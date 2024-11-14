@@ -1,22 +1,29 @@
 import * as React from "react";
+import 'react-native-gesture-handler';
 import { NavigationContainer } from "@react-navigation/native";
 import { createDrawerNavigator } from "@react-navigation/drawer";
 import { createStackNavigator } from "@react-navigation/stack";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import { StatusBar } from 'expo-status-bar';
-import { StyleSheet, Text, View } from 'react-native';
+import { StyleSheet, Text, View, StatusBar, SafeAreaView } from 'react-native';
 import Ionicons from "react-native-vector-icons/Ionicons";
 
-//oldalak importálása
+//--------------------------------------------------- oldalak importálása
+
 import Kezdolap from "./screens/Kezdolap";
 import Profil from "./screens/Profile";
 import Datumok from "./screens/Datumok";
 import Befizetesek from "./screens/Befizetesek";
 
+//--------------------------------------------------- kinézet import
+import Styles from './Styles';
+
+//---------------------------------------------------  navigátorok
 const Drawer = createDrawerNavigator();
 const Stack = createStackNavigator();
 const Tab = createBottomTabNavigator(); 
 
+//--------------------------------------------------- fő app
 export default function App() {
   return(
     <NavigationContainer>
@@ -34,7 +41,7 @@ export default function App() {
           } else if (route.name === "Befizetések"){
             iconName = focused ? "cash" : "cash-outline";
           }
-          // Az ikon komponens renderelése
+          // ikon komponens renderelés
           return <Ionicons name={iconName} size={size} color={color} />;
         },
         tabBarActiveTintColor: "tomato",
@@ -49,16 +56,3 @@ export default function App() {
     </NavigationContainer>
   );
 }
-
-function HomeTabs(){
-  
-}
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: '#fff',
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-});
