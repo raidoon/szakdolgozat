@@ -14,12 +14,26 @@ function kapcsolat(){
         host: 'localhost',
         user: 'root',
         password: '',
-        database: ''
+        database: 'szakdoga_gyakorlas'
       })
       connection.connect()
 }
 app.get('/', (req, res) => {
   res.send('Hello World!')
+})
+app.get('/tanuloLista', (req, res) => {
+    kapcsolat()
+    connection.query('SELECT * from tanulo', (err, rows, fields) => {
+        if (err) {
+            console.log(err)
+            res.status(500).send("Hiba")
+        }
+        else{
+            console.log(rows)
+            res.status(200).send(rows)
+        }
+      })
+      connection.end()
 })
 app.listen(port, () => {
   console.log(`Example app listening on port ${port}`)
