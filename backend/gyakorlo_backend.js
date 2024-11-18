@@ -14,19 +14,19 @@ function kapcsolat(){
         host: 'localhost',
         user: 'root',
         password: '',
-        database: 'szakdolgozat'
+        database: 'szakdoga_gyakorlas'
       })
       connection.connect()
 }
 app.get('/', (req, res) => {
-  res.send('kapcsolat OK')
+  res.send('Hello World!')
 })
-app.get('/osszesFelhasznalo', (req, res) => {
+app.get('/tanuloLista', (req, res) => {
     kapcsolat()
-    connection.query('SELECT * from felhasznaloi_adatok', (err, rows, fields) => {
+    connection.query('SELECT * from tanulo', (err, rows, fields) => {
         if (err) {
             console.log(err)
-            res.status(500).send("Nu-uh")
+            res.status(500).send("Hiba")
         }
         else{
             console.log(rows)
@@ -36,5 +36,5 @@ app.get('/osszesFelhasznalo', (req, res) => {
       connection.end()
 })
 app.listen(port, () => {
-    console.log(`Example app listening on port ${port}`)
-  })
+  console.log(`Example app listening on port ${port}`)
+})
