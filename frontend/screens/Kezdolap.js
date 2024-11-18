@@ -7,7 +7,7 @@ export default function Kezdolap({ navigation }) {
       <Text>Kezdőlap</Text>
       <Button
         title="Tovább a felhasználói oldalra"
-        onPress={() => navigation.navigate("Felhasználói felület")}
+        onPress={() => navigation.navigate("Profil")}
       />
     </View>
   );
