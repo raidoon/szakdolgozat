@@ -7,10 +7,10 @@ import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import { StatusBar } from 'expo-status-bar';
 import { StyleSheet, Text, View, SafeAreaView,Provider } from 'react-native';
 import Ionicons from "react-native-vector-icons/Ionicons";
-import { Provider } from "react-native-paper";
 //--------------------------------------------------- belépés előtti oldalak importálása
-//import Bejelentkezes from "./screens/Base/Bejelentkezes";
-//import Regisztracio from "./screens/Base/Regisztracio";
+import Bejelentkezes from "./Components/Bejelentkezes";
+
+//regisztracio
 
 //--------------------------------------------------- belépés utáni oldalak importálása
 import Kezdolap from "./screens/Home/Kezdolap";
@@ -18,7 +18,7 @@ import Befizetesek from "./screens/Home/Befizetesek";
 import Datumok from "./screens/Home/Datumok";
 import Profil from "./screens/Home/Profile";
 //--------------------------------------------------- kinézet import
-import Styles from './Styles';
+//import Styles from './Styles';
 
 
 //--------------------------------------------------- ide jön a connection
@@ -135,7 +135,7 @@ export default function App() {
 
 
 //----------------------------------------------- teszt app
-
+/*
 export default function App() {
   return (
     <Provider theme={theme}>
@@ -149,7 +149,7 @@ export default function App() {
           <Stack.Screen name="StartScreen" component={StartScreen} />
           <Stack.Screen name="Bejelentkezes" component={Bejelentkeztetes} />
           <Stack.Screen name="Regisztracio" component={Regisztracio} />
-          <Stack.Screen name="HomeScreen" component={HomeScreen} />
+          <Stack.Screen name="Kezdolap" component={Kezdolap} />
           <Stack.Screen
             name="ResetPasswordScreen"
             component={ResetPasswordScreen}
@@ -158,4 +158,16 @@ export default function App() {
       </NavigationContainer>
     </Provider>
   );
+}*/
+
+//------------------------------ új teszt app
+export default function App(){
+  return(
+    <NavigationContainer>
+      <Stack.Navigator
+      initialRouteName="Bejelentkezes">
+        <Stack.Screen name="Bejelentkezes" component={Bejelentkezes}></Stack.Screen>
+      </Stack.Navigator>
+    </NavigationContainer>
+  )
 }
