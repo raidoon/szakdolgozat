@@ -16,11 +16,7 @@ import Ripple from "react-native-material-ripple";
 
 
   value={jelszo=>setJelszo(jelszo)}
-
-  
  */
-
-
 
 export default function Bejelentkezes() {
   
@@ -153,5 +149,5 @@ const styles = StyleSheet.create({
     alignItems:'center',
     marginTop:20
    }
-   */
+*/
 });
