@@ -5,13 +5,18 @@ import { createDrawerNavigator } from "@react-navigation/drawer";
 import { createStackNavigator } from "@react-navigation/stack";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import { StatusBar } from 'expo-status-bar';
-import { StyleSheet, Text, View, SafeAreaView } from 'react-native';
+import { StyleSheet, Text, View, SafeAreaView,Provider } from 'react-native';
 import Ionicons from "react-native-vector-icons/Ionicons";
-//--------------------------------------------------- oldalak importálása
-import Kezdolap from "./screens/App/Kezdolap";
-import Befizetesek from "./screens/App/Befizetesek";
-import Datumok from "./screens/App/Datumok";
-import Profil from "./screens/App/Profile";
+import { Provider } from "react-native-paper";
+//--------------------------------------------------- belépés előtti oldalak importálása
+//import Bejelentkezes from "./screens/Base/Bejelentkezes";
+//import Regisztracio from "./screens/Base/Regisztracio";
+
+//--------------------------------------------------- belépés utáni oldalak importálása
+import Kezdolap from "./screens/Home/Kezdolap";
+import Befizetesek from "./screens/Home/Befizetesek";
+import Datumok from "./screens/Home/Datumok";
+import Profil from "./screens/Home/Profile";
 //--------------------------------------------------- kinézet import
 import Styles from './Styles';
 
@@ -90,6 +95,9 @@ function Regisztracio(){
 
 // A TAB NAVIGÁTOR LEGYEN EGY KÜLÖN FUNCTION, AMI NEM AKKOR JÖN BE, AMIKOR BELÉPÜNK AZ APPBA, HANEM AKKOR, HA A BEJELENTKEZÉS SIKERES VOLT
 
+/*
+
+//------------- ez a tabnavigatoros HomeScreen egy sikeres bejelentkezés után
 
 export default function App() {
   return(
@@ -120,5 +128,34 @@ export default function App() {
         <Tab.Screen name="Profil" component={Profil} />
       </Tab.Navigator>
     </NavigationContainer>
+  );
+}
+
+*/
+
+
+//----------------------------------------------- teszt app
+
+export default function App() {
+  return (
+    <Provider theme={theme}>
+      <NavigationContainer>
+        <Stack.Navigator
+          initialRouteName="StartScreen"
+          screenOptions={{
+            headerShown: false,
+          }}
+        >
+          <Stack.Screen name="StartScreen" component={StartScreen} />
+          <Stack.Screen name="Bejelentkezes" component={Bejelentkeztetes} />
+          <Stack.Screen name="Regisztracio" component={Regisztracio} />
+          <Stack.Screen name="HomeScreen" component={HomeScreen} />
+          <Stack.Screen
+            name="ResetPasswordScreen"
+            component={ResetPasswordScreen}
+          />
+        </Stack.Navigator>
+      </NavigationContainer>
+    </Provider>
   );
 }
