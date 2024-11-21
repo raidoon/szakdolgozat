@@ -1,16 +1,15 @@
 import * as React from "react";
-import 'react-native-gesture-handler';
+import "react-native-gesture-handler";
 import { NavigationContainer } from "@react-navigation/native";
 import { createDrawerNavigator } from "@react-navigation/drawer";
 import { createStackNavigator } from "@react-navigation/stack";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
-import { StatusBar } from 'expo-status-bar';
-import { StyleSheet, Text, View, SafeAreaView,Provider } from 'react-native';
+import { StatusBar } from "expo-status-bar";
+import { StyleSheet, Text, View, SafeAreaView, Provider } from "react-native";
 import Ionicons from "react-native-vector-icons/Ionicons";
 //--------------------------------------------------- belépés előtti oldalak importálása
 import Bejelentkezes from "./Components/Bejelentkezes";
-
-//regisztracio
+import Regisztracio from "./Components/Regisztracio";
 
 //--------------------------------------------------- belépés utáni oldalak importálása
 import Kezdolap from "./screens/Home/Kezdolap";
@@ -18,8 +17,7 @@ import Befizetesek from "./screens/Home/Befizetesek";
 import Datumok from "./screens/Home/Datumok";
 import Profil from "./screens/Home/Profile";
 //--------------------------------------------------- kinézet import
-//import Styles from './Styles';
-
+import Styles from './Styles';
 
 //--------------------------------------------------- ide jön a connection
 
@@ -62,34 +60,9 @@ const sql = postgres({
 //---------------------------------------------------  navigátorok
 const Drawer = createDrawerNavigator();
 const Stack = createStackNavigator();
-const Tab = createBottomTabNavigator(); 
-//--------------------------------------------------- bejelentkeztetes
-function Bejelentkeztetes(){
-  return(
-    <>
-      <StatusBar/>
-      <SafeAreaView>
-        <View>
-          <Text>Bejelentkezés</Text>
-        </View>
-      </SafeAreaView>
-    </>
-  );
-}
-//--------------------------------------------------- regisztráció
-function Regisztracio(){
-  return(
-    <>
-      <SafeAreaView>
-        <View>
-          <Text>Regisztráció</Text>
-        </View>
-      </SafeAreaView>
-    </>
-  );
-}
-//--------------------------------------------------- fő app
+const Tab = createBottomTabNavigator();
 
+//--------------------------------------------------- fő app
 
 //IDE MÉG NEM A TAB NAVIGÁTOR KELL, HANEM EGY STACK NAVIGÁTOR, AMIBEN BENNE VAN A BEJELENTKEZÉS, A REGISZTRÁCIÓ ÉS AZ ALAP HOME OLDAL, AMIBEN A FELHASZNÁLÓ KI TUDJA VÁLASZTANI, HOGY BEJELENTKEZNI AKAR VAGY REGISZTRÁLNI !!!
 
@@ -133,8 +106,7 @@ export default function App() {
 
 */
 
-
-//----------------------------------------------- teszt app
+//----------------------------------------------- emlékeztető teszt app
 /*
 export default function App() {
   return (
@@ -161,13 +133,22 @@ export default function App() {
 }*/
 
 //------------------------------ új teszt app
-export default function App(){
-  return(
+export default function App() {
+  return (
     <NavigationContainer>
-      <Stack.Navigator
-      initialRouteName="Bejelentkezes">
-        <Stack.Screen name="Bejelentkezes" component={Bejelentkezes}></Stack.Screen>
+      <Stack.Navigator initialRouteName="Bejelentkezes">
+        <Stack.Screen
+          name="Bejelentkezes"
+          component={Bejelentkezes}
+          options={{ title: "Bejelentkezés" }}
+        ></Stack.Screen>
+
+        <Stack.Screen
+          name="Regisztracio"
+          component={Regisztracio}
+          options={{ title: "Regisztráció" }}
+        ></Stack.Screen>
       </Stack.Navigator>
     </NavigationContainer>
-  )
+  );
 }

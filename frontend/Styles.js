@@ -1,5 +1,82 @@
 import {StyleSheet} from 'react-native';
+
 const Styles = StyleSheet.create({
+  //------------------------------------- BEJELENTKEZES.JS
+  bejelentkezes_Container: {
+    flex: 1,
+    width: "100%",
+    justifyContent: "center",
+    alignItems: "center",
+  },
+  bejelentkezes_FormInputWrapper: {
+    width: "90%",
+    height: 55,
+    backgroundColor: "#f7f9ef",
+    borderWidth: 1,
+    borderColor: "#000",
+    borderRadius: 6,
+    flexDirection: "row",
+    alignItems: "center",
+    paddingLeft: 8,
+    marginBottom: 10
+  },
+  bejelentkezes_Input: {
+    width: "90%",
+    height: "100%",
+    marginLeft: 10,
+  },
+  bejelentkezes_Gomb:{
+    padding:15,
+    backgroundColor:'#17469F',
+    alignItems:'center',
+    borderRadius:10,
+    width:'90%',
+    marginTop:20,
+    display:'flex',
+    flexDirection:'row',
+    justifyContent:'center',
+    alignItems:'center'
+  },
+  bejelentkezes_bejelentkezoGomb:{
+    color: '#FFFF'
+  },
+  bejelentkezes_regisztaciosGomb:{
+    width:'100%',
+    marginTop:7,
+    borderColor:'#17469F',
+    backgroundColor:'#fff',
+    borderWidth:1,
+    paddingVertical:10
+  },
+  bejelentkezes_kerdes:{
+    width:'90%',
+    marginTop:20
+  },
+  bejelentkezes_kerdesSzoveg:{
+    fontSize:16,
+    marginRight:5,
+    marginTop:10
+  },
+  bejelentkezes_regiGombSzoveg:{
+    color:'#17469F'
+  },
+  /**
+   bejelentkezes_support:{
+    fontSize:17,
+    fontWeight: '600'
+   },
+   bejelentkezes_nemEngedBejelentkezni:{
+    width:'90%',
+    alignItems:'center',
+    marginTop:20
+   }
+*/
+//------------------------------------ REGISZTRACIO.JS
+
+
+
+//------------------------- TESZTNEK
+
   /*login_container: {
     flex: 1,
     backgroundColor: '#FFF',
@@ -110,13 +187,13 @@ const Styles = StyleSheet.create({
     fontSize: 15,
     fontWeight: 'bold',
   },
-    */
+    
   container: {
     flex: 1,
     backgroundColor: '#fff',
     alignItems: 'center',
     justifyContent: 'center',
-  },
+  },*/
 
 });
 
