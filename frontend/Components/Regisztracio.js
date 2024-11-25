@@ -4,7 +4,7 @@ import Styles from "../Styles";
 import Ripple from "react-native-material-ripple";
 import { Octicons } from "@expo/vector-icons";
 
-export default function Regisztracio() {
+export default function Regisztracio({navigation}) {
   return (
     <View style={Styles.bejelentkezes_Container}>
         
@@ -63,8 +63,8 @@ export default function Regisztracio() {
             rippleCentered={true}
             rippleFades={false}
             rippleContainerBorderRadius={20}
-            style={[Styles.bejelentkezes_Gomb,Styles.bejelentkezes_regisztaciosGomb,{marginLeft: 100,marginRight:100}]}
-            //onPress={() => navigation.navigate("")}
+            style={[Styles.bejelentkezes_Gomb,Styles.bejelentkezes_regisztaciosGomb,{width: '60%'}]}
+            onPress={() => navigation.navigate("BejelentkezesUtan")}
         >
             <Text style={Styles.bejelentkezes_regiGombSzoveg}>Regisztráció</Text>
         </Ripple>

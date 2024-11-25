@@ -58,7 +58,8 @@ const Styles = StyleSheet.create({
     marginTop:10
   },
   bejelentkezes_regiGombSzoveg:{
-    color:'#17469F'
+    color:'#17469F',
+    
   },
   /**
    bejelentkezes_support:{
@@ -71,6 +72,7 @@ const Styles = StyleSheet.create({
     marginTop:20
    }
 */
+
 //------------------------------------ REGISZTRACIO.JS
 
 

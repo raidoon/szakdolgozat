@@ -68,11 +68,11 @@ const Tab = createBottomTabNavigator();
 
 // A TAB NAVIGÁTOR LEGYEN EGY KÜLÖN FUNCTION, AMI NEM AKKOR JÖN BE, AMIKOR BELÉPÜNK AZ APPBA, HANEM AKKOR, HA A BEJELENTKEZÉS SIKERES VOLT
 
-/*
+
 
 //------------- ez a tabnavigatoros HomeScreen egy sikeres bejelentkezés után
 
-export default function App() {
+export default function BejelentkezesUtan() {
   return(
     <NavigationContainer>
       <Tab.Navigator
@@ -104,7 +104,7 @@ export default function App() {
   );
 }
 
-*/
+
 
 //----------------------------------------------- emlékeztető teszt app
 /*
@@ -147,6 +147,11 @@ export default function App() {
           name="Regisztracio"
           component={Regisztracio}
           options={{ title: "Regisztráció" }}
+        ></Stack.Screen>
+
+        <Stack.Screen
+        name="BejelentkezesUtan"
+        component={BejelentkezesUtan}
         ></Stack.Screen>
       </Stack.Navigator>
     </NavigationContainer>
