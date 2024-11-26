@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Gép: 127.0.0.1
--- Létrehozás ideje: 2024. Nov 18. 13:02
+-- Létrehozás ideje: 2024. Nov 26. 14:08
 -- Kiszolgáló verziója: 10.4.28-MariaDB
 -- PHP verzió: 8.2.4
 
@@ -65,7 +65,11 @@ CREATE TABLE `befizetesek` (
 INSERT INTO `befizetesek` (`tanulo_id`, `befizetett_osszeg`, `befizetes_ideje`, `jovahagyva`) VALUES
 (1, 20000, '2024-11-17', 1),
 (1, 40000, '2024-11-17', 1),
-(1, 7800, '2024-11-18', 0);
+(1, 7800, '2024-11-18', 0),
+(6, 10000, '2024-11-26', 0),
+(6, 10000, '2024-11-26', 0),
+(11, 8000, '2024-11-25', 1),
+(11, 8000, '2024-11-25', 1);
 
 -- --------------------------------------------------------
 
@@ -109,7 +113,8 @@ CREATE TABLE `oktato_adatok` (
 
 INSERT INTO `oktato_adatok` (`oktato_id`, `oktato_nev`, `autosiskola_id`, `oktato_felhasznaloID`) VALUES
 (1, 'Kiss Béla', 2, 1),
-(2, 'Illés János', 1, 4);
+(2, 'Illés János', 1, 4),
+(6, 'Szűcs László', 2, 3);
 
 -- --------------------------------------------------------
 
@@ -130,7 +135,10 @@ CREATE TABLE `tanulo_adatok` (
 --
 
 INSERT INTO `tanulo_adatok` (`tanulo_id`, `tanulo_oktatoja`, `tanulo_nev`, `tanulo_orak`, `tanulo_felhasznaloID`) VALUES
-(1, 2, 'Ecsedi Hanna', 10, 5);
+(1, 2, 'Ecsedi Hanna', 10, 5),
+(2, 2, 'Katalin Katalin', 3, 2),
+(6, 2, 'Ecsedi Enna', 10, 2),
+(11, 6, 'Bodnár Fanni', 10, 2);
 
 --
 -- Indexek a kiírt táblákhoz
@@ -190,13 +198,13 @@ ALTER TABLE `felhasznaloi_adatok`
 -- AUTO_INCREMENT a táblához `oktato_adatok`
 --
 ALTER TABLE `oktato_adatok`
-  MODIFY `oktato_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
+  MODIFY `oktato_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=8;
 
 --
 -- AUTO_INCREMENT a táblához `tanulo_adatok`
 --
 ALTER TABLE `tanulo_adatok`
-  MODIFY `tanulo_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
+  MODIFY `tanulo_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=15;
 
 --
 -- Megkötések a kiírt táblákhoz
