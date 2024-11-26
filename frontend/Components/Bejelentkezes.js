@@ -16,6 +16,24 @@ export default function Bejelentkezes({ navigation }) {
     */
   }
 
+  const [adatok, setAdatok] = useState([]);
+  const letoltes = async () => {
+    var adatok = {
+      bevitel1: id,
+    };
+    const x = await fetch("http://192.168.10.57:3000/szavazatDb", {
+      method: "POST",
+      body: JSON.stringify(adatok),
+      headers: { "Content-type": "application/json; charset=UTF-8" },
+    });
+    const y = await x.json();
+    setAdatok(y);
+    alert(JSON.stringify(y));
+  };
+  useEffect(() => {
+    letoltes();
+  }, []);
+
   const handleLogin = () => {
     if (felhasznalonev === "admin" && jelszo === "password123") {
       setIsAuthenticated(true);
