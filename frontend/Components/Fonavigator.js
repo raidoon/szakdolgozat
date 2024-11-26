@@ -1,4 +1,5 @@
 import { useAuth } from "./authContext";
+import { NavigationContainer } from "@react-navigation/native";
 import { createStackNavigator } from "@react-navigation/stack";
 import Bejelentkezes from "./Bejelentkezes";
 import Regisztracio from "./Regisztracio";

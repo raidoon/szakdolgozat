@@ -10,6 +10,12 @@ export default function Bejelentkezes({ navigation }) {
   const [jelszo, setJelszo] = useState("");
   const { setIsAuthenticated } = useAuth();
 
+  {
+    /*
+       ASYNC STORAGE, ADATBÁZIS 
+    */
+  }
+
   const handleLogin = () => {
     if (felhasznalonev === "admin" && jelszo === "password123") {
       setIsAuthenticated(true);
