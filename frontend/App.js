@@ -6,7 +6,7 @@ import { createStackNavigator } from "@react-navigation/stack";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import { StatusBar } from "expo-status-bar";
 import { StyleSheet, Text, View, SafeAreaView, Provider } from "react-native";
-import Ionicons from "react-native-vector-icons/Ionicons";
+
 import { AuthProvider } from "./Components/authContext";
 import FoNavigator from "./Components/Fonavigator";
 //--------------------------------------------------- kinézet import
@@ -60,8 +60,8 @@ const Tab = createBottomTabNavigator();
 export default function App() {
   return (
     <AuthProvider>
-      <NavigationContainer>  {/* Itt kell maradnia a NavigationContainer-nek */}
-        <FoNavigator />  {/* Az egész navigációs logikát itt kezeljük */}
+      <NavigationContainer>
+        <FoNavigator />
       </NavigationContainer>
     </AuthProvider>
   );
