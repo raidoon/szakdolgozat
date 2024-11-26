@@ -4,7 +4,9 @@ import Datumok from "./Datumok";
 import Befizetesek from "./Befizetesek";
 import Profil from "./Profile";
 import Ionicons from "react-native-vector-icons/Ionicons";
+
 const Tab = createBottomTabNavigator();
+
 export default function BejelentkezesUtan() {
     return(
       <Tab.Navigator

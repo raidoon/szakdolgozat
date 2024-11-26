@@ -8,11 +8,11 @@ export default function Befizetesek() {
     const x = await fetch("http://192.168.10.57:3000/tanuloLista"); //Fanni: 58 --> EH: 57
     const y = await x.json();
     setAdatok(y);
-    //alert(JSON.stringify(y))
   };
   useEffect(() => {
     letoltes();
   }, []);
+  
   return (
     <View style={styles.default}>
       <Text style={{ fontSize: 20, fontWeight: "bold" }}>

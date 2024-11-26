@@ -1,34 +1,28 @@
 import { Text, TextInput, View } from "react-native";
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Octicons } from "@expo/vector-icons";
 import Ripple from "react-native-material-ripple";
 import Styles from "../Styles";
-import { useAuth } from "./authContext";
+import { useAuth} from "./authContext";
 
 export default function Bejelentkezes({ navigation }) {
   const [felhasznalonev, setFelhasznalonev] = useState("");
   const [jelszo, setJelszo] = useState("");
   const { setIsAuthenticated } = useAuth();
-
-  {
-    /*
-       ASYNC STORAGE, ADATBÁZIS 
-    */
-  }
-
   const [adatok, setAdatok] = useState([]);
   const letoltes = async () => {
     var adatok = {
-      bevitel1: id,
+      bevitel1: felhasznalonev,
+      bevitel2: jelszo
     };
-    const x = await fetch("http://192.168.10.57:3000/szavazatDb", {
+    const x = await fetch("http://192.168.10.57:3000/bejelentkezes", {
       method: "POST",
       body: JSON.stringify(adatok),
       headers: { "Content-type": "application/json; charset=UTF-8" },
     });
     const y = await x.json();
     setAdatok(y);
-    alert(JSON.stringify(y));
+    //alert(JSON.stringify(y));
   };
   useEffect(() => {
     letoltes();
@@ -37,7 +31,7 @@ export default function Bejelentkezes({ navigation }) {
   const handleLogin = () => {
     if (felhasznalonev === "admin" && jelszo === "password123") {
       setIsAuthenticated(true);
-      navigation.navigate("Kezdőlap");
+      navigation.navigate("Kezdolap",{atkuld: felhasznalonev})
     } else {
       alert("Hibás felhasználónév vagy jelszó!");
     }
