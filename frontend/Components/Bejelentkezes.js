@@ -1,39 +1,38 @@
 import { Text, TextInput, View } from "react-native";
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import { Octicons } from "@expo/vector-icons";
 import Ripple from "react-native-material-ripple";
 import Styles from "../Styles";
-import { useAuth} from "./authContext";
+import { useAuth } from "./authContext";
 
 export default function Bejelentkezes({ navigation }) {
   const [felhasznalonev, setFelhasznalonev] = useState("");
   const [jelszo, setJelszo] = useState("");
   const { setIsAuthenticated } = useAuth();
   const [adatok, setAdatok] = useState([]);
-  const letoltes = async () => {
-    var adatok = {
+  
+  const handleLogin = async () => {
+    const adatok = {
       bevitel1: felhasznalonev,
       bevitel2: jelszo
     };
-    const x = await fetch("http://192.168.10.57:3000/bejelentkezes", {
-      method: "POST",
-      body: JSON.stringify(adatok),
-      headers: { "Content-type": "application/json; charset=UTF-8" },
-    });
-    const y = await x.json();
-    setAdatok(y);
-    alert(JSON.stringify(y));
-  };
-  useEffect(() => {
-    letoltes();
-  }, []);
-
-  const handleLogin = () => {
-    if (felhasznalonev === "admin" && jelszo === "password123") {
-      setIsAuthenticated(true);
-      navigation.navigate("BejelentkezesUtan",)
-    } else {
-      alert("Hibás felhasználónév vagy jelszó!");
+    try {
+      const response = await fetch("http://192.168.10.57:3000/bejelentkezes", {
+        method: "POST",
+        body: JSON.stringify(adatok),
+        headers: { "Content-type": "application/json; charset=UTF-8" },
+      });
+      const data = await response.json();
+      setAdatok(data);
+      if (data.length > 0) {
+        setIsAuthenticated(true);
+        navigation.navigate("Kezdolap", {atkuld: felhasznalonev});
+      } else {
+        alert("Hibás felhasználónév vagy jelszó!");
+      }
+    } catch (error) {
+      console.error("Bejelentkezési hiba:", error);
+      alert("Hiba történt a bejelentkezés során!");
     }
   };
 
@@ -58,7 +57,7 @@ export default function Bejelentkezes({ navigation }) {
           secureTextEntry={true}
           value={jelszo}
           onChangeText={(szoveg) => setJelszo(szoveg)}
-          maxLength={20} //max 20 karaktert lehet jelszónak --> Fanni állítsd be az adatbázisba!!!
+          maxLength={20}
         />
       </View>
       <Ripple
@@ -69,7 +68,7 @@ export default function Bejelentkezes({ navigation }) {
         rippleFades={false}
         rippleContainerBorderRadius={20}
         style={Styles.bejelentkezes_Gomb}
-        onPress={handleLogin}  // Itt hívjuk meg a bejelentkezési logikát
+        onPress={handleLogin}
       >
         <Text style={Styles.bejelentkezes_bejelentkezoGomb}>Bejelentkezés</Text>
       </Ripple>

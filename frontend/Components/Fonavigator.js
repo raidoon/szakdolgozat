@@ -4,6 +4,7 @@ import { createStackNavigator } from "@react-navigation/stack";
 import Bejelentkezes from "./Bejelentkezes";
 import Regisztracio from "./Regisztracio";
 import BejelentkezesUtan from "../screens/Home/BejelentkezesUtan";
+import Kezdolap from "../screens/Home/Kezdolap";
 const Stack = createStackNavigator();
 export default function FoNavigator() {
     const { isAuthenticated } = useAuth();
@@ -26,6 +27,10 @@ export default function FoNavigator() {
             <Stack.Screen
             name="BejelentkezesUtan"
             component={BejelentkezesUtan}
+            />
+            <Stack.Screen
+            name="Kezdolap"
+            component={Kezdolap}
             />
           </Stack.Navigator>
         )}
