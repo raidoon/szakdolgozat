@@ -7,7 +7,8 @@ import Ionicons from "react-native-vector-icons/Ionicons";
 
 const Tab = createBottomTabNavigator();
 
-export default function BejelentkezesUtan() {
+export default function BejelentkezesUtan({navigation, route}) {
+  //const { atkuld } = route.params;
     return(
       <Tab.Navigator
         screenOptions={({ route }) => ({

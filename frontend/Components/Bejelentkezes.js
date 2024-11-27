@@ -22,7 +22,7 @@ export default function Bejelentkezes({ navigation }) {
     });
     const y = await x.json();
     setAdatok(y);
-    //alert(JSON.stringify(y));
+    alert(JSON.stringify(y));
   };
   useEffect(() => {
     letoltes();
@@ -31,7 +31,7 @@ export default function Bejelentkezes({ navigation }) {
   const handleLogin = () => {
     if (felhasznalonev === "admin" && jelszo === "password123") {
       setIsAuthenticated(true);
-      navigation.navigate("Kezdolap",{atkuld: felhasznalonev})
+      navigation.navigate("BejelentkezesUtan",)
     } else {
       alert("Hibás felhasználónév vagy jelszó!");
     }

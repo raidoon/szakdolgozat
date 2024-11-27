@@ -23,6 +23,10 @@ export default function FoNavigator() {
               component={Regisztracio}
               options={{ title: "Regisztráció" }}
             />
+            <Stack.Screen
+            name="BejelentkezesUtan"
+            component={BejelentkezesUtan}
+            />
           </Stack.Navigator>
         )}
       </>
