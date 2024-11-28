@@ -3,8 +3,8 @@ import { NavigationContainer } from "@react-navigation/native";
 import { createStackNavigator } from "@react-navigation/stack";
 import Bejelentkezes from "./Bejelentkezes";
 import Regisztracio from "./Regisztracio";
-import BejelentkezesUtan from "../screens/Home/BejelentkezesUtan";
-import Kezdolap from "../screens/Home/Kezdolap";
+import BejelentkezesUtan from "../Home/BejelentkezesUtan";
+import Kezdolap from "../Home/Kezdolap";
 const Stack = createStackNavigator();
 export default function FoNavigator() {
     const { isAuthenticated } = useAuth();

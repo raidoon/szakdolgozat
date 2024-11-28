@@ -1,7 +1,7 @@
 import {StyleSheet} from 'react-native';
 
 const Styles = StyleSheet.create({
-  //------------------------------------- BEJELENTKEZES.JS
+  //------------------------------------------ BEJELENTKEZES.JS
   bejelentkezes_Container: {
     flex: 1,
     width: "100%",

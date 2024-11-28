@@ -2,7 +2,7 @@ import { Text, TextInput, View } from "react-native";
 import React, { useState } from "react";
 import { Octicons } from "@expo/vector-icons";
 import Ripple from "react-native-material-ripple";
-import Styles from "../Styles";
+import Styles from "../../Styles";
 import { useAuth } from "./authContext";
 
 export default function Bejelentkezes({ navigation }) {
@@ -26,7 +26,7 @@ export default function Bejelentkezes({ navigation }) {
       setAdatok(data);
       if (data.length > 0) {
         setIsAuthenticated(true);
-        navigation.navigate("Kezdolap", {atkuld: felhasznalonev});
+        navigation.navigate("BejelentkezesUtan", {atkuld: felhasznalonev});
       } else {
         alert("Hibás felhasználónév vagy jelszó!");
       }
