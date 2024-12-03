@@ -36,4 +36,3 @@ export default function BejelentkezesUtan({navigation, route}) {
       </Tab.Navigator>
     );
   }
-  
