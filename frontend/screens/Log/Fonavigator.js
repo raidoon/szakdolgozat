@@ -5,6 +5,7 @@ import Bejelentkezes from "./Bejelentkezes";
 import Regisztracio from "./Regisztracio";
 import BejelentkezesUtan from "../Home/BejelentkezesUtan";
 import Kezdolap from "../Home/Kezdolap";
+import Profil from "../Home/Profile";
 const Stack = createStackNavigator();
 export default function FoNavigator() {
     const { isAuthenticated } = useAuth();
