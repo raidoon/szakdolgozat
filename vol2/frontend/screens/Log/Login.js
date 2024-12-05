@@ -1,6 +1,10 @@
 import React, { useState } from 'react';
-import { View, Text, TextInput, Button, Alert } from 'react-native';
+import { View, Text, TextInput, Button, Alert,TouchableOpacity } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import Styles from '../../Styles';
+import { Octicons } from "@expo/vector-icons";
+import Ripple from "react-native-material-ripple";
+
 
 export default function LoginScreen({ navigation }) {
   const [felhasznalonev, setFelhasznalonev] = useState('');
@@ -21,11 +25,14 @@ export default function LoginScreen({ navigation }) {
           const adat = await response.json();
           setAdatok(adat);
           if (adat.length > 0) {
-            if(adat.felhasznalo_tipus==1){
-                navigation.navigate("",);
+            console.log(adat)
+            if(adat[0].felhasznalo_tipus===1){
+                Alert.alert("Sikeres bejelentkezés!");
+                navigation.replace("Oktato_Kezdolap",);
             }
             else{
-                navigation.navigate("",);
+                Alert.alert("Sikeres bejelentkezés!");
+                navigation.replace("Tanulo_BejelentkezesUtan",);
             }
           } else {
             alert("Hibás felhasználónév vagy jelszó!");
@@ -38,13 +45,56 @@ export default function LoginScreen({ navigation }) {
 };
 
   return (
-    <View>
-      <Text>Felhasználónév:</Text>
-      <TextInput value={email} onChangeText={setEmail} keyboardType="email-address" />
-      <Text>Jelszó:</Text>
-      <TextInput value={password} onChangeText={setPassword} secureTextEntry />
-      <Button title="Login" onPress={handleLogin} />
-      <Button title="Regisztráió" onPress={() => navigation.navigate('Register')} />
+    <View style={Styles.bejelentkezes_Container}>
+      <View style={Styles.bejelentkezes_FormInputWrapper}>
+        <Octicons name="person" size={20} color="#FF6C00" />
+        <TextInput
+          cursorColor={"#000"}
+          style={Styles.jelszoInput}
+          placeholder="Felhasználónév"
+          value={felhasznalonev}
+          onChangeText={(felhasznalo) => setFelhasznalonev(felhasznalo)}
+        />
+      </View>
+      <View style={Styles.bejelentkezes_FormInputWrapper}>
+        <Octicons name="shield-lock" size={20} color="#FF6C00" />
+        <TextInput
+          cursorColor={"#000"}
+          style={Styles.jelszoInput}
+          placeholder="Jelszó"
+          secureTextEntry={true}
+          value={jelszo}
+          onChangeText={(szoveg) => setJelszo(szoveg)}
+          maxLength={20}
+        />
+      </View>
+      <Ripple
+        rippleColor="rgb(0,0,0)"
+        rippleOpacity={0.05}
+        rippleDuration={300}
+        rippleCentered={true}
+        rippleFades={false}
+        rippleContainerBorderRadius={20}
+        style={Styles.bejelentkezes_Gomb}
+        onPress={handleLogin}
+      >
+        <Text style={Styles.bejelentkezes_bejelentkezoGomb}>Bejelentkezés</Text>
+      </Ripple>
+      <View style={Styles.bejelentkezes_kerdes}>
+        <Text style={Styles.bejelentkezes_kerdesSzoveg}>Nincs fiókod?</Text>
+        <Ripple
+          rippleColor="rgb(0,0,0)"
+          rippleOpacity={0.05}
+          rippleDuration={300}
+          rippleCentered={true}
+          rippleFades={false}
+          rippleContainerBorderRadius={20}
+          style={[Styles.bejelentkezes_Gomb, Styles.bejelentkezes_regisztaciosGomb]}
+          onPress={() => navigation.replace("Regisztracio")}
+        >
+          <Text style={Styles.bejelentkezes_regiGombSzoveg}>Regisztálj!</Text>
+        </Ripple>
+      </View>
     </View>
   );
 }

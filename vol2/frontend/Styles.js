@@ -27,7 +27,7 @@ const Styles = StyleSheet.create({
   },
   bejelentkezes_Gomb:{
     padding:15,
-    backgroundColor:'#17469F',
+    backgroundColor:'#020202',
     alignItems:'center',
     borderRadius:10,
     width:'90%',
@@ -59,7 +59,10 @@ const Styles = StyleSheet.create({
   },
   bejelentkezes_regiGombSzoveg:{
     color:'#17469F',
-    
+  },
+  jelszoInput: {
+    flex:1,
+    paddingHorizontal: 8
   },
   /**
    bejelentkezes_support:{
