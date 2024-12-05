@@ -1,10 +1,10 @@
 import React from "react";
 import { View, Text, Button } from "react-native";
 
-export default function Tanulo_Datumok() {
+export default function Oktato_Datumok() {
   return (
     <View style={{ flex: 1, alignItems: "center", justifyContent: "center" }}>
-      <Text>Következő óra időpontja: </Text>
+      <Text>Elkövetkezendő órák:</Text>
     </View>
   );
 }

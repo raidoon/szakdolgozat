@@ -2,11 +2,11 @@ import React from "react";
 import { useState,useEffect } from "react";
 import { View, Text, StyleSheet, FlatList } from "react-native";
 
-export default function Tanulo_Befizetesek() {
+export default function Oktato_Kifizetesek() {
   
   return (
     <View style={styles.default}>
-      
+        <Text>Tanulók kifizetései</Text>
     </View>
   );
 }

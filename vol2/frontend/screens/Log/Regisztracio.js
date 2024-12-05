@@ -4,6 +4,7 @@ import {View, Text, TextInput, Alert, TouchableOpacity, StyleSheet,
 import Ripple from "react-native-material-ripple";
 import { Octicons, Ionicons } from "@expo/vector-icons";
 import { Svg, Path } from 'react-native-svg';
+import Styles from "../../Styles";
 
 export default function Regisztracio({ navigation }) {
   const [email, setEmail] = useState("");
@@ -15,29 +16,35 @@ export default function Regisztracio({ navigation }) {
   const [masodikJelszoMutatasa, setMasodikJelszoMutatasa] = useState(false);
 
   const Regisztralas = async () => {
-    if (jelszo !== joaJelszo) {
-      Alert.alert("A jelszók nem egyeznek meg!");
-      return;
+    if(jelszo.length===0){
+        Alert.alert("Add meg az adataidat!");
     }
-    try {
-      const response = await fetch("http://192.168.1.190:3000/regisztracio", {
-        email,
-        password: jelszo,
-      });
-      Alert.alert("Sikeres regisztráció!");
-      navigation.replace("LoginScreen");
-    } catch (error) {
-      Alert.alert(
-        "Nem sikerült regisztrálnod",
-        error.response?.data?.message || "Kérjük próbálja újra."
-      );
+    else
+    {
+        if (jelszo !== joaJelszo) {
+            Alert.alert("A jelszók nem egyeznek meg!");
+            return;
+          }
+          try {
+            const response = await fetch("http://192.168.1.190:3000/regisztracio", {
+              email,
+              password: jelszo,
+            });
+            Alert.alert("Sikeres regisztráció!");
+            navigation.replace("LoginScreen");
+          } catch (error) {
+            Alert.alert(
+              "Nem sikerült regisztrálnod",
+              error.response?.data?.message || "Kérjük próbálja újra."
+            );
+          }
     }
   };
 
   return (
-    <View style={styles.container}>
-      <Text style={styles.title}>Regisztráció</Text>
-      <Text style={styles.subtitle}>Először add meg az adataidat</Text>
+    <View style={Styles.bejelentkezes_Container}>
+      <Text style={Styles.focim}>Regisztráció</Text>
+      <Text style={Styles.alcim}>Először add meg az adataidat</Text>
 
       <View style={styles.inputWrapper}>
         <Octicons name="person" size={20} color="#FF6C00" />
@@ -133,24 +140,6 @@ export default function Regisztracio({ navigation }) {
 }
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    padding: 20,
-    backgroundColor: "#fff",
-    alignItems: "center",
-    justifyContent: "center",
-  },
-  title: {
-    fontSize: 28,
-    fontWeight: "bold",
-    color: "#000",
-    marginBottom: 10,
-  },
-  subtitle: {
-    fontSize: 14,
-    color: "#888",
-    marginBottom: 30,
-  },
   inputWrapper: {
     flexDirection: "row",
     alignItems: "center",

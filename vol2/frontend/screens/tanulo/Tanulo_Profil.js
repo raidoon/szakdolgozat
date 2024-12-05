@@ -1,6 +1,5 @@
 import React, { useState,useEffect } from "react";
 import { View, Text, FlatList, StyleSheet, SafeAreaView } from "react-native";
-import { Button } from "react-native-web";
 import Ripple from "react-native-material-ripple";
 import Styles from "../../Styles";
 import Ionicons from "react-native-vector-icons/Ionicons";
@@ -115,7 +114,7 @@ export default function Tanulo_Profil({navigation}) {
               rippleFades={false}
               rippleContainerBorderRadius={20}
               style={[styles.profileGombok, styles.gombDiv] }
-              onPress={() => navigation.navigate("")}
+              onPress={() => navigation.replace("Bejelentkezes")}
           >
             <View style={styles.elsoFlex}>
             <Ionicons name="log-out-outline" size={25} color="red"/>

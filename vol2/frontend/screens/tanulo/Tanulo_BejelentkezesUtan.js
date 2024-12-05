@@ -6,11 +6,13 @@ import Tanulo_Datumok from "./Tanulo_Datumok";
 import Tanulo_Befizetesek from "./Tanulo_Befizetesek";
 
 import Ionicons from "react-native-vector-icons/Ionicons";
+import { useState } from "react";
 
 const Tab = createBottomTabNavigator();
 
 export default function Tanulo_BejelentkezesUtan({navigation, route}) {
-  //const { atkuld } = route.params;
+  const { atkuld } = route.params;
+  console.log("Atkuldött adat: ", atkuld);
     return(
       <Tab.Navigator
         screenOptions={({ route }) => ({
@@ -31,10 +33,17 @@ export default function Tanulo_BejelentkezesUtan({navigation, route}) {
           tabBarInactiveTintColor: "gray",
         })}
       >
-        <Tab.Screen name="Tanulo_Kezdolap" component={Tanulo_Kezdolap} />
-        <Tab.Screen name="Tanulo_Datumok" component={Tanulo_Datumok} />
-        <Tab.Screen name="Tanulo_Befizetesek" component={Tanulo_Befizetesek} />
-        <Tab.Screen name="Tanulo_Profil" component={Tanulo_Profil} />
+        <Tab.Screen
+            name="Tanulo_Kezdolap"
+            options={{ title: "Kezdőlap" }}
+            children={() => <Tanulo_Kezdolap atkuld={atkuld} />}/>
+        
+        <Tab.Screen name="Tanulo_Datumok" options={{title:"Dátumok"}} component={Tanulo_Datumok} />
+        
+        <Tab.Screen name="Tanulo_Befizetesek" options={{title:"Befizetések"}} component={Tanulo_Befizetesek} />
+        
+        <Tab.Screen name="Tanulo_Profil" options={{title:"Tanulói Profil"}} component={Tanulo_Profil} />
+      
       </Tab.Navigator>
     );
   }

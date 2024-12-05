@@ -4,9 +4,10 @@ const Styles = StyleSheet.create({
   //------------------------------------------ BEJELENTKEZES.JS
   bejelentkezes_Container: {
     flex: 1,
-    width: "100%",
-    justifyContent: "center",
+    padding: 20,
+    backgroundColor: "#fff",
     alignItems: "center",
+    justifyContent: "center",
   },
   bejelentkezes_FormInputWrapper: {
     width: "90%",
@@ -63,6 +64,17 @@ const Styles = StyleSheet.create({
   jelszoInput: {
     flex:1,
     paddingHorizontal: 8
+  },
+  focim:{
+    fontSize: 28,
+    fontWeight: "bold",
+    color: "#000",
+    marginBottom: 10,
+  },
+  alcim:{
+    fontSize: 14,
+    color: "#888",
+    marginBottom: 30,
   },
   /**
    bejelentkezes_support:{
