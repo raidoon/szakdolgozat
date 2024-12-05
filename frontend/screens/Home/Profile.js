@@ -130,7 +130,7 @@ export default function Profil({navigation}) {
             <Ionicons name="log-out-outline" size={25} color="red"/>
             </View>
             
-            <Text style={{fontSize: 20,}}>Kiejelentkezés</Text>
+            <Text style={{fontSize: 20,}}>Kijelentkezés</Text>
             
             <View style={[styles.harmadikFlex,]}>
             <Ionicons name="chevron-forward-outline" size={25} color="gray"/>
