@@ -4,6 +4,7 @@ import {View, Text, TextInput, Alert, TouchableOpacity, StyleSheet,
 import Ripple from "react-native-material-ripple";
 import { Octicons, Ionicons } from "@expo/vector-icons";
 import Styles from "../../Styles";
+import Ipcim from "../../Ipcim";
 
 export default function Regisztracio({ navigation }) {
   const [email, setEmail] = useState("");
@@ -25,7 +26,7 @@ export default function Regisztracio({ navigation }) {
             return;
           }
           try {
-            const response = await fetch("http://192.168.1.190:3000/regisztracio", {
+            const response = await fetch(Ipcim.Ipcim + "/regisztracio", {
               email,
               password: jelszo,
             });

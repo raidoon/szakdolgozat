@@ -1,5 +1,5 @@
 import React, { useState,useEffect } from "react";
-import { View, Text, FlatList, StyleSheet, SafeAreaView } from "react-native";
+import { View, Text, FlatList, StyleSheet, SafeAreaView, TouchableOpacity } from "react-native";
 import Ripple from "react-native-material-ripple";
 import Styles from "../../Styles";
 import Ionicons from "react-native-vector-icons/Ionicons";
@@ -21,7 +21,7 @@ export default function Tanulo_Profil({navigation, atkuld}) {
       setAdatok(adat);
       console.log(adat)
     }
-    
+
 
   return(
     <View style={styles.default}>
@@ -145,6 +145,17 @@ export default function Tanulo_Profil({navigation, atkuld}) {
             </View>
          </Ripple>
       </View>
+
+      <TouchableOpacity
+          onPress={() => navigation.replace("Bejelentkezes")}
+          style={{ marginTop: 20 }}
+          >
+            <Text style={styles.bottomText}>
+              Már van fiókod?{" "}
+              <Text style={styles.linkText}>Jelentkezz be</Text>
+            </Text>
+          </TouchableOpacity>
+          
     </View>
   );
 }
