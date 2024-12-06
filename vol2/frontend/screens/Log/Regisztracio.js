@@ -3,7 +3,6 @@ import {View, Text, TextInput, Alert, TouchableOpacity, StyleSheet,
 } from "react-native";
 import Ripple from "react-native-material-ripple";
 import { Octicons, Ionicons } from "@expo/vector-icons";
-import { Svg, Path } from 'react-native-svg';
 import Styles from "../../Styles";
 
 export default function Regisztracio({ navigation }) {

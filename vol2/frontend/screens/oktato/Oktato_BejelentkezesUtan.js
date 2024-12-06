@@ -36,11 +36,21 @@ export default function Oktato_BejelentkezesUtan({navigation, route}) {
             options={{ title: "Kezdőlap" }}
             children={() => <Oktato_Kezdolap atkuld={atkuld} />}/>
 
-        <Tab.Screen name="Oktato_Datumok" options={{title:"Dátumok"}} component={Oktato_Datumok} />
+        <Tab.Screen 
+            name="Oktato_Datumok" 
+            options={{title:"Dátumok"}}
+            children={() => <Oktato_Datumok atkuld={atkuld} />} />
 
-        <Tab.Screen name="Oktato_Kifizetesek" options={{title:"Kifizetések"}} component={Oktato_Kifizetesek} />
+        <Tab.Screen
+            name="Oktato_Kifizetesek" 
+            options={{title:"Kifizetések"}} 
+            children={() => <Oktato_Kifizetesek atkuld={atkuld} />} />
 
-        <Tab.Screen name="Oktato_Profil" options={{title:"Oktatói Profil"}} component={Oktato_Profil} />
+        <Tab.Screen 
+            name="Oktato_Profil" 
+            options={{title:"Oktatói Profil"}} 
+            children={() => <Oktato_Profil atkuld={atkuld} />} />
+
       </Tab.Navigator>
     );
   }

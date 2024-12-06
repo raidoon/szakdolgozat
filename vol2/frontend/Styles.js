@@ -76,6 +76,12 @@ const Styles = StyleSheet.create({
     color: "#888",
     marginBottom: 30,
   },
+  input:{
+    flex: 1,
+      marginLeft: 10,
+      fontSize: 16,
+      color: "#000",
+  }
   /**
    bejelentkezes_support:{
     fontSize:17,

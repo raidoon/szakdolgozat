@@ -4,6 +4,7 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import Styles from '../../Styles';
 import { Octicons, Ionicons } from "@expo/vector-icons";
 import Ripple from "react-native-material-ripple";
+import Ipcim from '../../Ipcim';
 
 
 export default function LoginScreen({ navigation }) {
@@ -11,40 +12,41 @@ export default function LoginScreen({ navigation }) {
   const [jelszo, setJelszo] = useState('');
   const [jelszoMutatasa, setJelszoMutatasa] = useState(false);
   const [adatok,setAdatok] = useState([]);
-//192.168.1.190 ||192.168.10.57 ||192.168.10.58
+
   const handleLogin = async () => {
     const adatok={
         felhasznalonev: felhasznalonev,
         jelszo: jelszo
     }
     try{
-        const response = await fetch("http://192.168.1.190:3000/bejelentkezes", {
-            method: "POST",
-            body: JSON.stringify(adatok),
-            headers: { "Content-type": "application/json; charset=UTF-8" },
-          });
-          const adat = await response.json();
-          setAdatok(adat);
-          if (adat.length > 0) {
-            console.log(adat)
-            if(adat[0].felhasznalo_tipus===1){
-                var felhasznalo = adat[0].felhasznalo_nev;
-                Alert.alert("Üdvözöllek " + felhasznalo + "!");
-                navigation.replace("Oktato_Kezdolap", {atkuld: felhasznalo});
-            }
-            else{
-                var felhasznalo = adat[0].felhasznalo_nev;
-                Alert.alert("Üdvözöllek " + felhasznalo + "!");
-                navigation.replace("Tanulo_BejelentkezesUtan",{atkuld: adat[0].felhasznalo_id});
-            }
-          } else {
-            Alert.alert("Hibás felhasználónév vagy jelszó!");
+      const response = await fetch(Ipcim.Ipcim + "/bejelentkezes", {
+          method: "POST",
+          body: JSON.stringify(adatok),
+          headers: { "Content-type": "application/json; charset=UTF-8" },
+        });
+        const adat = await response.json();
+        //alert(JSON.stringify(adat));
+        setAdatok(adat);
+        if (adat.length > 0) {
+          console.log(adat)
+          if(adat[0].felhasznalo_tipus===1){
+              var felhasznalo = adat[0].felhasznalo_nev;
+              Alert.alert("Üdvözöllek " + felhasznalo + "!");
+              navigation.replace("Oktato_BejelentkezesUtan", {atkuld: adat[0].felhasznalo_id});
           }
-    }
-    catch (error) {
-        console.error("Bejelentkezési hiba:", error);
-        alert("Hiba történt a bejelentkezés során!");
-    }
+          else{
+              var felhasznalo = adat[0].felhasznalo_nev;
+              Alert.alert("Üdvözöllek " + felhasznalo + "!");
+              navigation.replace("Tanulo_BejelentkezesUtan",{atkuld: adat[0].felhasznalo_id});
+          }
+        } else {
+          Alert.alert("Hibás felhasználónév vagy jelszó!");
+        } 
+  }
+  catch (error) {
+      console.error("Bejelentkezési hiba:", error);
+      alert("Hiba történt a bejelentkezés során!");
+  }
 };
 
   return (
@@ -52,7 +54,7 @@ export default function LoginScreen({ navigation }) {
       <View style={styles.inputWrapper}>
         <Octicons name="person" size={20} color="#FF6C00" />
         <TextInput
-          style={styles.input}
+          style={Styles.input}
           placeholder="Felhasználónév"
           value={felhasznalonev}
           onChangeText={setFelhasznalonev}
@@ -62,7 +64,7 @@ export default function LoginScreen({ navigation }) {
       <View style={styles.inputWrapper}>
         <Octicons name="lock" size={20} color="#FF6C00" />
         <TextInput
-          style={styles.input}
+          style={Styles.input}
           placeholder="Jelszó"
           secureTextEntry={!jelszoMutatasa}
           value={jelszo}
@@ -118,12 +120,6 @@ const styles = StyleSheet.create({
       width: "100%",
       height: 50,
       marginBottom: 15,
-    },
-    input: {
-      flex: 1,
-      marginLeft: 10,
-      fontSize: 16,
-      color: "#000",
     },
     signupButton: {
       backgroundColor: "#020202",

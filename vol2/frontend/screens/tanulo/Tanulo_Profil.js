@@ -3,8 +3,26 @@ import { View, Text, FlatList, StyleSheet, SafeAreaView } from "react-native";
 import Ripple from "react-native-material-ripple";
 import Styles from "../../Styles";
 import Ionicons from "react-native-vector-icons/Ionicons";
+import Ipcim from "../../Ipcim";
 
-export default function Tanulo_Profil({navigation}) {
+export default function Tanulo_Profil({navigation, atkuld}) {
+    const [adatok,setAdatok] = useState([]);
+
+    const sajatAdatokBetoltese = async () => {
+      const adatok={
+        felhasznaloID: atkuld
+      }
+      const response = await fetch(Ipcim.Ipcim + "/sajatAdatokT", {
+        method: "POST",
+        body: JSON.stringify(adatok),
+        headers: { "Content-type": "application/json; charset=UTF-8" },
+      });
+      const adat = await response.json();
+      setAdatok(adat);
+      console.log(adat)
+    }
+    
+
   return(
     <View style={styles.default}>
 
@@ -13,7 +31,7 @@ export default function Tanulo_Profil({navigation}) {
       </View>
 
       <View>
-        <Text style={{fontSize: 30, fontWeight: 'bold',textAlign:'center',marginTop: 10}}>név helye</Text>
+        <Text style={{fontSize: 30, fontWeight: 'bold',textAlign:'center',marginTop: 10}}>{adatok.felhasznalo_nev}</Text>
         <Text style={{fontSize: 20, color:'grey',textAlign:'center',marginBottom: 20}}>email cím helye</Text>
       </View>
 

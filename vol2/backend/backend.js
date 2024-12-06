@@ -12,16 +12,17 @@ function kapcsolat() {
         host: 'localhost',
         user: 'root',
         password: '',
-        database: 'szakdolgozat'
+        database: 'szakdolgozat_vol2' //otthon: szakdolgozat || sulis gépen: szakdolgozat_vol2
     })
     connection.connect()
 }
 app.get('/hello', (req, res) => {
     res.send('Hello World!')
 })
+//jelszót vedd ki
 app.post('/bejelentkezes', (req, res) => {
     kapcsolat()
-    connection.query(`SELECT * from felhasznalo_adatok WHERE felhasznalo_nev = ? AND felhasznalo_jelszo = ?
+    connection.query(`SELECT * from felhasznaloi_adatok WHERE felhasznalo_nev = ? AND felhasznalo_jelszo = ?
   `,[req.body.felhasznalonev, req.body.jelszo], (err, rows, fields) => {
         if (err) {
             console.log(err)
@@ -33,6 +34,20 @@ app.post('/bejelentkezes', (req, res) => {
         }
       })
       connection.end()
+})
+app.post('/sajatAdatokT',(req,res)=>{
+    kapcsolat()
+    connection.query(`select * from tanulo_adatok where tanulo_felhasznaloID = ?`,[req.body.felhasznaloID],(err,rows,fields)=>{
+        if (err) {
+            console.log(err)
+            res.status(500).send("Hiba")
+        }
+        else{
+            console.log(rows)
+            res.status(200).send(rows)
+        }
+    })
+    connection.end()
 })
 
 app.listen(port, () => {

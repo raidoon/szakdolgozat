@@ -4,7 +4,7 @@ import Ripple from "react-native-material-ripple";
 import Styles from "../../Styles";
 import Ionicons from "react-native-vector-icons/Ionicons";
 
-export default function Oktato_Profil({navigation}) {
+export default function Oktato_Profil({navigation,atkuld}) {
   return(
     <View style={styles.default}>
 
@@ -13,7 +13,7 @@ export default function Oktato_Profil({navigation}) {
       </View>
 
       <View>
-        <Text style={{fontSize: 30, fontWeight: 'bold',textAlign:'center',marginTop: 10}}>név helye</Text>
+        <Text style={{fontSize: 30, fontWeight: 'bold',textAlign:'center',marginTop: 10}}>{atkuld ? `${atkuld}` : "Nincs adat"}</Text>
         <Text style={{fontSize: 20, color:'grey',textAlign:'center',marginBottom: 20}}>email cím helye</Text>
       </View>
 
@@ -39,6 +39,7 @@ export default function Oktato_Profil({navigation}) {
             </View>
          </Ripple>
       </View>
+
       <View style={styles.gombDiv}>
         <Ripple
               rippleColor="rgb(0,0,0)"
@@ -61,6 +62,7 @@ export default function Oktato_Profil({navigation}) {
             </View>
          </Ripple>
       </View>
+
       <View style={styles.gombDiv}>
         <Ripple
               rippleColor="rgb(0,0,0)"
@@ -83,6 +85,7 @@ export default function Oktato_Profil({navigation}) {
             </View>
          </Ripple>
       </View>
+
       <View style={styles.gombDiv}>
         <Ripple
               rippleColor="rgb(0,0,0)"
@@ -105,6 +108,7 @@ export default function Oktato_Profil({navigation}) {
             </View>
          </Ripple>
       </View>
+
       <View style={styles.gombDiv}>
         <Ripple
               rippleColor="rgb(0,0,0)"

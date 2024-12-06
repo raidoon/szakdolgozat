@@ -38,11 +38,20 @@ export default function Tanulo_BejelentkezesUtan({navigation, route}) {
             options={{ title: "Kezdőlap" }}
             children={() => <Tanulo_Kezdolap atkuld={atkuld} />}/>
         
-        <Tab.Screen name="Tanulo_Datumok" options={{title:"Dátumok"}} component={Tanulo_Datumok} />
+        <Tab.Screen 
+        name="Tanulo_Datumok" 
+        options={{title:"Óráim"}} 
+        children={() => <Tanulo_Datumok atkuld={atkuld} />}/>
         
-        <Tab.Screen name="Tanulo_Befizetesek" options={{title:"Befizetések"}} component={Tanulo_Befizetesek} />
+        <Tab.Screen 
+            name="Tanulo_Befizetesek" 
+            options={{title:"Befizetéseim"}} 
+            children={() => <Tanulo_Befizetesek atkuld={atkuld} />}/>
         
-        <Tab.Screen name="Tanulo_Profil" options={{title:"Tanulói Profil"}} component={Tanulo_Profil} />
+        <Tab.Screen 
+            name="Tanulo_Profil" 
+            options={{title:"Tanulói Profil"}} 
+            children={() => <Tanulo_Profil atkuld={atkuld} />}/>
       
       </Tab.Navigator>
     );
