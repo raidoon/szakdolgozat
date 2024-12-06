@@ -145,17 +145,6 @@ export default function Tanulo_Profil({navigation, atkuld}) {
             </View>
          </Ripple>
       </View>
-
-      <TouchableOpacity
-          onPress={() => navigation.replace("Bejelentkezes")}
-          style={{ marginTop: 20 }}
-          >
-            <Text style={styles.bottomText}>
-              Már van fiókod?{" "}
-              <Text style={styles.linkText}>Jelentkezz be</Text>
-            </Text>
-          </TouchableOpacity>
-          
     </View>
   );
 }
