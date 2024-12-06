@@ -49,7 +49,20 @@ app.post('/sajatAdatokT',(req,res)=>{
     })
     connection.end()
 })
-
+app.post('/sajatAdatokO',(req,res)=>{
+    kapcsolat()
+    connection.query(`select * from oktato_adatok where oktato_felhasznaloID = ?`,[req.body.felhasznaloID],(err,rows,fields)=>{
+        if (err) {
+            console.log(err)
+            res.status(500).send("Hiba")
+        }
+        else{
+            console.log(rows)
+            res.status(200).send(rows)
+        }
+    })
+    connection.end()
+})
 app.listen(port, () => {
     console.log(`Example app listening on port ${port}`)
 })
