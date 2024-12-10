@@ -3,8 +3,10 @@ import { View, Text, FlatList, StyleSheet, SafeAreaView, Alert } from "react-nat
 import Ripple from "react-native-material-ripple";
 import Styles from "../../Styles";
 import Ionicons from "react-native-vector-icons/Ionicons";
+import { useNavigation } from "@react-navigation/native";
 
-export default function Oktato_Profil({ navigation, atkuld }) {
+export default function Oktato_Profil({ atkuld }) {
+  const navigation = useNavigation();
   const [adatok, setAdatok] = useState([]);
   const letoltes = async () => {
     const adatok = {

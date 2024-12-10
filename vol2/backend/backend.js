@@ -73,18 +73,15 @@ app.post("/sajatAdatokO", (req, res) => {
   connection.end();
 });
 
-// ------------------- Regisztráció
-// ------------------- Regisztráció
+//-------------------------------------- REGISZTRÁCIÓ
 app.post("/regisztracio", (req, res) => {
     const { felhasznalonev, nev, telefonszam, email, jelszo, tipus } = req.body;
-  
     if (tipus !== 1 && tipus !== 2) {
-      res.status(400).send("Érvénytelen típus!"); // Csak 0 vagy 1 lehet
+      res.status(400).send("Érvénytelen típus!"); 
       return;
     }
-    kapcsolat(); // Create the connection here
-  
-    // Ellenőrizzük, hogy az email már létezik-e
+    kapcsolat();
+//-------------------------------------- VAN-E MÁR ILYEN EMAIL
     connection.query(
       "SELECT felhasznalo_email FROM felhasznaloi_adatok WHERE felhasznalo_email = ?",
       [email],
@@ -98,11 +95,11 @@ app.post("/regisztracio", (req, res) => {
   
         if (rows.length !== 0) {
           res.status(400).send("Ez az email már regisztrálva van!");
-          connection.end(); // Close the connection if the email already exists
+          connection.end(); 
           return;
         }
   
-        // Ellenőrizzük, hogy a felhasználónév már létezik-e
+//-------------------------------------- VAN-E MÉR ILYEN FELHASZNÁLÓNÉV
         connection.query(
           "SELECT felhasznalo_nev FROM felhasznaloi_adatok WHERE felhasznalo_nev = ?",
           [felhasznalonev],
@@ -116,11 +113,11 @@ app.post("/regisztracio", (req, res) => {
   
             if (rows2.length !== 0) {
               res.status(400).send("Ez a felhasználónév már regisztrálva van!");
-              connection.end(); // Close the connection if the username already exists
+              connection.end(); 
               return;
             }
   
-            // Jelszó hash-elése és mentése
+//-------------------------------------- JELSZÓ HASH
             bcrypt.hash(jelszo, 10, (hashErr, hashedPassword) => {
               if (hashErr) {
                 console.error(hashErr);
@@ -129,7 +126,7 @@ app.post("/regisztracio", (req, res) => {
                 return;
               }
   
-              // Új felhasználó hozzáadása
+//-------------------------------------- ÚJ FELHASZNÁLÓ
               connection.query(
                 "INSERT INTO felhasznaloi_adatok VALUES (null, ?, ?, ?, ?, ?)",
                 [felhasznalonev, email, hashedPassword, telefonszam, tipus],
@@ -137,10 +134,11 @@ app.post("/regisztracio", (req, res) => {
                   if (insertErr) {
                     console.error(insertErr);
                     res.status(500).send("Hiba a mentés során");
-                    connection.end(); // Close the connection on error
+                    connection.end(); 
                     return;
                   } else {
-                    // További adatok mentése a típus alapján
+                    
+//-------------------------------------- TANULÓ VAGY OKTATÓ TÍPUS
                     if (tipus === 1) {
                       // Oktató
                       connection.query(

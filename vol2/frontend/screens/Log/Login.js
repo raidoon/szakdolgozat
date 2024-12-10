@@ -23,16 +23,6 @@ export default function LoginScreen({ navigation }) {
         headers: { "Content-type": "application/json; charset=UTF-8" },
       });
       const adat = await response.json(); 
-      /*
-      const text = await response.text(); 
-      let adat = {};
-      try {
-        adat = JSON.parse(text);
-      } catch (e) {
-        console.error("Hiba a válasz feldolgozása közben:", e);
-        adat = { error: text };
-      }
-      */
       if (adat.error) {
         Alert.alert(adat.error); 
       } else {

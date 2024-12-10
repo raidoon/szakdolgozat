@@ -4,8 +4,10 @@ import Ripple from "react-native-material-ripple";
 import Styles from "../../Styles";
 import Ionicons from "react-native-vector-icons/Ionicons";
 import Ipcim from "../../Ipcim";
+import { useNavigation } from "@react-navigation/native";
 
-export default function Tanulo_Profil({navigation, atkuld}) {
+export default function Tanulo_Profil({atkuld}) {
+  const navigation = useNavigation();
     const [adatok,setAdatok] = useState([]);
 
     const sajatAdatokBetoltese = async () => {
@@ -132,7 +134,7 @@ export default function Tanulo_Profil({navigation, atkuld}) {
               rippleFades={false}
               rippleContainerBorderRadius={20}
               style={[styles.profileGombok, styles.gombDiv] }
-              onPress={() => navigation.replace("Bejelentkezes")}
+              onPress={() => navigation.navigate("Bejelentkezes")}
           >
             <View style={styles.elsoFlex}>
             <Ionicons name="log-out-outline" size={25} color="red"/>
