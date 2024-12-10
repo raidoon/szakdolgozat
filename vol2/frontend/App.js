@@ -27,6 +27,22 @@ function TanuloMenusStack(){
         screenOptions={{
           headerShown: false,
         }}>
+      <Stack.Screen name={"Oktato_Kezdolap"} component={Oktato_Kezdolap}/>
+      <Stack.Screen name={"Oktato_Datumok"} component={Oktato_Datumok}/>
+      <Stack.Screen name={"Oktato_Kifizetesek"} component={Oktato_Kifizetesek}/>
+      <Stack.Screen name={"Oktato_Profil"} component={Oktato_Profil}/>
+    </Stack.Navigator>
+    </NavigationContainer>
+  );
+}
+
+function OktatoMenuStack(){
+  return(
+    <NavigationContainer>
+      <Stack.Navigator
+        screenOptions={{
+          headerShown: false,
+        }}>
       <Stack.Screen name={"Tanulo_Kezdolap"} component={Tanulo_Kezdolap}/>
       <Stack.Screen name={"Tanulo_Datumok"} component={Tanulo_Datumok}/>
       <Stack.Screen name={"Tanulo_Befizetesek"} component={Tanulo_Befizetesek}/>
@@ -47,6 +63,7 @@ export default function App() {
         <Stack.Screen name="Tanulo_BejelentkezesUtan" component={Tanulo_BejelentkezesUtan}/>
         <Stack.Screen name="Oktato_BejelentkezesUtan" component={Oktato_BejelentkezesUtan}/>
         <Stack.Screen name="Tanuló menük" component={TanuloMenusStack}/>
+        <Stack.Screen name="Oktató menük" component={OktatoMenuStack}/>
       </Stack.Navigator>
     </NavigationContainer>
   );

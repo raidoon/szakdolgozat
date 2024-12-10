@@ -30,7 +30,7 @@ export default function Regisztracio({ navigation }) {
   const [oktato, setOktato] = useState(false);
 
   const Regisztralas = async () => {
-    const tipus = tanulo ? 0 : oktato ? 1 : null;
+    const tipus = tanulo ? 2 : oktato ? 1 : null;
     if (!felhasznalonev || !nev || !telefonszam || !email || !jelszo || !tipus) {
       Alert.alert("Kérlek, töltsd ki az összes mezőt!");
       return;

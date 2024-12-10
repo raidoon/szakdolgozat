@@ -78,7 +78,7 @@ app.post("/sajatAdatokO", (req, res) => {
 app.post("/regisztracio", (req, res) => {
     const { felhasznalonev, nev, telefonszam, email, jelszo, tipus } = req.body;
   
-    if (tipus !== 0 && tipus !== 1) {
+    if (tipus !== 1 && tipus !== 2) {
       res.status(400).send("Érvénytelen típus!"); // Csak 0 vagy 1 lehet
       return;
     }
@@ -153,13 +153,13 @@ app.post("/regisztracio", (req, res) => {
                           } else {
                             res.status(201).send("Sikeres oktató regisztráció!");
                           }
-                          connection.end(); // Safely close the connection here
+                          connection.end();
                         }
                       );
-                    } else if (tipus === 0) {
+                    } else if (tipus === 2) {
                       // Tanuló
                       connection.query(
-                        "INSERT INTO tanulo_adatok VALUES (null, ?, 'még nincs', ?)",
+                        "INSERT INTO tanulo_adatok VALUES (null, ?, 7, ?)",
                         [result.insertId, nev],
                         (err2) => {
                           if (err2) {
@@ -168,7 +168,7 @@ app.post("/regisztracio", (req, res) => {
                           } else {
                             res.status(201).send("Sikeres tanuló regisztráció!");
                           }
-                          connection.end(); // Safely close the connection here
+                          connection.end();
                         }
                       );
                     }
@@ -185,7 +185,7 @@ app.post("/beleptetes", (req, res) => {
   const { felhasznalonev, jelszo } = req.body;
   kapcsolat();
   connection.query(
-    "SELECT felhasznalo_id, felhasznalo_nev, felhasznalo_jelszo FROM felhasznaloi_adatok WHERE felhasznalo_nev = ?",
+    "SELECT felhasznalo_id, felhasznalo_nev, felhasznalo_jelszo, felhasznalo_tipus FROM felhasznaloi_adatok WHERE felhasznalo_nev = ?",
     [felhasznalonev],
     (err, rows) => {
       if (err) {

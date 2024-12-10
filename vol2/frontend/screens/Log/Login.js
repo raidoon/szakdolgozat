@@ -6,52 +6,49 @@ import { Octicons, Ionicons } from "@expo/vector-icons";
 import Ripple from "react-native-material-ripple";
 import Ipcim from '../../Ipcim';
 
-
 export default function LoginScreen({ navigation }) {
   const [felhasznalonev, setFelhasznalonev] = useState('');
   const [jelszo, setJelszo] = useState('');
   const [jelszoMutatasa, setJelszoMutatasa] = useState(false);
   const [adatok,setAdatok] = useState([]);
-
   const handleLogin = async () => {
     const adatok = {
       felhasznalonev: felhasznalonev,
       jelszo: jelszo
     };
-  
     try {
       const response = await fetch(Ipcim.Ipcim + "/beleptetes", {
         method: "POST",
         body: JSON.stringify(adatok),
         headers: { "Content-type": "application/json; charset=UTF-8" },
       });
-  
-      const text = await response.text(); // Get the raw response text
+      const adat = await response.json(); 
+      /*
+      const text = await response.text(); 
       let adat = {};
-  
       try {
-        // Attempt to parse JSON if possible
         adat = JSON.parse(text);
       } catch (e) {
-        // If JSON parsing fails, use the raw text
         console.error("Hiba a válasz feldolgozása közben:", e);
-        adat = { error: text };  // Set error message from the response
+        adat = { error: text };
       }
-  
+      */
       if (adat.error) {
-        Alert.alert(adat.error);  // Display error message if present
+        Alert.alert(adat.error); 
       } else {
         setAdatok(adat);
-        if (adat.length > 0) {
+        console.log(adat);
+       
+        if (adat.felhasznalo_id !== 0) {
           console.log(adat);
-          if (adat[0].felhasznalo_tipus === 1) {
-            var felhasznalo = adat[0].felhasznalo_nev;
+          if (adat.felhasznalo_tipus === 1) {
+            var felhasznalo = adat.felhasznalo_nev;
             Alert.alert("Üdvözöllek " + felhasznalo + "!");
-            navigation.replace("Oktato_BejelentkezesUtan", { atkuld: adat[0].felhasznalo_id });
+            navigation.replace("Oktato_BejelentkezesUtan", { atkuld: adat.felhasznalo_id });
           } else {
-            var felhasznalo = adat[0].felhasznalo_nev;
+            var felhasznalo = adat.felhasznalo_nev;
             Alert.alert("Üdvözöllek " + felhasznalo + "!");
-            navigation.replace("Tanulo_BejelentkezesUtan", { atkuld: adat[0].felhasznalo_id });
+            navigation.replace("Tanulo_BejelentkezesUtan", { atkuld: adat.felhasznalo_id });
           }
         } else {
           Alert.alert("Hibás felhasználónév vagy jelszó!");

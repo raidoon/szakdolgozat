@@ -17,6 +17,7 @@ export default function Oktato_Profil({ navigation, atkuld }) {
     });
     const adat = await response.json();
     setAdatok(adat);
+    console.log(adat);
     if (adat.length > 0) {
       Alert.alert(adat[0].oktato_neve)
     } else {
@@ -162,7 +163,7 @@ export default function Oktato_Profil({ navigation, atkuld }) {
           rippleFades={false}
           rippleContainerBorderRadius={20}
           style={[styles.profileGombok, styles.gombDiv]}
-          onPress={() => navigation.replace("Bejelentkezes")}
+          onPress={() => navigation.navigate("Bejelentkezes")}
         >
           <View style={styles.elsoFlex}>
             <Ionicons name="log-out-outline" size={25} color="red" />
