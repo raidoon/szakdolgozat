@@ -183,7 +183,6 @@ app.post("/regisztracio", (req, res) => {
   });  
 app.post("/beleptetes", (req, res) => {
   const { felhasznalonev, jelszo } = req.body;
-
   kapcsolat();
   connection.query(
     "SELECT felhasznalo_id, felhasznalo_nev, felhasznalo_jelszo FROM felhasznaloi_adatok WHERE felhasznalo_nev = ?",
@@ -213,7 +212,6 @@ app.post("/beleptetes", (req, res) => {
   );
   connection.end();
 });
-
 app.listen(port, () => {
   console.log(`Example app listening on port ${port}`);
 });

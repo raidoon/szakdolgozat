@@ -1,6 +1,5 @@
 import React, { useState } from "react";
 import {View, Text, TextInput, Alert, TouchableOpacity, StyleSheet} from "react-native";
-import CheckBox from "@react-native-community/checkbox";
 import Ripple from "react-native-material-ripple";
 import { Octicons, Ionicons } from "@expo/vector-icons";
 import Styles from "../../Styles";
