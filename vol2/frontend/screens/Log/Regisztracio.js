@@ -1,45 +1,78 @@
 import React, { useState } from "react";
-import {View, Text, TextInput, Alert, TouchableOpacity, StyleSheet,
-} from "react-native";
+import {View, Text, TextInput, Alert, TouchableOpacity, StyleSheet} from "react-native";
+import CheckBox from "@react-native-community/checkbox";
 import Ripple from "react-native-material-ripple";
 import { Octicons, Ionicons } from "@expo/vector-icons";
 import Styles from "../../Styles";
 import Ipcim from "../../Ipcim";
 
+function CustomCheckbox({ label, isChecked, onPress }) {
+  return (
+    <TouchableOpacity
+      style={styles.checkboxContainer}
+      onPress={onPress}
+    >
+      <View style={[styles.checkbox, isChecked && styles.checkedCheckbox]} />
+      <Text style={styles.label}>{label}</Text>
+    </TouchableOpacity>
+  );
+}
+
 export default function Regisztracio({ navigation }) {
   const [email, setEmail] = useState("");
   const [felhasznalonev, setFelhasznalonev] = useState("");
+  const [nev, setNev] = useState("");
   const [jelszo, setJelszo] = useState("");
   const [telefonszam,setTelefonszam] = useState("");
   const [joaJelszo, setJoaJelszo] = useState("");
   const [jelszoMutatasa, setJelszoMutatasa] = useState(false);
   const [masodikJelszoMutatasa, setMasodikJelszoMutatasa] = useState(false);
+  const [tanulo, setTanulo] = useState(false);
+  const [oktato, setOktato] = useState(false);
 
   const Regisztralas = async () => {
-    if(jelszo.length===0){
-        Alert.alert("Add meg az adataidat!");
+    const tipus = tanulo ? 0 : oktato ? 1 : null;
+    if (!felhasznalonev || !nev || !telefonszam || !email || !jelszo || !tipus) {
+      Alert.alert("Kérlek, töltsd ki az összes mezőt!");
+      return;
     }
-    else
-    {
-        if (jelszo !== joaJelszo) {
-            Alert.alert("A jelszók nem egyeznek meg!");
-            return;
-          }
-          try {
-            const response = await fetch(Ipcim.Ipcim + "/regisztracio", {
-              email,
-              password: jelszo,
-            });
-            Alert.alert("Sikeres regisztráció!");
-            navigation.replace("LoginScreen");
-          } catch (error) {
-            Alert.alert(
-              "Nem sikerült regisztrálnod",
-              error.response?.data?.message || "Kérjük próbálja újra."
-            );
-          }
+    if (jelszo !== joaJelszo) {
+      Alert.alert("A jelszavak nem egyeznek!");
+      return;
+    }if (!tanulo && !oktato) {
+      Alert.alert("Kérlek, válassz egy típust!");
+      return;
+    }
+  
+    try {
+      const response = await fetch(Ipcim.Ipcim + "/regisztracio", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          felhasznalonev,
+          telefonszam,
+          email,
+          jelszo,
+          tipus,
+          nev
+        }),
+      });
+  
+      if (response.ok) {
+        Alert.alert("Sikeres regisztráció!");
+        navigation.replace("Bejelentkezes");
+      } else {
+        const errorMessage = await response.text();
+        Alert.alert("Hiba", errorMessage);
+      }
+    } catch (error) {
+      console.error(error);
+      Alert.alert("Hálózati hiba", "Kérjük, próbálkozz újra.");
     }
   };
+  
 
   return (
     <View style={Styles.bejelentkezes_Container}>
@@ -50,9 +83,18 @@ export default function Regisztracio({ navigation }) {
         <Octicons name="person" size={20} color="#FF6C00" />
         <TextInput
           style={styles.input}
-          placeholder="Teljes név"
+          placeholder="Felhasználónév"
           value={felhasznalonev}
           onChangeText={setFelhasznalonev}
+        />
+      </View>
+      <View style={styles.inputWrapper}>
+        <Octicons name="person" size={20} color="#FF6C00" />
+        <TextInput
+          style={styles.input}
+          placeholder="Teljes név"
+          value={nev}
+          onChangeText={setNev}
         />
       </View>
 
@@ -116,6 +158,25 @@ export default function Regisztracio({ navigation }) {
         </TouchableOpacity>
       </View>
 
+      <View>
+      <CustomCheckbox
+        label="Tanuló vagyok"
+        isChecked={tanulo}
+        onPress={() => {
+          setTanulo(true);
+          setOktato(false);
+        }}
+      />
+      <CustomCheckbox
+        label="Oktató vagyok"
+        isChecked={oktato}
+        onPress={() => {
+          setOktato(true);
+          setTanulo(false);
+        }}
+      />
+    </View>
+
       <Ripple
         rippleColor="white"
         rippleOpacity={0.2}
@@ -151,6 +212,24 @@ const styles = StyleSheet.create({
     width: "100%",
     height: 50,
     marginBottom: 15,
+  },
+  checkboxContainer: {
+    flexDirection: "row",
+    alignItems: "center",
+    marginBottom: 10,
+  },
+  checkbox: {
+    width: 20,
+    height: 20,
+    borderWidth: 1,
+    borderColor: "#000",
+    marginRight: 8,
+  },
+  checkedCheckbox: {
+    backgroundColor: "#000",
+  },
+  label: {
+    fontSize: 16,
   },
   input: {
     flex: 1,

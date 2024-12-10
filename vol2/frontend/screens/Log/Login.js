@@ -14,40 +14,54 @@ export default function LoginScreen({ navigation }) {
   const [adatok,setAdatok] = useState([]);
 
   const handleLogin = async () => {
-    const adatok={
-        felhasznalonev: felhasznalonev,
-        jelszo: jelszo
-    }
-    try{
-      const response = await fetch(Ipcim.Ipcim + "/bejelentkezes", {
-          method: "POST",
-          body: JSON.stringify(adatok),
-          headers: { "Content-type": "application/json; charset=UTF-8" },
-        });
-        const adat = await response.json();
-        //alert(JSON.stringify(adat));
+    const adatok = {
+      felhasznalonev: felhasznalonev,
+      jelszo: jelszo
+    };
+  
+    try {
+      const response = await fetch(Ipcim.Ipcim + "/beleptetes", {
+        method: "POST",
+        body: JSON.stringify(adatok),
+        headers: { "Content-type": "application/json; charset=UTF-8" },
+      });
+  
+      const text = await response.text(); // Get the raw response text
+      let adat = {};
+  
+      try {
+        // Attempt to parse JSON if possible
+        adat = JSON.parse(text);
+      } catch (e) {
+        // If JSON parsing fails, use the raw text
+        console.error("Hiba a válasz feldolgozása közben:", e);
+        adat = { error: text };  // Set error message from the response
+      }
+  
+      if (adat.error) {
+        Alert.alert(adat.error);  // Display error message if present
+      } else {
         setAdatok(adat);
         if (adat.length > 0) {
-          console.log(adat)
-          if(adat[0].felhasznalo_tipus===1){
-              var felhasznalo = adat[0].felhasznalo_nev;
-              Alert.alert("Üdvözöllek " + felhasznalo + "!");
-              navigation.replace("Oktato_BejelentkezesUtan", {atkuld: adat[0].felhasznalo_id});
-          }
-          else{
-              var felhasznalo = adat[0].felhasznalo_nev;
-              Alert.alert("Üdvözöllek " + felhasznalo + "!");
-              navigation.replace("Tanulo_BejelentkezesUtan",{atkuld: adat[0].felhasznalo_id});
+          console.log(adat);
+          if (adat[0].felhasznalo_tipus === 1) {
+            var felhasznalo = adat[0].felhasznalo_nev;
+            Alert.alert("Üdvözöllek " + felhasznalo + "!");
+            navigation.replace("Oktato_BejelentkezesUtan", { atkuld: adat[0].felhasznalo_id });
+          } else {
+            var felhasznalo = adat[0].felhasznalo_nev;
+            Alert.alert("Üdvözöllek " + felhasznalo + "!");
+            navigation.replace("Tanulo_BejelentkezesUtan", { atkuld: adat[0].felhasznalo_id });
           }
         } else {
           Alert.alert("Hibás felhasználónév vagy jelszó!");
-        } 
-  }
-  catch (error) {
+        }
+      }
+    } catch (error) {
       console.error("Bejelentkezési hiba:", error);
       alert("Hiba történt a bejelentkezés során!");
-  }
-};
+    }
+  };
 
   return (
     <View style={Styles.bejelentkezes_Container}>
