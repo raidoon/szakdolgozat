@@ -44,7 +44,7 @@ const Styles = StyleSheet.create({
   bejelentkezes_regisztaciosGomb:{
     width:'100%',
     marginTop:7,
-    borderColor:'#17469F',
+    borderColor:'#FF6C00',
     backgroundColor:'#fff',
     borderWidth:1,
     paddingVertical:10
@@ -59,7 +59,7 @@ const Styles = StyleSheet.create({
     marginTop:10
   },
   bejelentkezes_regiGombSzoveg:{
-    color:'#17469F',
+    color:'#FF6C00',
   },
   jelszoInput: {
     flex:1,

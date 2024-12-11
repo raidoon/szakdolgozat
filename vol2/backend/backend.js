@@ -19,61 +19,7 @@ function kapcsolat() {
   });
   connection.connect();
 }
-//jelszót vedd ki
-app.post("/bejelentkezes", (req, res) => {
-  kapcsolat();
-  connection.query(
-    `SELECT felhasznalo_id,felhasznalo_nev,felhasznalo_tipus from felhasznaloi_adatok WHERE felhasznalo_nev = ? AND felhasznalo_jelszo = ?
-  `,
-    [req.body.felhasznalonev, req.body.jelszo],
-    (err, rows, fields) => {
-      if (err) {
-        console.log(err);
-        res.status(500).send("Hiba");
-      } else {
-        console.log(rows);
-        res.status(200).send(rows);
-      }
-    }
-  );
-  connection.end();
-});
-app.post("/sajatAdatokT", (req, res) => {
-  kapcsolat();
-  connection.query(
-    `select * from tanulo_adatok where tanulo_felhasznaloID = ?`,
-    [req.body.felhasznaloID],
-    (err, rows, fields) => {
-      if (err) {
-        console.log(err);
-        res.status(500).send("Hiba");
-      } else {
-        console.log(rows);
-        res.status(200).send(rows);
-      }
-    }
-  );
-  connection.end();
-});
-app.post("/sajatAdatokO", (req, res) => {
-  kapcsolat();
-  connection.query(
-    `select * from oktato_adatok where oktato_felhasznaloID = ?`,
-    [req.body.felhasznaloID],
-    (err, rows, fields) => {
-      if (err) {
-        console.log(err);
-        res.status(500).send("Hiba");
-      } else {
-        console.log(rows);
-        res.status(200).send(rows);
-      }
-    }
-  );
-  connection.end();
-});
-
-//-------------------------------------- REGISZTRÁCIÓ
+//------------------------------------------------ REGISZTRÁCIÓ
 app.post("/regisztracio", (req, res) => {
     const { felhasznalonev, nev, telefonszam, email, jelszo, tipus } = req.body;
     if (tipus !== 1 && tipus !== 2) {
@@ -81,7 +27,7 @@ app.post("/regisztracio", (req, res) => {
       return;
     }
     kapcsolat();
-//-------------------------------------- VAN-E MÁR ILYEN EMAIL
+//---------------------- VAN-E MÁR ILYEN EMAIL REGISZTRÁLVA
     connection.query(
       "SELECT felhasznalo_email FROM felhasznaloi_adatok WHERE felhasznalo_email = ?",
       [email],
@@ -92,14 +38,12 @@ app.post("/regisztracio", (req, res) => {
           connection.end();
           return;
         }
-  
         if (rows.length !== 0) {
           res.status(400).send("Ez az email már regisztrálva van!");
           connection.end(); 
           return;
         }
-  
-//-------------------------------------- VAN-E MÉR ILYEN FELHASZNÁLÓNÉV
+//---------------------- VAN-E MÉR ILYEN FELHASZNÁLÓNÉV REGISZTRÁLVA
         connection.query(
           "SELECT felhasznalo_nev FROM felhasznaloi_adatok WHERE felhasznalo_nev = ?",
           [felhasznalonev],
@@ -110,14 +54,12 @@ app.post("/regisztracio", (req, res) => {
               connection.end();
               return;
             }
-  
             if (rows2.length !== 0) {
               res.status(400).send("Ez a felhasználónév már regisztrálva van!");
               connection.end(); 
               return;
             }
-  
-//-------------------------------------- JELSZÓ HASH
+//---------------------- JELSZÓ HASH
             bcrypt.hash(jelszo, 10, (hashErr, hashedPassword) => {
               if (hashErr) {
                 console.error(hashErr);
@@ -125,8 +67,7 @@ app.post("/regisztracio", (req, res) => {
                 connection.end(); 
                 return;
               }
-  
-//-------------------------------------- ÚJ FELHASZNÁLÓ
+//---------------------- ÚJ FELHASZNÁLÓ FELVÉTELE, HA MÉG NINCS ILYEN FELHASZNÁLÓNÉV VAGY EMAIL
               connection.query(
                 "INSERT INTO felhasznaloi_adatok VALUES (null, ?, ?, ?, ?, ?)",
                 [felhasznalonev, email, hashedPassword, telefonszam, tipus],
@@ -136,11 +77,10 @@ app.post("/regisztracio", (req, res) => {
                     res.status(500).send("Hiba a mentés során");
                     connection.end(); 
                     return;
-                  } else {
-                    
-//-------------------------------------- TANULÓ VAGY OKTATÓ TÍPUS
-                    if (tipus === 1) {
-                      // Oktató
+                  } 
+//---------------------- MEGHATÁROZZUK, HOGY A REGISZTRÁLÓ TANULÓ VAGY OKTATÓ LESZ
+                  else {
+                    if (tipus === 1) { // Oktató
                       connection.query(
                         "INSERT INTO oktato_adatok VALUES (null, ?, 1, ?)",
                         [result.insertId, nev],
@@ -154,8 +94,7 @@ app.post("/regisztracio", (req, res) => {
                           connection.end();
                         }
                       );
-                    } else if (tipus === 2) {
-                      // Tanuló
+                    } else if (tipus === 2) { // Tanuló
                       connection.query(
                         "INSERT INTO tanulo_adatok VALUES (null, ?, 7, ?)",
                         [result.insertId, nev],
@@ -179,12 +118,13 @@ app.post("/regisztracio", (req, res) => {
       }
     );
   });  
+//------------------------------------------------ BEJELENTKEZÉS
 app.post("/beleptetes", (req, res) => {
   const { felhasznalonev, jelszo } = req.body;
   kapcsolat();
   connection.query(
-    "SELECT felhasznalo_id, felhasznalo_nev, felhasznalo_jelszo, felhasznalo_tipus FROM felhasznaloi_adatok WHERE felhasznalo_nev = ?",
-    [felhasznalonev],
+    "SELECT felhasznalo_id, felhasznalo_nev, felhasznalo_jelszo, felhasznalo_tipus FROM felhasznaloi_adatok WHERE felhasznalo_nev = ? OR felhasznalo_email = ?",
+    [felhasznalonev,felhasznalonev],
     (err, rows) => {
       if (err) {
         console.error(err);
@@ -192,17 +132,18 @@ app.post("/beleptetes", (req, res) => {
         return;
       }
       if (rows.length === 0) {
-        res.status(404).send("Felhasználó nem található!");
-      } else {
+        res.status(404).send("Ez a felhasználó nem található!");
+      } 
+      else {
         const hashedPassword = rows[0].felhasznalo_jelszo;
         bcrypt.compare(jelszo, hashedPassword, (compareErr, isMatch) => {
           if (compareErr) {
             console.error(compareErr);
-            res.status(500).send("Hiba a jelszó ellenőrzése során");
+            res.status(500).send("Hiba a jelszó ellenőrzése során!");
           } else if (isMatch) {
             res.status(200).send(rows[0]);
           } else {
-            res.status(401).send("Hibás jelszó");
+            res.status(401).send("Hibás jelszó!");
           }
         });
       }
@@ -210,6 +151,43 @@ app.post("/beleptetes", (req, res) => {
   );
   connection.end();
 });
+//------------------------------------------------ TANULÓ ADATAINAK LEKÉRDEZÉSE
+app.post("/sajatAdatokT", (req, res) => {
+  kapcsolat();
+  connection.query(
+    `select * from tanulo_adatok where tanulo_felhasznaloID = ?`,
+    [req.body.felhasznaloID],
+    (err, rows, fields) => {
+      if (err) {
+        console.log(err);
+        res.status(500).send("Hiba");
+      } else {
+        console.log(rows);
+        res.status(200).send(rows);
+      }
+    }
+  );
+  connection.end();
+});
+//------------------------------------------------ OKTATÓ ADATAINAK LEKÉRDEZÉSE
+app.post("/sajatAdatokO", (req, res) => {
+  kapcsolat();
+  connection.query(
+    `select * from oktato_adatok where oktato_felhasznaloID = ?`,
+    [req.body.felhasznaloID],
+    (err, rows, fields) => {
+      if (err) {
+        console.log(err);
+        res.status(500).send("Hiba");
+      } else {
+        console.log(rows);
+        res.status(200).send(rows);
+      }
+    }
+  );
+  connection.end();
+});
+//------------------------------------------------ lekérdezések vége
 app.listen(port, () => {
   console.log(`Example app listening on port ${port}`);
 });

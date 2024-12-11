@@ -1,6 +1,5 @@
 import React, { useState } from 'react';
 import { View, Text, TextInput, Button, Alert,TouchableOpacity, StyleSheet } from 'react-native';
-import AsyncStorage from '@react-native-async-storage/async-storage';
 import Styles from '../../Styles';
 import { Octicons, Ionicons } from "@expo/vector-icons";
 import Ripple from "react-native-material-ripple";
@@ -56,7 +55,7 @@ export default function LoginScreen({ navigation }) {
         <Octicons name="person" size={20} color="#FF6C00" />
         <TextInput
           style={Styles.input}
-          placeholder="Felhasználónév"
+          placeholder="Felhasználónév vagy email"
           value={felhasznalonev}
           onChangeText={setFelhasznalonev}
         />
