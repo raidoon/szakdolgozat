@@ -188,6 +188,36 @@ app.post("/sajatAdatokO", (req, res) => {
   connection.end();
 });
 //------------------------------------------------ lekérdezések vége
+
+
+
+
+
+
+//------------------------adott oktatóhoz tartozó tanulók neveinek megjelenítése post bevitel1
+app.post("/egyOktatoDiakjai", (req, res) => {
+  kapcsolat();
+  connection.query(
+    `SELECT tanulo.tanulo_nev
+    FROM tanulo_adatok AS tanulo
+    INNER JOIN oktato_adatok AS oktato
+    ON tanulo.tanulo_oktatoja = oktato.oktato_id
+    WHERE oktato.oktato_id= ?`,
+    [req.body.oktatoid],
+    (err, rows, fields) => {
+      if (err) {
+        console.log(err);
+        res.status(500).send("Hiba");
+      } else {
+        console.log(rows);
+        res.status(200).send(rows);
+      }
+    }
+  );
+  connection.end();
+});
+
+//----------------------
 app.listen(port, () => {
   console.log(`Example app listening on port ${port}`);
 });

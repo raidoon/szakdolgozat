@@ -1,0 +1,1 @@
+//oktato id erkezeik 
