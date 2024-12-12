@@ -16,19 +16,19 @@ import Oktato_Datumok from "./screens/oktato/Oktato_Datumok";
 import Oktato_Kifizetesek from "./screens/oktato/Oktato_Kifizetesek";
 import Oktato_Profil from "./screens/oktato/Oktato_Profil";
 import Oktato_Diakok from "./screens/oktato/Oktato_Diakok";
-import Oktato_TanuloReszletei from "./screens/oktato/Oktato_TanuloReszletei";
+
 
 const Stack = createStackNavigator();
 
 
-function OktatoMenuStack(){
+function TanuloMenusStack(){
   return (
     <NavigationContainer>
       <Stack.Navigator
         screenOptions={{
           headerShown: false,
         }}>
-      
+      <Stack.Screen name={"Oktato_Kezdolap"} component={Oktato_Kezdolap}/>
       <Stack.Screen name={"Oktato_Datumok"} component={Oktato_Datumok}/>
       <Stack.Screen name={"Oktato_Kifizetesek"} component={Oktato_Kifizetesek}/>
       <Stack.Screen name={"Oktato_Profil"} component={Oktato_Profil}/>
@@ -38,7 +38,7 @@ function OktatoMenuStack(){
   );
 }
 
-function TanuloMenusStack(){
+function OktatoMenuStack(){
   return(
     <NavigationContainer>
       <Stack.Navigator
@@ -60,14 +60,12 @@ export default function App() {
       <Stack.Navigator initialRouteName="Bejelentkezes" screenOptions={{
             headerShown: false,
   }}>
-        <Stack.Screen name="Bejelentkezes"  component={LoginScreen} />
+        <Stack.Screen name="Bejelentkezes"  component={LoginScreen}/>
         <Stack.Screen name="Regisztracio" component={Regisztracio}/>
         <Stack.Screen name="Tanulo_BejelentkezesUtan" component={Tanulo_BejelentkezesUtan}/>
         <Stack.Screen name="Oktato_BejelentkezesUtan" component={Oktato_BejelentkezesUtan}/>
         <Stack.Screen name="Tanuló menük" component={TanuloMenusStack}/>
         <Stack.Screen name="Oktató menük" component={OktatoMenuStack}/>
-        <Stack.Screen name="Oktato_TanuloReszletei" component={Oktato_TanuloReszletei}/>
-        <Stack.Screen name="Oktato_Kezdolap" component={Oktato_Kezdolap} />
       </Stack.Navigator>
     </NavigationContainer>
   );

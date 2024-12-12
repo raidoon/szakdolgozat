@@ -8,7 +8,6 @@ export default function Oktato_Diakok({atkuld}){
         <View style={Styles.oktatodiakok}>
             <View>
             <Text>Aktuális Diákok </Text>
-            <Text> {atkuld} </Text>
             </View>
         </View>
     );
