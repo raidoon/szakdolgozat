@@ -10,8 +10,9 @@ import Ionicons from "react-native-vector-icons/Ionicons";
 
 const Tab = createBottomTabNavigator();
 
-export default function Oktato_BejelentkezesUtan({navigation, route}) {
+export default function Oktato_BejelentkezesUtan({ route}) {
   const { atkuld } = route.params;
+  //const { navigation } = route.params;
     return(
       <Tab.Navigator
         screenOptions={({ route }) => ({
