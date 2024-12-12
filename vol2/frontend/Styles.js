@@ -219,16 +219,6 @@ const Styles = StyleSheet.create({
   },*/
 
   //--------------------------Oktato_Diakok.js
-
-  oktatodiakok:{
-    flex: 1,
-    padding: 20,
-    backgroundColor: "#fff",
-    alignItems: "center",
-    justifyContent: "center",
-  }
-
-
 });
 
 export default Styles;

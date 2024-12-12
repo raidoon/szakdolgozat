@@ -21,7 +21,7 @@ import Oktato_Diakok from "./screens/oktato/Oktato_Diakok";
 const Stack = createStackNavigator();
 
 
-function TanuloMenusStack(){
+function OktatoMenuStack(){
   return (
     <NavigationContainer>
       <Stack.Navigator
@@ -38,7 +38,7 @@ function TanuloMenusStack(){
   );
 }
 
-function OktatoMenuStack(){
+function TanuloMenusStack(){
   return(
     <NavigationContainer>
       <Stack.Navigator

@@ -6,13 +6,13 @@ import Ripple from "react-native-material-ripple";
 import Ipcim from '../../Ipcim';
 
 export default function LoginScreen({ navigation }) {
-  const [felhasznalonev, setFelhasznalonev] = useState('');
+  const [email, setEmail] = useState('');
   const [jelszo, setJelszo] = useState('');
   const [jelszoMutatasa, setJelszoMutatasa] = useState(false);
   const [adatok,setAdatok] = useState([]);
   const handleLogin = async () => {
     const adatok = {
-      felhasznalonev: felhasznalonev,
+      email: email,
       jelszo: jelszo
     };
     try {
@@ -27,7 +27,6 @@ export default function LoginScreen({ navigation }) {
       } else {
         setAdatok(adat);
         console.log(adat);
-       
         if (adat.felhasznalo_id !== 0) {
           console.log(adat);
           if (adat.felhasznalo_tipus === 1) {
@@ -40,7 +39,7 @@ export default function LoginScreen({ navigation }) {
             navigation.replace("Tanulo_BejelentkezesUtan", { atkuld: adat.felhasznalo_id });
           }
         } else {
-          Alert.alert("Hibás felhasználónév vagy jelszó!");
+          Alert.alert("Hibás email cím vagy jelszó!");
         }
       }
     } catch (error) {
@@ -55,9 +54,9 @@ export default function LoginScreen({ navigation }) {
         <Octicons name="person" size={20} color="#FF6C00" />
         <TextInput
           style={Styles.input}
-          placeholder="Felhasználónév vagy email"
-          value={felhasznalonev}
-          onChangeText={setFelhasznalonev}
+          placeholder="Email"
+          value={email}
+          onChangeText={setEmail}
         />
       </View>
 

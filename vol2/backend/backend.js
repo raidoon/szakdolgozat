@@ -132,7 +132,7 @@ app.post("/beleptetes", (req, res) => {
   const { email, jelszo } = req.body;
   kapcsolat();
   connection.query(
-    "SELECT felhasznalo_id, felhasznalo_nev, felhasznalo_jelszo, felhasznalo_tipus FROM felhasznaloi_adatok WHERE felhasznalo_email = ?",
+    "SELECT felhasznalo_id, felhasznalo_email, felhasznalo_jelszo, felhasznalo_tipus FROM felhasznaloi_adatok WHERE felhasznalo_email = ?",
     [email],
     (err, rows) => {
       if (err) {
