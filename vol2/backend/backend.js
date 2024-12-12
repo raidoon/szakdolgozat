@@ -15,116 +15,125 @@ function kapcsolat() {
     host: "localhost",
     user: "root",
     password: "",
-    database: "szakdolgozat_vol2", //otthon: szakdolgozat || sulis gépen: szakdolgozat_vol2
+    database: "szakdoga_gyakorlas", //otthon: szakdolgozat || sulis gépen: szakdolgozat_vol2 || szakdoga_gyakorlas
   });
   connection.connect();
 }
+//------------------------------------------------ autósiskolák lekérdezése
+app.get("/autosiskolalista", (req, res) => {
+  kapcsolat();
+  connection.query(
+    `select autosiskola_id, autosiskola_neve from autosiskola_adatok`,
+    (err, rows, fields) => {
+      if (err) {
+        console.log(err);
+        res.status(500).send("Hiba");
+      } else {
+        console.log(rows);
+        res.status(200).send(rows);
+      }
+    }
+  );
+  connection.end();
+});
 //------------------------------------------------ REGISZTRÁCIÓ
 app.post("/regisztracio", (req, res) => {
-    const { felhasznalonev, nev, telefonszam, email, jelszo, tipus } = req.body;
-    if (tipus !== 1 && tipus !== 2) {
-      res.status(400).send("Érvénytelen típus!"); 
-      return;
-    }
-    kapcsolat();
-//---------------------- VAN-E MÁR ILYEN EMAIL REGISZTRÁLVA
-    connection.query(
-      "SELECT felhasznalo_email FROM felhasznaloi_adatok WHERE felhasznalo_email = ?",
-      [email],
-      (err, rows) => {
-        if (err) {
-          console.error(err);
-          res.status(500).send("Hiba");
+  const {
+    autosiskola,
+    email,
+    jelszo,
+    telefonszam,
+    tipus,
+    nev
+  } = req.body;
+  if (tipus !== 1 && tipus !== 2) {
+    res.status(400).send("Érvénytelen típus!");
+    return;
+  }
+  kapcsolat();
+  //---------------------- VAN-E MÁR ILYEN EMAIL REGISZTRÁLVA
+  connection.query(
+    "SELECT felhasznalo_email FROM felhasznaloi_adatok WHERE felhasznalo_email = ?",
+    [email],
+    (err, rows) => {
+      if (err) {
+        console.error(err);
+        res.status(500).send("Hiba történt az email cím ellenőrzése közben!");
+        connection.end();
+        return;
+      }
+      if (rows.length !== 0) {
+        res.status(400).send("Ez az email cím már regisztrálva van!");
+        connection.end();
+        return;
+      }
+
+      //---------------------- JELSZÓ HASH
+      bcrypt.hash(jelszo, 10, (hashErr, hashedPassword) => {
+        if (hashErr) {
+          console.error(hashErr);
+          res.status(500).send("Hiba történt a jelszó titkosítása közben!");
           connection.end();
           return;
         }
-        if (rows.length !== 0) {
-          res.status(400).send("Ez az email már regisztrálva van!");
-          connection.end(); 
-          return;
-        }
-//---------------------- VAN-E MÉR ILYEN FELHASZNÁLÓNÉV REGISZTRÁLVA
+        //---------------------- ÚJ FELHASZNÁLÓ FELVÉTELE, HA MÉG NINCS ILYEN FELHASZNÁLÓNÉV VAGY EMAIL
         connection.query(
-          "SELECT felhasznalo_nev FROM felhasznaloi_adatok WHERE felhasznalo_nev = ?",
-          [felhasznalonev],
-          (err2, rows2) => {
-            if (err2) {
-              console.error(err2);
-              res.status(500).send("Hiba a felhasználónév ellenőrzésekor");
+          "INSERT INTO felhasznaloi_adatok VALUES (null, ?, ?, ?, ?, ?)",
+          [ autosiskola, email, hashedPassword, telefonszam, tipus],
+          (insertErr, result) => {
+            if (insertErr) {
+              console.error(insertErr);
+              res.status(500).send("Hiba történt a felhasználó mentése során!");
               connection.end();
               return;
             }
-            if (rows2.length !== 0) {
-              res.status(400).send("Ez a felhasználónév már regisztrálva van!");
-              connection.end(); 
-              return;
-            }
-//---------------------- JELSZÓ HASH
-            bcrypt.hash(jelszo, 10, (hashErr, hashedPassword) => {
-              if (hashErr) {
-                console.error(hashErr);
-                res.status(500).send("Hiba a jelszó hash-elés során");
-                connection.end(); 
-                return;
-              }
-//---------------------- ÚJ FELHASZNÁLÓ FELVÉTELE, HA MÉG NINCS ILYEN FELHASZNÁLÓNÉV VAGY EMAIL
-              connection.query(
-                "INSERT INTO felhasznaloi_adatok VALUES (null, ?, ?, ?, ?, ?)",
-                [felhasznalonev, email, hashedPassword, telefonszam, tipus],
-                (insertErr, result) => {
-                  if (insertErr) {
-                    console.error(insertErr);
-                    res.status(500).send("Hiba a mentés során");
-                    connection.end(); 
-                    return;
-                  } 
-//---------------------- MEGHATÁROZZUK, HOGY A REGISZTRÁLÓ TANULÓ VAGY OKTATÓ LESZ
-                  else {
-                    if (tipus === 1) { // Oktató
-                      connection.query(
-                        "INSERT INTO oktato_adatok VALUES (null, ?, 1, ?)",
-                        [result.insertId, nev],
-                        (err2) => {
-                          if (err2) {
-                            console.error(err2);
-                            res.status(500).send("Hiba az oktatói adatok mentésekor");
-                          } else {
-                            res.status(201).send("Sikeres oktató regisztráció!");
-                          }
-                          connection.end();
-                        }
-                      );
-                    } else if (tipus === 2) { // Tanuló
-                      connection.query(
-                        "INSERT INTO tanulo_adatok VALUES (null, ?, 7, ?)",
-                        [result.insertId, nev],
-                        (err2) => {
-                          if (err2) {
-                            console.error(err2);
-                            res.status(500).send("Hiba a tanulói adatok mentésekor");
-                          } else {
-                            res.status(201).send("Sikeres tanuló regisztráció!");
-                          }
-                          connection.end();
-                        }
-                      );
+            //---------------------- MEGHATÁROZZUK, HOGY A REGISZTRÁLÓ TANULÓ VAGY OKTATÓ LESZ
+            else {
+              if (tipus === 1) {
+                // Oktató
+                connection.query(
+                  "INSERT INTO oktato_adatok VALUES (null, ?, ?)",
+                  [result.insertId, nev],
+                  (err2) => {
+                    if (err2) {
+                      console.error(err2);
+                      res.status(500).send("Hiba történt az oktatói adatok mentésekor!");
+                    } else {
+                      res.status(201).send("Sikeres oktató regisztráció!");
                     }
+                    connection.end();
                   }
-                }
-              );
-            });
+                );
+              } else if (tipus === 2) {
+                // Tanuló
+                connection.query(
+                  "INSERT INTO tanulo_adatok VALUES (null, ?, 4, ?, 0)", //oktató id = 4 --> a teszt oktatóhoz adjuk automatikusan
+                  [result.insertId, nev],
+                  (err2) => {
+                    if (err2) {
+                      console.error(err2);
+                      res.status(500).send("Hiba történt a tanulói adatok mentésekor!");
+                    } else {
+                      res.status(201).send("Sikeres tanuló regisztráció!");
+                    }
+                    connection.end();
+                  }
+                );
+              }
+            }
           }
         );
-      }
-    );
-  });  
+      });
+    }
+  );
+});
 //------------------------------------------------ BEJELENTKEZÉS
 app.post("/beleptetes", (req, res) => {
-  const { felhasznalonev, jelszo } = req.body;
+  const { email, jelszo } = req.body;
   kapcsolat();
   connection.query(
-    "SELECT felhasznalo_id, felhasznalo_nev, felhasznalo_jelszo, felhasznalo_tipus FROM felhasznaloi_adatok WHERE felhasznalo_nev = ? OR felhasznalo_email = ?",
-    [felhasznalonev,felhasznalonev],
+    "SELECT felhasznalo_id, felhasznalo_nev, felhasznalo_jelszo, felhasznalo_tipus FROM felhasznaloi_adatok WHERE felhasznalo_email = ?",
+    [email],
     (err, rows) => {
       if (err) {
         console.error(err);
@@ -132,9 +141,8 @@ app.post("/beleptetes", (req, res) => {
         return;
       }
       if (rows.length === 0) {
-        res.status(404).send("Ez a felhasználó nem található!");
-      } 
-      else {
+        res.status(404).send("Ez az email cím nem található!");
+      } else {
         const hashedPassword = rows[0].felhasznalo_jelszo;
         bcrypt.compare(jelszo, hashedPassword, (compareErr, isMatch) => {
           if (compareErr) {
@@ -188,11 +196,6 @@ app.post("/sajatAdatokO", (req, res) => {
   connection.end();
 });
 //------------------------------------------------ lekérdezések vége
-
-
-
-
-
 
 //------------------------adott oktatóhoz tartozó tanulók neveinek megjelenítése post bevitel1
 app.post("/egyOktatoDiakjai", (req, res) => {
