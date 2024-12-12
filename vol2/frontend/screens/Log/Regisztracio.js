@@ -1,16 +1,21 @@
-import React, { useState } from "react";
-import {View, Text, TextInput, Alert, TouchableOpacity, StyleSheet} from "react-native";
+import React, { useState, useEffect } from "react";
+import {
+  View,
+  Text,
+  TextInput,
+  Alert,
+  TouchableOpacity,
+  StyleSheet,
+} from "react-native";
 import Ripple from "react-native-material-ripple";
 import { Octicons, Ionicons } from "@expo/vector-icons";
 import Styles from "../../Styles";
 import Ipcim from "../../Ipcim";
+import DropDownPicker from "react-native-dropdown-picker";
 
 function CustomCheckbox({ label, isChecked, onPress }) {
   return (
-    <TouchableOpacity
-      style={styles.checkboxContainer}
-      onPress={onPress}
-    >
+    <TouchableOpacity style={styles.checkboxContainer} onPress={onPress}>
       <View style={[styles.checkbox, isChecked && styles.checkedCheckbox]} />
       <Text style={styles.label}>{label}</Text>
     </TouchableOpacity>
@@ -19,30 +24,33 @@ function CustomCheckbox({ label, isChecked, onPress }) {
 
 export default function Regisztracio({ navigation }) {
   const [email, setEmail] = useState("");
-  const [felhasznalonev, setFelhasznalonev] = useState("");
   const [nev, setNev] = useState("");
   const [jelszo, setJelszo] = useState("");
-  const [telefonszam,setTelefonszam] = useState("");
+  const [telefonszam, setTelefonszam] = useState("");
   const [joaJelszo, setJoaJelszo] = useState("");
   const [jelszoMutatasa, setJelszoMutatasa] = useState(false);
   const [masodikJelszoMutatasa, setMasodikJelszoMutatasa] = useState(false);
   const [tanulo, setTanulo] = useState(false);
   const [oktato, setOktato] = useState(false);
 
+  //------------------------------- DROPDOWN
+
+  const [kinyitDropdown, setKinyitDropdown] = useState(false);
+
   const Regisztralas = async () => {
     const tipus = tanulo ? 2 : oktato ? 1 : null;
-    if (!felhasznalonev || !nev || !telefonszam || !email || !jelszo || !tipus) {
+    if (!autosiskola || !email || !jelszo || !telefonszam || !tipus || !nev) {
       Alert.alert("Kérlek, töltsd ki az összes mezőt!");
       return;
     }
     if (jelszo !== joaJelszo) {
-      Alert.alert("A jelszavak nem egyeznek!");
-      return;
-    }if (!tanulo && !oktato) {
-      Alert.alert("Kérlek, válassz egy típust!");
+      Alert.alert("A jelszavak nem egyeznek meg!");
       return;
     }
-  
+    if (!tanulo && !oktato) {
+      Alert.alert("Kérlek, válaszd ki, hogy tanuló vagy vagy oktató!");
+      return;
+    }
     try {
       const response = await fetch(Ipcim.Ipcim + "/regisztracio", {
         method: "POST",
@@ -50,15 +58,15 @@ export default function Regisztracio({ navigation }) {
           "Content-Type": "application/json",
         },
         body: JSON.stringify({
-          felhasznalonev,
-          telefonszam,
+          autosiskola,
           email,
           jelszo,
+          telefonszam,
           tipus,
-          nev
+          nev,
         }),
       });
-  
+
       if (response.ok) {
         Alert.alert("Sikeres regisztráció!");
         navigation.replace("Bejelentkezes");
@@ -71,20 +79,76 @@ export default function Regisztracio({ navigation }) {
       Alert.alert("Hálózati hiba", "Kérjük, próbálkozz újra.");
     }
   };
-  
+  // dropdown értékeinek tárolására
+  const [ertekek, setErtekek] = useState([]);
+  const [autosiskola, setAutosiskola] = useState("");
+
+  // API hívás az autósiskolák listájához
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const response = await fetch(Ipcim.Ipcim + "/autosiskolalista");
+        const text = await response.text();
+        console.log("API válasz szövege:", text);
+        if (response.ok) {
+          const data = JSON.parse(text);
+          const dropdownData = data.map((item) => ({
+            label: item.autosiskola_neve,
+            value: item.autosiskola_id,
+          }));
+          setErtekek(dropdownData);
+        } else {
+          console.log("API válasz nem volt sikeres:", response.status);
+          Alert.alert("Hiba", "Hiba történt az adatok betöltésekor.");
+        }
+      } catch (error) {
+        console.error("Hiba történt az API híváskor:", error);
+        Alert.alert("Hálózati hiba", "Kérjük, próbálkozz újra.");
+      }
+    };
+    fetchData();
+  }, []);
 
   return (
     <View style={Styles.bejelentkezes_Container}>
       <Text style={Styles.focim}>Regisztráció</Text>
       <Text style={Styles.alcim}>Először add meg az adataidat</Text>
 
+      <DropDownPicker
+        min={1}
+        max={1}
+        open={kinyitDropdown}
+        value={autosiskola}
+        items={ertekek}
+        setOpen={setKinyitDropdown}
+        setValue={setAutosiskola}
+        setItems={setErtekek}
+        style={{
+          backgroundColor: "#f7f7f7",
+          color: "#FF6C00",
+          marginBottom: 15,
+        }}
+        containerStyle={{}}
+        disabledStyle={{
+          opacity: 0.5,
+        }}
+        textStyle={{
+          color: "#FF6C00",
+          textAlign: "center",
+          fontWeight: "bold",
+          fontSize: 16,
+        }}
+        placeholder="Válassz autósiskolát"
+      />
+
       <View style={styles.inputWrapper}>
-        <Octicons name="person" size={20} color="#FF6C00" />
+        <Octicons name="mail" size={20} color="#FF6C00" />
         <TextInput
           style={styles.input}
-          placeholder="Felhasználónév"
-          value={felhasznalonev}
-          onChangeText={setFelhasznalonev}
+          placeholder="Email"
+          keyboardType="email-address"
+          value={email}
+          onChangeText={setEmail}
         />
       </View>
       <View style={styles.inputWrapper}>
@@ -98,24 +162,13 @@ export default function Regisztracio({ navigation }) {
       </View>
 
       <View style={styles.inputWrapper}>
-        <Ionicons name="call-outline" size={20} color="#FF6C00"/>
+        <Ionicons name="call-outline" size={20} color="#FF6C00" />
         <TextInput
           style={styles.input}
           placeholder="Telefonszám"
           keyboardType="numeric"
           value={telefonszam}
           onChangeText={setTelefonszam}
-        />
-      </View>
-
-      <View style={styles.inputWrapper}>
-        <Octicons name="mail" size={20} color="#FF6C00" />
-        <TextInput
-          style={styles.input}
-          placeholder="Email"
-          keyboardType="email-address"
-          value={email}
-          onChangeText={setEmail}
         />
       </View>
 
@@ -158,23 +211,23 @@ export default function Regisztracio({ navigation }) {
       </View>
 
       <View>
-      <CustomCheckbox
-        label="Tanuló vagyok"
-        isChecked={tanulo}
-        onPress={() => {
-          setTanulo(true);
-          setOktato(false);
-        }}
-      />
-      <CustomCheckbox
-        label="Oktató vagyok"
-        isChecked={oktato}
-        onPress={() => {
-          setOktato(true);
-          setTanulo(false);
-        }}
-      />
-    </View>
+        <CustomCheckbox
+          label="Tanuló vagyok"
+          isChecked={tanulo}
+          onPress={() => {
+            setTanulo(true);
+            setOktato(false);
+          }}
+        />
+        <CustomCheckbox
+          label="Oktató vagyok"
+          isChecked={oktato}
+          onPress={() => {
+            setOktato(true);
+            setTanulo(false);
+          }}
+        />
+      </View>
 
       <Ripple
         rippleColor="white"
@@ -191,8 +244,7 @@ export default function Regisztracio({ navigation }) {
         style={{ marginTop: 20 }}
       >
         <Text style={styles.bottomText}>
-          Már van fiókod?{" "}
-          <Text style={styles.linkText}>Jelentkezz be</Text>
+          Már van fiókod? <Text style={styles.linkText}>Jelentkezz be</Text>
         </Text>
       </TouchableOpacity>
     </View>

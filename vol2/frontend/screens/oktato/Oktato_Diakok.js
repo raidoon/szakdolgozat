@@ -2,7 +2,6 @@ import React from "react";
 import { View, Text, Button } from "react-native";
 
 
-const Tab = createBottomTabNavigator();
 
 export default function Oktato_Diakok({atkuld}){
     return(
