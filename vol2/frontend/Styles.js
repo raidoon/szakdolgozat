@@ -81,7 +81,7 @@ const Styles = StyleSheet.create({
       marginLeft: 10,
       fontSize: 16,
       color: "#000",
-  }
+  },
   /**
    bejelentkezes_support:{
     fontSize:17,
@@ -217,6 +217,17 @@ const Styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
   },*/
+
+  //--------------------------Oktato_Diakok.js
+
+  oktatodiakok:{
+    flex: 1,
+    padding: 20,
+    backgroundColor: "#fff",
+    alignItems: "center",
+    justifyContent: "center",
+  }
+
 
 });
 

@@ -4,6 +4,7 @@ import Oktato_Kezdolap from "./Oktato_Kezdolap";
 import Oktato_Datumok from "./Oktato_Datumok";
 import Oktato_Profil from "./Oktato_Profil";
 import Oktato_Kifizetesek from "./Oktato_Kifizetesek";
+import Oktato_Diakok from "./Oktato_Diakok";
 
 import Ionicons from "react-native-vector-icons/Ionicons";
 

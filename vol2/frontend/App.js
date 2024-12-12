@@ -15,6 +15,7 @@ import Oktato_Kezdolap from "./screens/oktato/Oktato_Kezdolap";
 import Oktato_Datumok from "./screens/oktato/Oktato_Datumok";
 import Oktato_Kifizetesek from "./screens/oktato/Oktato_Kifizetesek";
 import Oktato_Profil from "./screens/oktato/Oktato_Profil";
+import Oktato_Diakok from "./screens/oktato/Oktato_Diakok";
 
 
 const Stack = createStackNavigator();
@@ -31,6 +32,7 @@ function TanuloMenusStack(){
       <Stack.Screen name={"Oktato_Datumok"} component={Oktato_Datumok}/>
       <Stack.Screen name={"Oktato_Kifizetesek"} component={Oktato_Kifizetesek}/>
       <Stack.Screen name={"Oktato_Profil"} component={Oktato_Profil}/>
+      <Stack.Screen name={"Oktato_Diakok"} component={Oktato_Diakok}/>
     </Stack.Navigator>
     </NavigationContainer>
   );
