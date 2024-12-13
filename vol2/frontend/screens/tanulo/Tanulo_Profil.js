@@ -35,7 +35,10 @@ export default function Tanulo_Profil({atkuld}) {
               rippleFades={false}
               rippleContainerBorderRadius={20}
               style={[styles.profileGombok, styles.gombDiv] }
-              onPress={() => navigation.navigate("")}
+              onPress={() => navigation.navigate("Tanuló Profil", {
+                screen: "SzemelyesAdatok",
+              })
+              }
           >
             <View style={styles.elsoFlex}>
             <Ionicons name="person-outline" size={25} color="green"/>
@@ -48,6 +51,7 @@ export default function Tanulo_Profil({atkuld}) {
             </View>
          </Ripple>
       </View>
+
       <View style={styles.gombDiv}>
         <Ripple
               rippleColor="rgb(0,0,0)"
@@ -57,7 +61,10 @@ export default function Tanulo_Profil({atkuld}) {
               rippleFades={false}
               rippleContainerBorderRadius={20}
               style={[styles.profileGombok, styles.gombDiv] }
-              onPress={() => navigation.navigate("")}
+              onPress={() => navigation.navigate("Tanuló Profil", {
+                screen: "JelszoMegvaltoztatasa",
+              })
+              }
           >
             <View style={styles.elsoFlex}>
             <Ionicons name="shield-half-outline" size={25} color="blue"/>
@@ -79,7 +86,10 @@ export default function Tanulo_Profil({atkuld}) {
               rippleFades={false}
               rippleContainerBorderRadius={20}
               style={[styles.profileGombok, styles.gombDiv] }
-              onPress={() => navigation.navigate("")}
+              onPress={() => navigation.navigate("Tanuló Profil", {
+                screen: "Beallitasok",
+              })
+              }
           >
             <View style={styles.elsoFlex}>
             <Ionicons name="settings-outline" size={25} color="purple"/>
@@ -101,7 +111,10 @@ export default function Tanulo_Profil({atkuld}) {
               rippleFades={false}
               rippleContainerBorderRadius={20}
               style={[styles.profileGombok, styles.gombDiv] }
-              onPress={() => navigation.navigate("")}
+              onPress={() => navigation.navigate("Tanuló Profil", {
+                screen: "Kapcsolat",
+              })
+              }
           >
             <View style={[styles.elsoFlex,]}>
             <Ionicons name="information-circle-outline" size={25} color="black"/>

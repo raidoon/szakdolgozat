@@ -47,34 +47,24 @@ function OktatoMenuStack(){
 
 function TanuloMenusStack(){
   return(
-    <NavigationContainer>
-      <Stack.Navigator
-        screenOptions={{
-          headerShown: false,
-        }}>
+      <Stack.Navigator screenOptions={{headerShown: false,}}>
       <Stack.Screen name="Tanulo_Kezdolap" component={Tanulo_Kezdolap}/>
       <Stack.Screen name="Tanulo_Datumok" component={Tanulo_Datumok}/>
       <Stack.Screen name="Tanulo_Befizetesek" component={Tanulo_Befizetesek}/>
       <Stack.Screen name="Tanulo_Profil" component={Tanulo_Profil}/>
     </Stack.Navigator>
-    </NavigationContainer>
   );
 }
 
-function TanuloProfilStack(){
-  return(
-    <NavigationContainer>
-      <Stack.Navigator
-        screenOptions={{
-          headerShown: true,
-        }}>
-          <Stack.Screen name="SzemelyesAdatok" component={SzemelyesAdatok}/>
-          <Stack.Screen name="JelszoMegvaltoztatasa" component={JelszoMegvaltoztatasa}/>
-          <Stack.Screen name="Beallitasok" component={Beallitasok}/>
-          <Stack.Screen name="Kapcsolat" component={Kapcsolat}/>
-      </Stack.Navigator>
-    </NavigationContainer>
-  )
+function TanuloProfilStack() {
+  return (
+    <Stack.Navigator screenOptions={{ headerShown: true }}>
+      <Stack.Screen name="SzemelyesAdatok" options={{title:"Személyes adatok módosítása"}} component={SzemelyesAdatok} />
+      <Stack.Screen name="JelszoMegvaltoztatasa" options={{title:"Jelszó megváltoztatása"}} component={JelszoMegvaltoztatasa} />
+      <Stack.Screen name="Beallitasok" options={{title:"Beállítások"}} component={Beallitasok} />
+      <Stack.Screen name="Kapcsolat" options={{title:"Kapcsolat felvétele"}} component={Kapcsolat} />
+    </Stack.Navigator>
+  );
 }
 
 export default function App() {
