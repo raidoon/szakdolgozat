@@ -1,6 +1,25 @@
-import {StyleSheet} from 'react-native';
+import { StyleSheet } from "react-native";
 
 const Styles = StyleSheet.create({
+  focim: {
+    fontSize: 30,
+    fontWeight: "bold",
+    textAlign: "center",
+    marginTop: 10,
+  },
+  alcim: { //rovid alcimhez
+    fontSize: 20,
+    color: "grey",
+    textAlign: "center",
+    marginBottom: 20,
+  },
+  alcim2:{ //hosszabb alcimhez
+    fontSize: 16,
+    color: "grey",
+    textAlign: "center",
+    marginBottom: 20,
+    marginTop: 20,
+  },
   //------------------------------------------ BEJELENTKEZES.JS
   bejelentkezes_Container: {
     flex: 1,
@@ -19,68 +38,68 @@ const Styles = StyleSheet.create({
     flexDirection: "row",
     alignItems: "center",
     paddingLeft: 8,
-    marginBottom: 10
+    marginBottom: 10,
   },
   bejelentkezes_Input: {
     width: "90%",
     height: "100%",
     marginLeft: 10,
   },
-  bejelentkezes_Gomb:{
-    padding:15,
-    backgroundColor:'#020202',
-    alignItems:'center',
-    borderRadius:10,
-    width:'90%',
-    marginTop:20,
-    display:'flex',
-    flexDirection:'row',
-    justifyContent:'center',
-    alignItems:'center'
+  bejelentkezes_Gomb: {
+    padding: 15,
+    backgroundColor: "#020202",
+    alignItems: "center",
+    borderRadius: 10,
+    width: "90%",
+    marginTop: 20,
+    display: "flex",
+    flexDirection: "row",
+    justifyContent: "center",
+    alignItems: "center",
   },
-  bejelentkezes_bejelentkezoGomb:{
-    color: '#FFFF'
+  bejelentkezes_bejelentkezoGomb: {
+    color: "#FFFF",
   },
-  bejelentkezes_regisztaciosGomb:{
-    width:'100%',
-    marginTop:7,
-    borderColor:'#FF6C00',
-    backgroundColor:'#fff',
-    borderWidth:1,
-    paddingVertical:10
+  bejelentkezes_regisztaciosGomb: {
+    width: "100%",
+    marginTop: 7,
+    borderColor: "#FF6C00",
+    backgroundColor: "#fff",
+    borderWidth: 1,
+    paddingVertical: 10,
   },
-  bejelentkezes_kerdes:{
-    width:'90%',
-    marginTop:20
+  bejelentkezes_kerdes: {
+    width: "90%",
+    marginTop: 20,
   },
-  bejelentkezes_kerdesSzoveg:{
-    fontSize:16,
-    marginRight:5,
-    marginTop:10
+  bejelentkezes_kerdesSzoveg: {
+    fontSize: 16,
+    marginRight: 5,
+    marginTop: 10,
   },
-  bejelentkezes_regiGombSzoveg:{
-    color:'#FF6C00',
+  bejelentkezes_regiGombSzoveg: {
+    color: "#FF6C00",
   },
   jelszoInput: {
-    flex:1,
-    paddingHorizontal: 8
+    flex: 1,
+    paddingHorizontal: 8,
   },
-  focim:{
+  focim: {
     fontSize: 28,
     fontWeight: "bold",
     color: "#000",
     marginBottom: 10,
   },
-  alcim:{
+  alcim: {
     fontSize: 14,
     color: "#888",
     marginBottom: 30,
   },
-  input:{
+  input: {
     flex: 1,
-      marginLeft: 10,
-      fontSize: 16,
-      color: "#000",
+    marginLeft: 10,
+    fontSize: 16,
+    color: "#000",
   },
   /**
    bejelentkezes_support:{
@@ -93,131 +112,36 @@ const Styles = StyleSheet.create({
     marginTop:20
    }
 */
-
-//------------------------------------ REGISZTRACIO.JS
-
-
-
-//------------------------- TESZTNEK
-
-  /*login_container: {
+  //------------------------------------ REGISZTRACIO.JS
+  //------------------------------------ TANULO_PROFIL
+  profil_gombDiv: {
+    flexDirection: "row",
+    marginBottom: 0,
+    marginTop: 0,
+  },
+  profileGombok: {
+    width: "100%",
+    marginTop: 7,
+    paddingVertical: 10,
+  },
+  //------------------------------------ PROFILSCREENS
+  //--------------------- kapcsolat
+  kapcsolatNagyDiv: {
     flex: 1,
-    backgroundColor: '#FFF',
+    flexDirection: "column",
+    backgroundColor: "#grey",
+    alignItems: "center",
   },
-  login_header: {
-    alignItems: 'center',
-    paddingTop: 30,
-    paddingBottom: 50,
-    backgroundColor: '#208AEC',
+  kapcsolatBuborek: {
+    backgroundColor: "#fff",
+    borderRadius: 20,
+    marginTop: 50,
+    alignItems: "center",
+    textAlign: "center",
+    width: 250,
+    padding: 15,
+    height: 100,
   },
-  login_header_logo: {
-    width: 220,
-    resizeMode: 'contain',
-  },
-  login_header_text: {
-    marginTop: 15,
-    color: '#f0f0f0',
-    fontSize: 16,
-  },
-  login_header_text_bold: {
-    color: '#fff',
-    fontWeight: 'bold',
-  },
-  login_wrapper: {
-    flex: 1,
-    justifyContent: 'space-between',
-    paddingVertical: 40,
-    borderTopRightRadius: 12,
-    borderTopLeftRadius: 12,
-    marginTop: -10,
-    backgroundColor: '#fff',
-    alignItems: 'center',
-  },
-  form: {
-    width: '100%',
-    maxWidth: 280,
-  },
-  form_input: {
-    height: 44,
-    paddingHorizontal: 20,
-    marginBottom: 20,
-    backgroundColor: '#EDF0F7',
-    borderRadius: 50,
-  },
-  button: {
-    alignItems: 'center',
-    justifyContent: 'center',
-    height: 44,
-    backgroundColor: '#0065A4',
-    borderRadius: 50,
-  },
-  button_label: {
-    color: '#fff',
-    fontSize: 15,
-  },
-  login_social: {
-    width: '100%',
-    maxWidth: 280,
-    marginTop: 20,
-  },
-  login_social_separator: {
-    flexDirection: 'row',
-    alignItems: 'center',
-  },
-  login_social_separator_line: {
-    flex: 1,
-    width: '100%',
-    height: 1,
-    backgroundColor: '#E0E0E0',
-  },
-  login_social_separator_text: {
-    marginHorizontal: 10,
-    color: '#808080',
-    fontSize: 16,
-  },
-  login_social_buttons: {
-    flexDirection: 'row',
-    justifyContent: 'center',
-    marginTop: 20,
-  },
-  login_social_button: {
-    alignItems: 'center',
-    justifyContent: 'center',
-    width: 60,
-    height: 60,
-    marginHorizontal: 12,
-    borderWidth: 1,
-    borderColor: '#E7E7E7',
-    borderRadius: 60,
-  },
-  login_social_icon: {
-    width: 38,
-    height: 38,
-    resizeMode: 'contain',
-  },
-  login_social_facebook: {
-    backgroundColor: '#4267B2',
-    borderColor: '#4267B2',
-  },
-  login_footer_text: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    color: '#808080',
-    fontSize: 15,
-  },
-  login_footer_link: {
-    color: '#208AEC',
-    fontSize: 15,
-    fontWeight: 'bold',
-  },
-    
-  container: {
-    flex: 1,
-    backgroundColor: '#fff',
-    alignItems: 'center',
-    justifyContent: 'center',
-  },*/
-
   //--------------------------Oktato_Diakok.js
 });
 

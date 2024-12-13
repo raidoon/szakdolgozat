@@ -90,17 +90,17 @@ export default function Tanulo_BejelentkezesUtan({navigation, route}) {
         <Tab.Screen
             name="Tanulo_Kezdolap"
             options={{ title: "Kezdőlap" }}
-            children={() => <Tanulo_Kezdolap atkuld={atkuld} />}/>
+            children={() => <Tanulo_Kezdolap atkuld={adatok} />}/>
         
         <Tab.Screen 
         name="Tanulo_Datumok" 
         options={{title:"Óráim"}} 
-        children={() => <Tanulo_Datumok atkuld={atkuld} />}/>
+        children={() => <Tanulo_Datumok atkuld={adatok} />}/>
         
         <Tab.Screen 
             name="Tanulo_Befizetesek" 
             options={{title:"Befizetéseim"}} 
-            children={() => <Tanulo_Befizetesek atkuld={atkuld} />}/>
+            children={() => <Tanulo_Befizetesek atkuld={adatok} />}/>
         
         <Tab.Screen 
             name="Tanulo_Profil" 
