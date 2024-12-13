@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { View, Text, TextInput, Button, Alert,TouchableOpacity, StyleSheet } from 'react-native';
 import Styles from '../../Styles';
 import { Octicons, Ionicons } from "@expo/vector-icons";
@@ -30,12 +30,10 @@ export default function LoginScreen({ navigation }) {
         if (adat.felhasznalo_id !== 0) {
           console.log(adat);
           if (adat.felhasznalo_tipus === 1) {
-            var felhasznalo = adat.felhasznalo_nev;
-            Alert.alert("Üdvözöllek " + felhasznalo + "!");
+            Alert.alert("Üdvözöllek kedves oktató!");
             navigation.replace("Oktato_BejelentkezesUtan", { atkuld: adat.felhasznalo_id });
           } else {
-            var felhasznalo = adat.felhasznalo_nev;
-            Alert.alert("Üdvözöllek " + felhasznalo + "!");
+            Alert.alert("Üdvözöllek kedves tanuló!");
             navigation.replace("Tanulo_BejelentkezesUtan", { atkuld: adat.felhasznalo_id });
           }
         } else {

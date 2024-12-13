@@ -10,6 +10,13 @@ import Tanulo_Datumok from "./screens/tanulo/Tanulo_Datumok";
 import Tanulo_Befizetesek from "./screens/tanulo/Tanulo_Befizetesek";
 import Tanulo_Profil from "./screens/tanulo/Tanulo_Profil";
 
+//tanulo profilon belüli menük
+import SzemelyesAdatok from "./screens/tanulo/ProfilScreens/SzemelyesAdatok";
+import JelszoMegvaltoztatasa from "./screens/tanulo/ProfilScreens/JelszoMegvaltoztatasa";
+import Beallitasok from "./screens/tanulo/ProfilScreens/Beallitasok";
+import Kapcsolat from "./screens/tanulo/ProfilScreens/Kapcsolat";
+
+//oktato profilok
 import Oktato_BejelentkezesUtan from "./screens/oktato/Oktato_BejelentkezesUtan";
 import Oktato_Kezdolap from "./screens/oktato/Oktato_Kezdolap";
 import Oktato_Datumok from "./screens/oktato/Oktato_Datumok";
@@ -45,13 +52,29 @@ function TanuloMenusStack(){
         screenOptions={{
           headerShown: false,
         }}>
-      <Stack.Screen name={"Tanulo_Kezdolap"} component={Tanulo_Kezdolap}/>
-      <Stack.Screen name={"Tanulo_Datumok"} component={Tanulo_Datumok}/>
-      <Stack.Screen name={"Tanulo_Befizetesek"} component={Tanulo_Befizetesek}/>
-      <Stack.Screen name={"Tanulo_Profil"} component={Tanulo_Profil}/>
+      <Stack.Screen name="Tanulo_Kezdolap" component={Tanulo_Kezdolap}/>
+      <Stack.Screen name="Tanulo_Datumok" component={Tanulo_Datumok}/>
+      <Stack.Screen name="Tanulo_Befizetesek" component={Tanulo_Befizetesek}/>
+      <Stack.Screen name="Tanulo_Profil" component={Tanulo_Profil}/>
     </Stack.Navigator>
     </NavigationContainer>
   );
+}
+
+function TanuloProfilStack(){
+  return(
+    <NavigationContainer>
+      <Stack.Navigator
+        screenOptions={{
+          headerShown: true,
+        }}>
+          <Stack.Screen name="SzemelyesAdatok" component={SzemelyesAdatok}/>
+          <Stack.Screen name="JelszoMegvaltoztatasa" component={JelszoMegvaltoztatasa}/>
+          <Stack.Screen name="Beallitasok" component={Beallitasok}/>
+          <Stack.Screen name="Kapcsolat" component={Kapcsolat}/>
+      </Stack.Navigator>
+    </NavigationContainer>
+  )
 }
 
 export default function App() {
@@ -65,6 +88,7 @@ export default function App() {
         <Stack.Screen name="Tanulo_BejelentkezesUtan" component={Tanulo_BejelentkezesUtan}/>
         <Stack.Screen name="Oktato_BejelentkezesUtan" component={Oktato_BejelentkezesUtan}/>
         <Stack.Screen name="Tanuló menük" component={TanuloMenusStack}/>
+        <Stack.Screen name="Tanuló Profil" component={TanuloProfilStack}/>
         <Stack.Screen name="Oktató menük" component={OktatoMenuStack}/>
         <Stack.Screen name="Oktato_TanuloReszletei" component={Oktato_TanuloReszletei}/>
         <Stack.Screen name="Oktato_Kezdolap" component={Oktato_Kezdolap} />

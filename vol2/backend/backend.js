@@ -165,7 +165,12 @@ app.post("/beleptetes", (req, res) => {
 app.post("/sajatAdatokT", (req, res) => {
   kapcsolat();
   connection.query(
-    `select * from tanulo_adatok where tanulo_felhasznaloID = ?`,
+    `select felhasznalo_id,felhasznalo_email,felhasznalo_telefonszam,tanulo_neve,tanulo_levizsgazott,oktato_adatok.oktato_neve, autosiskola_adatok.autosiskola_nev 
+    from tanulo_adatok 
+    inner join felhasznaloi_adatok on tanulo_adatok.tanulo_felhasznaloID=felhasznaloi_adatok.felhasznalo_id 
+    inner join oktato_adatok on tanulo_adatok.tanulo_oktatoja=oktato_adatok.oktato_id 
+    inner join autosiskola_adatok on felhasznaloi_adatok.felhasznalo_autosiskola=autosiskola_adatok.autosiskola_id
+    where tanulo_felhasznaloID = ?`,
     [req.body.felhasznaloID],
     (err, rows, fields) => {
       if (err) {

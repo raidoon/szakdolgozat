@@ -9,21 +9,10 @@ import { useNavigation } from "@react-navigation/native";
 export default function Tanulo_Profil({atkuld}) {
   const navigation = useNavigation();
     const [adatok,setAdatok] = useState([]);
-
-    const sajatAdatokBetoltese = async () => {
-      const adatok={
-        felhasznaloID: atkuld
-      }
-      const response = await fetch(Ipcim.Ipcim + "/sajatAdatokT", {
-        method: "POST",
-        body: JSON.stringify(adatok),
-        headers: { "Content-type": "application/json; charset=UTF-8" },
-      });
-      const adat = await response.json();
-      setAdatok(adat);
-      console.log(adat)
-    }
-
+    const [felhasznalonev,setFelhasznalonev] = useState("");
+    
+    console.log("\n\t\t\tmost itt vagyok: tanuló profil oldal")
+    console.log(atkuld)
 
   return(
     <View style={styles.default}>
@@ -33,8 +22,8 @@ export default function Tanulo_Profil({atkuld}) {
       </View>
 
       <View>
-        <Text style={{fontSize: 30, fontWeight: 'bold',textAlign:'center',marginTop: 10}}>{adatok.felhasznalo_nev}</Text>
-        <Text style={{fontSize: 20, color:'grey',textAlign:'center',marginBottom: 20}}>email cím helye</Text>
+        <Text style={{fontSize: 30, fontWeight: 'bold',textAlign:'center',marginTop: 10}}>{atkuld[0].tanulo_neve}</Text>
+        <Text style={{fontSize: 20, color:'grey',textAlign:'center',marginBottom: 20}}>{atkuld[0].felhasznalo_email}</Text>
       </View>
 
       <View style={styles.gombDiv}>

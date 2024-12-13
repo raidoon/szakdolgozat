@@ -1,19 +1,73 @@
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
-
+import { Text, View } from 'react-native';
 import Tanulo_Kezdolap from "./Tanulo_Kezdolap";
 import Tanulo_Profil from "./Tanulo_Profil";
 import Tanulo_Datumok from "./Tanulo_Datumok";
 import Tanulo_Befizetesek from "./Tanulo_Befizetesek";
-
+import Ipcim from "../../Ipcim";
 import Ionicons from "react-native-vector-icons/Ionicons";
-import { useState } from "react";
+import { useState,useEffect } from "react";
+import Styles from "../../Styles";
+
 
 const Tab = createBottomTabNavigator();
 
 export default function Tanulo_BejelentkezesUtan({navigation, route}) {
   const { atkuld } = route.params;
-  console.log("Atkuldött adat: ", atkuld);
+  console.log("Fogadott adat: ", atkuld); //kapott id
+
+  const [adatok, setAdatok] = useState([]);
+  const [betolt, setBetolt] = useState(true);
+  const [hiba, setHiba] = useState(null);
+  
+  const sajatAdatokBetoltese = async () => {
+    try {
+      setBetolt(true);
+      var adatok = {
+        "felhasznaloID": atkuld,
+      };
+      const x = await fetch(Ipcim.Ipcim + "/sajatAdatokT", {
+        method: "POST",
+        body: JSON.stringify(adatok),
+        headers: { "Content-type": "application/json; charset=UTF-8" },
+      });
+  
+      if (!x.ok) {
+        throw new Error('Hiba történt az adatok betöltése közben');
+      }
+      const data = await x.json();
+      setAdatok(data);
+      setBetolt(false);
+    } catch (err) {
+      setHiba(err.message);
+      setBetolt(false);
+    }
+  };
+  
+  useEffect(() => {
+    if (atkuld) {
+      sajatAdatokBetoltese();
+    }
+  }, [atkuld]);
+  
+  //AMIKOR MÉG TÖLTŐDNEK AZ ADATOK, AKKOR EZ A SCREEN FOG MEGJELENNI --> ide mehetne pl valami loading image vagy animáció! :)
+  if (betolt) {
     return(
+      <View style={Styles.bejelentkezes_Container}>
+        <Text>Adatok betöltése folyamatban...</Text>
+      </View>
+    ) 
+  }
+  //AMIKOR HIBÁT KAPTUNK ADATBETÖLTÉS KÖZBEN VAGY UTÁN, AKKOR EZ A SCREEN FOG MEGJELENNI
+  if (hiba) {
+    return(
+      <View style={Styles.bejelentkezes_Container}>
+        <Text>Hiba: {hiba}</Text>
+      </View>
+    )
+  }
+  
+  return(
       <Tab.Navigator
         screenOptions={({ route }) => ({
           tabBarIcon: ({ focused, color, size }) => {
@@ -50,9 +104,9 @@ export default function Tanulo_BejelentkezesUtan({navigation, route}) {
         
         <Tab.Screen 
             name="Tanulo_Profil" 
-            options={{title:"Tanulói Profil"}} 
-            children={() => <Tanulo_Profil atkuld={atkuld} />}/>
-      
+            options={{title:"Profil"}} 
+            children={() => <Tanulo_Profil atkuld={adatok} />}/>
+
       </Tab.Navigator>
     );
   }

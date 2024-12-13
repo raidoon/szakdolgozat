@@ -93,7 +93,7 @@ export default function Regisztracio({ navigation }) {
         if (response.ok) {
           const data = JSON.parse(text);
           const dropdownData = data.map((item) => ({
-            label: item.autosiskola_neve,
+            label: item.autosiskola_nev,
             value: item.autosiskola_id,
           }));
           setErtekek(dropdownData);
