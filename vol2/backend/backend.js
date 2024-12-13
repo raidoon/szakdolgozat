@@ -15,7 +15,7 @@ function kapcsolat() {
     host: "localhost",
     user: "root",
     password: "",
-    database: "szakdoga_gyakorlas", //otthon: szakdolgozat || sulis gépen: szakdolgozat_vol2 || szakdoga_gyakorlas
+    database: "szakdolgozat_vol2", //otthon: szakdolgozat || sulis gépen: szakdolgozat_vol2 || szakdoga_gyakorlas
   });
   connection.connect();
 }
@@ -23,7 +23,7 @@ function kapcsolat() {
 app.get("/autosiskolalista", (req, res) => {
   kapcsolat();
   connection.query(
-    `select autosiskola_id, autosiskola_neve from autosiskola_adatok`,
+    `select autosiskola_id, autosiskola_nev from autosiskola_adatok`,
     (err, rows, fields) => {
       if (err) {
         console.log(err);
@@ -107,7 +107,9 @@ app.post("/regisztracio", (req, res) => {
               } else if (tipus === 2) {
                 // Tanuló
                 connection.query(
-                  "INSERT INTO tanulo_adatok VALUES (null, ?, 4, ?, 0)", //oktató id = 4 --> a teszt oktatóhoz adjuk automatikusan
+                  //szakdoga_gyakorlo --> oktató id = 4 --> a teszt oktatóhoz adjuk automatikusan
+                  //szakdoga_vol2 --> oktató id = 7 --> a teszt oktatóhoz adjuk automatikusan
+                  "INSERT INTO tanulo_adatok VALUES (null, ?, 7, ?, 0)", 
                   [result.insertId, nev],
                   (err2) => {
                     if (err2) {
@@ -129,11 +131,11 @@ app.post("/regisztracio", (req, res) => {
 });
 //------------------------------------------------ BEJELENTKEZÉS
 app.post("/beleptetes", (req, res) => {
-  const { email, jelszo } = req.body;
+  const { felhasznalo_email, felhasznalo_jelszo } = req.body;
   kapcsolat();
   connection.query(
     "SELECT felhasznalo_id, felhasznalo_email, felhasznalo_jelszo, felhasznalo_tipus FROM felhasznaloi_adatok WHERE felhasznalo_email = ?",
-    [email],
+    [felhasznalo_email],
     (err, rows) => {
       if (err) {
         console.error(err);
@@ -144,7 +146,7 @@ app.post("/beleptetes", (req, res) => {
         res.status(404).send("Ez az email cím nem található!");
       } else {
         const hashedPassword = rows[0].felhasznalo_jelszo;
-        bcrypt.compare(jelszo, hashedPassword, (compareErr, isMatch) => {
+        bcrypt.compare(felhasznalo_jelszo, hashedPassword, (compareErr, isMatch) => {
           if (compareErr) {
             console.error(compareErr);
             res.status(500).send("Hiba a jelszó ellenőrzése során!");

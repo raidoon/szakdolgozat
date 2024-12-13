@@ -6,14 +6,14 @@ import Ripple from "react-native-material-ripple";
 import Ipcim from '../../Ipcim';
 
 export default function LoginScreen({ navigation }) {
-  const [email, setEmail] = useState('');
-  const [jelszo, setJelszo] = useState('');
+  const [felhasznalo_email, setEmail] = useState('');
+  const [felhasznalo_jelszo, setJelszo] = useState('');
   const [jelszoMutatasa, setJelszoMutatasa] = useState(false);
   const [adatok,setAdatok] = useState([]);
   const handleLogin = async () => {
     const adatok = {
-      email: email,
-      jelszo: jelszo
+      felhasznalo_email: felhasznalo_email,
+      felhasznalo_jelszo: felhasznalo_jelszo
     };
     try {
       const response = await fetch(Ipcim.Ipcim + "/beleptetes", {
@@ -55,7 +55,7 @@ export default function LoginScreen({ navigation }) {
         <TextInput
           style={Styles.input}
           placeholder="Email"
-          value={email}
+          value={felhasznalo_email}
           onChangeText={setEmail}
         />
       </View>
@@ -66,7 +66,7 @@ export default function LoginScreen({ navigation }) {
           style={Styles.input}
           placeholder="Jelszó"
           secureTextEntry={!jelszoMutatasa}
-          value={jelszo}
+          value={felhasznalo_jelszo}
           onChangeText={setJelszo}
         />
         <TouchableOpacity onPress={() => setJelszoMutatasa(!jelszoMutatasa)}>
