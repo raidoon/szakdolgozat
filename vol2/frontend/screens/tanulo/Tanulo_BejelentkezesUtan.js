@@ -8,13 +8,15 @@ import Ipcim from "../../Ipcim";
 import Ionicons from "react-native-vector-icons/Ionicons";
 import { useState,useEffect } from "react";
 import Styles from "../../Styles";
-
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const Tab = createBottomTabNavigator();
 
 export default function Tanulo_BejelentkezesUtan({navigation, route}) {
   const { atkuld } = route.params;
   console.log("Fogadott adat: ", atkuld); //kapott id
+
+
 
   const [adatok, setAdatok] = useState([]);
   const [betolt, setBetolt] = useState(true);
