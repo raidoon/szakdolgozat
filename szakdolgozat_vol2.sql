@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Gép: 127.0.0.1
--- Létrehozás ideje: 2024. Dec 13. 09:59
+-- Létrehozás ideje: 2024. Dec 16. 09:56
 -- Kiszolgáló verziója: 10.4.28-MariaDB
 -- PHP verzió: 8.2.4
 
@@ -157,7 +157,8 @@ CREATE TABLE `tanulo_adatok` (
 --
 
 INSERT INTO `tanulo_adatok` (`tanulo_id`, `tanulo_felhasznaloID`, `tanulo_oktatoja`, `tanulo_neve`, `tanulo_levizsgazott`) VALUES
-(4, 13, 7, 'C', 0);
+(4, 13, 7, 'C', 0),
+(5, 11, 7, 'Kiss Boglárka', 0);
 
 --
 -- Indexek a kiírt táblákhoz
@@ -259,7 +260,7 @@ ALTER TABLE `ora_tipusa`
 -- AUTO_INCREMENT a táblához `tanulo_adatok`
 --
 ALTER TABLE `tanulo_adatok`
-  MODIFY `tanulo_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
+  MODIFY `tanulo_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
 
 --
 -- Megkötések a kiírt táblákhoz

@@ -8,7 +8,7 @@ export default function Tanulo_Kezdolap({atkuld}){
         <View style={Styles.bejelentkezes_Container}>
             <View>
             <Text>Sikeres bejelentkezés! </Text>
-            <Text>{atkuld ? `Felhasználó ID: ${atkuld}` : "Nincs adat"}</Text>
+            <Text>{atkuld ? `Felhasználó ID: ${atkuld[0].felhasznalo_id}` : "Nincs adat"}</Text>
             </View>
         </View>
     );
