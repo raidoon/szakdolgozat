@@ -19,7 +19,7 @@ export default function Oktato_Kezdolap({atkuld}){
         })
         const y=await x.json()
         setAdatok(y)
-        //alert(JSON.stringify(y))
+        alert(JSON.stringify(y))
     }
   
     useEffect(()=>{
@@ -27,6 +27,7 @@ export default function Oktato_Kezdolap({atkuld}){
         
     },[])
     const katt = (tanulo) => {
+        alert(tanulo.tanulo_neve)
         navigation.navigate("Oktato_TanuloReszletei", { tanulo });
     };
 
