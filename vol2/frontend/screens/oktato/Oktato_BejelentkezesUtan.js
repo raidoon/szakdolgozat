@@ -31,7 +31,10 @@ const Oktato_BejelentkezesUtan = ({ navigation, route }) => {
               iconName = focused ? "calendar" : "calendar-outline";
             } else if (route.name === "Oktato_Kifizetesek") {
               iconName = focused ? "cash" : "cash-outline";
+            }else if(route.name === "Oktato_Diakok"){
+              iconName = focused ? "people" : "people-outline";
             }
+
             return <Ionicons name={iconName} size={size} color={color} />;
           },
           tabBarActiveTintColor: "tomato",
@@ -52,6 +55,12 @@ const Oktato_BejelentkezesUtan = ({ navigation, route }) => {
             name="Oktato_Kifizetesek" 
             options={{title:"Kifizetések"}} 
             children={() => <Oktato_Kifizetesek atkuld={atkuld} />} />
+
+        <Tab.Screen
+            name="Oktato_Diakok" 
+            options={{title:"Diákok"}} 
+            children={() => <Oktato_Diakok atkuld={atkuld} />} />
+
 
         <Tab.Screen 
             name="Oktato_Profil" 

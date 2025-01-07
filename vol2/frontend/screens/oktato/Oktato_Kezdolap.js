@@ -1,17 +1,16 @@
-import React from "react";
 import { useState,useEffect } from 'react';
-import { Text, View, FlatList, TouchableOpacity, } from 'react-native';
-import Styles from "../../Styles";
+import { StyleSheet, Text, View, Image, FlatList, TouchableOpacity } from 'react-native';
+import Oktato_Styles from '../../Oktato_Styles';
 import Ipcim from "../../Ipcim";
 import { useNavigation } from '@react-navigation/native';
 
-const Oktato_Kezdolap = ({atkuld}) => {
+export default function Oktato_Kezdolap({atkuld}){
     const [adatok,setAdatok]=useState([])
-
+    const navigation = useNavigation();
     const letoltes=async ()=>{
         //alert("hello")
  var adatok={
-    "oktatoid": atkuld.oktato_id
+    "oktatoid":atkuld
  }
         const x=await fetch("http://192.168.10.58:3000/egyOktatoDiakjai",{
             method: "POST",
@@ -22,17 +21,23 @@ const Oktato_Kezdolap = ({atkuld}) => {
         setAdatok(y)
         alert(JSON.stringify(y))
     }
+  
     useEffect(()=>{
         letoltes()
         
     },[])
+    
+
     return(
-        <View style={Styles.bejelentkezes_Container}>
+        <View style={Oktato_Styles.reszletek_container}>
             <View>
             <Text>Sikeres bejelentkezés! </Text>
-            <Text>{atkuld ? `Felhasználó ID: ${atkuld.oktato_felhasznaloID}` : "Nincs adat"}</Text>
+            <Text>{atkuld ? `Felhasználó ID: ${atkuld}` : "Nincs adat"}</Text>
+            <Text>hello</Text>
+            
+
+            
             </View>
         </View>
     );
 }
-export default Oktato_Kezdolap;
