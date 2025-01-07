@@ -188,7 +188,10 @@ app.post("/sajatAdatokT", (req, res) => {
 app.post("/sajatAdatokO", (req, res) => {
   kapcsolat();
   connection.query(
-    `select * from oktato_adatok where oktato_felhasznaloID = ?`,
+    `select oktato_id,oktato_felhasznaloID,oktato_neve,felhasznalo_email,felhasznalo_telefonszam,autosiskola_adatok.autosiskola_nev from oktato_adatok
+    inner join felhasznaloi_adatok on felhasznaloi_adatok.felhasznalo_id=oktato_adatok.oktato_felhasznaloID
+    inner join autosiskola_adatok on felhasznaloi_adatok.felhasznalo_autosiskola=autosiskola_adatok.autosiskola_id
+    where oktato_felhasznaloID = ?`,
     [req.body.felhasznaloID],
     (err, rows, fields) => {
       if (err) {

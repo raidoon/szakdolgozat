@@ -2,15 +2,11 @@ import React from "react";
 import {
   View,
   Text,
-  FlatList,
   StyleSheet,
-  SafeAreaView,
-  TouchableOpacity,
 } from "react-native";
 import Ripple from "react-native-material-ripple";
 import Styles from "../../Styles";
 import Ionicons from "react-native-vector-icons/Ionicons";
-import Ipcim from "../../Ipcim";
 import { useNavigation } from "@react-navigation/native";
 
 const Tanulo_Profil = ({atkuld}) => {

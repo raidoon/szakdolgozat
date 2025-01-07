@@ -49,12 +49,6 @@ const Oktato_BejelentkezesUtan2 = ({ navigation, route }) => {
     sajatAdatokBetoltese();
   }, []);
     
-                /*
-                const handleLogout = async () => {
-                    await AsyncStorage.removeItem('userToken');
-                    navigation.navigate('LoginScreen');*/
-
-
   if (betolt) {
     return(
       <View style={Styles.bejelentkezes_Container}>

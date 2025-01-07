@@ -1,66 +1,30 @@
-import React, { useState, useEffect } from "react";
-import { View, Text, FlatList, StyleSheet, SafeAreaView, Alert } from "react-native";
+import React from "react";
+import {
+  View,
+  Text,
+  StyleSheet,
+} from "react-native";
 import Ripple from "react-native-material-ripple";
 import Styles from "../../Styles";
 import Ionicons from "react-native-vector-icons/Ionicons";
 import { useNavigation } from "@react-navigation/native";
 
-export default function Oktato_Profil({ atkuld }) {
+const Oktato_Profil = ({atkuld}) => {
+  console.log(atkuld)
   const navigation = useNavigation();
-  const [adatok, setAdatok] = useState([]);
-  const letoltes = async () => {
-    const adatok = {
-      felhasznaloID: atkuld,
-    };
-    const response = await fetch(Ipcim.Ipcim + "/sajatAdatokO", {
-      method: "POST",
-      body: JSON.stringify(adatok),
-      headers: { "Content-type": "application/json; charset=UTF-8" },
-    });
-    const adat = await response.json();
-    setAdatok(adat);
-    console.log(adat);
-    if (adat.length > 0) {
-      Alert.alert(adat[0].oktato_neve)
-    } else {
-      Alert.alert("valami nem jó");
-    }
-  };
-  useEffect(() => {
-    letoltes();
-  }, []);
 
   return (
     <View style={styles.default}>
       <View>
         <Text styles={{ textAlign: "center" }}>felhasználó profilkép?</Text>
-        <Text styles={{ textAlign: "center" }}>Átküldött ID: {atkuld}</Text>
       </View>
 
       <View>
-        <Text
-          style={{
-            fontSize: 30,
-            fontWeight: "bold",
-            textAlign: "center",
-            marginTop: 10,
-          }}
-        >
-          {adatok.oktato_nev} 
-        </Text>
-        <Text
-          style={{
-            fontSize: 20,
-            color: "grey",
-            textAlign: "center",
-            marginBottom: 20,
-          }}
-        >
-          email cím helye
-        </Text>
+        <Text style={Styles.focim}>{atkuld.oktato_neve}</Text>
+        <Text style={Styles.alcim}>{atkuld.felhasznalo_email}</Text>
       </View>
 
-      <View style={styles.gombDiv}>
+      <View style={Styles.profil_gombDiv}>
         <Ripple
           rippleColor="rgb(0,0,0)"
           rippleOpacity={0.05}
@@ -68,8 +32,12 @@ export default function Oktato_Profil({ atkuld }) {
           rippleCentered={true}
           rippleFades={false}
           rippleContainerBorderRadius={20}
-          style={[styles.profileGombok, styles.gombDiv]}
-          onPress={() => navigation.navigate("")}
+          style={[Styles.profileGombok, Styles.profil_gombDiv]}
+          onPress={() =>
+            navigation.navigate("Oktatói Profil", {
+              screen: "SzemelyesAdatok",
+            })
+          }
         >
           <View style={styles.elsoFlex}>
             <Ionicons name="person-outline" size={25} color="green" />
@@ -83,7 +51,7 @@ export default function Oktato_Profil({ atkuld }) {
         </Ripple>
       </View>
 
-      <View style={styles.gombDiv}>
+      <View style={Styles.profil_gombDiv}>
         <Ripple
           rippleColor="rgb(0,0,0)"
           rippleOpacity={0.05}
@@ -91,8 +59,12 @@ export default function Oktato_Profil({ atkuld }) {
           rippleCentered={true}
           rippleFades={false}
           rippleContainerBorderRadius={20}
-          style={[styles.profileGombok, styles.gombDiv]}
-          onPress={() => navigation.navigate("")}
+          style={[Styles.profileGombok, Styles.profil_gombDiv]}
+          onPress={() =>
+            navigation.navigate("Tanuló Profil", {
+              screen: "JelszoMegvaltoztatasa",
+            })
+          }
         >
           <View style={styles.elsoFlex}>
             <Ionicons name="shield-half-outline" size={25} color="blue" />
@@ -105,8 +77,7 @@ export default function Oktato_Profil({ atkuld }) {
           </View>
         </Ripple>
       </View>
-
-      <View style={styles.gombDiv}>
+      <View style={Styles.profil_gombDiv}>
         <Ripple
           rippleColor="rgb(0,0,0)"
           rippleOpacity={0.05}
@@ -114,8 +85,12 @@ export default function Oktato_Profil({ atkuld }) {
           rippleCentered={true}
           rippleFades={false}
           rippleContainerBorderRadius={20}
-          style={[styles.profileGombok, styles.gombDiv]}
-          onPress={() => navigation.navigate("")}
+          style={[Styles.profileGombok, Styles.profil_gombDiv]}
+          onPress={() =>
+            navigation.navigate("Tanuló Profil", {
+              screen: "Beallitasok",
+            })
+          }
         >
           <View style={styles.elsoFlex}>
             <Ionicons name="settings-outline" size={25} color="purple" />
@@ -128,8 +103,7 @@ export default function Oktato_Profil({ atkuld }) {
           </View>
         </Ripple>
       </View>
-
-      <View style={styles.gombDiv}>
+      <View style={Styles.profil_gombDiv}>
         <Ripple
           rippleColor="rgb(0,0,0)"
           rippleOpacity={0.05}
@@ -137,8 +111,12 @@ export default function Oktato_Profil({ atkuld }) {
           rippleCentered={true}
           rippleFades={false}
           rippleContainerBorderRadius={20}
-          style={[styles.profileGombok, styles.gombDiv]}
-          onPress={() => navigation.navigate("")}
+          style={[Styles.profileGombok, Styles.profil_gombDiv]}
+          onPress={() =>
+            navigation.navigate("Tanuló Profil", {
+              screen: "Kapcsolat",
+            })
+          }
         >
           <View style={[styles.elsoFlex]}>
             <Ionicons
@@ -155,8 +133,7 @@ export default function Oktato_Profil({ atkuld }) {
           </View>
         </Ripple>
       </View>
-
-      <View style={styles.gombDiv}>
+      <View style={Styles.profil_gombDiv}>
         <Ripple
           rippleColor="rgb(0,0,0)"
           rippleOpacity={0.05}
@@ -164,7 +141,7 @@ export default function Oktato_Profil({ atkuld }) {
           rippleCentered={true}
           rippleFades={false}
           rippleContainerBorderRadius={20}
-          style={[styles.profileGombok, styles.gombDiv]}
+          style={[Styles.profileGombok, Styles.profil_gombDiv]}
           onPress={() => navigation.navigate("Bejelentkezes")}
         >
           <View style={styles.elsoFlex}>
@@ -188,11 +165,6 @@ const styles = StyleSheet.create({
     flexDirection: "column",
     backgroundColor: "#fff",
   },
-  gombDiv: {
-    flexDirection: "row",
-    marginBottom: 0,
-    marginTop: 0,
-  },
   elsoFlex: {
     flex: 0,
     marginLeft: 30,
@@ -201,11 +173,6 @@ const styles = StyleSheet.create({
   harmadikFlex: {
     flex: 0,
     marginRight: 0,
-    backgroundColor: "yellow",
-  },
-  profileGombok: {
-    width: "100%",
-    marginTop: 7,
-    paddingVertical: 10,
   },
 });
+export default Oktato_Profil;
