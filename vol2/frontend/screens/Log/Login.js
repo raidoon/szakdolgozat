@@ -1,48 +1,57 @@
-import React, { useState, useEffect } from 'react';
-import { View, Text, TextInput, Button, Alert,TouchableOpacity, StyleSheet } from 'react-native';
-import Styles from '../../Styles';
+import React, { useState, useEffect } from "react";
+import {
+  View,
+  Text,
+  TextInput,
+  Button,
+  Alert,
+  TouchableOpacity,
+  StyleSheet,
+} from "react-native";
+import Styles from "../../Styles";
 import { Octicons, Ionicons } from "@expo/vector-icons";
 import Ripple from "react-native-material-ripple";
-import Ipcim from '../../Ipcim';
+import Ipcim from "../../Ipcim";
 
-export default function LoginScreen({ navigation }) {
-  const [felhasznalo_email, setEmail] = useState('');
-  const [felhasznalo_jelszo, setJelszo] = useState('');
+import AsyncStorage from '@react-native-async-storage/async-storage';
+
+const LoginScreen = ({ navigation }) => {
+  const [felhasznalo_email, setFelhasznaloEmail] = useState('');
+  const [felhasznalo_jelszo, setFelhasznaloJelszo] = useState('');
+
   const [jelszoMutatasa, setJelszoMutatasa] = useState(false);
-  const [adatok,setAdatok] = useState([]);
+
   const handleLogin = async () => {
     const adatok = {
-      felhasznalo_email: felhasznalo_email,
-      felhasznalo_jelszo: felhasznalo_jelszo
+      felhasznalo_email,
+      felhasznalo_jelszo,
     };
     try {
       const response = await fetch(Ipcim.Ipcim + "/beleptetes", {
-        method: "POST",
+        method: 'POST',
         body: JSON.stringify(adatok),
-        headers: { "Content-type": "application/json; charset=UTF-8" },
+        headers: { 'Content-type': 'application/json; charset=UTF-8' },
       });
-      const adat = await response.json(); 
+      const adat = await response.json();
       if (adat.error) {
-        Alert.alert(adat.error); 
+        Alert.alert(adat.error);
       } else {
-        setAdatok(adat);
-        console.log(adat);
         if (adat.felhasznalo_id !== 0) {
-          console.log(adat);
+          await AsyncStorage.setItem('userToken', JSON.stringify(adat));
           if (adat.felhasznalo_tipus === 1) {
-            Alert.alert("Üdvözöllek kedves oktató!");
-            navigation.replace("Oktato_BejelentkezesUtan", { atkuld: adat.felhasznalo_id });
+            Alert.alert('Üdvözöllek kedves oktató!');
+            navigation.replace('Oktato_BejelentkezesUtan2');
           } else {
-            Alert.alert("Üdvözöllek kedves tanuló!");
-            navigation.replace("Tanulo_BejelentkezesUtan", { atkuld: adat.felhasznalo_id });
+            Alert.alert('Üdvözöllek kedves tanuló!');
+            navigation.replace('Tanulo_BejelentkezesUtan');
           }
         } else {
-          Alert.alert("Hibás email cím vagy jelszó!");
+          Alert.alert('Hibás email cím vagy jelszó!');
         }
       }
     } catch (error) {
-      console.error("Bejelentkezési hiba:", error);
-      alert("Hiba történt a bejelentkezés során!");
+      console.error('Bejelentkezési hiba:', error);
+      Alert.alert('Hiba történt a bejelentkezés során!');
     }
   };
 
@@ -54,7 +63,7 @@ export default function LoginScreen({ navigation }) {
           style={Styles.input}
           placeholder="Email"
           value={felhasznalo_email}
-          onChangeText={setEmail}
+          onChangeText={setFelhasznaloEmail}
         />
       </View>
 
@@ -65,7 +74,7 @@ export default function LoginScreen({ navigation }) {
           placeholder="Jelszó"
           secureTextEntry={!jelszoMutatasa}
           value={felhasznalo_jelszo}
-          onChangeText={setJelszo}
+          onChangeText={setFelhasznaloJelszo}
         />
         <TouchableOpacity onPress={() => setJelszoMutatasa(!jelszoMutatasa)}>
           <Ionicons
@@ -96,7 +105,10 @@ export default function LoginScreen({ navigation }) {
           rippleCentered={true}
           rippleFades={false}
           rippleContainerBorderRadius={20}
-          style={[Styles.bejelentkezes_Gomb, Styles.bejelentkezes_regisztaciosGomb]}
+          style={[
+            Styles.bejelentkezes_Gomb,
+            Styles.bejelentkezes_regisztaciosGomb,
+          ]}
           onPress={() => navigation.replace("Regisztracio")}
         >
           <Text style={Styles.bejelentkezes_regiGombSzoveg}>Regisztálj!</Text>
@@ -106,38 +118,39 @@ export default function LoginScreen({ navigation }) {
   );
 }
 const styles = StyleSheet.create({
-    inputWrapper: {
-      flexDirection: "row",
-      alignItems: "center",
-      backgroundColor: "#f7f7f7",
-      borderWidth: 1,
-      borderColor: "#ccc",
-      borderRadius: 8,
-      paddingHorizontal: 10,
-      width: "100%",
-      height: 50,
-      marginBottom: 15,
-    },
-    signupButton: {
-      backgroundColor: "#020202",
-      paddingVertical: 12,
-      paddingHorizontal: 30,
-      borderRadius: 8,
-      width: "100%",
-      alignItems: "center",
-      marginTop: 20,
-    },
-    signupButtonText: {
-      color: "#fff",
-      fontWeight: "bold",
-      fontSize: 16,
-    },
-    bottomText: {
-      color: "#888",
-      fontSize: 14,
-    },
-    linkText: {
-      color: "#FF6C00",
-      fontWeight: "bold",
-    },
+  inputWrapper: {
+    flexDirection: "row",
+    alignItems: "center",
+    backgroundColor: "#f7f7f7",
+    borderWidth: 1,
+    borderColor: "#ccc",
+    borderRadius: 8,
+    paddingHorizontal: 10,
+    width: "100%",
+    height: 50,
+    marginBottom: 15,
+  },
+  signupButton: {
+    backgroundColor: "#020202",
+    paddingVertical: 12,
+    paddingHorizontal: 30,
+    borderRadius: 8,
+    width: "100%",
+    alignItems: "center",
+    marginTop: 20,
+  },
+  signupButtonText: {
+    color: "#fff",
+    fontWeight: "bold",
+    fontSize: 16,
+  },
+  bottomText: {
+    color: "#888",
+    fontSize: 14,
+  },
+  linkText: {
+    color: "#FF6C00",
+    fontWeight: "bold",
+  },
 });
+export default LoginScreen;

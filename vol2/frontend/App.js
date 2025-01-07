@@ -4,6 +4,10 @@ import { createStackNavigator } from "@react-navigation/stack";
 import LoginScreen from "./screens/Log/Login";
 import Regisztracio from "./screens/Log/Regisztracio";
 
+//teszt
+import Oktato_BejelentkezesUtan2 from "./screens/oktato/Oktato_BejelentkezesUtan2";
+
+//tanuloi profilok
 import Tanulo_BejelentkezesUtan from "./screens/tanulo/Tanulo_BejelentkezesUtan";
 import Tanulo_Kezdolap from "./screens/tanulo/Tanulo_Kezdolap";
 import Tanulo_Datumok from "./screens/tanulo/Tanulo_Datumok";
@@ -76,7 +80,7 @@ export default function App() {
         <Stack.Screen name="Bejelentkezes"  component={LoginScreen} />
         <Stack.Screen name="Regisztracio" component={Regisztracio}/>
         <Stack.Screen name="Tanulo_BejelentkezesUtan" component={Tanulo_BejelentkezesUtan}/>
-        <Stack.Screen name="Oktato_BejelentkezesUtan" component={Oktato_BejelentkezesUtan}/>
+        <Stack.Screen name="Oktato_BejelentkezesUtan2" component={Oktato_BejelentkezesUtan2}/>
         <Stack.Screen name="Tanuló menük" component={TanuloMenusStack}/>
         <Stack.Screen name="Tanuló Profil" component={TanuloProfilStack}/>
         <Stack.Screen name="Oktató menük" component={OktatoMenuStack}/>

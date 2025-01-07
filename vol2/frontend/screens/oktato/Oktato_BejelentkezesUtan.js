@@ -1,16 +1,21 @@
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
+import Oktato_Kifizetesek from "./Oktato_Kifizetesek";
 import Oktato_Kezdolap from "./Oktato_Kezdolap";
 import Oktato_Datumok from "./Oktato_Datumok";
 import Oktato_Profil from "./Oktato_Profil";
-import Oktato_Kifizetesek from "./Oktato_Kifizetesek";
 import Oktato_Diakok from "./Oktato_Diakok";
 
 import Ionicons from "react-native-vector-icons/Ionicons";
+import { Text, View, Button } from 'react-native';
+import { useState,useEffect } from "react";
+import Styles from "../../Styles";
+import Ipcim from "../../Ipcim";
 
 const Tab = createBottomTabNavigator();
 
-export default function Oktato_BejelentkezesUtan({ route}) {
+const Oktato_BejelentkezesUtan = ({ navigation, route }) => {
   const { atkuld } = route.params;
   //const { navigation } = route.params;
     return(
@@ -56,3 +61,4 @@ export default function Oktato_BejelentkezesUtan({ route}) {
       </Tab.Navigator>
     );
   }
+export default Oktato_BejelentkezesUtan;

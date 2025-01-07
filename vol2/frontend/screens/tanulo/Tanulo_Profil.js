@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React from "react";
 import {
   View,
   Text,
@@ -13,13 +13,8 @@ import Ionicons from "react-native-vector-icons/Ionicons";
 import Ipcim from "../../Ipcim";
 import { useNavigation } from "@react-navigation/native";
 
-export default function Tanulo_Profil({ atkuld }) {
+const Tanulo_Profil = ({atkuld}) => {
   const navigation = useNavigation();
-  const [adatok, setAdatok] = useState([]);
-  const [felhasznalonev, setFelhasznalonev] = useState("");
-
-  console.log("\n\t\t\tmost itt vagyok: tanuló profil oldal");
-  console.log(atkuld);
 
   return (
     <View style={styles.default}>
@@ -28,8 +23,8 @@ export default function Tanulo_Profil({ atkuld }) {
       </View>
 
       <View>
-        <Text style={Styles.focim}>{atkuld[0].tanulo_neve}</Text>
-        <Text style={Styles.alcim}>{atkuld[0].felhasznalo_email}</Text>
+        <Text style={Styles.focim}>{atkuld.tanulo_neve}</Text>
+        <Text style={Styles.alcim}>{atkuld.felhasznalo_email}</Text>
       </View>
 
       <View style={Styles.profil_gombDiv}>
@@ -181,6 +176,6 @@ const styles = StyleSheet.create({
   harmadikFlex: {
     flex: 0,
     marginRight: 0,
-    backgroundColor: "yellow",
   },
 });
+export default Tanulo_Profil;

@@ -1,5 +1,5 @@
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
-import { Text, View } from 'react-native';
+import { Text, View, Button } from 'react-native';
 import Tanulo_Kezdolap from "./Tanulo_Kezdolap";
 import Tanulo_Profil from "./Tanulo_Profil";
 import Tanulo_Datumok from "./Tanulo_Datumok";
@@ -12,45 +12,44 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const Tab = createBottomTabNavigator();
 
-export default function Tanulo_BejelentkezesUtan({navigation, route}) {
-  const { atkuld } = route.params;
-  console.log("Fogadott adat: ", atkuld); //kapott id
-
-
-
-  const [adatok, setAdatok] = useState([]);
+const Tanulo_BejelentkezesUtan = ({ navigation, route }) => {
+  const [storedData, setAdatok] = useState(null);
   const [betolt, setBetolt] = useState(true);
   const [hiba, setHiba] = useState(null);
-  
+
   const sajatAdatokBetoltese = async () => {
     try {
-      setBetolt(true);
-      var adatok = {
-        "felhasznaloID": atkuld,
-      };
-      const x = await fetch(Ipcim.Ipcim + "/sajatAdatokT", {
-        method: "POST",
-        body: JSON.stringify(adatok),
-        headers: { "Content-type": "application/json; charset=UTF-8" },
-      });
-  
-      if (!x.ok) {
-        throw new Error('Hiba történt az adatok betöltése közben');
+      const storedData = await AsyncStorage.getItem('userToken'); 
+      if (storedData) {
+        const user = JSON.parse(storedData); // Itt átalakítom át JavaScript objektummá !!!
+        const response = await fetch(Ipcim.Ipcim + "/sajatAdatokT", {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ felhasznaloID: user.felhasznalo_id }), // Itt használod a 'user' objektumot
+        });
+
+        if (!response.ok) {
+          throw new Error('Hiba történt az adatok betöltésekor.');
+        }
+
+        const data = await response.json();
+        setAdatok(data[0]);
       }
-      const data = await x.json();
-      setAdatok(data);
-      setBetolt(false);
     } catch (err) {
       setHiba(err.message);
+    } finally {
       setBetolt(false);
     }
   };
   
   useEffect(() => {
-    if (atkuld) {
-      sajatAdatokBetoltese();
-    }
-  }, [atkuld]);
+    sajatAdatokBetoltese();
+  }, []);
+
+  const handleLogout = async () => {
+    await AsyncStorage.removeItem('userToken');
+    navigation.navigate('LoginScreen');
+  };
   
   //AMIKOR MÉG TÖLTŐDNEK AZ ADATOK, AKKOR EZ A SCREEN FOG MEGJELENNI --> ide mehetne pl valami loading image vagy animáció! :)
   if (betolt) {
@@ -92,23 +91,25 @@ export default function Tanulo_BejelentkezesUtan({navigation, route}) {
         <Tab.Screen
             name="Tanulo_Kezdolap"
             options={{ title: "Kezdőlap" }}
-            children={() => <Tanulo_Kezdolap atkuld={adatok} />}/>
+            children={() => <Tanulo_Kezdolap atkuld={storedData} />}/>
         
         <Tab.Screen 
         name="Tanulo_Datumok" 
         options={{title:"Óráim"}} 
-        children={() => <Tanulo_Datumok atkuld={adatok} />}/>
+        children={() => <Tanulo_Datumok atkuld={storedData} />}/>
         
         <Tab.Screen 
             name="Tanulo_Befizetesek" 
             options={{title:"Befizetéseim"}} 
-            children={() => <Tanulo_Befizetesek atkuld={adatok} />}/>
+            children={() => <Tanulo_Befizetesek atkuld={storedData} />}/>
         
         <Tab.Screen 
             name="Tanulo_Profil" 
             options={{title:"Profil"}} 
-            children={() => <Tanulo_Profil atkuld={adatok} />}/>
+            children={() => <Tanulo_Profil atkuld={storedData} />}/>
 
       </Tab.Navigator>
     );
   }
+
+  export default Tanulo_BejelentkezesUtan;
