@@ -13,6 +13,11 @@ const Oktato_Profil = ({atkuld}) => {
   console.log(atkuld)
   const navigation = useNavigation();
 
+  const kijelentkeztetes = async () => {
+    await AsyncStorage.removeItem('bejelentkezve');
+    navigation.navigate('Bejelentkezes');
+  };
+
   return (
     <View style={styles.default}>
       <View>
@@ -142,7 +147,7 @@ const Oktato_Profil = ({atkuld}) => {
           rippleFades={false}
           rippleContainerBorderRadius={20}
           style={[Styles.profileGombok, Styles.profil_gombDiv]}
-          onPress={() => navigation.navigate("Bejelentkezes")}
+          onPress={kijelentkeztetes}
         >
           <View style={styles.elsoFlex}>
             <Ionicons name="log-out-outline" size={25} color="red" />

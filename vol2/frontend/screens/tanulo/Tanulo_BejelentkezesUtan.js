@@ -13,19 +13,19 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 const Tab = createBottomTabNavigator();
 
 const Tanulo_BejelentkezesUtan = ({ navigation, route }) => {
-  const [storedData, setAdatok] = useState(null);
+  const [adatok, setAdatok] = useState(null);
   const [betolt, setBetolt] = useState(true);
   const [hiba, setHiba] = useState(null);
 
   const sajatAdatokBetoltese = async () => {
     try {
-      const storedData = await AsyncStorage.getItem('userToken'); 
-      if (storedData) {
-        const user = JSON.parse(storedData); // Itt átalakítom át JavaScript objektummá !!!
+      const adatok = await AsyncStorage.getItem('bejelentkezve'); 
+      if (adatok) {
+        const user = JSON.parse(adatok); // Itt alakítom át JavaScript objektummá !!!
         const response = await fetch(Ipcim.Ipcim + "/sajatAdatokT", {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ felhasznaloID: user.felhasznalo_id }), // Itt használod a 'user' objektumot
+          body: JSON.stringify({ felhasznaloID: user.felhasznalo_id }), // 'user' objektumot
         });
 
         if (!response.ok) {
@@ -46,10 +46,7 @@ const Tanulo_BejelentkezesUtan = ({ navigation, route }) => {
     sajatAdatokBetoltese();
   }, []);
 
-  const handleLogout = async () => {
-    await AsyncStorage.removeItem('userToken');
-    navigation.navigate('LoginScreen');
-  };
+  
   
   //AMIKOR MÉG TÖLTŐDNEK AZ ADATOK, AKKOR EZ A SCREEN FOG MEGJELENNI --> ide mehetne pl valami loading image vagy animáció! :)
   if (betolt) {
@@ -91,22 +88,22 @@ const Tanulo_BejelentkezesUtan = ({ navigation, route }) => {
         <Tab.Screen
             name="Tanulo_Kezdolap"
             options={{ title: "Kezdőlap" }}
-            children={() => <Tanulo_Kezdolap atkuld={storedData} />}/>
+            children={() => <Tanulo_Kezdolap atkuld={adatok} />}/>
         
         <Tab.Screen 
         name="Tanulo_Datumok" 
         options={{title:"Óráim"}} 
-        children={() => <Tanulo_Datumok atkuld={storedData} />}/>
+        children={() => <Tanulo_Datumok atkuld={adatok} />}/>
         
         <Tab.Screen 
             name="Tanulo_Befizetesek" 
             options={{title:"Befizetéseim"}} 
-            children={() => <Tanulo_Befizetesek atkuld={storedData} />}/>
+            children={() => <Tanulo_Befizetesek atkuld={adatok} />}/>
         
         <Tab.Screen 
             name="Tanulo_Profil" 
             options={{title:"Profil"}} 
-            children={() => <Tanulo_Profil atkuld={storedData} />}/>
+            children={() => <Tanulo_Profil atkuld={adatok} />}/>
 
       </Tab.Navigator>
     );
