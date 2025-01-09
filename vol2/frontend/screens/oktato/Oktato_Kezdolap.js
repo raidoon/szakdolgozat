@@ -32,7 +32,7 @@ export default function Oktato_Kezdolap({atkuld}){
         <View style={Oktato_Styles.reszletek_container}>
             <View>
             <Text>Sikeres bejelentkezés! </Text>
-            <Text>{atkuld ? `Felhasználó ID: ${atkuld}` : "Nincs adat"}</Text>
+            <Text>{atkuld ? `Felhasználó ID: ${atkuld.oktato_felhasznaloID}` : "Nincs adat"}</Text>
             <Text>hello</Text>
             
 

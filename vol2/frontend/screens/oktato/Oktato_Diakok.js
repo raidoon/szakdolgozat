@@ -3,6 +3,7 @@ import { View, Text, Button, FlatList, TouchableOpacity } from "react-native";
 import { useNavigation } from '@react-navigation/native';
 import Styles from "../../Styles";
 import Oktato_Styles from "../../Oktato_Styles";
+import Ipcim from "../../Ipcim";
 
 
 export default function Oktato_Diakok({atkuld}){
@@ -10,17 +11,19 @@ export default function Oktato_Diakok({atkuld}){
     const navigation = useNavigation();
     const letoltes=async ()=>{
         //alert("hello")
+        //alert(atkuld.oktato_id)
  var adatok={
-    "oktatoid":atkuld
+    "oktatoid":atkuld.oktato_id
  }
-        const x=await fetch("http://192.168.10.58:3000/egyOktatoDiakjai",{
+        const x=await fetch(Ipcim.Ipcim +"/egyOktatoDiakjai",{
             method: "POST",
             body: JSON.stringify(adatok),
             headers: {"Content-type": "application/json; charset=UTF-8"}
         })
         const y=await x.json()
         setAdatok(y)
-        //alert(JSON.stringify(y))
+        alert(JSON.stringify(y))
+        console.log(y)
     }
   
     useEffect(()=>{
@@ -43,9 +46,11 @@ export default function Oktato_Diakok({atkuld}){
             <Text>hello</Text>
             <FlatList
         data={adatok}
+        
         renderItem={({item}) => (
             <View >
                 <Text>{item.tanulo_neve}</Text>
+                <Text>{item.tanulo_id}</Text>
     {/* 
                 <Image 
                 source={{uri: "http://10.0.0.162:3000/"+item.film_kep}} 

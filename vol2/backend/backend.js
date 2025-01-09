@@ -216,7 +216,7 @@ app.post("/egyOktatoDiakjai", (req, res) => {
     FROM tanulo_adatok AS tanulo
     INNER JOIN oktato_adatok AS oktato
     ON tanulo.tanulo_oktatoja = oktato.oktato_id
-    WHERE oktato.oktatoid=?`,
+    WHERE oktato.oktato_id=?`,
     [req.body.oktatoid],
     (err, rows, fields) => {
       if (err) {
