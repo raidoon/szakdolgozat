@@ -74,9 +74,7 @@ function TanuloProfilStack() {
 export default function App() {
   return (
     <NavigationContainer>
-      <Stack.Navigator initialRouteName="Bejelentkezes" screenOptions={{
-            headerShown: false,
-  }}>
+      <Stack.Navigator initialRouteName="Bejelentkezes" screenOptions={{headerShown: false,}}>
         <Stack.Screen name="Bejelentkezes"  component={LoginScreen} />
         <Stack.Screen name="Regisztracio" component={Regisztracio}/>
         <Stack.Screen name="Tanulo_BejelentkezesUtan" component={Tanulo_BejelentkezesUtan}/>

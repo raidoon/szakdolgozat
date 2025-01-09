@@ -205,24 +205,7 @@ app.post("/sajatAdatokO", (req, res) => {
   );
   connection.end();
 });
-//------------------------------------------------ TANULÓI BEFIZETÉSEK LEKÉRDEZÉSE
-app.post("/tanuloBefizetesei", (req, res) => {
-  kapcsolat();
-  connection.query(
-    `SELECT felhasznaloi_adatok.felhasznalo_id, tanulo_adatok.tanulo_id, befizetesek_id,befizetesek_tanuloID,befizetesek_oktatoID,befizetesek_tipusID,befizetesek_ideje,befizetesek_jovahagyva, SUM(befizetesek.befizetesek_osszeg) as 'osszesBefizetes' FROM befizetesek INNER JOIN tanulo_adatok ON befizetesek.befizetesek_tanuloID=tanulo_adatok.tanulo_id INNER JOIN felhasznaloi_adatok ON tanulo_adatok.tanulo_felhasznaloID=felhasznaloi_adatok.felhasznalo_id WHERE felhasznalo_id = ?`,
-    [req.body.felhasznalo_id],
-    (err, rows, fields) => {
-      if (err) {
-        console.log(err);
-        res.status(500).send("Hiba");
-      } else {
-        console.log(rows);
-        res.status(200).send(rows);
-      }
-    }
-  );
-  connection.end();
-});
+//------------------------------------------------ TANULÓ BEFIZETÉSINEK TELJES ÖSSZEGE
 app.post("/tanuloSUMbefizetes", (req, res) => {
   kapcsolat();
   connection.query(
@@ -240,8 +223,24 @@ app.post("/tanuloSUMbefizetes", (req, res) => {
   );
   connection.end();
 });
-
-
+//------------------------------------------------ TANULÓ BEFIZETÉSEINEK LISTÁJA
+app.post("/befizetesListaT", (req, res) => {
+  kapcsolat();
+  connection.query(
+    `SELECT befizetesek.befizetesek_id, befizetesek.befizetesek_osszeg, befizetesek.befizetesek_ideje, befizetesek_tipusID FROM befizetesek INNER JOIN tanulo_adatok ON befizetesek.befizetesek_tanuloID=tanulo_adatok.tanulo_id INNER JOIN felhasznaloi_adatok ON tanulo_adatok.tanulo_felhasznaloID=felhasznaloi_adatok.felhasznalo_id WHERE felhasznalo_id = ?`,
+    [req.body.felhasznalo_id],
+    (err, rows, fields) => {
+      if (err) {
+        console.log(err);
+        res.status(500).send("Hiba");
+      } else {
+        console.log(rows);
+        res.status(200).send(rows);
+      }
+    }
+  );
+  connection.end();
+});
 //------------------------------------------------ lekérdezések vége
 //------------------------adott oktatóhoz tartozó tanulók neveinek megjelenítése post bevitel1
 app.post("/egyOktatoDiakjai", (req, res) => {

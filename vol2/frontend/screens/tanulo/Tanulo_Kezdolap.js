@@ -1,51 +1,114 @@
-import React, { useState, useEffect } from "react";
 import { View, Text, StyleSheet, ScrollView } from "react-native";
+import React, { useState, useEffect } from "react";
+import Styles from "../../Styles";
 import Ipcim from "../../Ipcim";
+import LinearGradient from 'react-native-linear-gradient';
 
 const Tanulo_Kezdolap = ({ atkuld }) => {
   console.log("Atküldött adat a bejelentkezés után: ", atkuld);
-  const [adatok,setAdatok]=useState([])
-  const letoltes = async () => {
-    const adat={
-      "felhasznalo_id": atkuld.felhasznalo_id,
+  const [sumBefizetes,setSumBefizetes]=useState([]);
+  const [befizetLista,setBefizetLista]=useState([]);
+  const [betolt,setBetolt] = useState(true);
+  const [hiba,setHiba] = useState(null);
+
+  const adatokBetoltese = async () => {
+    try{
+        const adat={
+          "felhasznalo_id": atkuld.felhasznalo_id,
+        };
+        if(adat){
+          const osszeg=await fetch(Ipcim.Ipcim + "/tanuloSUMbefizetes", {
+            method: "POST",
+            body: JSON.stringify(adat),
+            headers: {"Content-type": "application/json; charset=UTF-8"},
+          });
+          //-----------
+          const befizetesek=await fetch(Ipcim.Ipcim + "/befizetesListaT", {
+            method: "POST",
+            body: JSON.stringify(adat),
+            headers: {"Content-type": "application/json; charset=UTF-8"},
+          });
+          //-----------
+          if(!osszeg.ok || !befizetesek.ok){
+            throw new Error('Hiba történt a fizetések betöltésekor!');
+          }
+          const osszegResponse = await osszeg.json();
+          const befizetesekResponse = await befizetesek.json();
+
+          setSumBefizetes(osszegResponse)
+          setBefizetLista(befizetesekResponse)
+
+          console.log("sumbefizetés összege: ", sumBefizetes)
+          console.log("befizetések eddig: ", befizetLista)
+        }
+      } catch(err){
+        setHiba(err.message);
+      } finally{
+        setBetolt(false);
+      }
     };
-    const x=await fetch(Ipcim.Ipcim + "/tanuloSUMbefizetes", {
-        method: "POST",
-        body: JSON.stringify(adat),
-        headers: {"Content-type": "application/json; charset=UTF-8"},
-    });
-    const y=await x.json();
-    setAdatok(y)
-  }
   useEffect(()=>{
-    letoltes();
+    adatokBetoltese();
   },[]);
 
+  if(betolt){
+    return(
+      <View style={Styles.bejelentkezes_Container}>
+        <Text>Adatok betöltése folyamatban...</Text>
+      </View>
+    )
+  }
+  if(hiba){
+    return(
+      <View style={Styles.bejelentkezes_Container}>
+        <Text>Hiba: {hiba}</Text>
+      </View>
+    )
+  }
   return (
     <ScrollView style={styles.egeszOldal}>
       <View style={styles.udvozloView}>
-        <Text style={styles.udvozloSzoveg}>Üdvözlünk</Text>
+        <Text style={styles.udvozloSzoveg}>Üdvözöljük!</Text>
         <Text style={styles.userNev}>{atkuld.tanulo_neve}</Text>
       </View>
       <View style={styles.befizetesContainer}>
         <Text style={styles.befizetesTitle}>Eddigi befizetések</Text>
-        <Text style={styles.befizetesOsszeg}>{adatok[0].osszesBefizetes} Ft</Text>
+        <Text style={styles.befizetesOsszeg}> {sumBefizetes[0].osszesBefizetes} Ft</Text>
       </View>
+      <View style={styles.oraContainer}>
+        <Text style={styles.oraTitle}>Következő óra időpontja:</Text>
+        <Text style={styles.oraOsszeg}>2025.03.15 18.00</Text>
+      </View>
+
       <View style={styles.tranzakcioContainer}>
         <Text style={styles.tranzakcioTitle}>Legutóbbi Tranzakciók</Text>
-       
-        <View style={styles.legutobbiTranzakciok}>
-          <Text style={styles.tranzakciosText}>Vizsga díj</Text>
-          <Text style={styles.tranzakciosOsszeg}>-25.0000 Ft</Text>
-        </View>
-        <View style={styles.legutobbiTranzakciok}>
-          <Text style={styles.tranzakciosText}>Órai befizetés</Text>
-          <Text style={styles.tranzakciosOsszeg}>-22.000 Ft</Text>
-        </View>
+        
+        {
+          befizetLista
+          .sort((a,b) => new Date(b.befizetesek_ideje) - new Date(a.befizetesek_ideje)) //dátum szerint csökkenő sorrendbe tesszük a lista elemeit
+          .slice(0,3) //csak az utolsó 3 befizetést akarom kiíratni, a többi majd a "Befizetéseim" fülön lesz
+          .map(item => {
+            if(item.befizetesek_tipusID==1){
+              return(
+                <View style={styles.legutobbiTranzakciok} key={item.befizetesek_id}>
+                  <Text style={styles.tranzakciosText}>Tanóra díj</Text>
+                  <Text style={styles.tranzakciosOsszeg}> - {item.befizetesek_osszeg} Ft</Text>
+                </View>
+              )
+            }
+            return(
+              <View style={styles.legutobbiTranzakciok} key={item.befizetesek_id}>
+                  <Text style={styles.tranzakciosText}>Vizsga díj</Text>
+                  <Text style={styles.tranzakciosOsszeg}> - {item.befizetesek_osszeg} Ft</Text>
+              </View>
+            )      
+          })
+        }
+        
       </View>
     </ScrollView>
   );
-};
+}
 export default Tanulo_Kezdolap;
 
 const styles = StyleSheet.create({
@@ -59,6 +122,7 @@ const styles = StyleSheet.create({
     borderBottomLeftRadius: 20,
     borderBottomRightRadius: 20,
     alignItems: "left",
+    marginTop: 45
   },
   udvozloSzoveg: {
     fontSize: 18,
@@ -72,10 +136,11 @@ const styles = StyleSheet.create({
   },
   befizetesContainer: {
     margin: 20,
-    backgroundColor: "#8338ec", //"#5A4FCF", //#6c5ce7
+    backgroundColor: "#5A4FCF", //"#8338ec", //"#5A4FCF", //#6c5ce7
     padding: 15,
     borderRadius: 15,
     alignItems: "center",
+    elevation: 3,
   },
   befizetesTitle: {
     fontSize: 16,
@@ -86,6 +151,22 @@ const styles = StyleSheet.create({
     fontWeight: "bold",
     color:'#fff',
     marginTop: 5,
+  },
+  oraContainer: {
+    margin: 20,
+    backgroundColor: "#ccccff", //"#C49991", //"#5E7CE2", //"#A06CD5", 
+    padding: 15,
+    borderRadius: 15,
+    alignItems: "center",
+    elevation: 3,
+  },
+  oraTitle: {
+    fontSize: 16,
+    color: 'black'
+  },
+  oraOsszeg: {
+    fontSize: 24,
+    color: '#32174d'
   },
   tranzakcioContainer: {
     margin: 20

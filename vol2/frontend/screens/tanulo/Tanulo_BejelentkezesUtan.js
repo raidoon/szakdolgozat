@@ -81,13 +81,13 @@ const Tanulo_BejelentkezesUtan = ({ navigation, route }) => {
             }
             return <Ionicons name={iconName} size={size} color={color} />;
           },
-          tabBarActiveTintColor: "tomato",
+          tabBarActiveTintColor: "#5a4fcf",
           tabBarInactiveTintColor: "gray",
         })}
       >
         <Tab.Screen
             name="Tanulo_Kezdolap"
-            options={{ title: "Kezdőlap" }}
+            options={{ headerShown: false, title: 'Kezdőlap'}}
             children={() => <Tanulo_Kezdolap atkuld={adatok} />}/>
         
         <Tab.Screen 
