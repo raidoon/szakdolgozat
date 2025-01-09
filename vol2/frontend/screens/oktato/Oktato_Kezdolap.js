@@ -9,6 +9,7 @@ export default function Oktato_Kezdolap({atkuld}){
     const navigation = useNavigation();
     const letoltes=async ()=>{
         //alert("hello")
+        alert(atkuld.oktato_felhasznaloID)
  var adatok={
     "oktatoid":atkuld
  }
