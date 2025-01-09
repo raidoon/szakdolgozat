@@ -1,86 +1,101 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import { View, Text, StyleSheet, ScrollView } from "react-native";
+import Ipcim from "../../Ipcim";
 
 const Tanulo_Kezdolap = ({ atkuld }) => {
-  console.log("Atküldött adat a Kezdőlapon: ", atkuld);
-
+  console.log("Atküldött adat a bejelentkezés után: ", atkuld);
+  const [adatok,setAdatok]=useState([])
+  const letoltes = async () => {
+    const adat={
+      "felhasznalo_id": atkuld.felhasznalo_id,
+    };
+    const x=await fetch(Ipcim.Ipcim + "/tanuloSUMbefizetes", {
+        method: "POST",
+        body: JSON.stringify(adat),
+        headers: {"Content-type": "application/json; charset=UTF-8"},
+    });
+    const y=await x.json();
+    setAdatok(y)
+  }
+  useEffect(()=>{
+    letoltes();
+  },[]);
 
   return (
-    <ScrollView style={styles.container}>
-      <View style={styles.header}>
-        <Text style={styles.welcomeText}>Üdvözlünk</Text>
-        <Text style={styles.nameText}>{atkuld.tanulo_neve}</Text>
+    <ScrollView style={styles.egeszOldal}>
+      <View style={styles.udvozloView}>
+        <Text style={styles.udvozloSzoveg}>Üdvözlünk</Text>
+        <Text style={styles.userNev}>{atkuld.tanulo_neve}</Text>
       </View>
-      <View style={styles.balanceContainer}>
-        <Text style={styles.balanceTitle}>Eddigi befizetések</Text>
-        <Text style={styles.balanceAmount}>47.000 Ft</Text>
+      <View style={styles.befizetesContainer}>
+        <Text style={styles.befizetesTitle}>Eddigi befizetések</Text>
+        <Text style={styles.befizetesOsszeg}>{adatok[0].osszesBefizetes} Ft</Text>
       </View>
-      <View style={styles.paymentsContainer}>
-        <Text style={styles.paymentsTitle}>Legutóbbi Tranzakciók</Text>
+      <View style={styles.tranzakcioContainer}>
+        <Text style={styles.tranzakcioTitle}>Legutóbbi Tranzakciók</Text>
        
-        <View style={styles.paymentRow}>
-          <Text style={styles.paymentText}>Vizsga díj</Text>
-          <Text style={styles.paymentAmount}>-25.0000 Ft</Text>
+        <View style={styles.legutobbiTranzakciok}>
+          <Text style={styles.tranzakciosText}>Vizsga díj</Text>
+          <Text style={styles.tranzakciosOsszeg}>-25.0000 Ft</Text>
         </View>
-        <View style={styles.paymentRow}>
-          <Text style={styles.paymentText}>Órai befizetés</Text>
-          <Text style={styles.paymentAmount}>-22.000 Ft</Text>
+        <View style={styles.legutobbiTranzakciok}>
+          <Text style={styles.tranzakciosText}>Órai befizetés</Text>
+          <Text style={styles.tranzakciosOsszeg}>-22.000 Ft</Text>
         </View>
       </View>
     </ScrollView>
   );
 };
-
 export default Tanulo_Kezdolap;
 
 const styles = StyleSheet.create({
-  container: {
+  egeszOldal: {
     flex: 1,
     backgroundColor: "#f5f5f5",
   },
-  header: {
-    backgroundColor: "#dfe6e9",
+  udvozloView: {
+    backgroundColor: "#dfe6e9", //#dfe6e9
     padding: 20,
     borderBottomLeftRadius: 20,
     borderBottomRightRadius: 20,
     alignItems: "left",
   },
-  welcomeText: {
+  udvozloSzoveg: {
     fontSize: 18,
-    color: "#636e72",
+    color: "#636e72", 
     fontWeight: "bold",
   },
-  nameText: {
+  userNev: {
     fontSize: 22,
     color: "#2d3436",
     fontWeight: "bold",
   },
-  balanceContainer: {
+  befizetesContainer: {
     margin: 20,
-    backgroundColor: "#6c5ce7",
+    backgroundColor: "#8338ec", //"#5A4FCF", //#6c5ce7
     padding: 15,
     borderRadius: 15,
     alignItems: "center",
   },
-  balanceTitle: {
+  befizetesTitle: {
     fontSize: 16,
     color: '#fff',
   },
-  balanceAmount: {
+  befizetesOsszeg: {
     fontSize: 24,
     fontWeight: "bold",
     color:'#fff',
     marginTop: 5,
   },
-  paymentsContainer: {
+  tranzakcioContainer: {
     margin: 20
   },
-  paymentsTitle: {
+  tranzakcioTitle: {
     fontSize: 18,
     fontWeight: "bold",
     marginBottom: 10,
   },
-  paymentRow: {
+  legutobbiTranzakciok: {
     flexDirection: "row",
     justifyContent: "space-between",
     backgroundColor: "#fff",
@@ -93,11 +108,11 @@ const styles = StyleSheet.create({
     shadowRadius: 3,
     shadowOffset: { width: 0, height: 1 },
   },
-  paymentText: {
+  tranzakciosText: {
     fontSize: 16,
     color: "#2d3436",
   },
-  paymentAmount: {
+  tranzakciosOsszeg: {
     fontSize: 16,
     fontWeight: "bold",
     color: "#d63031",
