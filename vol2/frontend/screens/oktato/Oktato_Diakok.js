@@ -9,21 +9,27 @@ import Ipcim from "../../Ipcim";
 export default function Oktato_Diakok({atkuld}){
     const [adatok,setAdatok]=useState([])
     const navigation = useNavigation();
+    console.log(atkuld)
     const letoltes=async ()=>{
         //alert("hello")
-        //alert(atkuld.oktato_id)
- var adatok={
-    "oktatoid":atkuld.oktato_id
- }
+       alert(atkuld.oktato_id)
+        var adat={
+            "oktatoid":atkuld.oktato_id
+        }
         const x=await fetch(Ipcim.Ipcim +"/egyOktatoDiakjai",{
             method: "POST",
-            body: JSON.stringify(adatok),
+            body: JSON.stringify(adat),
             headers: {"Content-type": "application/json; charset=UTF-8"}
         })
-        const y=await x.json()
+        
+        console.log(x)
+        const y=await x.json() 
+        
         setAdatok(y)
         alert(JSON.stringify(y))
         console.log(y)
+        
+
     }
   
     useEffect(()=>{
@@ -50,7 +56,7 @@ export default function Oktato_Diakok({atkuld}){
         renderItem={({item}) => (
             <View >
                 <Text>{item.tanulo_neve}</Text>
-                <Text>{item.tanulo_id}</Text>
+                
     {/* 
                 <Image 
                 source={{uri: "http://10.0.0.162:3000/"+item.film_kep}} 

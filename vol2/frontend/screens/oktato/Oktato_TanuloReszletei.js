@@ -1,5 +1,5 @@
 import {useEffect, useState} from "react";
-import { View, Text, Button } from "react-native";
+import { View, Text, Button,StyleSheet } from "react-native";
 import Styles from "../../Styles";
 import Ipcim from "../../Ipcim";
 
@@ -10,7 +10,7 @@ export default function Oktato_TanuloReszletei({route}){
     
         const letoltes=async ()=>{
         //alert("hello")
-            alert(tanulo.tanulo_felhasznaloID)
+            //alert(tanulo.tanulo_felhasznaloID)
             var adatok={
                 "felhasznaloID":tanulo.tanulo_felhasznaloID
             }
@@ -22,8 +22,8 @@ export default function Oktato_TanuloReszletei({route}){
                     const y=await x.json()
                     setAdatok(y)
                     setEmail(y[0].felhasznalo_email)
-                    alert(JSON.stringify(y))
-                    console.log(y)
+                    //alert(JSON.stringify(y))
+                    //console.log(y)
         
     }
   
@@ -32,12 +32,37 @@ export default function Oktato_TanuloReszletei({route}){
         
     },[])
     return(
-        <View style={Styles.bejelentkezes_Container}>
-            <View>
-            <Text>Részletek {tanulo.tanulo_neve} {tanulo.tanulo_felhasznaloID} {email}</Text>
-            <Text> {email}</Text>
+        <View style={stilus.elso}>
+            <View >
+            <Text style={stilus.szoveg}>Részletek</Text>
+            <Text>{tanulo.tanulo_neve}</Text>
+            <Text>{tanulo.tanulo_felhasznaloID}</Text>
+            <Text style={stilus.masodik}> {email}</Text>
           
             </View>
         </View>
     );
 }
+const stilus = StyleSheet.create({
+    elso:{
+    flex: 1,
+    backgroundColor: 'lightgreen',
+    alignItems:"center",
+    justifyContent:"center",
+    padding:20,
+    
+    
+},
+szoveg:{
+    fontSize:50,
+    fontStyle:"italic",
+    
+
+},
+masodik:{
+    justifyContent:"center",
+    fontSize:30,
+    
+}
+    
+})
