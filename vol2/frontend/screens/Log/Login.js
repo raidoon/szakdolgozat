@@ -3,7 +3,6 @@ import {
   View,
   Text,
   TextInput,
-  Button,
   Alert,
   TouchableOpacity,
   StyleSheet,
@@ -21,7 +20,25 @@ const LoginScreen = ({ navigation }) => {
 
   const [jelszoMutatasa, setJelszoMutatasa] = useState(false);
 
-  const handleLogin = async () => {
+  useEffect(() => {
+    //ide jöhetne adatok betöltése cuccli
+    const bejelentkezesEllenorzes = async () => {
+      const eltaroltFelhasznalo = await AsyncStorage.getItem('bejelentkezve');
+      if (eltaroltFelhasznalo) {
+        const bejelentkezettFelhasznalo = JSON.parse(eltaroltFelhasznalo);
+        if (bejelentkezettFelhasznalo.felhasznalo_id !== 0) {
+          if (bejelentkezettFelhasznalo.felhasznalo_tipus === 1) {
+            navigation.replace('Oktato_BejelentkezesUtan2');
+          } else {
+            navigation.replace('Tanulo_BejelentkezesUtan');
+          }
+        }
+      }
+    };
+    bejelentkezesEllenorzes();
+  }, []);
+
+  const bejelentkeztetes = async () => {
     const adatok = {
       felhasznalo_email,
       felhasznalo_jelszo,
@@ -37,7 +54,7 @@ const LoginScreen = ({ navigation }) => {
         Alert.alert(adat.error);
       } else {
         if (adat.felhasznalo_id !== 0) {
-          await AsyncStorage.setItem('userToken', JSON.stringify(adat));
+          await AsyncStorage.setItem('bejelentkezve', JSON.stringify(adat));
           if (adat.felhasznalo_tipus === 1) {
             Alert.alert('Üdvözöllek kedves oktató!');
             navigation.replace('Oktato_BejelentkezesUtan2');
@@ -92,7 +109,7 @@ const LoginScreen = ({ navigation }) => {
         rippleFades={false}
         rippleContainerBorderRadius={20}
         style={Styles.bejelentkezes_Gomb}
-        onPress={handleLogin}
+        onPress={bejelentkeztetes}
       >
         <Text style={Styles.bejelentkezes_bejelentkezoGomb}>Bejelentkezés</Text>
       </Ripple>

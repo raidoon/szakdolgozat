@@ -8,19 +8,25 @@ import Ripple from "react-native-material-ripple";
 import Styles from "../../Styles";
 import Ionicons from "react-native-vector-icons/Ionicons";
 import { useNavigation } from "@react-navigation/native";
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const Tanulo_Profil = ({atkuld}) => {
   const navigation = useNavigation();
 
+  const kijelentkeztetes = async () => {
+    await AsyncStorage.removeItem('bejelentkezve');
+    navigation.navigate('Bejelentkezes');
+  };
+
   return (
     <View style={styles.default}>
-      <View>
-        <Text styles={{ textAlign: "center" }}>felhasználó profilkép?</Text>
+      <View >
+        <Text style={{ textAlign: "center" }}>felhasználó profilkép?</Text>
       </View>
 
       <View>
-        <Text style={Styles.focim}>{atkuld.tanulo_neve}</Text>
-        <Text style={Styles.alcim}>{atkuld.felhasznalo_email}</Text>
+        <Text style={[Styles.focim,{textAlign:'center'}]}>{atkuld.tanulo_neve}</Text>
+        <Text style={[Styles.alcim,{textAlign:'center'}]}>{atkuld.felhasznalo_email}</Text>
       </View>
 
       <View style={Styles.profil_gombDiv}>
@@ -141,7 +147,7 @@ const Tanulo_Profil = ({atkuld}) => {
           rippleFades={false}
           rippleContainerBorderRadius={20}
           style={[Styles.profileGombok, Styles.profil_gombDiv]}
-          onPress={() => navigation.navigate("Bejelentkezes")}
+          onPress={kijelentkeztetes}
         >
           <View style={styles.elsoFlex}>
             <Ionicons name="log-out-outline" size={25} color="red" />
@@ -163,6 +169,8 @@ const styles = StyleSheet.create({
     flex: 1,
     flexDirection: "column",
     backgroundColor: "#fff",
+    alignItems: 'center',
+    textAlign: 'center'
   },
   elsoFlex: {
     flex: 0,
