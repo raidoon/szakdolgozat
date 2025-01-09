@@ -22,7 +22,7 @@ const Oktato_BejelentkezesUtan2 = ({ navigation, route }) => {
 
   const sajatAdatokBetoltese = async () => {
     try {
-      const storedData = await AsyncStorage.getItem('userToken');
+      const storedData = await AsyncStorage.getItem('bejelentkezve');
       if (storedData) {
         const user = JSON.parse(storedData);
         const response = await fetch(Ipcim.Ipcim + "/sajatAdatokO", {

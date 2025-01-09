@@ -21,7 +21,7 @@ const LoginScreen = ({ navigation }) => {
   const [jelszoMutatasa, setJelszoMutatasa] = useState(false);
 
   useEffect(() => {
-    //ide jöhetne adatok betöltése cuccli
+    //ide jöhetne adatok betöltése cuccli !!!
     const bejelentkezesEllenorzes = async () => {
       const eltaroltFelhasznalo = await AsyncStorage.getItem('bejelentkezve');
       if (eltaroltFelhasznalo) {

@@ -21,7 +21,7 @@ const Tanulo_BejelentkezesUtan = ({ navigation, route }) => {
     try {
       const adatok = await AsyncStorage.getItem('bejelentkezve'); 
       if (adatok) {
-        const user = JSON.parse(adatok); // Itt alakítom át JavaScript objektummá !!!
+        const user = JSON.parse(adatok);
         const response = await fetch(Ipcim.Ipcim + "/sajatAdatokT", {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
