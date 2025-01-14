@@ -1,114 +1,170 @@
-import { View, Text, StyleSheet, ScrollView } from "react-native";
+import {
+  View,
+  Text,
+  StyleSheet,
+  ScrollView,
+  TouchableOpacity,
+} from "react-native";
+import Ionicons from "react-native-vector-icons/Ionicons";
+import { useNavigation } from "@react-navigation/native";
+
 import React, { useState, useEffect } from "react";
 import Styles from "../../Styles";
 import Ipcim from "../../Ipcim";
-import LinearGradient from 'react-native-linear-gradient';
 
 const Tanulo_Kezdolap = ({ atkuld }) => {
+  const navigation = useNavigation();
   console.log("Atküldött adat a bejelentkezés után: ", atkuld);
-  const [sumBefizetes,setSumBefizetes]=useState([]);
-  const [befizetLista,setBefizetLista]=useState([]);
-  const [betolt,setBetolt] = useState(true);
-  const [hiba,setHiba] = useState(null);
+  const [sumBefizetes, setSumBefizetes] = useState([]);
+  const [befizetLista, setBefizetLista] = useState([]);
+  const [betolt, setBetolt] = useState(true);
+  const [hiba, setHiba] = useState(null);
 
   const adatokBetoltese = async () => {
-    try{
-        const adat={
-          "felhasznalo_id": atkuld.felhasznalo_id,
-        };
-        if(adat){
-          const osszeg=await fetch(Ipcim.Ipcim + "/tanuloSUMbefizetes", {
-            method: "POST",
-            body: JSON.stringify(adat),
-            headers: {"Content-type": "application/json; charset=UTF-8"},
-          });
-          //-----------
-          const befizetesek=await fetch(Ipcim.Ipcim + "/befizetesListaT", {
-            method: "POST",
-            body: JSON.stringify(adat),
-            headers: {"Content-type": "application/json; charset=UTF-8"},
-          });
-          //-----------
-          if(!osszeg.ok || !befizetesek.ok){
-            throw new Error('Hiba történt a fizetések betöltésekor!');
-          }
-          const osszegResponse = await osszeg.json();
-          const befizetesekResponse = await befizetesek.json();
-
-          setSumBefizetes(osszegResponse)
-          setBefizetLista(befizetesekResponse)
-
-          console.log("sumbefizetés összege: ", sumBefizetes)
-          console.log("befizetések eddig: ", befizetLista)
+    try {
+      const adat = {
+        felhasznalo_id: atkuld.felhasznalo_id,
+      };
+      if (adat) {
+        const osszeg = await fetch(Ipcim.Ipcim + "/tanuloSUMbefizetes", {
+          method: "POST",
+          body: JSON.stringify(adat),
+          headers: { "Content-type": "application/json; charset=UTF-8" },
+        });
+        //-----------
+        const befizetesek = await fetch(Ipcim.Ipcim + "/befizetesListaT", {
+          method: "POST",
+          body: JSON.stringify(adat),
+          headers: { "Content-type": "application/json; charset=UTF-8" },
+        });
+        //-----------
+        if (!osszeg.ok || !befizetesek.ok) {
+          throw new Error("Hiba történt a fizetések betöltésekor!");
         }
-      } catch(err){
-        setHiba(err.message);
-      } finally{
-        setBetolt(false);
-      }
-    };
-  useEffect(()=>{
-    adatokBetoltese();
-  },[]);
+        const osszegResponse = await osszeg.json();
+        const befizetesekResponse = await befizetesek.json();
 
-  if(betolt){
-    return(
+        setSumBefizetes(osszegResponse);
+        setBefizetLista(befizetesekResponse);
+
+        console.log("sumbefizetés összege: ", sumBefizetes);
+        console.log("befizetések eddig: ", befizetLista);
+      }
+    } catch (err) {
+      setHiba(err.message);
+    } finally {
+      setBetolt(false);
+    }
+  };
+  useEffect(() => {
+    adatokBetoltese();
+  }, []);
+
+  if (betolt) {
+    return (
       <View style={Styles.bejelentkezes_Container}>
         <Text>Adatok betöltése folyamatban...</Text>
       </View>
-    )
+    );
   }
-  if(hiba){
-    return(
+  if (hiba) {
+    return (
       <View style={Styles.bejelentkezes_Container}>
         <Text>Hiba: {hiba}</Text>
       </View>
-    )
+    );
   }
   return (
     <ScrollView style={styles.egeszOldal}>
+      {/* ---------------------------------------ÜDVÖZLÉS---------------------------------------- */}
       <View style={styles.udvozloView}>
         <Text style={styles.udvozloSzoveg}>Üdvözöljük!</Text>
         <Text style={styles.userNev}>{atkuld.tanulo_neve}</Text>
       </View>
-      <View style={styles.befizetesContainer}>
-        <Text style={styles.befizetesTitle}>Eddigi befizetések</Text>
-        <Text style={styles.befizetesOsszeg}> {sumBefizetes[0].osszesBefizetes} Ft</Text>
-      </View>
-      <View style={styles.oraContainer}>
+      {/* ----------------------------------BEFIZETÉSEK---------------------------------------- */}
+      <TouchableOpacity
+        style={styles.befizetesContainer}
+        onPress={() => navigation.navigate("Tanulo_Befizetesek")}
+      >
+        <View
+          style={{
+            flexDirection: "row",
+            alignItems: "center",
+            justifyContent: "space-between",
+            width: "100%",
+          }}
+        >
+          <View>
+            <Text style={styles.befizetesTitle}>Eddigi befizetések</Text>
+            <Text style={styles.befizetesOsszeg}>
+              {sumBefizetes[0].osszesBefizetes} Ft
+            </Text>
+          </View>
+          <Ionicons name="chevron-forward-outline" size={40} color="white"/>
+        </View>
+      </TouchableOpacity>
+      {/* --------------------------------------KÖVETKEZŐ ÓRA---------------------------------------- */}
+      <TouchableOpacity
+        style={styles.oraContainer}
+        onPress={() => navigation.navigate("Tanulo_Datumok")}
+      >
+        <View
+          style={{
+            flexDirection: "row",
+            alignItems: "center",
+            justifyContent: "space-between",
+            width: "100%",
+          }}
+        >
+          <View>
         <Text style={styles.oraTitle}>Következő óra időpontja:</Text>
         <Text style={styles.oraOsszeg}>2025.03.15 18.00</Text>
-      </View>
-
+        </View>
+        <Ionicons name="chevron-forward-outline" size={40} color="black"/>
+        </View>
+      </TouchableOpacity>
+      {/* --------------------------------------LEGUTÓBBI TRANZAKCIÓ---------------------------------------- */}
       <View style={styles.tranzakcioContainer}>
         <Text style={styles.tranzakcioTitle}>Legutóbbi Tranzakciók</Text>
-        
-        {
-          befizetLista
-          .sort((a,b) => new Date(b.befizetesek_ideje) - new Date(a.befizetesek_ideje)) //dátum szerint csökkenő sorrendbe tesszük a lista elemeit
-          .slice(0,3) //csak az utolsó 3 befizetést akarom kiíratni, a többi majd a "Befizetéseim" fülön lesz
-          .map(item => {
-            if(item.befizetesek_tipusID==1){
-              return(
-                <View style={styles.legutobbiTranzakciok} key={item.befizetesek_id}>
+
+        {befizetLista
+          .sort(
+            (a, b) =>
+              new Date(b.befizetesek_ideje) - new Date(a.befizetesek_ideje)
+          ) //dátum szerint csökkenő sorrendbe tesszük a lista elemeit
+          .slice(0, 3) //csak az utolsó 3 befizetést akarom kiíratni, a többi majd a "Befizetéseim" fülön lesz
+          .map((item) => {
+            if (item.befizetesek_tipusID == 1) {
+              return (
+                <View
+                  style={styles.legutobbiTranzakciok}
+                  key={item.befizetesek_id}
+                >
                   <Text style={styles.tranzakciosText}>Tanóra díj</Text>
-                  <Text style={styles.tranzakciosOsszeg}> - {item.befizetesek_osszeg} Ft</Text>
+                  <Text style={styles.tranzakciosOsszeg}>
+                    {" "}
+                    - {item.befizetesek_osszeg} Ft
+                  </Text>
                 </View>
-              )
+              );
             }
-            return(
-              <View style={styles.legutobbiTranzakciok} key={item.befizetesek_id}>
-                  <Text style={styles.tranzakciosText}>Vizsga díj</Text>
-                  <Text style={styles.tranzakciosOsszeg}> - {item.befizetesek_osszeg} Ft</Text>
+            return (
+              <View
+                style={styles.legutobbiTranzakciok}
+                key={item.befizetesek_id}
+              >
+                <Text style={styles.tranzakciosText}>Vizsga díj</Text>
+                <Text style={styles.tranzakciosOsszeg}>
+                  {" "}
+                  - {item.befizetesek_osszeg} Ft
+                </Text>
               </View>
-            )      
-          })
-        }
-        
+            );
+          })}
       </View>
     </ScrollView>
   );
-}
+};
 export default Tanulo_Kezdolap;
 
 const styles = StyleSheet.create({
@@ -122,11 +178,11 @@ const styles = StyleSheet.create({
     borderBottomLeftRadius: 20,
     borderBottomRightRadius: 20,
     alignItems: "left",
-    marginTop: 45
+    marginTop: 45,
   },
   udvozloSzoveg: {
     fontSize: 18,
-    color: "#636e72", 
+    color: "#636e72",
     fontWeight: "bold",
   },
   userNev: {
@@ -144,17 +200,17 @@ const styles = StyleSheet.create({
   },
   befizetesTitle: {
     fontSize: 16,
-    color: '#fff',
+    color: "#fff",
   },
   befizetesOsszeg: {
     fontSize: 24,
     fontWeight: "bold",
-    color:'#fff',
+    color: "#fff",
     marginTop: 5,
   },
   oraContainer: {
     margin: 20,
-    backgroundColor: "#ccccff", //"#C49991", //"#5E7CE2", //"#A06CD5", 
+    backgroundColor: "#ccccff", //"#C49991", //"#5E7CE2", //"#A06CD5",
     padding: 15,
     borderRadius: 15,
     alignItems: "center",
@@ -162,14 +218,14 @@ const styles = StyleSheet.create({
   },
   oraTitle: {
     fontSize: 16,
-    color: 'black'
+    color: "black",
   },
   oraOsszeg: {
     fontSize: 24,
-    color: '#32174d'
+    color: "#32174d",
   },
   tranzakcioContainer: {
-    margin: 20
+    margin: 20,
   },
   tranzakcioTitle: {
     fontSize: 18,
