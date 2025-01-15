@@ -1,99 +1,78 @@
 import React, { useState } from "react";
 import {
   View,
+  ScrollView,
   Text,
-  TextInput,
   TouchableOpacity,
   StyleSheet,
-  KeyboardAvoidingView,
-  ScrollView,
 } from "react-native";
 
-const Tanulo_Befizetesek = () => {
-  const [amount, setAmount] = useState("");
-  const [showNumberPad, setShowNumberPad] = useState(false);
+export default function Tanulo_Befizetesek() {
+  const [osszeg, setOsszeg] = useState("");
+  const [szamologepLathatoe, setSzamologepLathatoe] = useState(false);
 
-  const handleNumberPress = (num) => {
-    setAmount((prev) => prev + num);
+  {/* --------------------------------------SZÁMOLÓGÉP KINÉZET ÉS FUNKCIÓ---------------------------------------- */}
+  const osszegMegnyomas = () => {
+    setSzamologepLathatoe(!szamologepLathatoe);
   };
-
-  const handleClear = () => {
-    setAmount("");
+  const szamologepGombNyomas = (key) => {
+    if (key === "torles") {
+      setOsszeg(osszeg.slice(0, -1));
+    } else if (key === "C") {
+      setOsszeg("");
+    } else {
+      setOsszeg(osszeg + key);
+    }
   };
+  const szamologepBetoltes = () => (
+    <View style={styles.szamologepView}>
+      {[...Array(9).keys()].map((_, i) => (
+        <TouchableOpacity
+          key={i + 1}
+          onPress={() => szamologepGombNyomas((i + 1).toString())}
+          style={styles.szamologepGomb}
+        >
+          <Text style={styles.szamologepSzoveg}>{i + 1}</Text>
+        </TouchableOpacity>
+      ))}
+      <TouchableOpacity
+        onPress={() => szamologepGombNyomas("C")}
+        style={styles.szamologepGomb}
+      >
+        <Text style={styles.szamologepSzoveg}>C</Text>
+      </TouchableOpacity>
+      <TouchableOpacity
+        onPress={() => szamologepGombNyomas("0")}
+        style={styles.szamologepGomb}
+      >
+        <Text style={styles.szamologepSzoveg}>0</Text>
+      </TouchableOpacity>
+      <TouchableOpacity
+        onPress={() => szamologepGombNyomas("torles")}
+        style={styles.szamologepGomb}
+      >
+        <Text style={styles.szamologepSzoveg}>⌫</Text>
+      </TouchableOpacity>
+    </View>
+  );
 
   return (
-    <ScrollView style={styles.container}>
-      {/* Input Section */}
-      <KeyboardAvoidingView style={styles.topSection}>
-        <Text style={styles.title}>Add meg az összeget</Text>
-        <TouchableOpacity
-          style={styles.inputContainer}
-          onPress={() => setShowNumberPad(true)}
-        >
-          <Text style={styles.inputText}>
-            {amount ? `${amount} Ft` : "kattints a beíráshoz"}
-          </Text>
-        </TouchableOpacity>
-        <Text style={styles.subText}>...</Text>
-        <Text style={styles.subAmount}>{amount || "0.00"} Ft</Text>
-      </KeyboardAvoidingView>
-
+    <ScrollView>
+      <View style={styles.container}>
       {/* --------------------------------------SZÁMOLÓGÉP---------------------------------------- */}
-      {showNumberPad && (
-        <View style={styles.numberPad}>
-          <View style={styles.numberRow}>
-            {["1", "2", "3"].map((num) => (
-              <TouchableOpacity
-                key={num}
-                style={styles.numberButton}
-                onPress={() => handleNumberPress(num)}
-              >
-                <Text style={styles.numberText}>{num}</Text>
-              </TouchableOpacity>
-            ))}
-          </View>
-          <View style={styles.numberRow}>
-            {["4", "5", "6"].map((num) => (
-              <TouchableOpacity
-                key={num}
-                style={styles.numberButton}
-                onPress={() => handleNumberPress(num)}
-              >
-                <Text style={styles.numberText}>{num}</Text>
-              </TouchableOpacity>
-            ))}
-          </View>
-          <View style={styles.numberRow}>
-            {["7", "8", "9"].map((num) => (
-              <TouchableOpacity
-                key={num}
-                style={styles.numberButton}
-                onPress={() => handleNumberPress(num)}
-              >
-                <Text style={styles.numberText}>{num}</Text>
-              </TouchableOpacity>
-            ))}
-          </View>
-          <View style={styles.numberRow}>
-            <TouchableOpacity style={styles.numberButton} onPress={handleClear}>
-              <Text style={styles.numberText}>C</Text>
-            </TouchableOpacity>
-            <TouchableOpacity
-              style={styles.numberButton}
-              onPress={() => handleNumberPress("0")}
-            >
-              <Text style={styles.numberText}>0</Text>
-            </TouchableOpacity>
-            <TouchableOpacity
-              style={styles.numberButton}
-              onPress={() => setShowNumberPad(false)}
-            >
-              <Text style={styles.numberText}>X</Text>
-            </TouchableOpacity>
-          </View>
-        </View>
-      )}
-
+      <Text style={styles.cim}>Add meg a befizetett összeget</Text>
+      <TouchableOpacity onPress={osszegMegnyomas}>
+        <Text style={styles.osszegBeiras}>
+          {osszeg ? `${osszeg} Ft` : "0.00 Ft"}
+        </Text>
+      </TouchableOpacity>
+      <Text style={styles.balanceInfo}>felvétel az eddigi tranzakciókhoz</Text>
+      <Text style={styles.currentBalance}>Felvenni kívánt összeg: 0 Ft</Text> 
+      <TouchableOpacity style={styles.felvetelGomb}>
+        <Text style={styles.felvetelGombSzoveg}>Összeg felvétele</Text>
+      </TouchableOpacity>
+      {szamologepLathatoe && szamologepBetoltes()}
+      </View>
       {/* --------------------------------------LEGUTÓBBI TRANZAKCIÓS LISTA IDE (flatlist legyen)---------------------------------------- */}
       {/* --------------------------------------LEGUTÓBBI TRANZAKCIÓ---------------------------------------- */}
       <View style={styles.tranzakcioContainer}>
@@ -144,83 +123,74 @@ const Tanulo_Befizetesek = () => {
           <Text style={styles.tranzakciosOsszeg}> - 0 Ft</Text>
         </View>
       </View>
-      
     </ScrollView>
   );
-};
+}
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "#f5f5f5",
+    backgroundColor: "#f3f0fa",
+    alignItems: "center",
     padding: 20,
   },
-  topSection: {
-    flex: 1,
-    justifyContent: "center",
-    alignItems: "center",
+  cim: {
+    fontSize: 24,
+    fontWeight: "bold",
+    color: "#5c4ce3",
+    marginBottom: 20,
   },
-  title: {
+  osszegBeiras: {
+    fontSize: 40,
+    fontWeight: "bold",
+    color: "#5c4ce3",
+    textAlign: "center",
+    marginBottom: 10,
+  },
+  balanceInfo: {
+    fontSize: 16,
+    color: "#8e8e93",
+    marginBottom: 5,
+  },
+  currentBalance: {
     fontSize: 18,
-    fontWeight: "600",
-    marginBottom: 10,
+    color: "#5c4ce3",
+    marginBottom: 30,
   },
-  inputContainer: {
-    borderWidth: 1,
-    borderColor: "#ccc",
+  felvetelGomb: {
+    backgroundColor: "#5c4ce3",
+    paddingVertical: 15,
+    paddingHorizontal: 40,
     borderRadius: 10,
-    padding: 15,
-    minWidth: "80%",
-    alignItems: "center",
-    backgroundColor: "#fff",
+    marginBottom: 20,
   },
-  inputText: {
-    fontSize: 16,
+  felvetelGombSzoveg: {
+    color: "#fff",
+    fontSize: 18,
     fontWeight: "bold",
-    fontFamily: "italic",
-    color: "grey",
   },
-  subText: {
-    marginTop: 10,
-    fontSize: 14,
-    color: "#777",
-  },
-  subAmount: {
-    fontSize: 24,
-    fontWeight: "600",
-    marginTop: 5,
-    color: "#4CAF50",
-  },
-  numberPad: {
-    backgroundColor: "#fff",
-    padding: 20,
-    borderRadius: 10,
-    elevation: 5,
-  },
-  numberRow: {
+  szamologepView: {
     flexDirection: "row",
-    justifyContent: "space-between",
-    marginBottom: 10,
-  },
-  numberButton: {
-    backgroundColor: "#e0e0e0",
-    padding: 20,
-    borderRadius: 10,
-    minWidth: 70,
-    alignItems: "center",
-  },
-  numberText: {
-    fontSize: 24,
-    fontWeight: "bold",
-  },
-  bottomSection: {
-    flex: 1,
+    flexWrap: "wrap",
     justifyContent: "center",
-    alignItems: "center",
+    marginTop: 20,
   },
-  placeholderText: {
-    fontSize: 16,
-    color: "#aaa",
+  szamologepGomb: {
+    width: 80,
+    height: 80,
+    backgroundColor: "#fff",
+    borderColor: "#dcdcdc",
+    borderWidth: 1,
+    alignItems: "center",
+    justifyContent: "center",
+    margin: 5,
+    borderRadius: 10,
+    elevation: 2,
+  },
+  szamologepSzoveg: {
+    fontSize: 24,
+    color: "#5c4ce3",
+    fontWeight: "bold",
   },
   tranzakcioContainer: {
     margin: 20,
@@ -253,5 +223,3 @@ const styles = StyleSheet.create({
     color: "#d63031",
   },
 });
-
-export default Tanulo_Befizetesek;
