@@ -15,7 +15,7 @@ function kapcsolat() {
     host: "localhost",
     user: "root",
     password: "",
-    database: "szakdolgozat_vol2", //otthon: szakdolgozat || sulis gépen: szakdolgozat_vol2 || szakdoga_gyakorlas
+    database: "szakdolgozat_vol2",
   });
   connection.connect();
 }
@@ -209,7 +209,7 @@ app.post("/sajatAdatokO", (req, res) => {
 app.post("/tanuloSUMbefizetes", (req, res) => {
   kapcsolat();
   connection.query(
-    `SELECT SUM(befizetesek.befizetesek_osszeg) as 'osszesBefizetes' FROM befizetesek INNER JOIN tanulo_adatok ON befizetesek.befizetesek_tanuloID=tanulo_adatok.tanulo_id INNER JOIN felhasznaloi_adatok ON tanulo_adatok.tanulo_felhasznaloID=felhasznaloi_adatok.felhasznalo_id WHERE felhasznalo_id = ?`,
+    `SELECT SUM(befizetesek.befizetesek_osszeg) as 'osszesBefizetes' FROM befizetesek INNER JOIN tanulo_adatok ON befizetesek.befizetesek_tanuloID=tanulo_adatok.tanulo_id INNER JOIN felhasznaloi_adatok ON tanulo_adatok.tanulo_felhasznaloID=felhasznaloi_adatok.felhasznalo_id WHERE felhasznalo_id = ? AND befizetesek.befizetesek_jovahagyva = 1`,
     [req.body.felhasznalo_id],
     (err, rows, fields) => {
       if (err) {

@@ -47,8 +47,8 @@ const Tanulo_Kezdolap = ({ atkuld }) => {
         setSumBefizetes(osszegResponse);
         setBefizetLista(befizetesekResponse);
 
-        console.log("sumbefizetés összege: ", sumBefizetes);
-        console.log("befizetések eddig: ", befizetLista);
+        //console.log("sumbefizetés összege: ", sumBefizetes);
+        //console.log("befizetések eddig: ", befizetLista);
       }
     } catch (err) {
       setHiba(err.message);

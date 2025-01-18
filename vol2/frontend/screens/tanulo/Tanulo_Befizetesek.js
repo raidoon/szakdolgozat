@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import {
   View,
   ScrollView,
@@ -6,10 +6,69 @@ import {
   TouchableOpacity,
   StyleSheet,
 } from "react-native";
+import Styles from "../../Styles";
+import Ionicons from "react-native-vector-icons/Ionicons";
+import Ipcim from "../../Ipcim";
 
-export default function Tanulo_Befizetesek() {
+const Tanulo_Befizetesek = ({atkuld}) => {
+  const [befizetLista, setBefizetLista] = useState([]);
+  const [betolt, setBetolt] = useState(true);
+  const [hiba, setHiba] = useState(null);
+   
+  //------------------------------------------------------------- újak
   const [osszeg, setOsszeg] = useState("");
   const [szamologepLathatoe, setSzamologepLathatoe] = useState(false);
+
+  //-----------------adatok betöltése
+  const adatokBetoltese = async () =>{
+    try{
+      const adat = {
+        felhasznalo_id: atkuld.felhasznalo_id,
+      };
+      if(adat){
+        const befizetesek = await fetch(Ipcim.Ipcim + "/befizetesListaT", {
+                  method: "POST",
+                  body: JSON.stringify(adat),
+                  headers: { "Content-type": "application/json; charset=UTF-8" },
+        });
+        //-----------
+        if (!befizetesek.ok) {
+          throw new Error("Hiba történt a fizetések betöltésekor!");
+        }
+        const befizetesekResponse = await befizetesek.json();
+        setBefizetLista(befizetesekResponse);
+        console.log("befizetések eddig: ", befizetLista);
+      }
+    }
+    catch(err){
+      setHiba(err.message);
+    }
+    finally{
+      setBetolt(false);
+    }
+  };
+  useEffect(()=>{
+    adatokBetoltese();
+  },[]);
+  if(betolt){
+    return(
+      <View style={Styles.bejelentkezes_Container}>
+        <Text>Korábbi tranzakciók betöltése folyamatban...</Text>
+      </View>
+    );
+  } 
+  if(hiba){
+    return (
+      <View style={Styles.bejelentkezes_Container}>
+        <Text>Hiba: {hiba}</Text>
+      </View>
+    );
+  }
+
+  {/* --------------------------------------TRANZAKCIÓ RÉSZLETEI---------------------------------------- */}
+  const tranzakciosReszletek = ({kapott}) => {
+    console.log('tranzakciós részletek megnyomva, kapott item:   ', kapott);
+  };
 
   {/* --------------------------------------SZÁMOLÓGÉP KINÉZET ÉS FUNKCIÓ---------------------------------------- */}
   const osszegMegnyomas = () => {
@@ -58,76 +117,88 @@ export default function Tanulo_Befizetesek() {
 
   return (
     <ScrollView>
-      <View style={styles.container}>
       {/* --------------------------------------SZÁMOLÓGÉP---------------------------------------- */}
-      <Text style={styles.cim}>Add meg a befizetett összeget</Text>
-      <TouchableOpacity onPress={osszegMegnyomas}>
-        <Text style={styles.osszegBeiras}>
-          {osszeg ? `${osszeg} Ft` : "0.00 Ft"}
-        </Text>
-      </TouchableOpacity>
-      <Text style={styles.balanceInfo}>felvétel az eddigi tranzakciókhoz</Text>
-      <Text style={styles.currentBalance}>Felvenni kívánt összeg: 0 Ft</Text> 
-      <TouchableOpacity style={styles.felvetelGomb}>
-        <Text style={styles.felvetelGombSzoveg}>Összeg felvétele</Text>
-      </TouchableOpacity>
-      {szamologepLathatoe && szamologepBetoltes()}
+      <View style={styles.container}>
+        <Text style={styles.cim}>Oktatónak kifizetett összeg:</Text>
+        <TouchableOpacity onPress={osszegMegnyomas}>
+          <Text style={styles.osszegBeiras}>
+            {osszeg ? `${osszeg} Ft` : "0.00 Ft"}
+          </Text>
+        </TouchableOpacity>
+
+        <Text style={styles.balanceInfo}> Az alkalmazásban rögzített összegek kizárólag szemléltető jellegűek, és nem vonódnak le közvetlenül a bankkártyádról! A befizetett összeget az oktatód fogja jóváhagyni, vagy elutasítani.</Text>
+        
+        <TouchableOpacity style={styles.felvetelGomb}>
+          <Text style={styles.felvetelGombSzoveg}>Összeg felvétele</Text>
+        </TouchableOpacity>
+        
+        {szamologepLathatoe && szamologepBetoltes()}
       </View>
-      {/* --------------------------------------LEGUTÓBBI TRANZAKCIÓS LISTA IDE (flatlist legyen)---------------------------------------- */}
+
       {/* --------------------------------------LEGUTÓBBI TRANZAKCIÓ---------------------------------------- */}
       <View style={styles.tranzakcioContainer}>
         <Text style={styles.tranzakcioTitle}>Legutóbbi Tranzakciók</Text>
-
-        <View style={styles.legutobbiTranzakciok}>
-          <Text style={styles.tranzakciosText}>Tanóra díj</Text>
-          <Text style={styles.tranzakciosOsszeg}> - 0 Ft</Text>
-        </View>
-        <View style={styles.legutobbiTranzakciok}>
-          <Text style={styles.tranzakciosText}>Tanóra díj</Text>
-          <Text style={styles.tranzakciosOsszeg}> - 0 Ft</Text>
-        </View><View style={styles.legutobbiTranzakciok}>
-          <Text style={styles.tranzakciosText}>Tanóra díj</Text>
-          <Text style={styles.tranzakciosOsszeg}> - 0 Ft</Text>
-        </View><View style={styles.legutobbiTranzakciok}>
-          <Text style={styles.tranzakciosText}>Tanóra díj</Text>
-          <Text style={styles.tranzakciosOsszeg}> - 0 Ft</Text>
-        </View><View style={styles.legutobbiTranzakciok}>
-          <Text style={styles.tranzakciosText}>Tanóra díj</Text>
-          <Text style={styles.tranzakciosOsszeg}> - 0 Ft</Text>
-        </View><View style={styles.legutobbiTranzakciok}>
-          <Text style={styles.tranzakciosText}>Tanóra díj</Text>
-          <Text style={styles.tranzakciosOsszeg}> - 0 Ft</Text>
-        </View><View style={styles.legutobbiTranzakciok}>
-          <Text style={styles.tranzakciosText}>Tanóra díj</Text>
-          <Text style={styles.tranzakciosOsszeg}> - 0 Ft</Text>
-        </View><View style={styles.legutobbiTranzakciok}>
-          <Text style={styles.tranzakciosText}>Tanóra díj</Text>
-          <Text style={styles.tranzakciosOsszeg}> - 0 Ft</Text>
-        </View><View style={styles.legutobbiTranzakciok}>
-          <Text style={styles.tranzakciosText}>Tanóra díj</Text>
-          <Text style={styles.tranzakciosOsszeg}> - 0 Ft</Text>
-        </View><View style={styles.legutobbiTranzakciok}>
-          <Text style={styles.tranzakciosText}>Tanóra díj</Text>
-          <Text style={styles.tranzakciosOsszeg}> - 0 Ft</Text>
-        </View><View style={styles.legutobbiTranzakciok}>
-          <Text style={styles.tranzakciosText}>Tanóra díj</Text>
-          <Text style={styles.tranzakciosOsszeg}> - 0 Ft</Text>
-        </View><View style={styles.legutobbiTranzakciok}>
-          <Text style={styles.tranzakciosText}>Tanóra díj</Text>
-          <Text style={styles.tranzakciosOsszeg}> - 0 Ft</Text>
-        </View><View style={styles.legutobbiTranzakciok}>
-          <Text style={styles.tranzakciosText}>Tanóra díj</Text>
-          <Text style={styles.tranzakciosOsszeg}> - 0 Ft</Text>
-        </View><View style={styles.legutobbiTranzakciok}>
-          <Text style={styles.tranzakciosText}>Tanóra díj</Text>
-          <Text style={styles.tranzakciosOsszeg}> - 0 Ft</Text>
-        </View>
+        {befizetLista
+          .sort(
+            (a, b) =>
+              new Date(b.befizetesek_ideje) - new Date(a.befizetesek_ideje)
+          ) //dátum szerint csökkenő sorrendbe tesszük a lista elemeit
+          .map((item) => {
+            if (item.befizetesek_tipusID == 1) {
+              return (
+                <TouchableOpacity
+                  style={styles.legutobbiTranzakciok}
+                  key={item.befizetesek_id}
+                  onPress={() => tranzakciosReszletek(item.befizetesek_id)}
+                >
+                  <Text style={styles.tranzakciosText}>Tanóra díj</Text>
+                  <Text style={styles.tranzakciosOsszeg}>
+                    {" "}
+                    - {item.befizetesek_osszeg} Ft
+                  </Text>
+                </TouchableOpacity>
+              );
+            }
+            return (
+              <View style={styles.container}>
+                <TouchableOpacity
+                style={styles.legutobbiTranzakciok}
+                key={item.befizetesek_id}
+                >
+                  <Text style={styles.tranzakciosText}>Tanóra díj</Text>
+                  <Text style={styles.tranzakciosOsszeg}>
+                    {" "}
+                    - {item.befizetesek_osszeg} Ft
+                  </Text>
+                </TouchableOpacity>
+              </View>
+            );
+          })
+        }
       </View>
     </ScrollView>
   );
-}
+};
+export default Tanulo_Befizetesek;
 
 const styles = StyleSheet.create({
+  modalBackground: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
+    backgroundColor: "rgba(0, 0, 0, 0.5)",
+  },
+  modalContainer: {
+    width: 300,
+    padding: 20,
+    backgroundColor: "white",
+    borderRadius: 10,
+    alignItems: "center",
+  },
+  modalText: {
+    fontSize: 18,
+    marginBottom: 20,
+  },
   container: {
     flex: 1,
     backgroundColor: "#f3f0fa",
@@ -139,6 +210,7 @@ const styles = StyleSheet.create({
     fontWeight: "bold",
     color: "#5c4ce3",
     marginBottom: 20,
+    marginTop: 30
   },
   osszegBeiras: {
     fontSize: 40,
@@ -151,11 +223,7 @@ const styles = StyleSheet.create({
     fontSize: 16,
     color: "#8e8e93",
     marginBottom: 5,
-  },
-  currentBalance: {
-    fontSize: 18,
-    color: "#5c4ce3",
-    marginBottom: 30,
+    textAlign: 'center'
   },
   felvetelGomb: {
     backgroundColor: "#5c4ce3",
@@ -163,6 +231,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: 40,
     borderRadius: 10,
     marginBottom: 20,
+    marginTop: 20
   },
   felvetelGombSzoveg: {
     color: "#fff",
