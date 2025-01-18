@@ -241,6 +241,8 @@ app.post("/befizetesListaT", (req, res) => {
   );
   connection.end();
 });
+//------------------------------------------------ TANULÓ BEFIZETÉS FELVÉTELE
+
 //------------------------------------------------ lekérdezések vége
 //------------------------adott oktatóhoz tartozó tanulók neveinek megjelenítése post bevitel1
 app.post("/egyOktatoDiakjai", (req, res) => {
