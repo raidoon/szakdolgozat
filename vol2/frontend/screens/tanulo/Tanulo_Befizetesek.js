@@ -15,6 +15,7 @@ import { Alert } from "react-native";
 //-----------alert
 import Alerts from "../../Alerts";
 import { SafeAreaView } from "react-native-web";
+import symbolicateStackTrace from "react-native/Libraries/Core/Devtools/symbolicateStackTrace";
 
 const Tanulo_Befizetesek = ({ atkuld }) => {
   const [befizetLista, setBefizetLista] = useState([]);
@@ -24,10 +25,6 @@ const Tanulo_Befizetesek = ({ atkuld }) => {
   //------------------------------------------------------------- ÚJ VÁLTOZÓK
   const [osszeg, setOsszeg] = useState("");
   const [szamologepLathatoe, setSzamologepLathatoe] = useState(false);
-
-  //-------------------------------------------------------------- TRANZAKCIÓ EL VAN E FOGADVA
-  const [elfogadva, setElfogadva] = useState("")
-
 
   //------------------------------------------------------------- MODAL
   const [kivalasztottTranzakcio, setKivalasztottTranzakcio] = useState(null);
@@ -225,7 +222,34 @@ const Tanulo_Befizetesek = ({ atkuld }) => {
                 new Date(b.befizetesek_ideje) - new Date(a.befizetesek_ideje)
             )
             .map((item) => {
-              if (item.befizetesek_tipusID == 1) {
+              {
+                /* --------------------------------------JÓVÁHAGYVA---------------------------------------- */
+              }
+              if (item.befizetesek_jovahagyva == 1) {
+                if (item.befizetesek_tipusID == 1) {
+                  return (
+                    <View key={item.befizetesek_id}>
+                      <TouchableOpacity
+                        style={styles.legutobbiTranzakciok}
+                        key={item.befizetesek_id}
+                        onPress={() => {
+                          modalNyitas(item);
+                        }}
+                      >
+                        <Ionicons
+                          name="checkmark-circle"
+                          size={20}
+                          color="green"
+                        />
+                        <Text style={styles.tranzakciosText}>Tanóra díj</Text>
+                        <Text style={styles.tranzakciosOsszeg}>
+                          {" "}
+                          - {item.befizetesek_osszeg} Ft
+                        </Text>
+                      </TouchableOpacity>
+                    </View>
+                  );
+                }
                 return (
                   <View key={item.befizetesek_id}>
                     <TouchableOpacity
@@ -233,7 +257,89 @@ const Tanulo_Befizetesek = ({ atkuld }) => {
                       key={item.befizetesek_id}
                       onPress={() => modalNyitas(item)}
                     >
-                      <Text style={styles.tranzakciosText}>Tanóra díj</Text>
+                      <Ionicons
+                        name="checkmark-circle"
+                        size={20}
+                        color="green"
+                      />
+                      <Text style={styles.tranzakciosText}>Vizsga díj</Text>
+                      <Text style={styles.tranzakciosOsszeg}>
+                        {" "}
+                        - {item.befizetesek_osszeg} Ft
+                      </Text>
+                    </TouchableOpacity>
+                  </View>
+                );
+              } else if (item.befizetesek_jovahagyva == 2) {
+                {
+                  /* ELUTASÍTOTT BEFIZETÉSEK */
+                }
+                if (item.befizetesek_tipusID == 1) {
+                  return (
+                    <View key={item.befizetesek_id}>
+                      <TouchableOpacity
+                        style={styles.legutobbiTranzakciok}
+                        key={item.befizetesek_id}
+                        onPress={() => {
+                          modalNyitas(item);
+                        }}
+                      >
+                        <Ionicons name="close-outline" size={20} color="red" />
+                        <Text style={styles.tranzakciosText}>Tanóra díj</Text>
+                        <Text style={styles.tranzakciosOsszeg}>
+                          {" "}
+                          - {item.befizetesek_osszeg} Ft
+                        </Text>
+                      </TouchableOpacity>
+                    </View>
+                  );
+                }
+                return (
+                  <View key={item.befizetesek_id}>
+                    <TouchableOpacity
+                      style={[styles.legutobbiTranzakciok, {}]}
+                      key={item.befizetesek_id}
+                      onPress={() => modalNyitas(item)}
+                    >
+                      <Ionicons name="close" size={25} color="red" />
+                      <Text style={styles.tranzakciosText}>Vizsga díj</Text>
+                      <Text style={styles.tranzakciosOsszeg}>
+                        {" "}
+                        - {item.befizetesek_osszeg} Ft
+                      </Text>
+                    </TouchableOpacity>
+                  </View>
+                );
+              } else {
+                if (item.befizetesek_tipusID == 1) {
+                  return (
+                    <View key={item.befizetesek_id}>
+                      <TouchableOpacity
+                        style={styles.legutobbiTranzakciok}
+                        key={item.befizetesek_id}
+                        onPress={() => {
+                          modalNyitas(item);
+                        }}
+                      >
+                        <Ionicons name="alert" size={20} color="orange" />
+                        <Text style={styles.tranzakciosText}>Tanóra díj</Text>
+                        <Text style={styles.tranzakciosOsszeg}>
+                          {" "}
+                          - {item.befizetesek_osszeg} Ft
+                        </Text>
+                      </TouchableOpacity>
+                    </View>
+                  );
+                }
+                return (
+                  <View key={item.befizetesek_id}>
+                    <TouchableOpacity
+                      style={styles.legutobbiTranzakciok}
+                      key={item.befizetesek_id}
+                      onPress={() => modalNyitas(item)}
+                    >
+                      <Ionicons name="alert" size={20} color="orange" />
+                      <Text style={styles.tranzakciosText}>Vizsga díj </Text>
                       <Text style={styles.tranzakciosOsszeg}>
                         {" "}
                         - {item.befizetesek_osszeg} Ft
@@ -242,21 +348,6 @@ const Tanulo_Befizetesek = ({ atkuld }) => {
                   </View>
                 );
               }
-              return (
-                <View key={item.befizetesek_id}>
-                  <TouchableOpacity
-                    style={styles.legutobbiTranzakciok}
-                    key={item.befizetesek_id}
-                    onPress={() => modalNyitas(item)}
-                  >
-                    <Text style={styles.tranzakciosText}>Vizsga díj</Text>
-                    <Text style={styles.tranzakciosOsszeg}>
-                      {" "}
-                      - {item.befizetesek_osszeg} Ft
-                    </Text>
-                  </TouchableOpacity>
-                </View>
-              );
             })}
         </View>
       )}
@@ -270,7 +361,18 @@ const Tanulo_Befizetesek = ({ atkuld }) => {
           <View style={styles.modalOverlay}>
             <View style={styles.modalContent}>
               <Text style={styles.modalTitle}>BEFIZETÉS RÉSZLETEI</Text>
-              <Text style={styles.modalText}>Típusa:{" "}  </Text>
+              <Text style={styles.modalText}>Típus:{" "}
+              {kivalasztottTranzakcio.befizetesek_tipusID === 1 ? 
+                (
+                  <>
+                    {"tanóra díj"}
+                  </>
+                ) : (
+                  <>
+                    {"vizsga díj"}
+                  </>
+                )}
+              </Text>
               <Text style={styles.modalText}>
                 Összeg: {kivalasztottTranzakcio.befizetesek_osszeg} Ft
               </Text>
@@ -293,8 +395,26 @@ const Tanulo_Befizetesek = ({ atkuld }) => {
                   return formazottDatum;
                 })()}
               </Text>
-              <Text style={styles.modalText}>{osszeg ? `${osszeg} Ft` : "0.00 Ft"}</Text>
-              <Text style={styles.modalText}>Elutasítva:</Text>
+              <Text style={styles.modalText}>
+                {kivalasztottTranzakcio.befizetesek_jovahagyva === 1 ? (
+                  <>
+                    
+                    {"Befizetés elfogadva!"}
+                    <Ionicons name="checkmark-circle" size={20} color="green" />
+                  </>
+                ) : kivalasztottTranzakcio.befizetesek_jovahagyva === 0 ? (
+                  <>
+                    <Ionicons name="alert" size={20} color="orange" />
+                    {" Elfogadásra vár"}
+                  </>
+                ) : (
+                  <>
+                    <Ionicons name="close" size={20} color="red" />
+                    {"Befizetés elutasítva!"}
+                  </>
+                )}
+              </Text>
+
               <TouchableOpacity
                 onPress={modalCsukas}
                 style={styles.modalCloseBtn}
@@ -334,6 +454,7 @@ const styles = StyleSheet.create({
   modalText: {
     fontSize: 16,
     marginBottom: 5,
+    textAlign: "left",
   },
   modalCloseBtn: {
     marginTop: 20,
@@ -428,11 +549,11 @@ const styles = StyleSheet.create({
     shadowOffset: { width: 0, height: 1 },
   },
   tranzakciosText: {
-    fontSize: 16,
+    fontSize: 17,
     color: "#2d3436",
   },
   tranzakciosOsszeg: {
-    fontSize: 16,
+    fontSize: 17,
     fontWeight: "bold",
     color: "#d63031",
   },
