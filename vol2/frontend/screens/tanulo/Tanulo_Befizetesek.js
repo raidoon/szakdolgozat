@@ -236,12 +236,12 @@ const Tanulo_Befizetesek = ({ atkuld }) => {
                           modalNyitas(item);
                         }}
                       >
-                        <Ionicons
+                        
+                        <Text style={styles.tranzakciosText}><Ionicons
                           name="checkmark-circle"
-                          size={20}
+                          size={17}
                           color="green"
-                        />
-                        <Text style={styles.tranzakciosText}>Tanóra díj</Text>
+                        />Tanóra díj</Text>
                         <Text style={styles.tranzakciosOsszeg}>
                           {" "}
                           - {item.befizetesek_osszeg} Ft
@@ -259,7 +259,7 @@ const Tanulo_Befizetesek = ({ atkuld }) => {
                     >
                       <Ionicons
                         name="checkmark-circle"
-                        size={20}
+                        size={17}
                         color="green"
                       />
                       <Text style={styles.tranzakciosText}>Vizsga díj</Text>
@@ -284,8 +284,8 @@ const Tanulo_Befizetesek = ({ atkuld }) => {
                           modalNyitas(item);
                         }}
                       >
-                        <Ionicons name="close-outline" size={20} color="red" />
-                        <Text style={styles.tranzakciosText}>Tanóra díj</Text>
+                        
+                        <Text style={styles.tranzakciosText}><Ionicons name="close-outline" size={17} color="red" />Tanóra díj</Text>
                         <Text style={styles.tranzakciosOsszeg}>
                           {" "}
                           - {item.befizetesek_osszeg} Ft
@@ -301,8 +301,8 @@ const Tanulo_Befizetesek = ({ atkuld }) => {
                       key={item.befizetesek_id}
                       onPress={() => modalNyitas(item)}
                     >
-                      <Ionicons name="close" size={25} color="red" />
-                      <Text style={styles.tranzakciosText}>Vizsga díj</Text>
+                      
+                      <Text style={styles.tranzakciosText}><Ionicons name="close" size={17} color="red" />Vizsga díj</Text>
                       <Text style={styles.tranzakciosOsszeg}>
                         {" "}
                         - {item.befizetesek_osszeg} Ft
@@ -321,8 +321,8 @@ const Tanulo_Befizetesek = ({ atkuld }) => {
                           modalNyitas(item);
                         }}
                       >
-                        <Ionicons name="alert" size={20} color="orange" />
-                        <Text style={styles.tranzakciosText}>Tanóra díj</Text>
+                        
+                        <Text style={styles.tranzakciosText}><Ionicons name="alert" size={17} color="orange" />Tanóra díj</Text>
                         <Text style={styles.tranzakciosOsszeg}>
                           {" "}
                           - {item.befizetesek_osszeg} Ft
@@ -338,8 +338,8 @@ const Tanulo_Befizetesek = ({ atkuld }) => {
                       key={item.befizetesek_id}
                       onPress={() => modalNyitas(item)}
                     >
-                      <Ionicons name="alert" size={20} color="orange" />
-                      <Text style={styles.tranzakciosText}>Vizsga díj </Text>
+                      
+                      <Text style={styles.tranzakciosText}><Ionicons name="alert" size={17} color="orange" />Vizsga díj </Text>
                       <Text style={styles.tranzakciosOsszeg}>
                         {" "}
                         - {item.befizetesek_osszeg} Ft
@@ -400,16 +400,16 @@ const Tanulo_Befizetesek = ({ atkuld }) => {
                   <>
                     
                     {"Befizetés elfogadva!"}
-                    <Ionicons name="checkmark-circle" size={20} color="green" />
+                    <Ionicons name="checkmark-circle" size={17} color="green" />
                   </>
                 ) : kivalasztottTranzakcio.befizetesek_jovahagyva === 0 ? (
                   <>
-                    <Ionicons name="alert" size={20} color="orange" />
+                    <Ionicons name="alert" size={17} color="orange" />
                     {" Elfogadásra vár"}
                   </>
                 ) : (
                   <>
-                    <Ionicons name="close" size={20} color="red" />
+                    <Ionicons name="close" size={17} color="red" />
                     {"Befizetés elutasítva!"}
                   </>
                 )}
@@ -430,7 +430,6 @@ const Tanulo_Befizetesek = ({ atkuld }) => {
 };
 
 export default Tanulo_Befizetesek;
-
 const styles = StyleSheet.create({
   modalOverlay: {
     flex: 1,
@@ -537,7 +536,8 @@ const styles = StyleSheet.create({
   },
   legutobbiTranzakciok: {
     flexDirection: "row",
-    justifyContent: "space-between",
+    alignItems: "center",
+    justifyContent: "flex-start",
     backgroundColor: "#fff",
     padding: 15,
     borderRadius: 10,
@@ -551,6 +551,8 @@ const styles = StyleSheet.create({
   tranzakciosText: {
     fontSize: 17,
     color: "#2d3436",
+    marginLeft: 8,
+    flex: 1,
   },
   tranzakciosOsszeg: {
     fontSize: 17,
