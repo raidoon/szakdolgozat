@@ -5,6 +5,7 @@ import {
   Text,
   TouchableOpacity,
   StyleSheet,
+  Modal,
 } from "react-native";
 import Styles from "../../Styles";
 import Ionicons from "react-native-vector-icons/Ionicons";
@@ -13,25 +14,46 @@ import { Alert } from "react-native";
 
 //-----------alert
 import Alerts from "../../Alerts";
-
+import { SafeAreaView } from "react-native-web";
 
 const Tanulo_Befizetesek = ({ atkuld }) => {
   const [befizetLista, setBefizetLista] = useState([]);
   const [betolt, setBetolt] = useState(true);
   const [hiba, setHiba] = useState(null);
-  
-//------------------------------------------------------------- ÚJ VÁLTOZÓK
+
+  //------------------------------------------------------------- ÚJ VÁLTOZÓK
   const [osszeg, setOsszeg] = useState("");
   const [szamologepLathatoe, setSzamologepLathatoe] = useState(false);
 
+  //-------------------------------------------------------------- TRANZAKCIÓ EL VAN E FOGADVA
+  const [elfogadva, setElfogadva] = useState("")
+
+
+  //------------------------------------------------------------- MODAL
+  const [kivalasztottTranzakcio, setKivalasztottTranzakcio] = useState(null);
+  const [modalLathatoe, setModalLathatoe] = useState(false);
+
+  // Modal open function
+  const modalNyitas = (tranzakcio) => {
+    setKivalasztottTranzakcio(tranzakcio);
+    setModalLathatoe(true);
+  };
+
+  // Modal close function
+  const modalCsukas = () => {
+    setModalLathatoe(false);
+    setKivalasztottTranzakcio(null);
+  };
+
   //------------------------------------------------------------------------- ALERT
 
-  const [isAlertVisible, setIsAlertVisible] = useState(false);
+  /*const [isAlertVisible, setIsAlertVisible] = useState(false);
 
   const showAlert = () => setIsAlertVisible(true);
   const hideAlert = () => setIsAlertVisible(false);
+ */
 
-//------------------------------------------------------------- BEFIZETÉSEK BETÖLTÉSE
+  //------------------------------------------------------------- BEFIZETÉSEK BETÖLTÉSE
   const adatokBetoltese = async () => {
     try {
       const adat = {
@@ -43,7 +65,7 @@ const Tanulo_Befizetesek = ({ atkuld }) => {
           body: JSON.stringify(adat),
           headers: { "Content-type": "application/json; charset=UTF-8" },
         });
-        
+
         if (!befizetesek.ok) {
           throw new Error("Hiba történt a fizetések betöltésekor!");
         }
@@ -77,41 +99,43 @@ const Tanulo_Befizetesek = ({ atkuld }) => {
       </View>
     );
   }
+  {
+    /* --------------------------------------TRANZAKCIÓ RÉSZLETEI---------------------------------------- */
+  }
+  const osszegFelvitele = () => {
+    if (osszeg != 0) {
+      if (osszeg.startsWith("0")) {
+        //az összeg obviously nem kezdődhet 0-val
+        //setIsAlertVisible(true);
+        //<Alerts isVisible={isAlertVisible} onClose={hideAlert}></Alerts>;
+        Alert.alert("Hiba!", "Az összeg nem kezdődhet 0-val!", [
+          {
+            text: "RENDBEN",
+          },
+        ]);
+      } else {
+        console.log("összeg felvitele gomb megnyomva");
+        console.log("összeg: ", osszeg);
 
-  {/* --------------------------------------TRANZAKCIÓ RÉSZLETEI---------------------------------------- */}
-  const tranzakciosReszletek = ({ kapott }) => {
-    console.log("tranzakciós részletek megnyomva, kapott item:   ", kapott);
+        //backend helye
+
+        Alert.alert("Siker!", "A tranzakció sikeresen mentve!", [
+          {
+            text: "OK",
+          },
+        ]);
+
+        setOsszeg(""); //törlöm a beírt összeget a felvitel után
+      }
+    } else
+      Alert.alert("Hiba!", "A befizetni kívánt összeg nem lehet 0!", [
+        { text: "Értem", onPress: () => console.log("Értem megnyomva") },
+      ]);
   };
 
-  {/* --------------------------------------TRANZAKCIÓ RÉSZLETEI---------------------------------------- */}
-  const osszegFelvitele = () => {
-    if(osszeg!=0){
-      if(osszeg.startsWith('0')){ //az összeg obviously nem kezdődhet 0-val
-        setIsAlertVisible(true);
-        <Alerts isVisible={isAlertVisible} onClose={hideAlert}></Alerts>
-      }
-      else{
-        console.log("összeg felvitele gomb megnyomva")
-        console.log("összeg: ",osszeg)
-    
-        //backend helye
-    
-        Alert.alert("Siker!", "A tranzakció sikeresen mentve!",[
-          {
-            text: 'OK'
-          }
-        ])
-    
-        setOsszeg("") //törlöm a beírt összeget a felvitel után
-      }
-    }
-    else Alert.alert("Hiba!","A befizetni kívánt összeg nem lehet 0!",[
-      {text: 'Értem', onPress: () => console.log('Értem megnyomva')}
-    ])   
+  {
+    /* --------------------------------------SZÁMOLÓGÉP KINÉZET ÉS FUNKCIÓ---------------------------------------- */
   }
-
-
-  {/* --------------------------------------SZÁMOLÓGÉP KINÉZET ÉS FUNKCIÓ---------------------------------------- */}
   const osszegMegnyomas = () => {
     setSzamologepLathatoe(!szamologepLathatoe);
   };
@@ -161,39 +185,35 @@ const Tanulo_Befizetesek = ({ atkuld }) => {
   );
 
   return (
-    
     <ScrollView>
       {/* --------------------------------------SZÁMOLÓGÉP---------------------------------------- */}
       <View style={styles.container}>
-          <Text style={styles.cim}>Oktatónak kifizetett összeg:</Text>
-          <TouchableOpacity onPress={osszegMegnyomas}>
-            <Text style={styles.osszegBeiras}>
-              {osszeg ? `${osszeg} Ft` : "0.00 Ft"}
-            </Text>
-          </TouchableOpacity>
+        <Text style={styles.cim}>Befizetés összege:</Text>
+        <TouchableOpacity onPress={osszegMegnyomas}>
+          <Text style={styles.osszegBeiras}>
+            {osszeg ? `${osszeg} Ft` : "0.00 Ft"}
+          </Text>
+        </TouchableOpacity>
 
-          {/* Figyelmeztető szöveg megváltoztatása ||függ: számológép látható-e */}
-          {szamologepLathatoe ? (
-            <Text style={styles.figyelmeztetes}>
-              A felvenni kívánt összeget az oktatód fogja jóváhagyni, amennyiben tényleg
-              kifizetted neki! 
-            </Text>
-          ) : (
-            <Text style={styles.figyelmeztetes}>
-              Az alkalmazásban rögzített összegek kizárólag szemléltető jellegűek, és
-              nem vonódnak le a bankkártyádról!
-            </Text>
-          )}
+        {/* Figyelmeztető szöveg megváltoztatása ||függ: számológép látható-e */}
+        {szamologepLathatoe ? (
+          <Text style={styles.figyelmeztetes}>
+            A felvenni kívánt összeget az oktatód fogja jóváhagyni, amennyiben
+            tényleg kifizetted neki!
+          </Text>
+        ) : (
+          <Text style={styles.figyelmeztetes}>
+            Az alkalmazásban rögzített tranzakciók kizárólag szemléltető
+            jellegűek, és nem vonódnak le a bankkártyádról!
+          </Text>
+        )}
 
-          <TouchableOpacity 
-            style={styles.felvetelGomb}
-            onPress={osszegFelvitele}
-            >
-            <Text style={styles.felvetelGombSzoveg}>Összeg felvétele</Text>
-          </TouchableOpacity>
+        <TouchableOpacity style={styles.felvetelGomb} onPress={osszegFelvitele}>
+          <Text style={styles.felvetelGombSzoveg}>Összeg felvétele</Text>
+        </TouchableOpacity>
 
-          {szamologepLathatoe && szamologepBetoltes()}
-        </View>
+        {szamologepLathatoe && szamologepBetoltes()}
+      </View>
 
       {/* --------------------------------------LEGUTÓBBI TRANZAKCIÓS RÉSZ---------------------------------------- */}
       {szamologepLathatoe ? null : (
@@ -207,24 +227,27 @@ const Tanulo_Befizetesek = ({ atkuld }) => {
             .map((item) => {
               if (item.befizetesek_tipusID == 1) {
                 return (
-                  <TouchableOpacity
-                    style={styles.legutobbiTranzakciok}
-                    key={item.befizetesek_id}
-                    onPress={() => tranzakciosReszletek(item.befizetesek_id)}
-                  >
-                    <Text style={styles.tranzakciosText}>Tanóra díj</Text>
-                    <Text style={styles.tranzakciosOsszeg}>
-                      {" "}
-                      - {item.befizetesek_osszeg} Ft
-                    </Text>
-                  </TouchableOpacity>
+                  <View key={item.befizetesek_id}>
+                    <TouchableOpacity
+                      style={styles.legutobbiTranzakciok}
+                      key={item.befizetesek_id}
+                      onPress={() => modalNyitas(item)}
+                    >
+                      <Text style={styles.tranzakciosText}>Tanóra díj</Text>
+                      <Text style={styles.tranzakciosOsszeg}>
+                        {" "}
+                        - {item.befizetesek_osszeg} Ft
+                      </Text>
+                    </TouchableOpacity>
+                  </View>
                 );
               }
               return (
-                <TouchableOpacity
+                <View key={item.befizetesek_id}>
+                  <TouchableOpacity
                     style={styles.legutobbiTranzakciok}
                     key={item.befizetesek_id}
-                    //onPress={() => tranzakciosReszletek(item.befizetesek_id)}
+                    onPress={() => modalNyitas(item)}
                   >
                     <Text style={styles.tranzakciosText}>Vizsga díj</Text>
                     <Text style={styles.tranzakciosOsszeg}>
@@ -232,9 +255,55 @@ const Tanulo_Befizetesek = ({ atkuld }) => {
                       - {item.befizetesek_osszeg} Ft
                     </Text>
                   </TouchableOpacity>
+                </View>
               );
             })}
-      </View>
+        </View>
+      )}
+      {/*-------------------------------------------- MODAL ----------------------------------------------*/}
+      {kivalasztottTranzakcio && (
+        <Modal
+          transparent={true}
+          visible={modalLathatoe}
+          onRequestClose={modalCsukas}
+        >
+          <View style={styles.modalOverlay}>
+            <View style={styles.modalContent}>
+              <Text style={styles.modalTitle}>BEFIZETÉS RÉSZLETEI</Text>
+              <Text style={styles.modalText}>Típusa:{" "}  </Text>
+              <Text style={styles.modalText}>
+                Összeg: {kivalasztottTranzakcio.befizetesek_osszeg} Ft
+              </Text>
+              <Text style={styles.modalText}>
+                Dátum:{" "}
+                {(() => {
+                  const eredetiDatum = new Date(
+                    kivalasztottTranzakcio.befizetesek_ideje
+                  );
+                  const formazottDatum =
+                    eredetiDatum.getFullYear() +
+                    "." +
+                    ("0" + (eredetiDatum.getMonth() + 1)).slice(-2) +
+                    "." +
+                    ("0" + eredetiDatum.getDate()).slice(-2) +
+                    " " +
+                    ("0" + eredetiDatum.getHours()).slice(-2) +
+                    ":" +
+                    ("0" + eredetiDatum.getMinutes()).slice(-2);
+                  return formazottDatum;
+                })()}
+              </Text>
+              <Text style={styles.modalText}>{osszeg ? `${osszeg} Ft` : "0.00 Ft"}</Text>
+              <Text style={styles.modalText}>Elutasítva:</Text>
+              <TouchableOpacity
+                onPress={modalCsukas}
+                style={styles.modalCloseBtn}
+              >
+                <Text style={styles.modalCloseText}>Bezárás</Text>
+              </TouchableOpacity>
+            </View>
+          </View>
+        </Modal>
       )}
     </ScrollView>
   );
@@ -243,6 +312,40 @@ const Tanulo_Befizetesek = ({ atkuld }) => {
 export default Tanulo_Befizetesek;
 
 const styles = StyleSheet.create({
+  modalOverlay: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
+    backgroundColor: "rgba(0, 0, 0, 0.5)",
+  },
+  modalContent: {
+    backgroundColor: "#fff",
+    padding: 20,
+    borderRadius: 10,
+    width: 300,
+    elevation: 5,
+  },
+  modalTitle: {
+    fontSize: 18,
+    fontWeight: "bold",
+    marginBottom: 10,
+    textAlign: "center",
+  },
+  modalText: {
+    fontSize: 16,
+    marginBottom: 5,
+  },
+  modalCloseBtn: {
+    marginTop: 20,
+    padding: 10,
+    backgroundColor: "#5c4ce3",
+    borderRadius: 5,
+  },
+  modalCloseText: {
+    color: "#fff",
+    fontSize: 16,
+    textAlign: "center",
+  },
   container: {
     flex: 1,
     backgroundColor: "#f3f0fa",
@@ -266,7 +369,7 @@ const styles = StyleSheet.create({
     fontSize: 16,
     color: "#8e8e93",
     marginBottom: 5,
-    textAlign: 'center'
+    textAlign: "center",
   },
   felvetelGomb: {
     backgroundColor: "#5c4ce3",
@@ -274,7 +377,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: 40,
     borderRadius: 10,
     marginBottom: 20,
-    marginTop: 20
+    marginTop: 20,
   },
   felvetelGombSzoveg: {
     color: "#fff",
