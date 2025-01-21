@@ -11,8 +11,9 @@ import {
 } from "react-native";
 import DateTimePicker from "@react-native-community/datetimepicker";
 import Checkbox from "expo-checkbox";
+import Ipcim from "../../Ipcim";
 
-export default function OktatoDatumok() {
+export default function OktatoDatumok({atkuld}) {
   const [adatTomb, setAdatTomb] = useState([]);
   const [szoveg, setSzoveg] = useState("");
   const [date, setDate] = useState(new Date());
@@ -44,21 +45,23 @@ export default function OktatoDatumok() {
     });
   }, []);
 
-  const felvitel = () => {
+  const felvitel = async() => {
     if (!szoveg || !datum) {
       alert("Minden mezőt tölts ki!");
       return;
     }
-    const uj = [
-      ...adatTomb,
-      { id: Date.now(), feladat: szoveg, datum: datum, kesz: 0 },
-    ];
-    uj.sort((a, b) => new Date(a.datum) - new Date(b.datum));
-    setAdatTomb(uj);
-    storeData(uj);
-    setSzoveg("");
-    setDatum("");
-    alert("Sikeres felvitel!");
+    var adatok={
+      "bevitel1":atkuld.oktato_felhasznaloID
+    }
+    alert(adatok.bevitel1)
+    const x=await fetch(Ipcim.Ipcim+"/oraFelvitel",
+    {
+      method: "POST",
+      body: JSON.stringify(adatok),
+      headers: {"Content-type": "application/json; charset=UTF-8"}
+  })
+      const y=await x.text()
+    //alert(y);
   };
 
   const torles = () => {
@@ -88,11 +91,12 @@ export default function OktatoDatumok() {
 
   return (
     <View style={styles.container}>
-      <Text style={styles.title}>Elkövetkezendő órák:</Text>
+      <Text style={styles.title}>Új óra rögzítése:</Text>
+      <Text>{atkuld ? `Felhasználó ID: ${atkuld.oktato_felhasznaloID}` : "Nincs adat"}</Text>
       <View style={styles.inputContainer}>
         <TextInput
           style={styles.input}
-          placeholder="Óra megnevezése"
+          placeholder="Megjegyzés"
           onChangeText={setSzoveg}
           value={szoveg}
         />

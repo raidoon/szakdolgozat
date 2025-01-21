@@ -293,7 +293,22 @@ app.post("/egyTanuloOrai", (req, res) => {
   connection.end();
 });
 
-
+//--------------------------OraFelvitel
+app.post('/oraFelvitel', (req, res) => {
+  kapcsolat()
+  connection.query(`INSERT INTO ora_adatok VALUES (NULL, 1,7, 4, "2024-01-21 09:58:27", 0 )`, [req.body.bevitel1], (err, rows, fields) => {
+    if (err) {
+      console.log("Hiba")
+      console.log(err)
+      res.status(500).send("Hiba")
+    }
+    else {
+      console.log("Sikeres felvitel!")
+      res.status(200).send("Sikeres felvitel!")
+    }
+  })
+  connection.end()
+})
 
 
 //----------------------
