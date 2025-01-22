@@ -296,7 +296,7 @@ app.post("/egyTanuloOrai", (req, res) => {
 //--------------------------OraFelvitel
 app.post('/oraFelvitel', (req, res) => {
   kapcsolat()
-  connection.query(`INSERT INTO ora_adatok VALUES (NULL, 1,7, 4, "2024-01-21 09:58:27", 0 )`, [req.body.bevitel1], (err, rows, fields) => {
+  connection.query(`INSERT INTO ora_adatok VALUES (NULL, 1, ?, 4, ?, 0 )`, [req.body.bevitel2, req.body.bevitel4], (err, rows, fields) => {
     if (err) {
       console.log("Hiba")
       console.log(err)
