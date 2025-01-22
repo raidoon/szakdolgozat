@@ -19,7 +19,7 @@ const BefizetesForm = () => {
     };
 
     try {
-      const response = await fetch('http://YOUR_SERVER_URL/tanuloBefizetesFelvitel', {
+      const response = await fetch( Ipcim.Ipcim + "/tanuloBefizetesFelvitel", {
         method: 'POST',
         body: JSON.stringify(adat),
         headers: {

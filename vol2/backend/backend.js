@@ -12,6 +12,7 @@ app.use(cors());
 var connection;
 function kapcsolat() {
   connection = mysql.createConnection({
+    connectionLimit: 10,
     host: "localhost",
     user: "root",
     password: "",
@@ -242,9 +243,8 @@ app.post("/befizetesListaT", (req, res) => {
   connection.end();
 });
 //------------------------------------------------ TANULÓ BEFIZETÉS FELVÉTELE
-app.post('/tanuloBefizetesFelvitel',(req,res)=>{
+/*app.post('/tanuloBefizetesFelvitel',(req,res)=>{
   kapcsolat()
-  connection.connect()
   connection.query(`INSERT INTO befizetesek  VALUES (null,${req.body.befizetesek_tanuloID},${req.body.befizetesek_oktatoID},${req.body.befizetesek_tipusID},${req.body.befizetesek_osszeg},${req.body.befizetesek_ideje},0)`, (err, rows, fields) => {
     if (err) 
       res.send("Hiba") 
@@ -253,8 +253,29 @@ app.post('/tanuloBefizetesFelvitel',(req,res)=>{
   })    
   connection.end()
 });
+*/
+app.post('/tanuloBefizetesFelvitel', (req, res) => {
+  const { befizetesek_tanuloID, befizetesek_oktatoID, befizetesek_tipusID, befizetesek_osszeg, befizetesek_ideje } = req.body;
+  // Use the existing connection, do not reconnect
+  kapcsolat()
+  connection.query(
+    `INSERT INTO befizetesek (befizetesek_tanuloID, befizetesek_oktatoID, befizetesek_tipusID, befizetesek_osszeg, befizetesek_ideje, befizetesek_jovahagyva) 
+     VALUES (?, ?, ?, ?, ?, 0)`,
+    [befizetesek_tanuloID, befizetesek_oktatoID, befizetesek_tipusID, befizetesek_osszeg, befizetesek_ideje],
+    (err, rows) => {
+      if (err) {
+        console.log(err);
+        res.status(500).send("Hiba történt a befizetés felvitele során!");
+      } else {
+        res.status(200).send("A befizetés felvitele sikerült!");
+      }
+    }
+  );
+  connection.end()
+});
+//------------------------------------------------ TANULÓ ÓRÁINAK LEKÉRDEZÉSE
 
-//------------------------------------------------ lekérdezések vége
+//------------------------------------------------ TANULÓI LEKÉRDEZÉSEK VÉGE
 //------------------------adott oktatóhoz tartozó tanulók neveinek megjelenítése post bevitel1
 app.post("/egyOktatoDiakjai", (req, res) => {
   console.log("hello")

@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useCallback } from "react";
 import {
   View,
   ScrollView,
@@ -6,6 +6,7 @@ import {
   TouchableOpacity,
   StyleSheet,
   Modal,
+  RefreshControl,
 } from "react-native";
 import Styles from "../../Styles";
 import Ionicons from "react-native-vector-icons/Ionicons";
@@ -13,6 +14,7 @@ import Ipcim from "../../Ipcim";
 import { Alert } from "react-native";
 
 const Tanulo_Befizetesek = ({ atkuld }) => {
+  const [frissites, setFrissites] = useState(false); //https://reactnative.dev/docs/refreshcontrol
   const [befizetLista, setBefizetLista] = useState([]);
   const [betolt, setBetolt] = useState(true);
   const [hiba, setHiba] = useState(null);
@@ -20,7 +22,7 @@ const Tanulo_Befizetesek = ({ atkuld }) => {
   const [osszeg, setOsszeg] = useState("");
   const [szamologepLathatoe, setSzamologepLathatoe] = useState(false);
   //-------------------------------------------------------------
-  const [tanora, setTanora] = useState(false);
+  const [tanora, setTanora] = useState(true);
   const [vizsga, setVizsga] = useState(false);
   //------------------------------------------------------------- MODAL
   const [kivalasztottTranzakcio, setKivalasztottTranzakcio] = useState(null);
@@ -44,6 +46,7 @@ const Tanulo_Befizetesek = ({ atkuld }) => {
       </TouchableOpacity>
     );
   }
+
   //------------------------------------------------------------- BEFIZETÉSEK BETÖLTÉSE
   const adatokBetoltese = async () => {
     try {
@@ -75,6 +78,15 @@ const Tanulo_Befizetesek = ({ atkuld }) => {
     adatokBetoltese();
   }, []);
 
+  //------------------------------------------------------------- OLDAL FRISSÍTÉSE
+  const frissitesKozben = useCallback(() => {
+    setFrissites(true);
+    setTimeout(() => {
+      adatokBetoltese();
+      setFrissites(false);
+    }, 2000);
+  }, []);
+  //-------------------------
   if (betolt) {
     return (
       <View style={Styles.bejelentkezes_Container}>
@@ -105,21 +117,57 @@ const Tanulo_Befizetesek = ({ atkuld }) => {
         console.log("összeg felvitele gomb megnyomva");
         console.log("összeg: ", osszeg);
         const tipusID = tanora ? 1 : vizsga ? 2 : null;
+        //jelenlegi idő
+        const datum = new Date();
+        // Dátum formázása YYYY-MM-DD HH:MM:SS formában (az adatbázisban datetimenak van beállítva!!)
+        const formazottDatum =
+          datum.getFullYear() +
+          "-" +
+          ("0" + (datum.getMonth() + 1)).slice(-2) +
+          "-" +
+          ("0" + datum.getDate()).slice(-2) +
+          " " +
+          ("0" + datum.getHours()).slice(-2) +
+          ":" +
+          ("0" + datum.getMinutes()).slice(-2) +
+          ":" +
+          ("0" + datum.getSeconds()).slice(-2);
+
         const adat = {
           befizetesek_tanuloID: atkuld.tanulo_id, //5
           befizetesek_oktatoID: atkuld.tanulo_oktatoja, //7
           befizetesek_tipusID: tipusID, //1 vagy 2
           befizetesek_osszeg: osszeg, //összeg
-          befizetesek_ideje: ideje, //HIÁNYZIK
+          befizetesek_ideje: formazottDatum,
         };
 
-        Alert.alert("Siker!", "A tranzakció sikeresen mentve!", [
-          {
-            text: "OK",
-          },
-        ]);
+        try {
+          const valasz = await fetch(Ipcim.Ipcim + "/tanuloBefizetesFelvitel", {
+            method: "POST",
+            body: JSON.stringify(adat),
+            headers: {
+              "Content-Type": "application/json; charset=UTF-8",
+            },
+          });
 
-        setOsszeg(""); //törlöm a beírt összeget a felvitel után
+          // Válasz szöveges formátumban, így text() metódussal dolgozunk
+          const valaszText = await valasz.text();
+          console.log("Válasz szövege: ", valaszText); // Naplózzuk a választ a könnyebb hibakereséshez
+
+          if (valasz.ok) {
+            Alert.alert("Siker", valaszText); // A szöveget közvetlenül jelenítjük meg
+          } else {
+            Alert.alert(
+              "Hiba",
+              valaszText || "A befizetés felvitele nem sikerült."
+            );
+          }
+        } catch (error) {
+          Alert.alert("Hiba", `Hiba történt: ${error.message}`);
+        }
+
+        setOsszeg(""); //törlöm a beírt összeget a felvitel után!!!
+        adatokBetoltese();
       }
     } else
       Alert.alert("Hiba!", "A befizetni kívánt összeg nem lehet 0!", [
@@ -176,14 +224,18 @@ const Tanulo_Befizetesek = ({ atkuld }) => {
   );
 
   return (
-    <ScrollView>
+    <ScrollView
+      refreshControl={
+        <RefreshControl refreshing={frissites} onRefresh={frissitesKozben} />
+      }
+    >
       {/* --------------------------------------SZÁMOLÓGÉP---------------------------------------- */}
       <View style={styles.container}>
         {/* Figyelmeztető szöveg megváltoztatása ||függ: számológép látható-e */}
         {szamologepLathatoe ? (
           <View style={styles.container2}>
             <TouchableOpacity onPress={osszegMegnyomas}>
-            <Text style={styles.cim}>Kattints az összegre</Text>
+              <Text style={styles.cim}>Kattints az összegre</Text>
               <Text style={styles.osszegBeiras}>
                 {osszeg ? `${osszeg} Ft` : "0.00 Ft"}
               </Text>
@@ -193,7 +245,7 @@ const Tanulo_Befizetesek = ({ atkuld }) => {
               tényleg kifizetted neki!
             </Text>
             <View style={styles.checkboxView}>
-            <SajatCheckbox
+              <SajatCheckbox
                 label="Tanóra"
                 isChecked={tanora}
                 onPress={() => {
@@ -612,7 +664,6 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     alignItems: "center",
     marginRight: 20,
-    
   },
   checkbox: {
     width: 25,
@@ -620,13 +671,13 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderColor: "#000",
     marginRight: 8,
-    borderRadius: 30
+    borderRadius: 30,
   },
   checkedCheckbox: {
     backgroundColor: "#5c4ce3",
   },
   checkboxView: {
-    flexDirection: 'row',
-    alignContent:'space-between',
-  }
+    flexDirection: "row",
+    alignContent: "space-between",
+  },
 });
