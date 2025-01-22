@@ -12,44 +12,38 @@ import Ionicons from "react-native-vector-icons/Ionicons";
 import Ipcim from "../../Ipcim";
 import { Alert } from "react-native";
 
-//-----------alert
-import Alerts from "../../Alerts";
-import { SafeAreaView } from "react-native-web";
-import symbolicateStackTrace from "react-native/Libraries/Core/Devtools/symbolicateStackTrace";
-
 const Tanulo_Befizetesek = ({ atkuld }) => {
   const [befizetLista, setBefizetLista] = useState([]);
   const [betolt, setBetolt] = useState(true);
   const [hiba, setHiba] = useState(null);
-
   //------------------------------------------------------------- ÚJ VÁLTOZÓK
   const [osszeg, setOsszeg] = useState("");
   const [szamologepLathatoe, setSzamologepLathatoe] = useState(false);
-
+  //-------------------------------------------------------------
+  const [tanora, setTanora] = useState(false);
+  const [vizsga, setVizsga] = useState(false);
   //------------------------------------------------------------- MODAL
   const [kivalasztottTranzakcio, setKivalasztottTranzakcio] = useState(null);
   const [modalLathatoe, setModalLathatoe] = useState(false);
 
-  // Modal open function
   const modalNyitas = (tranzakcio) => {
     setKivalasztottTranzakcio(tranzakcio);
     setModalLathatoe(true);
   };
 
-  // Modal close function
   const modalCsukas = () => {
     setModalLathatoe(false);
     setKivalasztottTranzakcio(null);
   };
-
-  //------------------------------------------------------------------------- ALERT
-
-  /*const [isAlertVisible, setIsAlertVisible] = useState(false);
-
-  const showAlert = () => setIsAlertVisible(true);
-  const hideAlert = () => setIsAlertVisible(false);
- */
-
+  //------------------------------------------------------------- CHECKBOX
+  function SajatCheckbox({ label, isChecked, onPress }) {
+    return (
+      <TouchableOpacity style={styles.checkboxContainer} onPress={onPress}>
+        <View style={[styles.checkbox, isChecked && styles.checkedCheckbox]} />
+        <Text style={{ fontSize: 17 }}>{label}</Text>
+      </TouchableOpacity>
+    );
+  }
   //------------------------------------------------------------- BEFIZETÉSEK BETÖLTÉSE
   const adatokBetoltese = async () => {
     try {
@@ -97,14 +91,11 @@ const Tanulo_Befizetesek = ({ atkuld }) => {
     );
   }
   {
-    /* --------------------------------------TRANZAKCIÓ RÉSZLETEI---------------------------------------- */
+    /* -------------------------------------- ÖSSZEG FELVITELE AZ ADATBÁZISBA ---------------------------------------- */
   }
-  const osszegFelvitele = () => {
+  const osszegFelvitele = async () => {
     if (osszeg != 0) {
       if (osszeg.startsWith("0")) {
-        //az összeg obviously nem kezdődhet 0-val
-        //setIsAlertVisible(true);
-        //<Alerts isVisible={isAlertVisible} onClose={hideAlert}></Alerts>;
         Alert.alert("Hiba!", "Az összeg nem kezdődhet 0-val!", [
           {
             text: "RENDBEN",
@@ -113,8 +104,14 @@ const Tanulo_Befizetesek = ({ atkuld }) => {
       } else {
         console.log("összeg felvitele gomb megnyomva");
         console.log("összeg: ", osszeg);
-
-        //backend helye
+        const tipusID = tanora ? 1 : vizsga ? 2 : null;
+        const adat = {
+          befizetesek_tanuloID: atkuld.tanulo_id, //5
+          befizetesek_oktatoID: atkuld.tanulo_oktatoja, //7
+          befizetesek_tipusID: tipusID, //1 vagy 2
+          befizetesek_osszeg: osszeg, //összeg
+          befizetesek_ideje: ideje, //HIÁNYZIK
+        };
 
         Alert.alert("Siker!", "A tranzakció sikeresen mentve!", [
           {
@@ -129,14 +126,12 @@ const Tanulo_Befizetesek = ({ atkuld }) => {
         { text: "Értem", onPress: () => console.log("Értem megnyomva") },
       ]);
   };
-
   {
     /* --------------------------------------SZÁMOLÓGÉP KINÉZET ÉS FUNKCIÓ---------------------------------------- */
   }
   const osszegMegnyomas = () => {
     setSzamologepLathatoe(!szamologepLathatoe);
   };
-
   // számológép gombok
   const szamologepGombNyomas = (key) => {
     if (key === "torles") {
@@ -147,7 +142,6 @@ const Tanulo_Befizetesek = ({ atkuld }) => {
       setOsszeg(osszeg + key);
     }
   };
-
   // -------------------------------------------------------- SZÁMOLÓGÉP VIEW ----------------------------------------------------
   const szamologepBetoltes = () => (
     <View style={styles.szamologepView}>
@@ -185,24 +179,51 @@ const Tanulo_Befizetesek = ({ atkuld }) => {
     <ScrollView>
       {/* --------------------------------------SZÁMOLÓGÉP---------------------------------------- */}
       <View style={styles.container}>
-        <Text style={styles.cim}>Befizetés összege:</Text>
-        <TouchableOpacity onPress={osszegMegnyomas}>
-          <Text style={styles.osszegBeiras}>
-            {osszeg ? `${osszeg} Ft` : "0.00 Ft"}
-          </Text>
-        </TouchableOpacity>
-
         {/* Figyelmeztető szöveg megváltoztatása ||függ: számológép látható-e */}
         {szamologepLathatoe ? (
-          <Text style={styles.figyelmeztetes}>
-            A felvenni kívánt összeget az oktatód fogja jóváhagyni, amennyiben
-            tényleg kifizetted neki!
-          </Text>
+          <View style={styles.container2}>
+            <TouchableOpacity onPress={osszegMegnyomas}>
+            <Text style={styles.cim}>Kattints az összegre</Text>
+              <Text style={styles.osszegBeiras}>
+                {osszeg ? `${osszeg} Ft` : "0.00 Ft"}
+              </Text>
+            </TouchableOpacity>
+            <Text style={styles.figyelmeztetes}>
+              A felvenni kívánt összeget az oktatód fogja jóváhagyni, amennyiben
+              tényleg kifizetted neki!
+            </Text>
+            <View style={styles.checkboxView}>
+            <SajatCheckbox
+                label="Tanóra"
+                isChecked={tanora}
+                onPress={() => {
+                  setTanora(true);
+                  setVizsga(false);
+                }}
+              />
+              <SajatCheckbox
+                label="Vizsga"
+                isChecked={vizsga}
+                onPress={() => {
+                  setVizsga(true);
+                  setTanora(false);
+                }}
+              />
+            </View>
+          </View>
         ) : (
-          <Text style={styles.figyelmeztetes}>
-            Az alkalmazásban rögzített tranzakciók kizárólag szemléltető
-            jellegűek, és nem vonódnak le a bankkártyádról!
-          </Text>
+          <View style={styles.container2}>
+            <TouchableOpacity onPress={osszegMegnyomas}>
+              <Text style={styles.cim}>Kattints az összegre</Text>
+              <Text style={styles.osszegBeiras}>
+                {osszeg ? `${osszeg} Ft` : "0.00 Ft"}
+              </Text>
+            </TouchableOpacity>
+            <Text style={styles.figyelmeztetes}>
+              Az alkalmazásban rögzített tranzakciók kizárólag szemléltető
+              jellegűek, és nem vonódnak le a bankkártyádról!
+            </Text>
+          </View>
         )}
 
         <TouchableOpacity style={styles.felvetelGomb} onPress={osszegFelvitele}>
@@ -236,12 +257,14 @@ const Tanulo_Befizetesek = ({ atkuld }) => {
                           modalNyitas(item);
                         }}
                       >
-                        
-                        <Text style={styles.tranzakciosText}><Ionicons
-                          name="checkmark-circle"
-                          size={17}
-                          color="green"
-                        />Tanóra díj</Text>
+                        <Text style={styles.tranzakciosText}>
+                          <Ionicons
+                            name="checkmark-circle"
+                            size={17}
+                            color="green"
+                          />
+                          Tanóra díj
+                        </Text>
                         <Text style={styles.tranzakciosOsszeg}>
                           {" "}
                           - {item.befizetesek_osszeg} Ft
@@ -284,8 +307,14 @@ const Tanulo_Befizetesek = ({ atkuld }) => {
                           modalNyitas(item);
                         }}
                       >
-                        
-                        <Text style={styles.tranzakciosText}><Ionicons name="close-outline" size={17} color="red" />Tanóra díj</Text>
+                        <Text style={styles.tranzakciosText}>
+                          <Ionicons
+                            name="close-outline"
+                            size={17}
+                            color="red"
+                          />
+                          Tanóra díj
+                        </Text>
                         <Text style={styles.tranzakciosOsszeg}>
                           {" "}
                           - {item.befizetesek_osszeg} Ft
@@ -301,8 +330,10 @@ const Tanulo_Befizetesek = ({ atkuld }) => {
                       key={item.befizetesek_id}
                       onPress={() => modalNyitas(item)}
                     >
-                      
-                      <Text style={styles.tranzakciosText}><Ionicons name="close" size={17} color="red" />Vizsga díj</Text>
+                      <Text style={styles.tranzakciosText}>
+                        <Ionicons name="close" size={17} color="red" />
+                        Vizsga díj
+                      </Text>
                       <Text style={styles.tranzakciosOsszeg}>
                         {" "}
                         - {item.befizetesek_osszeg} Ft
@@ -321,8 +352,10 @@ const Tanulo_Befizetesek = ({ atkuld }) => {
                           modalNyitas(item);
                         }}
                       >
-                        
-                        <Text style={styles.tranzakciosText}><Ionicons name="alert" size={17} color="orange" />Tanóra díj</Text>
+                        <Text style={styles.tranzakciosText}>
+                          <Ionicons name="alert" size={17} color="orange" />
+                          Tanóra díj
+                        </Text>
                         <Text style={styles.tranzakciosOsszeg}>
                           {" "}
                           - {item.befizetesek_osszeg} Ft
@@ -338,8 +371,10 @@ const Tanulo_Befizetesek = ({ atkuld }) => {
                       key={item.befizetesek_id}
                       onPress={() => modalNyitas(item)}
                     >
-                      
-                      <Text style={styles.tranzakciosText}><Ionicons name="alert" size={17} color="orange" />Vizsga díj </Text>
+                      <Text style={styles.tranzakciosText}>
+                        <Ionicons name="alert" size={17} color="orange" />
+                        Vizsga díj{" "}
+                      </Text>
                       <Text style={styles.tranzakciosOsszeg}>
                         {" "}
                         - {item.befizetesek_osszeg} Ft
@@ -361,16 +396,12 @@ const Tanulo_Befizetesek = ({ atkuld }) => {
           <View style={styles.modalOverlay}>
             <View style={styles.modalContent}>
               <Text style={styles.modalTitle}>BEFIZETÉS RÉSZLETEI</Text>
-              <Text style={styles.modalText}>Típus:{" "}
-              {kivalasztottTranzakcio.befizetesek_tipusID === 1 ? 
-                (
-                  <>
-                    {"tanóra díj"}
-                  </>
+              <Text style={styles.modalText}>
+                Típus:{" "}
+                {kivalasztottTranzakcio.befizetesek_tipusID === 1 ? (
+                  <>{"tanóra díj"}</>
                 ) : (
-                  <>
-                    {"vizsga díj"}
-                  </>
+                  <>{"vizsga díj"}</>
                 )}
               </Text>
               <Text style={styles.modalText}>
@@ -398,7 +429,6 @@ const Tanulo_Befizetesek = ({ atkuld }) => {
               <Text style={styles.modalText}>
                 {kivalasztottTranzakcio.befizetesek_jovahagyva === 1 ? (
                   <>
-                    
                     {"Befizetés elfogadva!"}
                     <Ionicons name="checkmark-circle" size={17} color="green" />
                   </>
@@ -467,6 +497,13 @@ const styles = StyleSheet.create({
     textAlign: "center",
   },
   container: {
+    marginTop: 50,
+    flex: 1,
+    backgroundColor: "#f3f0fa",
+    alignItems: "center",
+    padding: 20,
+  },
+  container2: {
     flex: 1,
     backgroundColor: "#f3f0fa",
     alignItems: "center",
@@ -497,7 +534,6 @@ const styles = StyleSheet.create({
     paddingHorizontal: 40,
     borderRadius: 10,
     marginBottom: 20,
-    marginTop: 20,
   },
   felvetelGombSzoveg: {
     color: "#fff",
@@ -527,6 +563,7 @@ const styles = StyleSheet.create({
     fontWeight: "bold",
   },
   tranzakcioContainer: {
+    backgroundColor: "#f3f0fa",
     margin: 20,
   },
   tranzakcioTitle: {
@@ -559,4 +596,37 @@ const styles = StyleSheet.create({
     fontWeight: "bold",
     color: "#d63031",
   },
+  inputWrapper: {
+    flexDirection: "row",
+    alignItems: "center",
+    backgroundColor: "#f7f7f7",
+    borderWidth: 1,
+    borderColor: "#ccc",
+    borderRadius: 8,
+    paddingHorizontal: 10,
+    width: "100%",
+    height: 50,
+    marginBottom: 15,
+  },
+  checkboxContainer: {
+    flexDirection: "row",
+    alignItems: "center",
+    marginRight: 20,
+    
+  },
+  checkbox: {
+    width: 25,
+    height: 25,
+    borderWidth: 1,
+    borderColor: "#000",
+    marginRight: 8,
+    borderRadius: 30
+  },
+  checkedCheckbox: {
+    backgroundColor: "#5c4ce3",
+  },
+  checkboxView: {
+    flexDirection: 'row',
+    alignContent:'space-between',
+  }
 });

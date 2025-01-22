@@ -25,7 +25,7 @@ const Tanulo_BejelentkezesUtan = ({ navigation, route }) => {
         const response = await fetch(Ipcim.Ipcim + "/sajatAdatokT", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ felhasznaloID: user.felhasznalo_id }), // 'user' objektumot
+          body: JSON.stringify({ tanulo_felhasznaloID: user.felhasznalo_id }), // 'user' objektum
         });
 
         if (!response.ok) {
@@ -97,7 +97,7 @@ const Tanulo_BejelentkezesUtan = ({ navigation, route }) => {
 
       <Tab.Screen
         name="Tanulo_Befizetesek"
-        options={{ title: "Befizetéseim" }}
+        options={{ headerShown: false, title: "Befizetéseim" }}
         children={() => <Tanulo_Befizetesek atkuld={adatok} />}
       />
 

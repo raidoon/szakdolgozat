@@ -165,13 +165,13 @@ app.post("/beleptetes", (req, res) => {
 app.post("/sajatAdatokT", (req, res) => {
   kapcsolat();
   connection.query(
-    `select felhasznalo_id,felhasznalo_email,felhasznalo_telefonszam,tanulo_neve,tanulo_levizsgazott,oktato_adatok.oktato_neve, autosiskola_adatok.autosiskola_nev 
-    from tanulo_adatok 
-    inner join felhasznaloi_adatok on tanulo_adatok.tanulo_felhasznaloID=felhasznaloi_adatok.felhasznalo_id 
-    inner join oktato_adatok on tanulo_adatok.tanulo_oktatoja=oktato_adatok.oktato_id 
-    inner join autosiskola_adatok on felhasznaloi_adatok.felhasznalo_autosiskola=autosiskola_adatok.autosiskola_id
+    `select felhasznalo_id,tanulo_id,felhasznalo_email,felhasznalo_telefonszam,tanulo_neve,tanulo_levizsgazott,tanulo_oktatoja,oktato_adatok.oktato_neve, autosiskola_adatok.autosiskola_nev 
+    from felhasznaloi_adatok 
+    inner join tanulo_adatok on felhasznaloi_adatok.felhasznalo_id=tanulo_adatok.tanulo_felhasznaloID  
+    inner join oktato_adatok on tanulo_adatok.tanulo_oktatoja=oktato_adatok.oktato_id  
+    inner join autosiskola_adatok on felhasznaloi_adatok.felhasznalo_autosiskola=autosiskola_adatok.autosiskola_id 
     where tanulo_felhasznaloID = ?`,
-    [req.body.felhasznaloID],
+    [req.body.tanulo_felhasznaloID],
     (err, rows, fields) => {
       if (err) {
         console.log(err);
@@ -242,6 +242,17 @@ app.post("/befizetesListaT", (req, res) => {
   connection.end();
 });
 //------------------------------------------------ TANULÓ BEFIZETÉS FELVÉTELE
+app.post('/tanuloBefizetesFelvitel',(req,res)=>{
+  kapcsolat()
+  connection.connect()
+  connection.query(`INSERT INTO befizetesek  VALUES (null,${req.body.befizetesek_tanuloID},${req.body.befizetesek_oktatoID},${req.body.befizetesek_tipusID},${req.body.befizetesek_osszeg},${req.body.befizetesek_ideje},0)`, (err, rows, fields) => {
+    if (err) 
+      res.send("Hiba") 
+    else 
+    res.send("A befizetés felvitele sikerült!")
+  })    
+  connection.end()
+});
 
 //------------------------------------------------ lekérdezések vége
 //------------------------adott oktatóhoz tartozó tanulók neveinek megjelenítése post bevitel1
