@@ -1,11 +1,8 @@
 import { useState,useEffect } from "react";
 import { View, Text, Button, FlatList, TouchableOpacity } from "react-native";
 import { useNavigation } from '@react-navigation/native';
-import Styles from "../../Styles";
 import Oktato_Styles from "../../Oktato_Styles";
 import Ipcim from "../../Ipcim";
-import DateTimePicker from "@react-native-community/datetimepicker";
-import Checkbox from "expo-checkbox";
 
 
 export default function Oktato_Diakok({atkuld}){
