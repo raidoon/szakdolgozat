@@ -37,6 +37,7 @@ const Oktato_BejelentkezesUtan2 = ({ navigation, route }) => {
 
         const data = await response.json();
         setAdatok(data[0]);
+        console.log(data[0].felhasznalo_id)
       }
     } catch (err) {
       setHiba(err.message);
