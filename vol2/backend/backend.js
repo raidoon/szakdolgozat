@@ -306,10 +306,11 @@ app.post("/egyTanuloOrai", (req, res) => {
   console.log("egy tanulo orai")
   kapcsolat();
   connection.query(
-    `SELECT *
-    FROM tanulo_adatok AS tanulo
-    INNER JOIN ora_adatok AS ora
-    ON tanulo.tanulo_id = ora.tanulo_id
+    `SELECT * 
+    FROM tanulo_adatok 
+    AS tanulo 
+    INNER JOIN ora_adatok 
+    AS ora ON tanulo.tanulo_id = ora.ora_diakja 
     WHERE tanulo.tanulo_id=?`,
     [req.body.tanuloid],
     (err, rows, fields) => {
