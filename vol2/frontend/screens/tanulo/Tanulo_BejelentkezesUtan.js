@@ -91,7 +91,7 @@ const Tanulo_BejelentkezesUtan = ({ navigation, route }) => {
 
       <Tab.Screen
         name="Tanulo_Datumok"
-        options={{ title: "Óráim" }}
+        options={{headerShown:false, title: "Óráim" }}
         children={() => <Tanulo_Datumok atkuld={adatok} />}
       />
 

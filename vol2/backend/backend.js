@@ -166,9 +166,10 @@ app.post("/beleptetes", (req, res) => {
 app.post("/sajatAdatokT", (req, res) => {
   kapcsolat();
   connection.query(
-    `select felhasznalo_id,tanulo_id,felhasznalo_email,felhasznalo_telefonszam,tanulo_neve,tanulo_levizsgazott,tanulo_oktatoja,oktato_adatok.oktato_neve, autosiskola_adatok.autosiskola_nev 
+    `select felhasznalo_id,tanulo_id,felhasznalo_email,felhasznalo_telefonszam,tanulo_neve,tanulo_levizsgazott,tanulo_oktatoja,oktato_adatok.oktato_neve, autosiskola_adatok.autosiskola_nev, ora_adatok.ora_diakja 
     from felhasznaloi_adatok 
-    inner join tanulo_adatok on felhasznaloi_adatok.felhasznalo_id=tanulo_adatok.tanulo_felhasznaloID  
+    inner join tanulo_adatok on felhasznaloi_adatok.felhasznalo_id=tanulo_adatok.tanulo_felhasznaloID
+    inner join ora_adatok on tanulo_adatok.tanulo_id=ora_adatok.ora_diakja   
     inner join oktato_adatok on tanulo_adatok.tanulo_oktatoja=oktato_adatok.oktato_id  
     inner join autosiskola_adatok on felhasznaloi_adatok.felhasznalo_autosiskola=autosiskola_adatok.autosiskola_id 
     where tanulo_felhasznaloID = ?`,
@@ -274,6 +275,23 @@ app.post('/tanuloBefizetesFelvitel', (req, res) => {
   connection.end()
 });
 //------------------------------------------------ TANULÓ ÓRÁINAK LEKÉRDEZÉSE
+app.post("/tanuloOrai", (req, res) => {
+  kapcsolat();
+  connection.query(
+    `SELECT * FROM ora_adatok WHERE ora_adatok.ora_diakja = ?`,
+    [req.body.ora_diakja],
+    (err, rows, fields) => {
+      if (err) {
+        console.log(err);
+        res.status(500).send("Hiba");
+      } else {
+        console.log(rows);
+        res.status(200).send(rows);
+      }
+    }
+  );
+  connection.end();
+});
 
 //------------------------------------------------ TANULÓI LEKÉRDEZÉSEK VÉGE
 //------------------------adott oktatóhoz tartozó tanulók neveinek megjelenítése post bevitel1
@@ -303,7 +321,7 @@ app.post("/egyOktatoDiakjai", (req, res) => {
 //----------------------
 
 app.post("/egyTanuloOrai", (req, res) => {
-  console.log("hello")
+  console.log("egy tanulo orai")
   kapcsolat();
   connection.query(
     `SELECT * 

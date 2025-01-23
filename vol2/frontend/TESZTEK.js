@@ -1,3 +1,4 @@
+/*
 import React, { useState } from 'react';
 import { View, Text, StyleSheet, FlatList, TouchableOpacity } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
@@ -5,20 +6,19 @@ import { Ionicons } from '@expo/vector-icons';
 const Tanulo_Datumok = ({ atkuld }) => {
   const today = new Date();
   const [selectedDate, setSelectedDate] = useState(today);
-  const [isExpanded, setIsExpanded] = useState(false);
 
   const eventsByDate = {
-    '2025-01-03': [
-      { id: '1', title: 'Marketing team meeting', time: '08:00 - 08:40 AM', color: '#FDEEDC' },
-      { id: '2', title: 'Make plans to create new products', time: '09:00 - 09:40 AM', color: '#E8DFF5' },
-      { id: '3', title: 'Coffee breaks and snacks', time: '10:00 - 10:15 AM', color: '#D6EFFF' },
+    '2025-01-23': [
+      { id: '1', title: 'Indulás a buszvégállomásról', time: '08:00 - 10:00 AM', color: '#FDEEDC' },
+      { id: '2', title: 'Indulás a Szepességi utcáról', time: '09:00 - 09:40 AM', color: '#E8DFF5' },
+      { id: '3', title: 'Petőfi utca', time: '10:00 - 10:15 AM', color: '#D6EFFF' },
     ],
     '2025-01-04': [
-      { id: '4', title: 'Team brainstorming session', time: '08:30 - 09:30 AM', color: '#F5D8E8' },
-      { id: '5', title: 'Design review meeting', time: '10:00 - 11:00 AM', color: '#D6EFFF' },
+      { id: '4', title: 'Team brainstorming session', time: '08:30 - 10:30 AM', color: '#F5D8E8' },
+      { id: '5', title: 'Design review meeting', time: '11:00 - 11:30 AM', color: '#D6EFFF' },
       { id: '6', title: 'Lunch with clients', time: '12:00 - 01:00 PM', color: '#FDEEDC' },
     ],
-    '2025-01-05': [
+    '2025-01-25': [
       { id: '7', title: 'Weekly report submission', time: '09:00 - 09:30 AM', color: '#E8DFF5' },
       { id: '8', title: 'Project update call', time: '11:00 - 11:45 AM', color: '#D6EFFF' },
     ],
@@ -49,31 +49,35 @@ const Tanulo_Datumok = ({ atkuld }) => {
     setSelectedDate(newDate);
   };
 
-  const toggleCalendarView = () => {
-    setIsExpanded(!isExpanded);
+  const changeMonth = (direction) => {
+    const newDate = new Date(selectedDate);
+    newDate.setMonth(selectedDate.getMonth() + direction);
+    setSelectedDate(newDate);
   };
 
-  const renderCompactRow = () => {
-    const currentDay = today.getDate();
-    const daysToShow = 5; // Show 5 days in compact view
-    const startDay = Math.max(1, currentDay - Math.floor(daysToShow / 2));
-    const endDay = Math.min(getDaysInMonth(today.getFullYear(), today.getMonth()), startDay + daysToShow - 1);
+  return (
+    <View style={styles.container}>
+      {/* Header *//*}
+      <View style={styles.header}>
+        <TouchableOpacity onPress={() => changeMonth(-1)}>
+          <Ionicons name="arrow-back" size={24} color="black" />
+        </TouchableOpacity>
+        <Text style={styles.month}>{renderCalendarHeader()}</Text>
+        <TouchableOpacity onPress={() => changeMonth(1)}>
+          <Ionicons name="arrow-forward" size={24} color="black" />
+        </TouchableOpacity>
+      </View>
 
-    const days = [];
-    for (let day = startDay; day <= endDay; day++) {
-      days.push(day);
-    }
-
-    return (
-      <View style={styles.compactRow}>
-        {days.map((day) => (
+      {/* Date Selector *//*}
+      <View style={styles.dateSelector}>
+        {generateCalendarDays().map((day) => (
           <TouchableOpacity
             key={day}
             onPress={() => handleDatePress(day)}
             style={
               selectedDate.getDate() === day
-                ? styles.selectedDateCompact
-                : styles.dateItemCompact
+                ? styles.selectedDate
+                : styles.dateItem
             }
           >
             <Text
@@ -88,54 +92,8 @@ const Tanulo_Datumok = ({ atkuld }) => {
           </TouchableOpacity>
         ))}
       </View>
-    );
-  };
 
-  return (
-    <View style={styles.container}>
-      {/* Header */}
-      <View style={styles.header}>
-        <Text style={styles.month}>{renderCalendarHeader()}</Text>
-        <TouchableOpacity onPress={toggleCalendarView}>
-          <Ionicons
-            name={isExpanded ? 'arrow-up' : 'arrow-down'}
-            size={24}
-            color="black"
-          />
-        </TouchableOpacity>
-      </View>
-
-      {/* Compact View */}
-      {!isExpanded && renderCompactRow()}
-
-      {/* Full Calendar View */}
-      {isExpanded && (
-        <View style={styles.dateSelector}>
-          {generateCalendarDays().map((day) => (
-            <TouchableOpacity
-              key={day}
-              onPress={() => handleDatePress(day)}
-              style={
-                selectedDate.getDate() === day
-                  ? styles.selectedDate
-                  : styles.dateItem
-              }
-            >
-              <Text
-                style={
-                  selectedDate.getDate() === day
-                    ? styles.selectedText
-                    : styles.dateText
-                }
-              >
-                {day}
-              </Text>
-            </TouchableOpacity>
-          ))}
-        </View>
-      )}
-
-      {/* Event List */}
+      {/* Event List *//*}
       <FlatList
         data={events}
         keyExtractor={(item) => item.id}
@@ -145,7 +103,7 @@ const Tanulo_Datumok = ({ atkuld }) => {
             <Text style={styles.eventTime}>{item.time}</Text>
           </View>
         )}
-        ListEmptyComponent={<Text style={styles.noEvents}>No events for this day</Text>}
+        ListEmptyComponent={<Text style={styles.noEvents}>Ezen a napon nincsenek óráid</Text>}
       />
     </View>
   );
@@ -168,12 +126,6 @@ const styles = StyleSheet.create({
     fontSize: 20,
     fontWeight: 'bold',
   },
-  compactRow: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    marginBottom: 20,
-  },
   dateSelector: {
     flexDirection: 'row',
     flexWrap: 'wrap',
@@ -192,18 +144,6 @@ const styles = StyleSheet.create({
     borderRadius: 10,
     padding: 5,
     marginVertical: 5,
-  },
-  dateItemCompact: {
-    alignItems: 'center',
-    padding: 10,
-    borderRadius: 10,
-    backgroundColor: '#F5F5F5',
-  },
-  selectedDateCompact: {
-    alignItems: 'center',
-    padding: 10,
-    borderRadius: 10,
-    backgroundColor: '#D6EFFF',
   },
   dateText: {
     color: '#888',
@@ -235,3 +175,4 @@ const styles = StyleSheet.create({
 });
 
 export default Tanulo_Datumok;
+ */
