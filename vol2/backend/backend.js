@@ -304,7 +304,7 @@ app.post("/egyOktatoDiakjai", (req, res) => {
     INNER JOIN oktato_adatok AS oktato
     ON tanulo.tanulo_oktatoja = oktato.oktato_id
     WHERE oktato.oktato_id=?`,
-    [req.body.oktatoid],
+    [req.body.oktato_id],
     (err, rows, fields) => {
       if (err) {
         console.log(err);
@@ -330,7 +330,7 @@ app.post("/egyTanuloOrai", (req, res) => {
     INNER JOIN ora_adatok 
     AS ora ON tanulo.tanulo_id = ora.ora_diakja 
     WHERE tanulo.tanulo_id=?`,
-    [req.body.tanuloid],
+    [req.body.tanulo_id],
     (err, rows, fields) => {
       if (err) {
         console.log(err);
@@ -347,7 +347,7 @@ app.post("/egyTanuloOrai", (req, res) => {
 //--------------------------OraFelvitel
 app.post('/oraFelvitel', (req, res) => {
   kapcsolat()
-  connection.query(`INSERT INTO ora_adatok VALUES (NULL, 1, ?, 4, ?, 0 )`, [req.body.bevitel2, req.body.bevitel4], (err, rows, fields) => {
+  connection.query(`INSERT INTO ora_adatok VALUES (NULL, ?, ?, ?, ?, 0 )`, [req.body.bevitel1, req.body.bevitel2, req.body.bevitel3, req.body.bevitel4], (err, rows, fields) => {
     if (err) {
       console.log("Hiba")
       console.log(err)
@@ -360,6 +360,25 @@ app.post('/oraFelvitel', (req, res) => {
   })
   connection.end()
 })
+
+
+//--------------------------------
+app.get("/valasztTipus", (req, res) => {
+  kapcsolat();
+  connection.query(
+    `select *  from ora_tipusa`,
+    (err, rows, fields) => {
+      if (err) {
+        console.log(err);
+        res.status(500).send("Hiba");
+      } else {
+        console.log(rows);
+        res.status(200).send(rows);
+      }
+    }
+  );
+  connection.end();
+});
 
 
 //----------------------

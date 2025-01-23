@@ -6,32 +6,75 @@ import {
   Button,
   TouchableOpacity,
   StyleSheet,
-  FlatList,
 } from "react-native";
+import { Dropdown } from "react-native-element-dropdown";
 import Ipcim from "../../Ipcim";
 import DateTimePicker from "@react-native-community/datetimepicker";
 import Checkbox from "expo-checkbox";
 
 export default function Oktato_OraRogzites({ route }) {
-  const { atkuld } = route.params; // Paraméter fogadása
+  const { atkuld } = route.params;
 
   const [adatTomb, setAdatTomb] = useState([]);
+  const [diakTomb, setDiakTomb] = useState([]); // Új állapot a diákok dropdownhoz
+  const [selectedValue, setSelectedValue] = useState(1); //tipus
+  const [selectedDiak, setSelectedDiak] = useState(null); // Új állapot a kiválasztott diákhoz
   const [date, setDate] = useState(new Date());
   const [show, setShow] = useState(false);
   const [datum, setDatum] = useState("");
   const [szoveg, setSzoveg] = useState("");
   const [isChecked, setChecked] = useState(false);
 
+  // Típusok betöltése
+  useEffect(() => {
+    const fetchAdatok = async () => {
+      try {
+        const response = await fetch(Ipcim.Ipcim + "/valasztTipus");
+        const data = await response.json();
+        setAdatTomb(data.map((item) => ({ label: item.oratipus_neve, value: item.oratipus_id })));
+      } catch (error) {
+        console.error("Hiba a valasztTipus adatok betöltésekor:", error);
+      }
+    };
+    fetchAdatok();
+  }, []);
+
+  // Diákok betöltése az oktató alapján
+  useEffect(() => {
+    const fetchDiakok = async () => {
+      if (!atkuld || !atkuld.oktato_id) return;
+
+      try {
+        var adat={
+          "oktato_id":atkuld.oktato_id
+      }
+        const response = await fetch(`${Ipcim.Ipcim}/egyOktatoDiakjai`, {
+          method: "POST",
+          body: JSON.stringify(adat),
+          headers: {"Content-type": "application/json; charset=UTF-8"}
+      });
+        const data = await response.json();
+        setDiakTomb(data.map((item) => ({ label: item.tanulo_neve, value: item.tanulo_id })));
+      } catch (error) {
+        console.error("Hiba az egyOktatoDiakjai adatok betöltésekor:", error);
+      }
+    };
+    fetchDiakok();
+  }, [atkuld]);
+
   const felvitel = async () => {
-    if (!datum) {
+    if (!datum || !selectedValue || !selectedDiak) {
       alert("A kötelező mezőket töltsd ki!");
       return;
     }
-
+//alert(selectedValue)
     const adatok = {
+      bevitel1:selectedValue,
       bevitel2: atkuld.oktato_id,
-      bevitel4: datum,
-      megjegyzes: szoveg || "",
+      bevitel3: selectedDiak,
+      bevitel4: datum
+      
+      //megjegyzes: szoveg || "",
     };
 
     try {
@@ -60,6 +103,37 @@ export default function Oktato_OraRogzites({ route }) {
     <View style={styles.container}>
       <Text style={styles.title}>Új óra rögzítése:</Text>
       <Text>{atkuld ? `Felhasználó ID: ${atkuld.oktato_id}` : "Nincs adat"}</Text>
+
+      {/* Dropdown: Óratípus */}
+      <Text style={styles.label}>Válassz típust:</Text>
+      <Dropdown
+        style={styles.dropdown}
+        placeholderStyle={styles.placeholderStyle}
+        selectedTextStyle={styles.selectedTextStyle}
+        data={adatTomb}
+        maxHeight={300}
+        labelField="label"
+        valueField="value"
+        placeholder="-- Válassz --"
+        value={selectedValue}
+        onChange={(item) => setSelectedValue(item.value)}
+      />
+
+      {/* Dropdown: Diákok */}
+      <Text style={styles.label}>Válassz diákot:</Text>
+      <Dropdown
+        style={styles.dropdown}
+        placeholderStyle={styles.placeholderStyle}
+        selectedTextStyle={styles.selectedTextStyle}
+        data={diakTomb}
+        maxHeight={300}
+        labelField="label"
+        valueField="value"
+        placeholder="-- Válassz diákot --"
+        value={selectedDiak}
+        onChange={(item) => setSelectedDiak(item.value)}
+      />
+
       <View style={styles.inputContainer}>
         <TextInput
           style={styles.input}
@@ -71,8 +145,10 @@ export default function Oktato_OraRogzites({ route }) {
           <Text style={styles.clearText}>Törlés</Text>
         </TouchableOpacity>
       </View>
+
       <Button title="Dátum kiválasztása" onPress={() => setShow(true)} />
       {datum ? <Text style={styles.date}>{datum}</Text> : null}
+
       <Button title="Új óra felvitele" onPress={felvitel} />
       {show && (
         <DateTimePicker
@@ -96,6 +172,26 @@ const styles = StyleSheet.create({
   title: {
     fontSize: 20,
     marginBottom: 20,
+  },
+  label: {
+    fontSize: 16,
+    marginTop: 10,
+  },
+  dropdown: {
+    height: 50,
+    width: "100%",
+    borderWidth: 1,
+    borderRadius: 8,
+    marginVertical: 10,
+    paddingHorizontal: 8,
+  },
+  placeholderStyle: {
+    fontSize: 16,
+    color: "gray",
+  },
+  selectedTextStyle: {
+    fontSize: 16,
+    color: "black",
   },
   inputContainer: {
     flexDirection: "row",
