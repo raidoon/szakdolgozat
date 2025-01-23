@@ -1,3 +1,7 @@
+
+//EZ AZ EREDETI
+
+
 import {
     SafeAreaView,
     View,

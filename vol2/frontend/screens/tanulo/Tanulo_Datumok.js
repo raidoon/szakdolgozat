@@ -1,151 +1,190 @@
-import React, { useState } from 'react';
-import { View, Text, StyleSheet, FlatList, TouchableOpacity } from 'react-native';
-import { Ionicons } from '@expo/vector-icons';
+import React, { useState } from "react";
+import {
+  View,
+  Text,
+  StyleSheet,
+  FlatList,
+  TouchableOpacity,
+} from "react-native";
+import { Ionicons } from "@expo/vector-icons";
 
 const Tanulo_Datumok = ({ atkuld }) => {
-  const today = new Date();
-  const [selectedDate, setSelectedDate] = useState(today);
-  const [isExpanded, setIsExpanded] = useState(false);
+  const ma = new Date();
+  const [kivalasztottDatum, setKivalasztottDatum] = useState(ma);
+  const [naptarLenyitas, setNaptarLenyitas] = useState(false);
 
-  const eventsByDate = {
-    '2025-01-03': [
-      { id: '1', title: 'Marketing team meeting', time: '08:00 - 08:40 AM', color: '#FDEEDC' },
-      { id: '2', title: 'Make plans to create new products', time: '09:00 - 09:40 AM', color: '#E8DFF5' },
-      { id: '3', title: 'Coffee breaks and snacks', time: '10:00 - 10:15 AM', color: '#D6EFFF' },
+  const orakDatumSzerint = {
+    "2025-01-23": [
+      {
+        id: "1",
+        cim: "Indulás a buszvégállomásról",
+        ido: "reggel 08:00 - 10:00",
+        color: "#FDEEDC",
+      },
+      {
+        id: "2",
+        cim: "Indulás a Szepességi utcáról",
+        ido: "D.E. 09:00 - 09:40",
+        color: "#E8DFF5",
+      },
+      {
+        id: "3",
+        cim: "Petőfi utca",
+        ido: "délelőtt 10:00 - 10:15",
+        color: "#D6EFFF",
+      },
     ],
-    '2025-01-04': [
-      { id: '4', title: 'Team brainstorming session', time: '08:30 - 09:30 AM', color: '#F5D8E8' },
-      { id: '5', title: 'Design review meeting', time: '10:00 - 11:00 AM', color: '#D6EFFF' },
-      { id: '6', title: 'Lunch with clients', time: '12:00 - 01:00 PM', color: '#FDEEDC' },
+    "2025-01-17": [
+      {
+        id: "4",
+        cim: "Indulás a buszvégállomásról",
+        ido: "08:30 - 10:30",
+        color: "#F5D8E8",
+      },
+      {
+        id: "5",
+        cim: "EZ EGY ORA IDK",
+        ido: "11:00 - 11:30",
+        color: "#D6EFFF",
+      },
+      {
+        id: "6",
+        cim: "Lunch with clients",
+        ido: "12:00 - 13:00",
+        color: "#FDEEDC",
+      },
     ],
-    '2025-01-05': [
-      { id: '7', title: 'Weekly report submission', time: '09:00 - 09:30 AM', color: '#E8DFF5' },
-      { id: '8', title: 'Project update call', time: '11:00 - 11:45 AM', color: '#D6EFFF' },
+    "2025-01-25": [
+      {
+        id: "7",
+        cim: "Indulás a buszvégállomásról",
+        ido: "09:00 - 09:30",
+        color: "#E8DFF5",
+      },
+      {
+        id: "8",
+        cim: "BLA BLA BLA BLA",
+        ido: "11:00 - 11:45",
+        color: "#D6EFFF",
+      },
     ],
   };
 
-  const events = eventsByDate[selectedDate.toISOString().split('T')[0]] || [];
+  const orak =
+    orakDatumSzerint[kivalasztottDatum.toISOString().split("T")[0]] || [];
 
-  const renderCalendarHeader = () => {
-    const monthName = selectedDate.toLocaleString('default', { month: 'long' });
-    const year = selectedDate.getFullYear();
-    return `${monthName} ${year}`;
+  const naptarToggle = () => {
+    setNaptarLenyitas(!naptarLenyitas);
   };
 
-  const getDaysInMonth = (year, month) => {
-    return new Date(year, month + 1, 0).getDate();
+  const NaptarHeaderBetoltes = () => {
+    const honapNeve = kivalasztottDatum.toLocaleString("default", {
+      month: "long",
+    });
+    const ev = kivalasztottDatum.getFullYear();
+    return `${honapNeve} ${ev}`;
   };
 
-  const generateCalendarDays = () => {
-    const year = selectedDate.getFullYear();
-    const month = selectedDate.getMonth();
-    const daysInMonth = getDaysInMonth(year, month);
-    return Array.from({ length: daysInMonth }, (_, i) => i + 1);
+  const getHonapNapjai = (ev, honap) => {
+    return new Date(ev, honap + 1, 0).getDate();
   };
 
-  const handleDatePress = (day) => {
-    const newDate = new Date(selectedDate);
-    newDate.setDate(day);
-    setSelectedDate(newDate);
+  const NaptariNapokGeneralasa = () => {
+    const ev = kivalasztottDatum.getFullYear();
+    const honap = kivalasztottDatum.getMonth();
+    const honapNapjai = getHonapNapjai(ev, honap);
+    return Array.from({ length: honapNapjai }, (_, i) => i + 1);
   };
 
-  const toggleCalendarView = () => {
-    setIsExpanded(!isExpanded);
+  const datumMegnyomas = (nap) => {
+    const ujDatum = new Date(kivalasztottDatum);
+    ujDatum.setDate(nap);
+    setKivalasztottDatum(ujDatum);
   };
 
-  const renderCompactRow = () => {
-    const currentDay = today.getDate();
-    const daysToShow = 5; // Show 5 days in compact view
-    const startDay = Math.max(1, currentDay - Math.floor(daysToShow / 2));
-    const endDay = Math.min(getDaysInMonth(today.getFullYear(), today.getMonth()), startDay + daysToShow - 1);
-
-    const days = [];
-    for (let day = startDay; day <= endDay; day++) {
-      days.push(day);
-    }
-
-    return (
-      <View style={styles.compactRow}>
-        {days.map((day) => (
-          <TouchableOpacity
-            key={day}
-            onPress={() => handleDatePress(day)}
-            style={
-              selectedDate.getDate() === day
-                ? styles.selectedDateCompact
-                : styles.dateItemCompact
-            }
-          >
-            <Text
-              style={
-                selectedDate.getDate() === day
-                  ? styles.selectedText
-                  : styles.dateText
-              }
-            >
-              {day}
-            </Text>
-          </TouchableOpacity>
-        ))}
-      </View>
-    );
+  const honapValtas = (irany) => {
+    const ujDatum = new Date(kivalasztottDatum);
+    ujDatum.setMonth(kivalasztottDatum.getMonth() + irany);
+    setKivalasztottDatum(ujDatum);
   };
 
   return (
     <View style={styles.container}>
-      {/* Header */}
-      <View style={styles.header}>
-        <Text style={styles.month}>{renderCalendarHeader()}</Text>
-        <TouchableOpacity onPress={toggleCalendarView}>
+
+<View style={styles.header}>
+        <Text style={styles.honap}>{NaptarHeaderBetoltes()}</Text>
+
+        {/*------------------  NAPTÁRI NÉZET VÁLTÁSA NYÍL --------------------*/}
+
+        <TouchableOpacity onPress={naptarToggle}>
           <Ionicons
-            name={isExpanded ? 'arrow-up' : 'arrow-down'}
-            size={24}
+            name={naptarLenyitas ? 'arrow-up' : 'arrow-down'}
+            size={30}
             color="black"
           />
         </TouchableOpacity>
+
+        {/* ---------- IDE JÖN AZ 1 SOROS NAPTÁRI VIEW !!!! */}
+
+
       </View>
 
-      {/* Compact View */}
-      {!isExpanded && renderCompactRow()}
+      {/*--------------------------------  LENYITOTT NAPTÁRI NÉZET !!!  ---------------------------*/}
+      {naptarLenyitas && (
+        <View>
+          {/* NAPTÁR HEADER */}
+          <View style={styles.header}>
+            <TouchableOpacity onPress={() => honapValtas(-1)}>
+              <Ionicons name="arrow-back" size={24} color="black" />
+            </TouchableOpacity>
+            <Text style={styles.honap}>{NaptarHeaderBetoltes()}</Text>
+            <TouchableOpacity onPress={() => honapValtas(1)}>
+              <Ionicons name="arrow-forward" size={24} color="black" />
+            </TouchableOpacity>
+          </View>
 
-      {/* Full Calendar View */}
-      {isExpanded && (
-        <View style={styles.dateSelector}>
-          {generateCalendarDays().map((day) => (
-            <TouchableOpacity
-              key={day}
-              onPress={() => handleDatePress(day)}
-              style={
-                selectedDate.getDate() === day
-                  ? styles.selectedDate
-                  : styles.dateItem
-              }
-            >
-              <Text
+          {/* NAPOK KIVÁLASZTÁSA A NAPTÁRBÓL */}
+          <View style={styles.napValasztas}>
+            {NaptariNapokGeneralasa().map((nap) => (
+              <TouchableOpacity
+                key={nap}
+                onPress={() => datumMegnyomas(nap)}
                 style={
-                  selectedDate.getDate() === day
-                    ? styles.selectedText
-                    : styles.dateText
+                  kivalasztottDatum.getDate() === nap
+                    ? styles.kivalasztottdatum
+                    : styles.dateItem
                 }
               >
-                {day}
-              </Text>
-            </TouchableOpacity>
-          ))}
+                <Text
+                  style={
+                    kivalasztottDatum.getDate() === nap
+                      ? styles.kivalasztottSzoveg
+                      : styles.datumSzoveg
+                  }
+                >
+                  {nap}
+                </Text>
+              </TouchableOpacity>
+            ))}
+          </View>
         </View>
       )}
 
-      {/* Event List */}
+      {/* ÓRA LISTA */}
       <FlatList
-        data={events}
+        data={orak}
         keyExtractor={(item) => item.id}
         renderItem={({ item }) => (
-          <View style={[styles.eventItem, { backgroundColor: item.color }]}>  
-            <Text style={styles.eventTitle}>{item.title}</Text>
-            <Text style={styles.eventTime}>{item.time}</Text>
+          <View
+            style={[styles.maddingespadding, { backgroundColor: item.color }]}
+          >
+            <Text style={styles.oraCim}>{item.cim}</Text>
+            <Text style={styles.oraIdeje}>{item.ido}</Text>
           </View>
         )}
-        ListEmptyComponent={<Text style={styles.noEvents}>No events for this day</Text>}
+        ListEmptyComponent={
+          <Text style={styles.nincsOra}>Ezen a napon nincsenek óráid</Text>
+        }
       />
     </View>
   );
@@ -154,82 +193,64 @@ const Tanulo_Datumok = ({ atkuld }) => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#FFF',
+    backgroundColor: "#FFF",
     paddingHorizontal: 16,
     paddingTop: 40,
   },
   header: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
     marginBottom: 20,
   },
-  month: {
+  honap: {
     fontSize: 20,
-    fontWeight: 'bold',
+    fontWeight: "bold",
   },
-  compactRow: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    marginBottom: 20,
-  },
-  dateSelector: {
-    flexDirection: 'row',
-    flexWrap: 'wrap',
-    justifyContent: 'space-between',
+  napValasztas: {
+    flexDirection: "row",
+    flexWrap: "wrap",
+    justifyContent: "space-between",
     marginBottom: 20,
   },
   dateItem: {
-    width: '13%',
-    alignItems: 'center',
+    width: "13%",
+    alignItems: "center",
     marginVertical: 5,
   },
-  selectedDate: {
-    width: '13%',
-    alignItems: 'center',
-    backgroundColor: '#D6EFFF',
+  kivalasztottdatum: {
+    width: "13%",
+    alignItems: "center",
+    backgroundColor: "#D6EFFF",
     borderRadius: 10,
     padding: 5,
     marginVertical: 5,
   },
-  dateItemCompact: {
-    alignItems: 'center',
-    padding: 10,
-    borderRadius: 10,
-    backgroundColor: '#F5F5F5',
+  datumSzoveg: {
+    color: "#888",
   },
-  selectedDateCompact: {
-    alignItems: 'center',
-    padding: 10,
-    borderRadius: 10,
-    backgroundColor: '#D6EFFF',
+  kivalasztottSzoveg: {
+    color: "#000",
+    fontWeight: "bold",
   },
-  dateText: {
-    color: '#888',
-  },
-  selectedText: {
-    color: '#000',
-    fontWeight: 'bold',
-  },
-  eventItem: {
+  maddingespadding: {
     borderRadius: 10,
     padding: 16,
     marginBottom: 10,
   },
-  eventTitle: {
+  oraCim: {
     fontSize: 16,
-    fontWeight: 'bold',
+    fontWeight: "bold",
     marginBottom: 5,
   },
-  eventTime: {
+  oraIdeje: {
     fontSize: 14,
-    color: '#555',
+    color: "#555",
   },
-  noEvents: {
-    textAlign: 'center',
-    color: '#888',
-    fontStyle: 'italic',
+  nincsOra: {
+    textAlign: "center",
+    color: "#888",
+    fontStyle: "italic",
     marginTop: 20,
   },
 });
