@@ -56,7 +56,7 @@ const Tanulo_Befizetesek = ({ atkuld }) => {
       if (adat) {
         const befizetesek = await fetch(Ipcim.Ipcim + "/befizetesListaT", {
           method: "POST",
-          body: JSON.stringify(adat),
+          body: JSON.stringify(adat), 
           headers: { "Content-type": "application/json; charset=UTF-8" },
         });
 
@@ -78,7 +78,7 @@ const Tanulo_Befizetesek = ({ atkuld }) => {
     adatokBetoltese();
   }, []);
 
-  //------------------------------------------------------------- OLDAL FRISSÍTÉSE
+  //-------------------------------------------------------------  OLDAL FRISSÍTÉSE
   const frissitesKozben = useCallback(() => {
     setFrissites(true);
     setTimeout(() => {

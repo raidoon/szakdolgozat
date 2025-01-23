@@ -1,169 +1,236 @@
-import {
-  SafeAreaView,
-  View,
-  Text,
-  StyleSheet,
-  TouchableOpacity,
-} from "react-native";
-import { Calendar, CalendarList, Agenda } from "react-native-calendars";
-import React, { useState, useEffect } from "react";
-import Ipcim from "../../Ipcim";
-import Styles from "../../Styles";
+import React, { useState } from 'react';
+import { View, Text, StyleSheet, FlatList, TouchableOpacity } from 'react-native';
+import { Ionicons } from '@expo/vector-icons';
 
-const Tanulo_Datumok = ({atkuld}) => {
-  const [korabbiOrak, setKorabbiOrak] = useState(false);
-  const [kivalasztottDatum, setKivalasztottDatum] = useState("");
-  const [betolt, setBetolt] = useState(true);
-  const [hiba, setHiba] = useState(null);
-  const [frissites, setFrissites] = useState(false);
-  //------------------------------------------------------------- CHECKBOX
-  function SajatCheckbox({ label, isChecked, onPress }) {
-    return (
-      <TouchableOpacity style={styles.checkboxContainer} onPress={onPress}>
-        <View style={[styles.checkbox, isChecked && styles.checkedCheckbox]} />
-        <Text style={{ fontSize: 17 }}>{label}</Text>
-      </TouchableOpacity>
-    );
-  }
-  //------------------------------------------------------------- A TANULÓ ÓRÁINAK BETÖLTÉSE
-  const adatokBetoltese = async () => {
-    try {
-      const adat = {
-        tanuloid: atkuld.tanuloid,
-      };
-      if (adat) {
-        const orak = await fetch(Ipcim.Ipcim + "/egyTanuloOrai", {
-          method: "POST",
-          body: JSON.stringify(adat),
-          headers: { "Content-type": "application/json; charset=UTF-8" },
-        });
+const Tanulo_Datumok = ({ atkuld }) => {
+  const today = new Date();
+  const [selectedDate, setSelectedDate] = useState(today);
+  const [isExpanded, setIsExpanded] = useState(false);
 
-        if (!orak.ok) {
-          throw new Error("Hiba történt az órák betöltése közben!");
-        }
-        const orakValasz = await orak.json();
-        setKorabbiOrak(orakValasz);
-        console.log("órák eddig: ", orakValasz);
-      }
-    } catch (err) {
-      setHiba(err.message);
-    } finally {
-      setBetolt(false);
-    }
+  const eventsByDate = {
+    '2025-01-03': [
+      { id: '1', title: 'Marketing team meeting', time: '08:00 - 08:40 AM', color: '#FDEEDC' },
+      { id: '2', title: 'Make plans to create new products', time: '09:00 - 09:40 AM', color: '#E8DFF5' },
+      { id: '3', title: 'Coffee breaks and snacks', time: '10:00 - 10:15 AM', color: '#D6EFFF' },
+    ],
+    '2025-01-04': [
+      { id: '4', title: 'Team brainstorming session', time: '08:30 - 09:30 AM', color: '#F5D8E8' },
+      { id: '5', title: 'Design review meeting', time: '10:00 - 11:00 AM', color: '#D6EFFF' },
+      { id: '6', title: 'Lunch with clients', time: '12:00 - 01:00 PM', color: '#FDEEDC' },
+    ],
+    '2025-01-05': [
+      { id: '7', title: 'Weekly report submission', time: '09:00 - 09:30 AM', color: '#E8DFF5' },
+      { id: '8', title: 'Project update call', time: '11:00 - 11:45 AM', color: '#D6EFFF' },
+    ],
   };
 
-  useEffect(() => {
-    adatokBetoltese();
-  }, []);
-  //-------------------------
-  if (betolt) {
-    return (
-      <View style={Styles.bejelentkezes_Container}>
-        <Text>Korábbi órák betöltése folyamatban...</Text>
-      </View>
-    );
-  }
+  const events = eventsByDate[selectedDate.toISOString().split('T')[0]] || [];
 
-  if (hiba) {
+  const renderCalendarHeader = () => {
+    const monthName = selectedDate.toLocaleString('default', { month: 'long' });
+    const year = selectedDate.getFullYear();
+    return `${monthName} ${year}`;
+  };
+
+  const getDaysInMonth = (year, month) => {
+    return new Date(year, month + 1, 0).getDate();
+  };
+
+  const generateCalendarDays = () => {
+    const year = selectedDate.getFullYear();
+    const month = selectedDate.getMonth();
+    const daysInMonth = getDaysInMonth(year, month);
+    return Array.from({ length: daysInMonth }, (_, i) => i + 1);
+  };
+
+  const handleDatePress = (day) => {
+    const newDate = new Date(selectedDate);
+    newDate.setDate(day);
+    setSelectedDate(newDate);
+  };
+
+  const toggleCalendarView = () => {
+    setIsExpanded(!isExpanded);
+  };
+
+  const renderCompactRow = () => {
+    const currentDay = today.getDate();
+    const daysToShow = 5; // Show 5 days in compact view
+    const startDay = Math.max(1, currentDay - Math.floor(daysToShow / 2));
+    const endDay = Math.min(getDaysInMonth(today.getFullYear(), today.getMonth()), startDay + daysToShow - 1);
+
+    const days = [];
+    for (let day = startDay; day <= endDay; day++) {
+      days.push(day);
+    }
+
     return (
-      <View style={Styles.bejelentkezes_Container}>
-        <Text>Hiba: {hiba}</Text>
+      <View style={styles.compactRow}>
+        {days.map((day) => (
+          <TouchableOpacity
+            key={day}
+            onPress={() => handleDatePress(day)}
+            style={
+              selectedDate.getDate() === day
+                ? styles.selectedDateCompact
+                : styles.dateItemCompact
+            }
+          >
+            <Text
+              style={
+                selectedDate.getDate() === day
+                  ? styles.selectedText
+                  : styles.dateText
+              }
+            >
+              {day}
+            </Text>
+          </TouchableOpacity>
+        ))}
       </View>
     );
-  }
+  };
 
   return (
-    <SafeAreaView style={styles.teljesdiv}>
-      <View style={styles.datumdiv}>
-        <Calendar
-          style={styles.kalendar}
-          onDayPress={(day) => {
-            console.log("selected day", day);
-            setKivalasztottDatum(day);
-          }}
-          theme={{
-            backgroundColor: "#ffffff",
-            calendarBackground: "#ffffff",
-            textSectionTitleColor: "#b6c1cd",
-            selectedDayBackgroundColor: "#00adf5",
-            selectedDayTextColor: "purple",
-            todayTextColor: "#00adf5",
-            dayTextColor: "#2d4150",
-            textDisabledColor: "#dd99ee",
-          }}
-          markedDates={{
-            [kivalasztottDatum]: {
-              selected: true,
-              disableTouchEvent: true,
-              selectedDotColor: "orange",
-            },
-            "2025-01-10": {
-              selected: true,
-              marked: true,
-              selectedColor: "green",
-            },
-            "2025-01-17": { marked: true },
-            "2025-01-16": { marked: true },
-            "2025-01-15": { marked: true },
-          }}
-        ></Calendar>
+    <View style={styles.container}>
+      {/* Header */}
+      <View style={styles.header}>
+        <Text style={styles.month}>{renderCalendarHeader()}</Text>
+        <TouchableOpacity onPress={toggleCalendarView}>
+          <Ionicons
+            name={isExpanded ? 'arrow-up' : 'arrow-down'}
+            size={24}
+            color="black"
+          />
+        </TouchableOpacity>
       </View>
 
-      <View style={styles.orakdiv}>
-        <SajatCheckbox
-          label="Korábbi órák betöltése"
-          isChecked={korabbiOrak}
-          onPress={() => {
-            if (korabbiOrak) {
-              setKorabbiOrak(false);
-            } else setKorabbiOrak(true);
-          }}
-        />
-      </View>
-    </SafeAreaView>
+      {/* Compact View */}
+      {!isExpanded && renderCompactRow()}
+
+      {/* Full Calendar View */}
+      {isExpanded && (
+        <View style={styles.dateSelector}>
+          {generateCalendarDays().map((day) => (
+            <TouchableOpacity
+              key={day}
+              onPress={() => handleDatePress(day)}
+              style={
+                selectedDate.getDate() === day
+                  ? styles.selectedDate
+                  : styles.dateItem
+              }
+            >
+              <Text
+                style={
+                  selectedDate.getDate() === day
+                    ? styles.selectedText
+                    : styles.dateText
+                }
+              >
+                {day}
+              </Text>
+            </TouchableOpacity>
+          ))}
+        </View>
+      )}
+
+      {/* Event List */}
+      <FlatList
+        data={events}
+        keyExtractor={(item) => item.id}
+        renderItem={({ item }) => (
+          <View style={[styles.eventItem, { backgroundColor: item.color }]}>  
+            <Text style={styles.eventTitle}>{item.title}</Text>
+            <Text style={styles.eventTime}>{item.time}</Text>
+          </View>
+        )}
+        ListEmptyComponent={<Text style={styles.noEvents}>No events for this day</Text>}
+      />
+    </View>
   );
 };
 
 const styles = StyleSheet.create({
-  teljesdiv: {
+  container: {
     flex: 1,
-    backgroundColor: "green",
-    marginTop: 40,
+    backgroundColor: '#FFF',
+    paddingHorizontal: 16,
+    paddingTop: 40,
   },
-  datumdiv: {
-    backgroundColor: "orange",
-    height: "auto",
+  header: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    marginBottom: 20,
   },
-  orakdiv: {
-    backgroundColor: "lightblue",
-    flex: 2,
-    flexDirection: "column",
+  month: {
+    fontSize: 20,
+    fontWeight: 'bold',
   },
-  kalendar: {
-    borderWidth: 1,
-    borderColor: "gray",
-    height: "auto",
-    width: "100%",
+  compactRow: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    marginBottom: 20,
   },
-  checkboxContainer: {
-    flexDirection: "row",
-    alignItems: "center",
-    marginRight: 20,
+  dateSelector: {
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    justifyContent: 'space-between',
+    marginBottom: 20,
   },
-  checkbox: {
-    width: 25,
-    height: 25,
-    borderWidth: 1,
-    borderColor: "#000",
-    marginRight: 8,
-    borderRadius: 30,
+  dateItem: {
+    width: '13%',
+    alignItems: 'center',
+    marginVertical: 5,
   },
-  checkedCheckbox: {
-    backgroundColor: "#5c4ce3",
+  selectedDate: {
+    width: '13%',
+    alignItems: 'center',
+    backgroundColor: '#D6EFFF',
+    borderRadius: 10,
+    padding: 5,
+    marginVertical: 5,
   },
-  checkboxView: {
-    flexDirection: "row",
-    alignContent: "space-between",
+  dateItemCompact: {
+    alignItems: 'center',
+    padding: 10,
+    borderRadius: 10,
+    backgroundColor: '#F5F5F5',
+  },
+  selectedDateCompact: {
+    alignItems: 'center',
+    padding: 10,
+    borderRadius: 10,
+    backgroundColor: '#D6EFFF',
+  },
+  dateText: {
+    color: '#888',
+  },
+  selectedText: {
+    color: '#000',
+    fontWeight: 'bold',
+  },
+  eventItem: {
+    borderRadius: 10,
+    padding: 16,
+    marginBottom: 10,
+  },
+  eventTitle: {
+    fontSize: 16,
+    fontWeight: 'bold',
+    marginBottom: 5,
+  },
+  eventTime: {
+    fontSize: 14,
+    color: '#555',
+  },
+  noEvents: {
+    textAlign: 'center',
+    color: '#888',
+    fontStyle: 'italic',
+    marginTop: 20,
   },
 });
 
