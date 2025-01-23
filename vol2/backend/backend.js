@@ -303,7 +303,7 @@ app.post("/egyOktatoDiakjai", (req, res) => {
 //----------------------
 
 app.post("/egyTanuloOrai", (req, res) => {
-  console.log("hello")
+  console.log("egy tanulo orai")
   kapcsolat();
   connection.query(
     `SELECT *
