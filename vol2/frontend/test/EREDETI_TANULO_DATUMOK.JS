@@ -1,88 +1,18 @@
-import React, { useState, useEffect, useCallback } from "react";
+import React, { useState } from "react";
 import {
   View,
   Text,
   StyleSheet,
   FlatList,
   TouchableOpacity,
-  RefreshControl,
-  ScrollView,
 } from "react-native";
-import {
-  Calendar,
-  CalendarList,
-  Agenda,
-  LocaleConfig,
-} from "react-native-calendars";
 import { Ionicons } from "@expo/vector-icons";
-import Styles from "../../Styles";
 
 const Tanulo_Datumok = ({ atkuld }) => {
   const ma = new Date();
-  const [kivalasztottDatum, setKivalasztottDatum] = useState(new Date());
-
+  const [kivalasztottDatum, setKivalasztottDatum] = useState(ma);
   const [naptarLenyitas, setNaptarLenyitas] = useState(false);
-  const [orakLista, setOrakLista] = useState([]);
-  const [betolt, setBetolt] = useState(true);
-  const [hiba, setHiba] = useState(null);
-  const [frissites, setFrissites] = useState(false);
 
-  //--------------------------------------------- LOCALE CONFIG NAPTÁRHOZ, HOGY MAGYAR LEGYEN!!---------------------
-
-  LocaleConfig.locales["hu"] = {
-    monthNames: [
-      "Január",
-      "Február",
-      "Március",
-      "Április",
-      "Május",
-      "Június",
-      "Július",
-      "Augusztus",
-      "Szeptember",
-      "Október",
-      "November",
-      "December",
-    ],
-    monthNamesShort: [
-      "Jan",
-      "Feb",
-      "Már",
-      "Ápr",
-      "Máj",
-      "Jún",
-      "Júl",
-      "Aug",
-      "Szept",
-      "Okt",
-      "Nov",
-      "Dec",
-    ],
-    dayNames: [
-      "Vasárnap",
-      "Hétfő",
-      "Kedd",
-      "Szerda",
-      "Csütörtök",
-      "Péntek",
-      "Szombat",
-    ],
-    dayNamesShort: ["Vas", "Hét", "Ke", "Sze", "Csü", "Pén", "Szo"],
-    today: "Ma",
-  };
-  LocaleConfig.defaultLocale = "hu";
-  //--------------------------------------------- IDE JÖN MAJD A TANULÓ ÓRÁINAK BETÖLTÉSE
-
-  //------------------------------------------------------------- OLDAL FRISSÍTÉSE
-  const frissitesKozben = useCallback(() => {
-    setFrissites(true);
-    setTimeout(() => {
-      adatokBetoltese();
-      setFrissites(false);
-    }, 2000);
-  }, []);
-
-  /*
   const orakDatumSzerint = {
     "2025-01-23": [
       {
@@ -142,7 +72,6 @@ const Tanulo_Datumok = ({ atkuld }) => {
 
   const orak =
     orakDatumSzerint[kivalasztottDatum.toISOString().split("T")[0]] || [];
-*/
 
   const naptarToggle = () => {
     setNaptarLenyitas(!naptarLenyitas);
@@ -152,52 +81,48 @@ const Tanulo_Datumok = ({ atkuld }) => {
     const honapNeve = kivalasztottDatum.toLocaleString("hu-HU", {
       month: "long",
     });
-    const honapNeveNagyBetuvel =
-      honapNeve.charAt(0).toUpperCase() + honapNeve.slice(1);
+    const honapNeveNagyBetuvel = honapNeve.charAt(0).toUpperCase() + honapNeve.slice(1);
     const ev = kivalasztottDatum.getFullYear();
-    return(
-      <Text style={styles.egysorosHonapSzoveg}>
-            {honapNeveNagyBetuvel} {ev}
-      </Text>
-    ) ;
+    return `${honapNeveNagyBetuvel} ${ev}`;
   };
 
-  const datumMegnyomas = (day) => {
-    const ujDatum = new Date(kivalasztottDatum);
-    if (isNaN(ujDatum)) {
-      setKivalasztottDatum(new Date()); // Set to current date if invalid
-    } else {
-      ujDatum.setDate(day);
+  const getHonapNapjai = (ev, honap) => {
+    return new Date(ev, honap + 1, 0).getDate();
+  };
 
-      // Make sure the selected date stays within the current month
-      if (ujDatum.getMonth() !== kivalasztottDatum.getMonth()) {
-        setKivalasztottDatum(new Date()); // Reset to current date if month has changed
-      } else {
-        setKivalasztottDatum(ujDatum);
-      }
-    }
+  const NaptariNapokGeneralasa = () => {
+    const ev = kivalasztottDatum.getFullYear();
+    const honap = kivalasztottDatum.getMonth();
+    const honapNapjai = getHonapNapjai(ev, honap);
+    return Array.from({ length: honapNapjai }, (_, i) => i + 1);
+  };
+
+  const datumMegnyomas = (nap) => {
+    const ujDatum = new Date(kivalasztottDatum);
+    ujDatum.setDate(nap);
+    setKivalasztottDatum(ujDatum);
+  };
+
+  const honapValtas = (irany) => {
+    const ujDatum = new Date(kivalasztottDatum);
+    ujDatum.setMonth(kivalasztottDatum.getMonth() + irany);
+    setKivalasztottDatum(ujDatum);
   };
 
   const jelenlegiHet = () => {
     const hetElsoNapja = new Date(kivalasztottDatum);
     hetElsoNapja.setDate(
       kivalasztottDatum.getDate() - kivalasztottDatum.getDay() + 1
-    ); // always start the week on Monday
+    ); // mindig hétfővel kezdje a hetet
 
     return Array.from({ length: 7 }, (_, i) => {
       const nap = new Date(hetElsoNapja);
       nap.setDate(hetElsoNapja.getDate() + i);
-
-      // Ensure the generated week stays within the same month
-      if (nap.getMonth() !== kivalasztottDatum.getMonth()) {
-        return null; // Skip days that are out of the current month
-      }
       return nap;
-    }).filter(Boolean); // Remove null values
+    });
   };
 
-  const maVanMa = (datum) => {
-    if (!datum) return false; // Ensure datum is not undefined or null
+  const isToday = (datum) => {
     const ma = new Date();
     return (
       ma.getDate() === datum.getDate() &&
@@ -206,57 +131,27 @@ const Tanulo_Datumok = ({ atkuld }) => {
     );
   };
 
-  /*
-  const honapValtas = (irany) => {
-    const ujDatum = new Date(kivalasztottDatum);
-    ujDatum.setMonth(kivalasztottDatum.getMonth() + irany);
-    setKivalasztottDatum(ujDatum);
-  };
-*/
-  /*
-  const getHonapNapjai = (ev, honap) => {
-    return new Date(ev, honap + 1, 0).getDate();
-  };
-  */
-
-  /*
-  const NaptariNapokGeneralasa = () => {
-    const ev = kivalasztottDatum.getFullYear();
-    const honap = kivalasztottDatum.getMonth();
-    const honapNapjai = getHonapNapjai(ev, honap);
-    return Array.from({ length: honapNapjai }, (_, i) => i + 1);
-  };
-  */
-
   return (
-    <View
-      style={styles.container}
-      refreshControl={
-        <RefreshControl refreshing={frissites} onRefresh={frissitesKozben} />
-      }
-    >
+    <View style={styles.container}>
       {/* ------------------------------ BEZÁRT EGY SOROS NAPTÁR NÉZET -------------------------------------- */}
       {!naptarLenyitas && (
         <View style={styles.collapsedRow}>
-          {NaptarHeaderBetoltes()}
+          <Text style={styles.egysorosHonapSzoveg}>{NaptarHeaderBetoltes()}</Text>
           <View style={styles.weekRow}>
             {jelenlegiHet().map((nap) => (
               <View
                 key={nap.toISOString()}
-                style={[styles.weekDay, maVanMa(nap) && styles.maiNapHattere]}
+                style={[styles.weekDay, isToday(nap) && styles.maiNapHattere]}
               >
                 <Text
-                  style={[
-                    styles.weekDayText,
-                    maVanMa(nap) && styles.maiNapSzovege,
-                  ]}
+                  style={[styles.weekDayText, isToday(nap) && styles.maiNapSzovege]}
                 >
                   {nap.toLocaleString("hu-HU", { weekday: "short" })}
                 </Text>
                 <Text
                   style={[
                     styles.weekDayNumber,
-                    maVanMa(nap) && styles.maiNapSzovege,
+                    isToday(nap) && styles.maiNapSzovege,
                   ]}
                 >
                   {nap.getDate()}
@@ -270,41 +165,38 @@ const Tanulo_Datumok = ({ atkuld }) => {
       {/* ------------------------------------------- KINYITOTT NAGY NAPTÁR NÉZET -------------------------------- */}
       {naptarLenyitas && (
         <View>
-          <View style={{marginTop: 20}}>
-            <Calendar
-              style={styles.kalendar}
-              renderHeader={() => NaptarHeaderBetoltes()}
-              onDayPress={(day) => {
-                console.log("selected day", day);
-                datumMegnyomas(day);
-              }}
-              theme={{
-                backgroundColor: "#ffffff",
-                calendarBackground: "#ffffff",
-                textSectionTitleColor: "#b6c1cd",
-                selectedDayBackgroundColor: "#00adf5",
-                selectedDayTextColor: "purple",
-                todayTextColor: "#00adf5",
-                dayTextColor: "#2d4150",
-                textDisabledColor: "#dd99ee",
-              }}
-              markedDates={{
-                [kivalasztottDatum]: {
-                  selected: true,
-                  disableTouchEvent: true,
-                  selectedDotColor: "orange",
-                },
-                "2025-01-10": {
-                  selected: true,
-                  marked: true,
-                  selectedColor: "green",
-                },
-                "2025-01-17": { marked: true },
-                "2025-01-16": { marked: true },
-                "2025-01-15": { marked: true },
-              }}
-              locale={"hu"}
-            />
+          <View style={styles.header}>
+            <TouchableOpacity onPress={() => honapValtas(-1)}>
+              <Ionicons name="arrow-back" size={24} color="black" />
+            </TouchableOpacity>
+            <Text style={styles.egysorosHonapSzoveg}>{NaptarHeaderBetoltes()}</Text>
+            <TouchableOpacity onPress={() => honapValtas(1)}>
+              <Ionicons name="arrow-forward" size={24} color="black" />
+            </TouchableOpacity>
+          </View>
+
+          <View style={styles.napValasztas}>
+            {NaptariNapokGeneralasa().map((nap) => (
+              <TouchableOpacity
+                key={nap}
+                onPress={() => datumMegnyomas(nap)}
+                style={
+                  kivalasztottDatum.getDate() === nap
+                    ? styles.kivalasztottdatum
+                    : styles.dateItem
+                }
+              >
+                <Text
+                  style={
+                    kivalasztottDatum.getDate() === nap
+                      ? styles.kivalasztottSzoveg
+                      : styles.datumSzoveg
+                  }
+                >
+                  {nap}
+                </Text>
+              </TouchableOpacity>
+            ))}
           </View>
         </View>
       )}
@@ -319,10 +211,10 @@ const Tanulo_Datumok = ({ atkuld }) => {
         )}
       </TouchableOpacity>
 
+
       {/*------------------------ IDE JÖNNEK MAJD AZ ÓRÁK FLATLISTTEL, AB-BŐL -----------------------*/}
 
-      {/*
-           <FlatList
+      <FlatList
         data={orak}
         keyExtractor={(item) => item.id}
         renderItem={({ item }) => (
@@ -337,7 +229,6 @@ const Tanulo_Datumok = ({ atkuld }) => {
           <Text style={styles.nincsOra}>Ezen a napon nincsenek óráid</Text>
         }
       />
-           */}
     </View>
   );
 };
@@ -351,14 +242,13 @@ const styles = StyleSheet.create({
   },
   collapsedRow: {
     marginBottom: 20,
-    marginTop: 27.5
   },
   egysorosHonapSzoveg: {
     fontSize: 24,
     fontWeight: "bold",
     textAlign: "center",
     marginBottom: 10,
-    color: "#4A4AFC",
+    color: "#4A4AFC"
   },
   weekRow: {
     flexDirection: "row",
@@ -388,7 +278,7 @@ const styles = StyleSheet.create({
   maiNapSzovege: {
     //color: "#4A4AFC",
     fontWeight: "bold",
-    color: "#fff",
+    color: '#fff'
   },
   header: {
     flexDirection: "row",
