@@ -16,11 +16,11 @@ import {
 } from "react-native-calendars";
 import { Ionicons } from "@expo/vector-icons";
 import Styles from "../../Styles";
+import Ipcim from "../../Ipcim";
 
 const Tanulo_Datumok = ({ atkuld }) => {
   const ma = new Date();
   const [kivalasztottDatum, setKivalasztottDatum] = useState(new Date());
-
   const [naptarLenyitas, setNaptarLenyitas] = useState(false);
   const [orakLista, setOrakLista] = useState([]);
   const [betolt, setBetolt] = useState(true);
@@ -71,7 +71,36 @@ const Tanulo_Datumok = ({ atkuld }) => {
     today: "Ma",
   };
   LocaleConfig.defaultLocale = "hu";
-  //--------------------------------------------- IDE JÖN MAJD A TANULÓ ÓRÁINAK BETÖLTÉSE
+  //------------------------------------------------------------- A TANULÓ ÓRÁINAK BETÖLTÉSE
+  const adatokBetoltese = async () => {
+    try {
+      const adat = {
+        ora_diakja: atkuld.ora_diakja,
+      };
+      if (adat) {
+        const orak = await fetch(Ipcim.Ipcim + "/tanuloOsszesOraja", {
+          method: "POST",
+          body: JSON.stringify(adat),
+          headers: { "Content-type": "application/json; charset=UTF-8" },
+        });
+
+        if (!orak.ok) {
+          throw new Error("Hiba történt az órák betöltése közben!");
+        }
+        const orakValasz = await orak.json();
+        setOrakLista(orakValasz);
+        console.log("órák eddig: ", orakValasz);
+      }
+    } catch (err) {
+      setHiba(err.message);
+    } finally {
+      setBetolt(false);
+      console.log("tanulo_datumok screen --> az adatok betöltése hiba nélkül lefutott");
+    }
+  };
+  useEffect(() => {
+    adatokBetoltese();
+  }, []);
 
   //------------------------------------------------------------- OLDAL FRISSÍTÉSE
   const frissitesKozben = useCallback(() => {
@@ -81,68 +110,22 @@ const Tanulo_Datumok = ({ atkuld }) => {
       setFrissites(false);
     }, 2000);
   }, []);
+  //-------------------------
+  if (betolt) {
+    return (
+      <View style={Styles.bejelentkezes_Container}>
+        <Text>Korábbi tranzakciók betöltése folyamatban...</Text>
+      </View>
+    );
+  }
 
-  /*
-  const orakDatumSzerint = {
-    "2025-01-23": [
-      {
-        id: "1",
-        cim: "Indulás a buszvégállomásról",
-        ido: "reggel 08:00 - 10:00",
-        color: "#FDEEDC",
-      },
-      {
-        id: "2",
-        cim: "Indulás a Szepességi utcáról",
-        ido: "D.E. 09:00 - 09:40",
-        color: "#E8DFF5",
-      },
-      {
-        id: "3",
-        cim: "Petőfi utca",
-        ido: "délelőtt 10:00 - 10:15",
-        color: "#D6EFFF",
-      },
-    ],
-    "2025-01-17": [
-      {
-        id: "4",
-        cim: "Indulás a buszvégállomásról",
-        ido: "08:30 - 10:30",
-        color: "#F5D8E8",
-      },
-      {
-        id: "5",
-        cim: "EZ EGY ORA IDK",
-        ido: "11:00 - 11:30",
-        color: "#D6EFFF",
-      },
-      {
-        id: "6",
-        cim: "Lunch with clients",
-        ido: "12:00 - 13:00",
-        color: "#FDEEDC",
-      },
-    ],
-    "2025-01-25": [
-      {
-        id: "7",
-        cim: "Indulás a buszvégállomásról",
-        ido: "09:00 - 09:30",
-        color: "#E8DFF5",
-      },
-      {
-        id: "8",
-        cim: "BLA BLA BLA BLA",
-        ido: "11:00 - 11:45",
-        color: "#D6EFFF",
-      },
-    ],
-  };
-
-  const orak =
-    orakDatumSzerint[kivalasztottDatum.toISOString().split("T")[0]] || [];
-*/
+  if (hiba) {
+    return (
+      <View style={Styles.bejelentkezes_Container}>
+        <Text>Hiba: {hiba}</Text>
+      </View>
+    );
+  }
 
   const naptarToggle = () => {
     setNaptarLenyitas(!naptarLenyitas);
@@ -155,49 +138,45 @@ const Tanulo_Datumok = ({ atkuld }) => {
     const honapNeveNagyBetuvel =
       honapNeve.charAt(0).toUpperCase() + honapNeve.slice(1);
     const ev = kivalasztottDatum.getFullYear();
-    return(
+    return (
       <Text style={styles.egysorosHonapSzoveg}>
-            {honapNeveNagyBetuvel} {ev}
+        {honapNeveNagyBetuvel} {ev}
       </Text>
-    ) ;
+    );
   };
 
   const datumMegnyomas = (day) => {
     const ujDatum = new Date(kivalasztottDatum);
     if (isNaN(ujDatum)) {
-      setKivalasztottDatum(new Date()); // Set to current date if invalid
+      setKivalasztottDatum(new Date()); // ha nem jó, akkor beállítjuk a mai napot
     } else {
       ujDatum.setDate(day);
-
-      // Make sure the selected date stays within the current month
       if (ujDatum.getMonth() !== kivalasztottDatum.getMonth()) {
-        setKivalasztottDatum(new Date()); // Reset to current date if month has changed
+        setKivalasztottDatum(new Date());
       } else {
         setKivalasztottDatum(ujDatum);
       }
     }
   };
-
   const jelenlegiHet = () => {
     const hetElsoNapja = new Date(kivalasztottDatum);
     hetElsoNapja.setDate(
       kivalasztottDatum.getDate() - kivalasztottDatum.getDay() + 1
-    ); // always start the week on Monday
+    ); // mindig hétfőnél kezdjük a hetet
 
     return Array.from({ length: 7 }, (_, i) => {
       const nap = new Date(hetElsoNapja);
       nap.setDate(hetElsoNapja.getDate() + i);
 
-      // Ensure the generated week stays within the same month
+      // bebiztosítjuk, hogy a generált napok a hónapon belül maradnak
       if (nap.getMonth() !== kivalasztottDatum.getMonth()) {
-        return null; // Skip days that are out of the current month
+        return null; // kihagyjuk azokat a napokat, amik már nincsenek a hónapban
       }
       return nap;
-    }).filter(Boolean); // Remove null values
+    }).filter(Boolean); // töröljük a null értékeket
   };
-
   const maVanMa = (datum) => {
-    if (!datum) return false; // Ensure datum is not undefined or null
+    if (!datum) return false; // biztosítjuk, hogy a dátum nem ad vissza rossz értéket
     const ma = new Date();
     return (
       ma.getDate() === datum.getDate() &&
@@ -205,7 +184,6 @@ const Tanulo_Datumok = ({ atkuld }) => {
       ma.getFullYear() === datum.getFullYear()
     );
   };
-
   /*
   const honapValtas = (irany) => {
     const ujDatum = new Date(kivalasztottDatum);
@@ -218,7 +196,6 @@ const Tanulo_Datumok = ({ atkuld }) => {
     return new Date(ev, honap + 1, 0).getDate();
   };
   */
-
   /*
   const NaptariNapokGeneralasa = () => {
     const ev = kivalasztottDatum.getFullYear();
@@ -229,7 +206,7 @@ const Tanulo_Datumok = ({ atkuld }) => {
   */
 
   return (
-    <View
+    <ScrollView
       style={styles.container}
       refreshControl={
         <RefreshControl refreshing={frissites} onRefresh={frissitesKozben} />
@@ -238,7 +215,8 @@ const Tanulo_Datumok = ({ atkuld }) => {
       {/* ------------------------------ BEZÁRT EGY SOROS NAPTÁR NÉZET -------------------------------------- */}
       {!naptarLenyitas && (
         <View style={styles.collapsedRow}>
-          {NaptarHeaderBetoltes()}
+          {/*{NaptarHeaderBetoltes()} */}
+          {/*<Text style={styles.egysorosHonapSzoveg}></Text>*/}
           <View style={styles.weekRow}>
             {jelenlegiHet().map((nap) => (
               <View
@@ -264,13 +242,85 @@ const Tanulo_Datumok = ({ atkuld }) => {
               </View>
             ))}
           </View>
+          {/*------------------------------ NAPTÁR KI BE NYITÓS GOMB !!! --------------------------*/}
+
+          <TouchableOpacity onPress={naptarToggle} style={styles.kibenyitogomb}>
+            {naptarLenyitas ? (
+              <Ionicons name="chevron-up-outline" size={30} color="white" />
+            ) : (
+              <Ionicons name="chevron-down-outline" size={30} color="white" />
+            )}
+          </TouchableOpacity>
+          {/*------------------------------ ÓRÁK BETÖLTÉSE ------------------------------
+          <FlatList
+            data={orakLista}
+            keyExtractor={(item) => item.id}
+            renderItem={({ item }) => (
+              <View
+                style={[
+                  styles.maddingespadding,
+                  { backgroundColor: item.color },
+                ]}
+              >
+                <Text style={styles.oraCim}>{item.cim}</Text>
+                <Text style={styles.oraIdeje}>{item.ido}</Text>
+              </View>
+            )}
+            ListEmptyComponent={
+              <Text style={styles.nincsOra}>{`A mai napon nem lesz órád, úgyhogy ne felejts el pihenni! :)`}</Text>
+            }
+          />*/}
+          {orakLista.length > 0 ? (
+            orakLista.map((item) => {
+              const date = new Date(item.ora_datuma);
+              // Formázott dátum lekérdezése (pl. 2025.01.31)
+              const honapNap = date
+                .toLocaleDateString("hu-HU", {
+                  year: "numeric",
+                  month: "2-digit",
+                  day: "2-digit",
+                })
+                .replace("/", ".")
+                .replace("/", ".");
+
+              // Formázott idő lekérdezése (pl. 08:00)
+              const oraPerc = date.toLocaleTimeString("hu-HU", {
+                hour: "2-digit",
+                minute: "2-digit",
+                hour12: false,
+              });
+
+              if(date.getDay() === ma.getDay()){
+                return (
+                  <View
+                    key={item.ora_id}
+                    style={[
+                      styles.maddingespadding,
+                      { backgroundColor: item.color },
+                    ]}
+                  >
+                    <Text style={styles.oraCim}>{item.cim}</Text>
+                    <Text style={styles.oraIdeje}>
+                      {`${honapNap} ${oraPerc}`}
+                    </Text>
+                  </View>
+                );
+              }
+            })
+          ) : (
+            <Text style={styles.nincsOra}>
+              {`A mai napon nem lesz órád, úgyhogy ne felejts el pihenni! :)`}
+            </Text>
+          )}
+
+          {/*------------------------------ BUBBLE KÖVETKEZŐ ÓRA IDŐPONTJA ------------------------------*/}
         </View>
       )}
 
       {/* ------------------------------------------- KINYITOTT NAGY NAPTÁR NÉZET -------------------------------- */}
       {naptarLenyitas && (
         <View>
-          <View style={{marginTop: 20}}>
+          <View style={{ marginTop: 20 }}>
             <Calendar
               style={styles.kalendar}
               renderHeader={() => NaptarHeaderBetoltes()}
@@ -306,52 +356,31 @@ const Tanulo_Datumok = ({ atkuld }) => {
               locale={"hu"}
             />
           </View>
+          {/*------------------------------ NAPTÁR KI BE NYITÓS GOMB !!! --------------------------*/}
+
+          <TouchableOpacity onPress={naptarToggle} style={styles.kibenyitogomb}>
+            {naptarLenyitas ? (
+              <Ionicons name="chevron-up-outline" size={30} color="white" />
+            ) : (
+              <Ionicons name="chevron-down-outline" size={30} color="white" />
+            )}
+          </TouchableOpacity>
         </View>
       )}
-
-      {/*------------------------------ NAPTÁR KI BE NYITÓS GOMB !!! --------------------------*/}
-
-      <TouchableOpacity onPress={naptarToggle} style={styles.kibenyitogomb}>
-        {naptarLenyitas ? (
-          <Ionicons name="chevron-up-outline" size={30} color="white" />
-        ) : (
-          <Ionicons name="chevron-down-outline" size={30} color="white" />
-        )}
-      </TouchableOpacity>
-
-      {/*------------------------ IDE JÖNNEK MAJD AZ ÓRÁK FLATLISTTEL, AB-BŐL -----------------------*/}
-
-      {/*
-           <FlatList
-        data={orak}
-        keyExtractor={(item) => item.id}
-        renderItem={({ item }) => (
-          <View
-            style={[styles.maddingespadding, { backgroundColor: item.color }]}
-          >
-            <Text style={styles.oraCim}>{item.cim}</Text>
-            <Text style={styles.oraIdeje}>{item.ido}</Text>
-          </View>
-        )}
-        ListEmptyComponent={
-          <Text style={styles.nincsOra}>Ezen a napon nincsenek óráid</Text>
-        }
-      />
-           */}
-    </View>
+    </ScrollView>
   );
 };
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "#FFF",
+    backgroundColor: "#f5f5f5",
     paddingHorizontal: 16,
     paddingTop: 40,
   },
   collapsedRow: {
     marginBottom: 20,
-    marginTop: 27.5
+    marginTop: 27.5,
   },
   egysorosHonapSzoveg: {
     fontSize: 24,
@@ -368,10 +397,17 @@ const styles = StyleSheet.create({
   weekDay: {
     alignItems: "center",
     padding: 5,
+    //color: '#ccccff'
+    //backgroundColor: 'gray',
+    backgroundColor: "#e9e8ee",
+    borderRadius: 15,
+    minWidth: 40,
   },
   weekDayText: {
     fontSize: 20,
-    color: "#888",
+    //color: "#888",
+    //color: '#ccccff'
+    color: "#153243",
   },
   weekDayNumber: {
     fontSize: 20,
@@ -382,6 +418,7 @@ const styles = StyleSheet.create({
     //backgroundColor: "#D6EFFF",
     //backgroundColor: "#ccccff",
     backgroundColor: "#A06CD5",
+    //backgroundColor: '#8F95D3',
     borderRadius: 10,
     padding: 8,
   },

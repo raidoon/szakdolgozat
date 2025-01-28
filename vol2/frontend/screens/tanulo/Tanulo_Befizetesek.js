@@ -447,7 +447,7 @@ const Tanulo_Befizetesek = ({ atkuld }) => {
         >
           <View style={styles.modalOverlay}>
             <View style={styles.modalContent}>
-              <Text style={styles.modalTitle}>BEFIZETÉS RÉSZLETEI</Text>
+              <Text style={styles.modalTitle}>TRANZAKCIÓ RÉSZLETEI</Text>
               <Text style={styles.modalText}>
                 Típus:{" "}
                 {kivalasztottTranzakcio.befizetesek_tipusID === 1 ? (
