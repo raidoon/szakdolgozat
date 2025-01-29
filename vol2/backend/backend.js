@@ -39,14 +39,7 @@ app.get("/autosiskolalista", (req, res) => {
 });
 //------------------------------------------------ REGISZTRÁCIÓ
 app.post("/regisztracio", (req, res) => {
-  const {
-    autosiskola,
-    email,
-    jelszo,
-    telefonszam,
-    tipus,
-    nev
-  } = req.body;
+  const { autosiskola, email, jelszo, telefonszam, tipus, nev } = req.body;
   if (tipus !== 1 && tipus !== 2) {
     res.status(400).send("Érvénytelen típus!");
     return;
@@ -80,7 +73,7 @@ app.post("/regisztracio", (req, res) => {
         //---------------------- ÚJ FELHASZNÁLÓ FELVÉTELE, HA MÉG NINCS ILYEN FELHASZNÁLÓNÉV VAGY EMAIL
         connection.query(
           "INSERT INTO felhasznaloi_adatok VALUES (null, ?, ?, ?, ?, ?)",
-          [ autosiskola, email, hashedPassword, telefonszam, tipus],
+          [autosiskola, email, hashedPassword, telefonszam, tipus],
           (insertErr, result) => {
             if (insertErr) {
               console.error(insertErr);
@@ -98,7 +91,9 @@ app.post("/regisztracio", (req, res) => {
                   (err2) => {
                     if (err2) {
                       console.error(err2);
-                      res.status(500).send("Hiba történt az oktatói adatok mentésekor!");
+                      res
+                        .status(500)
+                        .send("Hiba történt az oktatói adatok mentésekor!");
                     } else {
                       res.status(201).send("Sikeres oktató regisztráció!");
                     }
@@ -110,12 +105,14 @@ app.post("/regisztracio", (req, res) => {
                 connection.query(
                   //szakdoga_gyakorlo --> oktató id = 4 --> a teszt oktatóhoz adjuk automatikusan
                   //szakdoga_vol2 --> oktató id = 7 --> a teszt oktatóhoz adjuk automatikusan
-                  "INSERT INTO tanulo_adatok VALUES (null, ?, 7, ?, 0)", 
+                  "INSERT INTO tanulo_adatok VALUES (null, ?, 7, ?, 0)",
                   [result.insertId, nev],
                   (err2) => {
                     if (err2) {
                       console.error(err2);
-                      res.status(500).send("Hiba történt a tanulói adatok mentésekor!");
+                      res
+                        .status(500)
+                        .send("Hiba történt a tanulói adatok mentésekor!");
                     } else {
                       res.status(201).send("Sikeres tanuló regisztráció!");
                     }
@@ -147,16 +144,20 @@ app.post("/beleptetes", (req, res) => {
         res.status(404).send("Ez az email cím nem található!");
       } else {
         const hashedPassword = rows[0].felhasznalo_jelszo;
-        bcrypt.compare(felhasznalo_jelszo, hashedPassword, (compareErr, isMatch) => {
-          if (compareErr) {
-            console.error(compareErr);
-            res.status(500).send("Hiba a jelszó ellenőrzése során!");
-          } else if (isMatch) {
-            res.status(200).send(rows[0]);
-          } else {
-            res.status(401).send("Hibás jelszó!");
+        bcrypt.compare(
+          felhasznalo_jelszo,
+          hashedPassword,
+          (compareErr, isMatch) => {
+            if (compareErr) {
+              console.error(compareErr);
+              res.status(500).send("Hiba a jelszó ellenőrzése során!");
+            } else if (isMatch) {
+              res.status(200).send(rows[0]);
+            } else {
+              res.status(401).send("Hibás jelszó!");
+            }
           }
-        });
+        );
       }
     }
   );
@@ -255,14 +256,26 @@ app.post("/befizetesListaT", (req, res) => {
   connection.end()
 });
 */
-app.post('/tanuloBefizetesFelvitel', (req, res) => {
-  const { befizetesek_tanuloID, befizetesek_oktatoID, befizetesek_tipusID, befizetesek_osszeg, befizetesek_ideje } = req.body;
+app.post("/tanuloBefizetesFelvitel", (req, res) => {
+  const {
+    befizetesek_tanuloID,
+    befizetesek_oktatoID,
+    befizetesek_tipusID,
+    befizetesek_osszeg,
+    befizetesek_ideje,
+  } = req.body;
   // Use the existing connection, do not reconnect
-  kapcsolat()
+  kapcsolat();
   connection.query(
     `INSERT INTO befizetesek (befizetesek_tanuloID, befizetesek_oktatoID, befizetesek_tipusID, befizetesek_osszeg, befizetesek_ideje, befizetesek_jovahagyva) 
      VALUES (?, ?, ?, ?, ?, 0)`,
-    [befizetesek_tanuloID, befizetesek_oktatoID, befizetesek_tipusID, befizetesek_osszeg, befizetesek_ideje],
+    [
+      befizetesek_tanuloID,
+      befizetesek_oktatoID,
+      befizetesek_tipusID,
+      befizetesek_osszeg,
+      befizetesek_ideje,
+    ],
     (err, rows) => {
       if (err) {
         console.log(err);
@@ -272,10 +285,33 @@ app.post('/tanuloBefizetesFelvitel', (req, res) => {
       }
     }
   );
-  connection.end()
+  connection.end();
 });
-//------------------------------------------------ TANULÓ ÓRÁINAK LEKÉRDEZÉSE
-app.post("/tanuloOrai", (req, res) => {
+//------------------------------------------------ TANULÓ CSAK A KÖVETKEZŐ ÓRÁJÁNAK LEKÉRDEZÉSE
+app.post("/tanuloKovetkezoOraja", (req, res) => {
+  kapcsolat();
+  connection.query(
+    `SELECT * FROM ora_adatok WHERE ora_adatok.ora_diakja = ? 
+      AND ora_datuma > NOW() 
+        AND ora_teljesitve = 0 
+    ORDER BY ora_datuma 
+    ASC 
+    LIMIT 1`,
+    [req.body.ora_diakja],
+    (err, rows, fields) => {
+      if (err) {
+        console.log(err);
+        res.status(500).send("Hiba");
+      } else {
+        console.log(rows);
+        res.status(200).send(rows);
+      }
+    }
+  );
+  connection.end();
+});
+//------------------------------------------------ TANULÓ ÖSSZES ÓRÁJÁNAK LEKÉRDEZÉSE
+app.post("/tanuloOsszesOraja", (req, res) => {
   kapcsolat();
   connection.query(
     `SELECT * FROM ora_adatok WHERE ora_adatok.ora_diakja = ?`,
@@ -292,11 +328,19 @@ app.post("/tanuloOrai", (req, res) => {
   );
   connection.end();
 });
-
+/*------------------------------------------------ A TANULÓ EGY ADOTT NAPON LÉVŐ ÓRÁINAK LEKÉRDEZÉSE
+app.post("/tanuloOraiAdottNapon", (req, res) => {
+  kapcsolat();
+  connection.query(
+    `select * from ora_adatok where ora_adatok.ora_diakja = ? 
+        AND 
+      ora_adatok.ora_datuma = `
+  )
+})*/
 //------------------------------------------------ TANULÓI LEKÉRDEZÉSEK VÉGE
 //------------------------adott oktatóhoz tartozó tanulók neveinek megjelenítése post bevitel1
 app.post("/egyOktatoDiakjai", (req, res) => {
-  console.log("hello")
+  console.log("hello");
   kapcsolat();
   connection.query(
     `SELECT *
@@ -321,7 +365,7 @@ app.post("/egyOktatoDiakjai", (req, res) => {
 //----------------------
 
 app.post("/egyTanuloOrai", (req, res) => {
-  console.log("egy tanulo orai")
+  console.log("egy tanulo orai");
   kapcsolat();
   connection.query(
     `SELECT * 
@@ -345,41 +389,44 @@ app.post("/egyTanuloOrai", (req, res) => {
 });
 
 //--------------------------OraFelvitel
-app.post('/oraFelvitel', (req, res) => {
-  kapcsolat()
-  connection.query(`INSERT INTO ora_adatok VALUES (NULL, ?, ?, ?, ?, 0 )`, [req.body.bevitel1, req.body.bevitel2, req.body.bevitel3, req.body.bevitel4], (err, rows, fields) => {
-    if (err) {
-      console.log("Hiba")
-      console.log(err)
-      res.status(500).send("Hiba")
-    }
-    else {
-      console.log("Sikeres felvitel!")
-      res.status(200).send("Sikeres felvitel!")
-    }
-  })
-  connection.end()
-})
-
-
-//--------------------------------
-app.get("/valasztTipus", (req, res) => {
+app.post("/oraFelvitel", (req, res) => {
   kapcsolat();
   connection.query(
-    `select *  from ora_tipusa`,
+    `INSERT INTO ora_adatok VALUES (NULL, ?, ?, ?, ?, 0 )`,
+    [
+      req.body.bevitel1,
+      req.body.bevitel2,
+      req.body.bevitel3,
+      req.body.bevitel4,
+    ],
     (err, rows, fields) => {
       if (err) {
+        console.log("Hiba");
         console.log(err);
         res.status(500).send("Hiba");
       } else {
-        console.log(rows);
-        res.status(200).send(rows);
+        console.log("Sikeres felvitel!");
+        res.status(200).send("Sikeres felvitel!");
       }
     }
   );
   connection.end();
 });
 
+//--------------------------------
+app.get("/valasztTipus", (req, res) => {
+  kapcsolat();
+  connection.query(`select *  from ora_tipusa`, (err, rows, fields) => {
+    if (err) {
+      console.log(err);
+      res.status(500).send("Hiba");
+    } else {
+      console.log(rows);
+      res.status(200).send(rows);
+    }
+  });
+  connection.end();
+});
 
 //----------------------
 app.listen(port, () => {

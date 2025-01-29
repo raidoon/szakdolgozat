@@ -7,7 +7,6 @@ import {
 } from "react-native";
 import Ionicons from "react-native-vector-icons/Ionicons";
 import { useNavigation } from "@react-navigation/native";
-
 import React, { useState, useEffect } from "react";
 import Styles from "../../Styles";
 import Ipcim from "../../Ipcim";
@@ -17,27 +16,42 @@ const Tanulo_Kezdolap = ({ atkuld }) => {
   console.log("Atküldött adat a bejelentkezés után: ", atkuld);
   const [sumBefizetes, setSumBefizetes] = useState([]);
   const [befizetLista, setBefizetLista] = useState([]);
+  const [koviOra, setKoviOra] = useState([]);
   const [betolt, setBetolt] = useState(true);
   const [hiba, setHiba] = useState(null);
-
   const adatokBetoltese = async () => {
     try {
       const adat = {
         felhasznalo_id: atkuld.felhasznalo_id,
       };
-      if (adat) {
+      const oraAdat = {
+        ora_diakja: atkuld.ora_diakja,
+      }
+      if(oraAdat){
+        //---------- a következő óra időpontja
+        const ora = await fetch(Ipcim.Ipcim + "/tanuloKovetkezoOraja", {
+          method: "POST",
+          body: JSON.stringify(oraAdat),
+          headers: {"Content-type": "application/json; charset=UTF-8" },
+        });
+        const oraResponse = await ora.json();
+        setKoviOra(oraResponse);
+        console.log("következő óra: ", oraResponse);
+      }
+      if (adat) {  
+        //---------- eddigi befizetések összege
         const osszeg = await fetch(Ipcim.Ipcim + "/tanuloSUMbefizetes", {
           method: "POST",
           body: JSON.stringify(adat),
           headers: { "Content-type": "application/json; charset=UTF-8" },
         });
-        //-----------
+        //----------- az összes eddigi befizetés listája
         const befizetesek = await fetch(Ipcim.Ipcim + "/befizetesListaT", {
           method: "POST",
           body: JSON.stringify(adat),
           headers: { "Content-type": "application/json; charset=UTF-8" },
         });
-        //-----------
+        //----------- ellenőrzések
         if (!osszeg.ok || !befizetesek.ok) {
           throw new Error("Hiba történt a fizetések betöltésekor!");
         }
@@ -46,9 +60,6 @@ const Tanulo_Kezdolap = ({ atkuld }) => {
 
         setSumBefizetes(osszegResponse);
         setBefizetLista(befizetesekResponse);
-
-        //console.log("sumbefizetés összege: ", sumBefizetes);
-        //console.log("befizetések eddig: ", befizetLista);
       }
     } catch (err) {
       setHiba(err.message);
@@ -59,7 +70,7 @@ const Tanulo_Kezdolap = ({ atkuld }) => {
   useEffect(() => {
     adatokBetoltese();
   }, []);
-
+  //---------------------------------- ADATOK BETÖLTÉSE
   if (betolt) {
     return (
       <View style={Styles.bejelentkezes_Container}>
@@ -67,6 +78,22 @@ const Tanulo_Kezdolap = ({ atkuld }) => {
       </View>
     );
   }
+  //---------------------------------- DÁTUM FORMÁZÁSA AZ ÓRÁHOZ
+  const koviOraFormazasa = (adatBresponseJSON) => {
+    const datum = new Date(adatBresponseJSON);
+    // Külön formázott dátum (pl. JANUÁR 31)
+    const honapNevekMagyarul = [
+      'január', 'Február', 'Március', 'Április', 'Május', 'Június',
+      'Július', 'Augusztus', 'Szeptember', 'Október', 'November', 'December'
+    ];
+    const nap = datum.getDate();
+    const honap = honapNevekMagyarul[datum.getMonth()].toUpperCase();
+    // Külön formázott idő (pl. 7:00)
+    const ora = datum.getHours();
+    const perc = datum.getMinutes().toString().padStart(2, '0'); // 2 számjegyre formázva
+    return `${honap} ${nap} - ${ora}:${perc} óra`;
+  };
+  //-------------------------------- HIBA KEZELÉS
   if (hiba) {
     return (
       <View style={Styles.bejelentkezes_Container}>
@@ -95,7 +122,7 @@ const Tanulo_Kezdolap = ({ atkuld }) => {
           }}
         >
           <View>
-            <Text style={styles.befizetesTitle}>Eddigi befizetések</Text>
+            <Text style={styles.befizetesTitle}>Eddigi befizetései</Text>
             <Text style={styles.befizetesOsszeg}>
               {sumBefizetes[0].osszesBefizetes} Ft
             </Text>
@@ -118,7 +145,9 @@ const Tanulo_Kezdolap = ({ atkuld }) => {
         >
           <View>
         <Text style={styles.oraTitle}>Következő óra időpontja:</Text>
-        <Text style={styles.oraOsszeg}>2025.03.15 18.00</Text>
+        <Text style={styles.oraOsszeg}>
+        {koviOra.length > 0 ? koviOraFormazasa(koviOra[0].ora_datuma) : "Egyenlőre még nincs beírva következő óra!"}
+          </Text>
         </View>
         <Ionicons name="chevron-forward-outline" size={40} color="black"/>
         </View>
