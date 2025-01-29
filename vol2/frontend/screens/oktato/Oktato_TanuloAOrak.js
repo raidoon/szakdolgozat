@@ -2,12 +2,12 @@ import { useEffect, useState } from "react";
 import { View, Text, StyleSheet } from "react-native";
 import Ipcim from "../../Ipcim";
 
-export default function Oktato_TanuloReszletei({ route }) {
+
+
+export default function Oktato_TanuloAOrak({ route }) {
     const { tanulo } = route.params;
     const [adatok, setAdatok] = useState([]);
-    const [email, setEmail] = useState("");
-    const [telefonszam, setTelefonszam]=useState("");
-
+    
     const letoltes = async () => {
         try {
             const adat = {
@@ -16,7 +16,7 @@ export default function Oktato_TanuloReszletei({ route }) {
             console.log("API hívás indítása...");
             console.log("Elküldött adat:", JSON.stringify({ "felhasznaloID": tanulo.tanulo_felhasznaloID }));
 
-            const response = await fetch(Ipcim.Ipcim + "/tanuloReszletei", { 
+            const response = await fetch(Ipcim.Ipcim + "/diakokOrai", { 
                 method: "POST",
                 body: JSON.stringify(adat),
                 headers: { "Content-type": "application/json; charset=UTF-8" }
@@ -33,8 +33,7 @@ export default function Oktato_TanuloReszletei({ route }) {
             const data = await response.json();
             console.log("Betöltött adatok:", data);
             setAdatok(data);
-            setEmail(data[0].felhasznalo_email); // Ha a válasz tömböt ad vissza
-            setTelefonszam(data[0].felhasznalo_telefonszam);
+           
 
         } catch (error) {
             console.error("Hiba az API-hívás során:", error);
@@ -52,8 +51,7 @@ export default function Oktato_TanuloReszletei({ route }) {
                 <Text style={stilus.szoveg}>Részletek</Text>
                 <Text>{tanulo.tanulo_neve}</Text>
                 <Text>{tanulo.tanulo_felhasznaloID}</Text>
-                <Text style={stilus.masodik}>{email}</Text>
-                <Text style={stilus.masodik}>{telefonszam}</Text>
+                
             </View>
         </View>
     );

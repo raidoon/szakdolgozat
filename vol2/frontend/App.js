@@ -29,6 +29,10 @@ import Oktato_Profil from "./screens/oktato/Oktato_Profil";
 import Oktato_Diakok from "./screens/oktato/Oktato_Diakok";
 import Oktato_TanuloReszletei from "./screens/oktato/Oktato_TanuloReszletei";
 import Oktato_OraRogzites from "./screens/oktato/Oktato_OraRogzites";
+import Oktato_AktualisTanulok from "./screens/oktato/Oktato_AktualisTanulok";
+import Oktato_TanuloAOrak from "./screens/oktato/Oktato_TanuloAOrak";
+
+
 
 const Stack = createStackNavigator();
 
@@ -86,6 +90,8 @@ export default function App() {
         <Stack.Screen name="Oktato_TanuloReszletei" component={Oktato_TanuloReszletei}/>
         <Stack.Screen name="Oktato_OraRogzites" component={Oktato_OraRogzites} />
         <Stack.Screen name="Oktato_Kezdolap" component={Oktato_Kezdolap} />
+        <Stack.Screen name="Oktato_AktualisTanulok" component={Oktato_AktualisTanulok} />
+        <Stack.Screen name="Oktato_TanuloAOrak" component={Oktato_TanuloAOrak} />
       </Stack.Navigator>
     </NavigationContainer>
   );

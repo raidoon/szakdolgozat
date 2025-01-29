@@ -379,9 +379,85 @@ app.get("/valasztTipus", (req, res) => {
   );
   connection.end();
 });
-
+//--------------------------TanuloReszletei.js
+app.post("/tanuloReszletei", (req, res) => {
+  kapcsolat();
+  connection.query(
+    `select felhasznalo_id,tanulo_id,felhasznalo_email,felhasznalo_telefonszam,tanulo_neve,tanulo_levizsgazott
+    from felhasznaloi_adatok 
+    inner join tanulo_adatok on felhasznaloi_adatok.felhasznalo_id=tanulo_adatok.tanulo_felhasznaloID  
+    where tanulo_felhasznaloID = ?`,
+    [req.body.tanulo_felhasznaloID],
+    (err, rows, fields) => {
+      if (err) {
+        console.log(err);
+        res.status(500).send("Hiba");
+      } else {
+        console.log(rows);
+        res.status(200).send(rows);
+      }
+    }
+  );
+  connection.end();
+});
 
 //----------------------
+app.post("/aktualisDiakok", (req, res) => {
+  console.log("hello")
+  kapcsolat();
+  connection.query(
+    `SELECT tanulo_neve
+    FROM tanulo_adatok AS tanulo
+    INNER JOIN oktato_adatok AS oktato
+    ON tanulo.tanulo_oktatoja = oktato.oktato_id
+    WHERE tanulo.tanulo_levizsgazott=0 AND oktato.oktato_id=?`,
+    [req.body.oktato_id],
+    (err, rows, fields) => {
+      if (err) {
+        console.log(err);
+        res.status(500).send("Hiba");
+      } else {
+        console.log(rows);
+        res.status(200).send(rows);
+      }
+    }
+  );
+  connection.end();
+});
+
+//------------------
+
+
+app.post("/diakokOrai", (req, res) => {
+  console.log("hello")
+  kapcsolat();
+  connection.query(
+    `SELECT tanulo_neve, ora_datuma, ora_teljesitve
+    FROM felhasznaloi_adatok AS felhasznalo
+    INNER JOIN tanulo_adatok AS tanulo
+    ON felhasznalo.felhasznalo_id=tanulo.tanulo_felhasznaloID
+    INNER JOIN ora_adatok AS ora
+    ON tanulo.tanulo_id= ora.ora_diakja 
+    WHERE tanulo_felhasznaloID = ?`,
+    [req.body.tanulo_felhasznaloID],
+    (err, rows, fields) => {
+      if (err) {
+        console.log(err);
+        res.status(500).send("Hiba");
+      } else {
+        console.log(rows);
+        res.status(200).send(rows);
+      }
+    }
+  );
+  connection.end();
+});
+
+
+
+
+
+//-------------------
 app.listen(port, () => {
   console.log(`Example app listening on port ${port}`);
 });
