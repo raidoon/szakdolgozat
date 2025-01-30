@@ -4,18 +4,21 @@ import { useNavigation } from '@react-navigation/native';
 import Oktato_Styles from "../../Oktato_Styles";
 import Ipcim from "../../Ipcim";
 
-export default function Oktato_AktualisTanulok({ atkuld }) {
+export default function Oktato_AktualisTanulok({ route }) {
+    const { atkuld } = route.params;
     const [adatok, setAdatok] = useState([]);
     const navigation = useNavigation();
     console.log(atkuld);
 
     const letoltes = async () => {
+        
+        
         try {
             const adat = {
                 oktato_id: atkuld.oktato_id,
             }
-            console.log("API hívás indítása...");
-            console.log("Elküldött adat:", JSON.stringify({ "oktatoid": atkuld.oktato_id }));
+            alert(atkuld.oktato_id)
+            console.log("Elküldött adat:", JSON.stringify({ "oktato_id": atkuld.oktato_id }));
 
             const response = await fetch(Ipcim.Ipcim + "/aktualisDiakok", {
                 method: "POST",
@@ -30,18 +33,19 @@ export default function Oktato_AktualisTanulok({ atkuld }) {
             }
 
             const data = await response.json();
-            console.log("Betöltött adatok:", data);
+            //alert(JSON.stringify(data))
             setAdatok(data);
 
         } catch (error) {
             console.error("Hiba az API-hívás során:", error);
             alert("Nem sikerült az adatok letöltése. Ellenőrizd az API-t.");
         }
+        
     }
 
     useEffect(() => {
         letoltes();
-    }, []); // Az üres tömb biztosítja, hogy csak egyszer fusson le a letoltes()
+    }, []); 
 
     const katt = (tanulo) => {
         
@@ -57,7 +61,7 @@ export default function Oktato_AktualisTanulok({ atkuld }) {
             <View>
                 <Text>hello</Text>
 
-                {/* FlatList a diákok adatainak megjelenítésére */}
+                
                 <FlatList
                     data={adatok}
                     renderItem={({ item }) => (
@@ -66,11 +70,11 @@ export default function Oktato_AktualisTanulok({ atkuld }) {
                             <TouchableOpacity 
                                 style={{ backgroundColor: "#0000ff" }} 
                                 onPress={() => katt(item)}>
-                                <Text style={{ color: "white" }}>Részletek</Text>
+                                <Text style={{ color: "white" }}>Továbbiak</Text>
                             </TouchableOpacity>
                         </View>
                     )}
-                    keyExtractor={item => item.tanulo_id.toString()} // Típuskonverzió, ha szükséges
+                    keyExtractor={item => item.tanulo_id.toString()} 
                 />
             </View>
         </View>

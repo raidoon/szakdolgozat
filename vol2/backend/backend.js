@@ -446,7 +446,7 @@ app.post("/aktualisDiakok", (req, res) => {
   console.log("hello");
   kapcsolat();
   connection.query(
-    `SELECT tanulo_neve
+    `SELECT tanulo_id,tanulo_neve
     FROM tanulo_adatok AS tanulo
     INNER JOIN oktato_adatok AS oktato
     ON tanulo.tanulo_oktatoja = oktato.oktato_id
@@ -466,6 +466,33 @@ app.post("/aktualisDiakok", (req, res) => {
 });
 
 //------------------
+
+app.post("/levizsgazottDiakok", (req, res) => {
+  console.log("hello");
+  kapcsolat();
+  connection.query(
+    `SELECT tanulo_id,tanulo_neve
+    FROM tanulo_adatok AS tanulo
+    INNER JOIN oktato_adatok AS oktato
+    ON tanulo.tanulo_oktatoja = oktato.oktato_id
+    WHERE tanulo.tanulo_levizsgazott=1 AND oktato.oktato_id=?`,
+    [req.body.oktato_id],
+    (err, rows, fields) => {
+      if (err) {
+        console.log(err);
+        res.status(500).send("Hiba");
+      } else {
+        console.log(rows);
+        res.status(200).send(rows);
+      }
+    }
+  );
+  connection.end();
+});
+
+
+
+//----------------
 
 app.post("/diakokOrai", (req, res) => {
   console.log("hello");

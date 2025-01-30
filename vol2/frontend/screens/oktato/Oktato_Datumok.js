@@ -43,7 +43,7 @@ export default function Oktato_Datumok({atkuld}){
 
   const kattaktual = (tanulo) => {
       
-    navigation.navigate("Oktato_AktualTanulok", { tanulo });
+    navigation.navigate("Oktato_AktualisTanulok", { tanulo });
 };
   
   
