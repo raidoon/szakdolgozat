@@ -1,10 +1,14 @@
 import React from "react";
 import { View, Text, } from "react-native";
 import Styles from "../../../Styles";
+import Ionicons from "react-native-vector-icons/Ionicons";
 
 export default function Kapcsolat() {
   return (
     <View style={Styles.kapcsolatNagyDiv}>
+
+      <Text>Lépjen velünk kapcsolatba!</Text>
+
       <View style={{ textAlign: "left", width: "100%" }}>
         <Text
           style={Styles.alcim2}
@@ -15,9 +19,9 @@ export default function Kapcsolat() {
       </View>
 
       <View style={Styles.kapcsolatBuborek}>
-        <Text>Customer Support</Text>
-        <Text>Email cím</Text>
-        <Text>segitseg@gmail.com</Text>
+        <Text><Ionicons name="mail" size={40} color="orange" /></Text>
+        <Text>Ügyfélszolgálat</Text>
+        <Text>slashtactics@gmail.com</Text>
       </View>
 
       <View style={Styles.kapcsolatBuborek}>

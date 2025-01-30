@@ -56,7 +56,7 @@ const Tanulo_Befizetesek = ({ atkuld }) => {
       if (adat) {
         const befizetesek = await fetch(Ipcim.Ipcim + "/befizetesListaT", {
           method: "POST",
-          body: JSON.stringify(adat), 
+          body: JSON.stringify(adat),
           headers: { "Content-type": "application/json; charset=UTF-8" },
         });
 
@@ -289,7 +289,10 @@ const Tanulo_Befizetesek = ({ atkuld }) => {
       {szamologepLathatoe ? null : (
         <View style={styles.tranzakcioContainer}>
           <Text style={styles.tranzakcioTitle}>Legutóbbi Tranzakciók</Text>
-          {befizetLista
+          {befizetLista.length===null ? (
+            <Text style={styles.nincsOra}>Egyenlőre még nem történt befizetés!</Text>
+          ) : (
+            befizetLista
             .sort(
               (a, b) =>
                 new Date(b.befizetesek_ideje) - new Date(a.befizetesek_ideje)
@@ -435,7 +438,8 @@ const Tanulo_Befizetesek = ({ atkuld }) => {
                   </View>
                 );
               }
-            })}
+            })
+          )}
         </View>
       )}
       {/*-------------------------------------------- MODAL ----------------------------------------------*/}
@@ -513,6 +517,12 @@ const Tanulo_Befizetesek = ({ atkuld }) => {
 
 export default Tanulo_Befizetesek;
 const styles = StyleSheet.create({
+  nincsOra: {
+    textAlign: "center",
+    color: "#888",
+    fontStyle: "italic",
+    marginTop: 20,
+  },
   modalOverlay: {
     flex: 1,
     justifyContent: "center",

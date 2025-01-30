@@ -3,6 +3,7 @@ import {
   View,
   Text,
   StyleSheet,
+  Alert
 } from "react-native";
 import Ripple from "react-native-material-ripple";
 import Styles from "../../Styles";
@@ -13,6 +14,19 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 const Tanulo_Profil = ({atkuld}) => {
   const navigation = useNavigation();
 
+  const kijelentkeztetesAlert = () => {
+    Alert.alert('Figyelem!','Biztosan ki szeretne jelentkezni?', [
+      {
+        text: 'Mégse',
+        onPress: () => console.log('mégse megnyomva'),
+        style: 'cancel',
+      },
+      {
+        text: 'Igen',
+        onPress: () => kijelentkeztetes()
+      }
+    ])
+  };
   const kijelentkeztetes = async () => {
     await AsyncStorage.removeItem('bejelentkezve');
     navigation.navigate('Bejelentkezes');
@@ -29,7 +43,7 @@ const Tanulo_Profil = ({atkuld}) => {
         <Text style={[Styles.alcim,{textAlign:'center'}]}>{atkuld.felhasznalo_email}</Text>
       </View>
 
-      <View style={Styles.profil_gombDiv}>
+      <View style={Styles.profil_gombDiv}> {/** SZEMÉLYES ADATOK */}
         <Ripple
           rippleColor="rgb(0,0,0)"
           rippleOpacity={0.05}
@@ -56,7 +70,7 @@ const Tanulo_Profil = ({atkuld}) => {
         </Ripple>
       </View>
 
-      <View style={Styles.profil_gombDiv}>
+      <View style={Styles.profil_gombDiv}> {/*JELSZÓ MEGVÁLTOZTATÁSA */}
         <Ripple
           rippleColor="rgb(0,0,0)"
           rippleOpacity={0.05}
@@ -82,7 +96,7 @@ const Tanulo_Profil = ({atkuld}) => {
           </View>
         </Ripple>
       </View>
-      <View style={Styles.profil_gombDiv}>
+      <View style={Styles.profil_gombDiv}> {/**BEÁLLÍTÁSOK */}
         <Ripple
           rippleColor="rgb(0,0,0)"
           rippleOpacity={0.05}
@@ -108,7 +122,7 @@ const Tanulo_Profil = ({atkuld}) => {
           </View>
         </Ripple>
       </View>
-      <View style={Styles.profil_gombDiv}>
+      <View style={Styles.profil_gombDiv}> {/*KAPCSOLAT */}
         <Ripple
           rippleColor="rgb(0,0,0)"
           rippleOpacity={0.05}
@@ -147,7 +161,7 @@ const Tanulo_Profil = ({atkuld}) => {
           rippleFades={false}
           rippleContainerBorderRadius={20}
           style={[Styles.profileGombok, Styles.profil_gombDiv]}
-          onPress={kijelentkeztetes}
+          onPress={kijelentkeztetesAlert}
         >
           <View style={styles.elsoFlex}>
             <Ionicons name="log-out-outline" size={25} color="red" />

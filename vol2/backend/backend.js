@@ -167,14 +167,8 @@ app.post("/beleptetes", (req, res) => {
 app.post("/sajatAdatokT", (req, res) => {
   kapcsolat();
   connection.query(
-    `select felhasznalo_id,tanulo_id,felhasznalo_email,felhasznalo_telefonszam,tanulo_neve,tanulo_levizsgazott,tanulo_oktatoja,oktato_adatok.oktato_neve, autosiskola_adatok.autosiskola_nev, ora_adatok.ora_diakja 
-    from felhasznaloi_adatok 
-    inner join tanulo_adatok on felhasznaloi_adatok.felhasznalo_id=tanulo_adatok.tanulo_felhasznaloID
-    inner join ora_adatok on tanulo_adatok.tanulo_id=ora_adatok.ora_diakja   
-    inner join oktato_adatok on tanulo_adatok.tanulo_oktatoja=oktato_adatok.oktato_id  
-    inner join autosiskola_adatok on felhasznaloi_adatok.felhasznalo_autosiskola=autosiskola_adatok.autosiskola_id 
-    where tanulo_felhasznaloID = ?`,
-    [req.body.tanulo_felhasznaloID],
+    `select felhasznalo_id, felhasznalo_autosiskola, felhasznalo_email, felhasznalo_jelszo, felhasznalo_telefonszam,felhasznalo_tipus, tanulo_adatok.tanulo_id, tanulo_adatok.tanulo_oktatoja, tanulo_adatok.tanulo_neve, tanulo_adatok.tanulo_levizsgazott from felhasznaloi_adatok INNER JOIN tanulo_adatok ON felhasznaloi_adatok.felhasznalo_id=tanulo_adatok.tanulo_felhasznaloID  where felhasznalo_id = ?`,
+    [req.body.felhasznalo_id],
     (err, rows, fields) => {
       if (err) {
         console.log(err);
@@ -226,7 +220,25 @@ app.post("/tanuloSUMbefizetes", (req, res) => {
   );
   connection.end();
 });
-//------------------------------------------------ TANULÓ BEFIZETÉSEINEK LISTÁJA
+//------------------------------------------------ TANULÓ TARTOZÁSAINAK TELJES ÖSSZEGE
+app.post("/tanuloSUMtartozas", (req, res) => {
+  kapcsolat();
+  connection.query(
+    `SELECT SUM(befizetesek.befizetesek_osszeg) as 'osszesTartozas' FROM befizetesek INNER JOIN tanulo_adatok ON befizetesek.befizetesek_tanuloID=tanulo_adatok.tanulo_id INNER JOIN felhasznaloi_adatok ON tanulo_adatok.tanulo_felhasznaloID=felhasznaloi_adatok.felhasznalo_id WHERE felhasznalo_id = ? AND befizetesek.befizetesek_jovahagyva != 1 AND befizetesek.befizetesek_jovahagyva !=2`,
+    [req.body.felhasznalo_id],
+    (err, rows, fields) => {
+      if (err) {
+        console.log(err);
+        res.status(500).send("Hiba");
+      } else {
+        console.log(rows);
+        res.status(200).send(rows);
+      }
+    }
+  );
+  connection.end();
+});
+//------------------------------------------------ TANULÓ ÖSSZES BEFIZETÉSE EGY LISTÁBAN
 app.post("/befizetesListaT", (req, res) => {
   kapcsolat();
   connection.query(
@@ -245,17 +257,6 @@ app.post("/befizetesListaT", (req, res) => {
   connection.end();
 });
 //------------------------------------------------ TANULÓ BEFIZETÉS FELVÉTELE
-/*app.post('/tanuloBefizetesFelvitel',(req,res)=>{
-  kapcsolat()
-  connection.query(`INSERT INTO befizetesek  VALUES (null,${req.body.befizetesek_tanuloID},${req.body.befizetesek_oktatoID},${req.body.befizetesek_tipusID},${req.body.befizetesek_osszeg},${req.body.befizetesek_ideje},0)`, (err, rows, fields) => {
-    if (err) 
-      res.send("Hiba") 
-    else 
-    res.send("A befizetés felvitele sikerült!")
-  })    
-  connection.end()
-});
-*/
 app.post("/tanuloBefizetesFelvitel", (req, res) => {
   const {
     befizetesek_tanuloID,
@@ -314,8 +315,8 @@ app.post("/tanuloKovetkezoOraja", (req, res) => {
 app.post("/tanuloOsszesOraja", (req, res) => {
   kapcsolat();
   connection.query(
-    `SELECT * FROM ora_adatok WHERE ora_adatok.ora_diakja = ?`,
-    [req.body.ora_diakja],
+    `select * from ora_adatok INNER join tanulo_adatok on ora_adatok.ora_diakja=tanulo_adatok.tanulo_id inner join felhasznaloi_adatok on tanulo_adatok.tanulo_felhasznaloID=felhasznaloi_adatok.felhasznalo_id WHERE felhasznaloi_adatok.felhasznalo_id = ?;`,
+    [req.body.felhasznalo_id],
     (err, rows, fields) => {
       if (err) {
         console.log(err);
@@ -328,15 +329,6 @@ app.post("/tanuloOsszesOraja", (req, res) => {
   );
   connection.end();
 });
-/*------------------------------------------------ A TANULÓ EGY ADOTT NAPON LÉVŐ ÓRÁINAK LEKÉRDEZÉSE
-app.post("/tanuloOraiAdottNapon", (req, res) => {
-  kapcsolat();
-  connection.query(
-    `select * from ora_adatok where ora_adatok.ora_diakja = ? 
-        AND 
-      ora_adatok.ora_datuma = `
-  )
-})*/
 //------------------------------------------------ TANULÓI LEKÉRDEZÉSEK VÉGE
 //------------------------adott oktatóhoz tartozó tanulók neveinek megjelenítése post bevitel1
 app.post("/egyOktatoDiakjai", (req, res) => {

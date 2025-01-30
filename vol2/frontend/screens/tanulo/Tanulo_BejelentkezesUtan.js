@@ -16,16 +16,18 @@ const Tanulo_BejelentkezesUtan = ({ navigation, route }) => {
   const [adatok, setAdatok] = useState(null);
   const [betolt, setBetolt] = useState(true);
   const [hiba, setHiba] = useState(null);
+  
 
   const sajatAdatokBetoltese = async () => {
     try {
       const adatok = await AsyncStorage.getItem("bejelentkezve");
       if (adatok) {
+        console.log(adatok)
         const user = JSON.parse(adatok);
         const response = await fetch(Ipcim.Ipcim + "/sajatAdatokT", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ tanulo_felhasznaloID: user.felhasznalo_id }), // 'user' objektum
+          body: JSON.stringify({ felhasznalo_id: user.felhasznalo_id }), // 'user' objektum
         });
 
         if (!response.ok) {

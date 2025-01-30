@@ -15,6 +15,7 @@ const Tanulo_Kezdolap = ({ atkuld }) => {
   const navigation = useNavigation();
   console.log("Atküldött adat a bejelentkezés után: ", atkuld);
   const [sumBefizetes, setSumBefizetes] = useState([]);
+  const [sumTartozas, setSumTartozas] = useState([]);
   const [befizetLista, setBefizetLista] = useState([]);
   const [koviOra, setKoviOra] = useState([]);
   const [betolt, setBetolt] = useState(true);
@@ -25,7 +26,7 @@ const Tanulo_Kezdolap = ({ atkuld }) => {
         felhasznalo_id: atkuld.felhasznalo_id,
       };
       const oraAdat = {
-        ora_diakja: atkuld.ora_diakja,
+        ora_diakja: atkuld.ora_diakja, 
       }
       if(oraAdat){
         //---------- a következő óra időpontja
@@ -51,15 +52,23 @@ const Tanulo_Kezdolap = ({ atkuld }) => {
           body: JSON.stringify(adat),
           headers: { "Content-type": "application/json; charset=UTF-8" },
         });
+        //----------- eddigi tartozás / elfogadásra váró SUM
+        const tartozas = await fetch(Ipcim.Ipcim + "/tanuloSUMtartozas",{
+          method: "POST",
+          body: JSON.stringify(adat),
+          headers: {"Content-type": "application/json; charset=UTF-8"},
+        });
         //----------- ellenőrzések
-        if (!osszeg.ok || !befizetesek.ok) {
+        if (!osszeg.ok || !befizetesek.ok || !tartozas.ok) {
           throw new Error("Hiba történt a fizetések betöltésekor!");
         }
         const osszegResponse = await osszeg.json();
         const befizetesekResponse = await befizetesek.json();
+        const tartozasResponse = await tartozas.json();
 
         setSumBefizetes(osszegResponse);
         setBefizetLista(befizetesekResponse);
+        setSumTartozas(tartozasResponse);
       }
     } catch (err) {
       setHiba(err.message);
@@ -122,14 +131,33 @@ const Tanulo_Kezdolap = ({ atkuld }) => {
           }}
         >
           <View>
-            <Text style={styles.befizetesTitle}>Eddigi befizetései</Text>
+            <Text style={styles.befizetesTitle}>Eddig befizetve:</Text>
             <Text style={styles.befizetesOsszeg}>
-              {sumBefizetes[0].osszesBefizetes} Ft
+              {sumBefizetes[0].osszesBefizetes===null ? "0 Ft" : `${sumBefizetes[0].osszesBefizetes} Ft`}
             </Text>
           </View>
           <Ionicons name="chevron-forward-outline" size={40} color="white"/>
         </View>
       </TouchableOpacity>
+      {/* ----------------------------------TARTOZÁSOK---------------------------------------- */}
+      <View style={styles.tartozasContainer}>
+      <View
+          style={{
+            flexDirection: "row",
+            alignItems: "center",
+            justifyContent: "space-between",
+            width: "100%",
+          }}
+        >
+          <View>
+            <Text style={styles.tartozasTitle}>Tartozás/elfogadásra váró befizetés:</Text>
+            <Text style={styles.tartozasOsszeg}>
+              {sumTartozas[0].osszesTartozas===null ? "0 Ft" : `${sumTartozas[0].osszesTartozas} Ft`}
+            </Text>
+          </View>
+          
+        </View>
+      </View>
       {/* --------------------------------------KÖVETKEZŐ ÓRA---------------------------------------- */}
       <TouchableOpacity
         style={styles.oraContainer}
@@ -149,14 +177,16 @@ const Tanulo_Kezdolap = ({ atkuld }) => {
         {koviOra.length > 0 ? koviOraFormazasa(koviOra[0].ora_datuma) : "Egyenlőre még nincs beírva következő óra!"}
           </Text>
         </View>
-        <Ionicons name="chevron-forward-outline" size={40} color="black"/>
+        <View styles={{marginRight: 30}}><Ionicons name="chevron-forward-outline" size={40} color="#03045e"/></View>
         </View>
       </TouchableOpacity>
       {/* --------------------------------------LEGUTÓBBI TRANZAKCIÓ---------------------------------------- */}
       <View style={styles.tranzakcioContainer}>
         <Text style={styles.tranzakcioTitle}>Legutóbbi Tranzakciók</Text>
-
-        {befizetLista
+          {befizetLista.length===null ? (
+            <Text style={styles.nincsOra}>Egyenlőre még nem történt befizetés!</Text>
+          ):(
+            befizetLista
           .sort(
             (a, b) =>
               new Date(b.befizetesek_ideje) - new Date(a.befizetesek_ideje)
@@ -189,7 +219,10 @@ const Tanulo_Kezdolap = ({ atkuld }) => {
                 </Text>
               </View>
             );
-          })}
+          })
+          )}
+
+        {}
       </View>
     </ScrollView>
   );
@@ -200,6 +233,7 @@ const styles = StyleSheet.create({
   egeszOldal: {
     flex: 1,
     backgroundColor: "#f5f5f5",
+    width: '100%'
   },
   udvozloView: {
     backgroundColor: "#dfe6e9", //#dfe6e9
@@ -221,7 +255,7 @@ const styles = StyleSheet.create({
   },
   befizetesContainer: {
     margin: 20,
-    backgroundColor: "#5A4FCF", //"#8338ec", //"#5A4FCF", //#6c5ce7
+    backgroundColor: "#023E8A", //"#8338ec", //"#5A4FCF", //#6c5ce7
     padding: 15,
     borderRadius: 15,
     alignItems: "center",
@@ -237,9 +271,28 @@ const styles = StyleSheet.create({
     color: "#fff",
     marginTop: 5,
   },
+  tartozasContainer:{
+    marginLeft: 20,
+    marginRight: 20,
+    backgroundColor: '#0077B6',
+    padding: 15,
+    borderRadius: 15,
+    alignItems: 'center',
+    elevation: 3,
+  },
+  tartozasTitle:{
+    fontSize: 16,
+    color: '#fff',
+  },
+  tartozasOsszeg:{
+    fontSize: 24,
+    fontWeight: "bold",
+    color: "#fff",
+    marginTop: 5,
+  },
   oraContainer: {
     margin: 20,
-    backgroundColor: "#ccccff", //"#C49991", //"#5E7CE2", //"#A06CD5",
+    backgroundColor: "#CAF0F8", //"#C49991", //"#5E7CE2", //"#A06CD5",
     padding: 15,
     borderRadius: 15,
     alignItems: "center",
@@ -247,11 +300,13 @@ const styles = StyleSheet.create({
   },
   oraTitle: {
     fontSize: 16,
-    color: "black",
+    color: "#03045E",
   },
   oraOsszeg: {
     fontSize: 24,
-    color: "#32174d",
+    color: "#03045E",
+    width: "auto",
+    marginRight: 20
   },
   tranzakcioContainer: {
     margin: 20,
@@ -260,6 +315,12 @@ const styles = StyleSheet.create({
     fontSize: 18,
     fontWeight: "bold",
     marginBottom: 10,
+  },
+  nincsOra: {
+    textAlign: "center",
+    color: "#888",
+    fontStyle: "italic",
+    marginTop: 20,
   },
   legutobbiTranzakciok: {
     flexDirection: "row",

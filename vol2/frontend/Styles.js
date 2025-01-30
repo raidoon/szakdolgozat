@@ -140,7 +140,8 @@ const Styles = StyleSheet.create({
     textAlign: "center",
     width: 250,
     padding: 15,
-    height: 100,
+    minHeight: 100,
+    maxHeight: 'auto',
   },
   //--------------------------Oktato_Diakok.js
 });

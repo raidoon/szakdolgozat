@@ -1,5 +1,9 @@
 import React, { useState, useEffect, useCallback } from "react";
 import {
+  PanGestureHandler,
+  GestureHandlerRootView,
+} from "react-native-gesture-handler";
+import {
   View,
   Text,
   StyleSheet,
@@ -20,14 +24,6 @@ import Ipcim from "../../Ipcim";
 
 const Tanulo_Datumok = ({ atkuld }) => {
   const ma = new Date();
-  const maMegformazva = ma
-    .toLocaleDateString("hu-HU", {
-      year: "numeric",
-      month: "2-digit",
-      day: "2-digit",
-    })
-    .replace(/\//g, ".");
-
   const [kivalasztottDatum, setKivalasztottDatum] = useState(ma);
   const [naptarLenyitas, setNaptarLenyitas] = useState(false);
   const [orakLista, setOrakLista] = useState([]);
@@ -107,7 +103,7 @@ const Tanulo_Datumok = ({ atkuld }) => {
   const adatokBetoltese = async () => {
     try {
       const adat = {
-        ora_diakja: atkuld.ora_diakja,
+        felhasznalo_id: atkuld.felhasznalo_id,
       };
       if (adat) {
         const orak = await fetch(Ipcim.Ipcim + "/tanuloOsszesOraja", {
@@ -180,11 +176,23 @@ const Tanulo_Datumok = ({ atkuld }) => {
     const ev = kivalasztottDatum.getFullYear();
     return (
       <Text style={styles.egysorosHonapSzoveg}>
-        {honapNeveNagyBetuvel} {ev}
+        {ev} - {honapNeveNagyBetuvel}
       </Text>
     );
   };
-
+  const BecsukottNezetesNaptarHeader = () => {
+    const honapNeve = kivalasztottDatum.toLocaleString("hu-HU", {
+      month: "long",
+    });
+    const honapNeveNagyBetuvel =
+      honapNeve.charAt(0).toUpperCase() + honapNeve.slice(1);
+    return <Text>{honapNeveNagyBetuvel}</Text>;
+  };
+  const honapValtas = (irany) => {
+    const ujDatum = new Date(kivalasztottDatum);
+    ujDatum.setMonth(kivalasztottDatum.getMonth() + irany);
+    setKivalasztottDatum(ujDatum);
+  };
   const datumMegnyomas = (day) => {
     const ujDatum = new Date(kivalasztottDatum);
     if (isNaN(ujDatum)) {
@@ -207,16 +215,23 @@ const Tanulo_Datumok = ({ atkuld }) => {
     return Array.from({ length: 7 }, (_, i) => {
       const nap = new Date(hetElsoNapja);
       nap.setDate(hetElsoNapja.getDate() + i);
-
-      // bebiztosítjuk, hogy a generált napok a hónapon belül maradnak
-      if (nap.getMonth() !== kivalasztottDatum.getMonth()) {
-        return null; // kihagyjuk azokat a napokat, amik már nincsenek a hónapban
-      }
       return nap;
     }).filter(Boolean); // töröljük a null értékeket
   };
+  const handleSwipeLeft = () => {
+    const ujDatum = new Date(kivalasztottDatum);
+    ujDatum.setDate(kivalasztottDatum.getDate() + 7); // 7 nappal előre
+    setKivalasztottDatum(ujDatum);
+  };
+
+  const handleSwipeRight = () => {
+    const ujDatum = new Date(kivalasztottDatum);
+    ujDatum.setDate(kivalasztottDatum.getDate() - 7); // 7 nappal hátra
+    setKivalasztottDatum(ujDatum);
+  };
+
   return (
-    <ScrollView
+    <View
       style={styles.container}
       refreshControl={
         <RefreshControl refreshing={frissites} onRefresh={frissitesKozben} />
@@ -224,7 +239,87 @@ const Tanulo_Datumok = ({ atkuld }) => {
     >
       {/* ------------------------------ BEZÁRT EGY SOROS NAPTÁR NÉZET -------------------------------------- */}
       {!naptarLenyitas && (
-        <View style={styles.collapsedRow}>
+        <View>
+          <Text style={styles.egysorosHonapSzoveg}>
+            {BecsukottNezetesNaptarHeader()}
+          </Text>
+          <View style={styles.collapsedRow}>
+            {/*------------------------------ A HÉTNEK A SORA !!! --------------------------*/}
+            <View style={styles.weekRow}>
+              <TouchableOpacity onPress={handleSwipeRight}>
+                <Ionicons name="chevron-back-outline" size={30} color="black" />
+              </TouchableOpacity>
+
+              {jelenlegiHet().map((nap) => {
+                const isWeekend = nap.getDay() === 0 || nap.getDay() === 6; // Vasárnap vagy Szombat
+                const hasClass = orakLista.some((item) => {
+                  const date = new Date(item.ora_datuma);
+                  return (
+                    date.getFullYear() === nap.getFullYear() &&
+                    date.getMonth() === nap.getMonth() &&
+                    date.getDate() === nap.getDate()
+                  );
+                });
+
+                return (
+                  <TouchableOpacity
+                    key={nap.toISOString()}
+                    style={[
+                      isWeekend && !kivalasztottDatum
+                        ? styles.weekendDay
+                        : styles.weekDay, // Hétvégéknek piros háttér
+                      nap.toDateString() === kivalasztottDatum.toDateString() &&
+                        styles.kivalasztottdatum,
+                      isWeekend && styles.weekendDayText, // Hétvégéknek piros szöveg
+                      hasClass && styles.vanAznapOra,
+                    ]}
+                    onPress={() => setKivalasztottDatum(nap)}
+                  >
+                    <Text
+                      style={[
+                        styles.weekDayText,
+                        nap.toDateString() ===
+                          kivalasztottDatum.toDateString() &&
+                          styles.kivalasztottSzoveg,
+                        isWeekend && styles.weekendDayText, // Hétvégéknek piros szöveg
+                      ]}
+                    >
+                      {nap.toLocaleString("hu-HU", { weekday: "short" })}
+                    </Text>
+                    <Text
+                      style={[
+                        styles.weekDayNumber,
+                        nap.toDateString() ===
+                          kivalasztottDatum.toDateString() &&
+                          styles.kivalasztottSzoveg,
+                        isWeekend && styles.weekDayNumber,
+                      ]}
+                    >
+                      {nap.getDate()}
+                    </Text>
+                  </TouchableOpacity>
+                );
+              })}
+
+              <TouchableOpacity onPress={handleSwipeLeft}>
+                <Ionicons
+                  name="chevron-forward-outline"
+                  size={30}
+                  color="black"
+                />
+              </TouchableOpacity>
+            </View>
+          </View>
+
+          {/*------------------------------ NAPTÁR KI BE NYITÓS GOMB !!! --------------------------*/}
+          <TouchableOpacity onPress={naptarToggle} style={styles.kibenyitogomb}>
+            {naptarLenyitas ? (
+              <Ionicons name="chevron-up-outline" size={30} color="white" />
+            ) : (
+              <Ionicons name="chevron-down-outline" size={30} color="white" />
+            )}
+          </TouchableOpacity>
+          {/*------------------------------ KÖVETKEZŐ ÓRA BUBORÉK !!! --------------------------*/}
           <View style={styles.oraContainer}>
             <View
               style={{
@@ -244,66 +339,6 @@ const Tanulo_Datumok = ({ atkuld }) => {
               </View>
             </View>
           </View>
-          <View style={styles.weekRow}>
-            {jelenlegiHet().map((nap) => {
-              const hasClass = orakLista.some((item) => {
-                const date = new Date(item.ora_datuma);
-                return (
-                  date.getFullYear() === nap.getFullYear() &&
-                  date.getMonth() === nap.getMonth() &&
-                  date.getDate() === nap.getDate()
-                );
-              });
-              return (
-                <TouchableOpacity
-                  key={nap.toISOString()}
-                  style={[
-                    styles.weekDay,
-                    nap.toDateString() === kivalasztottDatum.toDateString()
-                      ? styles.kivalasztottdatum
-                      : null, // kapjon "kivalasztottdatum" design-t az a nap, amelyikre rákattintunk --> a háttere
-                    nap.toDateString() === kivalasztottDatum.toDateString() &&
-                      styles.maiNapHattere, // kapjon "maiNapHattere" designt az a nap, amelyikre rákattintunk
-                    hasClass && styles.hasClass,
-                  ]}
-                  onPress={() => setKivalasztottDatum(nap)} // kattintásra napot váltunk
-                >
-                  <Text
-                    style={[
-                      styles.weekDayText,
-                      nap.toDateString() === kivalasztottDatum.toDateString()
-                        ? styles.kivalasztottSzoveg
-                        : null, // kapjon "kivalasztottSzoveg" design-t az a nap, amelyikre rákattintunk --> a szövege
-                      nap.toDateString() === kivalasztottDatum.toDateString() &&
-                        styles.maiNapSzovege,
-                    ]}
-                  >
-                    {nap.toLocaleString("hu-HU", { weekday: "short" })}
-                  </Text>
-                  <Text
-                    style={[
-                      styles.weekDayNumber,
-                      nap.toDateString() === kivalasztottDatum.toDateString()
-                        ? styles.kivalasztottSzoveg
-                        : null,
-                      nap.toDateString() === kivalasztottDatum.toDateString() &&
-                        styles.maiNapSzovege,
-                    ]}
-                  >
-                    {nap.getDate()}
-                  </Text>
-                </TouchableOpacity>
-              );
-            })}
-          </View>
-          {/*------------------------------ NAPTÁR KI BE NYITÓS GOMB !!! --------------------------*/}
-          <TouchableOpacity onPress={naptarToggle} style={styles.kibenyitogomb}>
-            {naptarLenyitas ? (
-              <Ionicons name="chevron-up-outline" size={30} color="white" />
-            ) : (
-              <Ionicons name="chevron-down-outline" size={30} color="white" />
-            )}
-          </TouchableOpacity>
           {/*------------------------------ AZ ÓRÁK FELSOROLÁSA --------------------------*/}
           {orakLista.some((item) => {
             const date = new Date(item.ora_datuma);
@@ -361,9 +396,9 @@ const Tanulo_Datumok = ({ atkuld }) => {
               }
             })
           ) : (
-            <Text style={styles.nincsOra}> 
+            <Text style={styles.nincsOra}>
               {`${kivalasztottDatum.getDate()}${
-                kivalasztottDatum.getDate() % 2 === 0 ? "-án" : "-én" 
+                kivalasztottDatum.getDate() % 2 === 0 ? "-án" : "-én"
               } nem lesz órád, úgyhogy ne felejts el aznap pihenni! :)`}
             </Text>
           )}
@@ -380,6 +415,18 @@ const Tanulo_Datumok = ({ atkuld }) => {
                 console.log("selected day", day);
                 datumMegnyomas(day);
               }}
+              onPressArrowLeft={() => {
+                honapValtas(-1);
+              }}
+              onPressArrowRight={() => {
+                honapValtas(1);
+              }}
+              //onVisibleMonthsChange={(months) => {
+              // Frissítjük az állapotot az első látható hónap alapján
+              //if (months.length > 0) {
+              //setKivalasztottDatum(new Date(months[0].dateString));
+              //}
+              //}}
               theme={{
                 backgroundColor: "#ffffff",
                 calendarBackground: "#ffffff",
@@ -419,11 +466,83 @@ const Tanulo_Datumok = ({ atkuld }) => {
           </TouchableOpacity>
         </View>
       )}
-    </ScrollView>
+    </View>
   );
 };
 
 const styles = StyleSheet.create({
+  //----------------------------------- egy soros naptár
+  egysorosHonapSzoveg: {
+    fontSize: 30,
+    fontWeight: "bold",
+    textAlign: "center",
+    marginBottom: 20,
+    color: "#4A4AFC",
+  },
+  collapsedRow: {
+    width: "auto",
+    backgroundColor: "#FFFFFF",
+    height: 120,
+    paddingVertical: 10,
+    paddingHorizontal: 10,
+    borderRadius: 15,
+    elevation: 5, // Árnyék Androidos telón
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.2,
+    shadowRadius: 4,
+    alignItems: "center",
+    alignContent: "center",
+    textAlign: "center",
+  },
+  weekRow: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    width: "100%",
+    alignItems: "center",
+  },
+  weekDay: {
+    //backgroundColor: 'green',
+    minWidth: 40,
+    height: 80,
+    borderRadius: 15,
+    justifyContent: "center",
+    alignItems: "center",
+    //backgroundColor: "#F0F0F0", // Alap háttérszín
+  },
+  weekendDay: {
+    minWidth: 40,
+    height: 80,
+    borderRadius: 15,
+    justifyContent: "center",
+    alignItems: "center",
+  },
+  weekendDayText: {
+    fontSize: 18,
+    color: "red",
+    fontWeight: "500",
+  },
+  kivalasztottdatum: {
+    backgroundColor: "#6A5AE0", // Lila háttér a kiválasztott naphoz
+  },
+  weekDayText: {
+    fontSize: 18,
+    color: "#666",
+    fontWeight: "500",
+  },
+  weekDayNumber: {
+    fontSize: 16,
+    fontWeight: "bold",
+    color: "#333",
+  },
+  kivalasztottSzoveg: {
+    color: "#FFFFFF", // Fehér szöveg a kiválasztott napon
+  },
+  vanAznapOra: {
+    borderBottomWidth: 4,
+    borderBottomColor: "#2EC0F9", // Kiemelés ha van óra aznap
+  },
+  //----------------------------------- egy soros naptár vége
   eventItem: {
     borderRadius: 10,
     padding: 16,
@@ -444,55 +563,6 @@ const styles = StyleSheet.create({
     paddingHorizontal: 16,
     paddingTop: 40,
   },
-  collapsedRow: {
-    marginBottom: 20,
-    marginTop: 27.5,
-  },
-  egysorosHonapSzoveg: {
-    fontSize: 24,
-    fontWeight: "bold",
-    textAlign: "center",
-    marginBottom: 10,
-    color: "#4A4AFC",
-  },
-  weekRow: {
-    flexDirection: "row",
-    justifyContent: "space-around",
-    alignItems: "center",
-  },
-  weekDay: {
-    alignItems: "center",
-    padding: 5,
-    //color: '#ccccff'
-    //backgroundColor: 'gray',
-    backgroundColor: "#e9e8ee",
-    borderRadius: 15,
-    minWidth: 50,
-  },
-  weekDayText: {
-    fontSize: 20,
-    //color: "#888",
-    //color: '#ccccff'
-    color: "#153243",
-  },
-  weekDayNumber: {
-    fontSize: 20,
-    fontWeight: "bold",
-    color: "#555",
-  },
-  maiNapHattere: {
-    //backgroundColor: "#D6EFFF",
-    //backgroundColor: "#ccccff",
-    backgroundColor: "#A06CD5",
-    //backgroundColor: '#8F95D3',
-    borderRadius: 10,
-    padding: 8,
-  },
-  maiNapSzovege: {
-    //color: "#4A4AFC",
-    fontWeight: "bold",
-    color: "#fff",
-  },
   header: {
     flexDirection: "row",
     justifyContent: "space-between",
@@ -510,20 +580,8 @@ const styles = StyleSheet.create({
     alignItems: "center",
     marginVertical: 5,
   },
-  kivalasztottdatum: {
-    width: "15%",
-    alignItems: "center",
-    backgroundColor: "#D6EFFF",
-    borderRadius: 10,
-    padding: 5,
-    marginVertical: 5,
-  },
   datumSzoveg: {
     color: "#888",
-  },
-  kivalasztottSzoveg: {
-    color: "#000",
-    fontWeight: "bold",
   },
   maddingespadding: {
     borderRadius: 10,
