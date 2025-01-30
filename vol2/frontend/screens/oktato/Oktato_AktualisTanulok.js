@@ -4,7 +4,7 @@ import { useNavigation } from '@react-navigation/native';
 import Oktato_Styles from "../../Oktato_Styles";
 import Ipcim from "../../Ipcim";
 
-export default function Oktato_Diakok({ atkuld }) {
+export default function Oktato_AktualisTanulok({ atkuld }) {
     const [adatok, setAdatok] = useState([]);
     const navigation = useNavigation();
     console.log(atkuld);
@@ -17,7 +17,7 @@ export default function Oktato_Diakok({ atkuld }) {
             console.log("API hívás indítása...");
             console.log("Elküldött adat:", JSON.stringify({ "oktatoid": atkuld.oktato_id }));
 
-            const response = await fetch(Ipcim.Ipcim + "/egyOktatoDiakjai", {
+            const response = await fetch(Ipcim.Ipcim + "/aktualisDiakok", {
                 method: "POST",
                 body: JSON.stringify(adat),
                 headers: { "Content-type": "application/json; charset=UTF-8" }
@@ -44,8 +44,8 @@ export default function Oktato_Diakok({ atkuld }) {
     }, []); // Az üres tömb biztosítja, hogy csak egyszer fusson le a letoltes()
 
     const katt = (tanulo) => {
-        // Navigálás a "Oktato_TanuloReszletei" képernyőre
-        navigation.navigate("Oktato_TanuloReszletei", { tanulo });
+        
+        navigation.navigate("Oktato_TanuloAOrak", { tanulo });
     };
 
     return (
