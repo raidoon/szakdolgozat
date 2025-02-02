@@ -21,6 +21,7 @@ import {
 import { Ionicons } from "@expo/vector-icons";
 import Styles from "../../Styles";
 import Ipcim from "../../Ipcim";
+import TanuloKinyitottDatumok from "./Tanulo_KinyitottDatumok";
 
 const Tanulo_Datumok = ({ atkuld }) => {
   const ma = new Date();
@@ -167,19 +168,7 @@ const Tanulo_Datumok = ({ atkuld }) => {
     setNaptarLenyitas(!naptarLenyitas);
   };
 
-  const NaptarHeaderBetoltes = () => {
-    const honapNeve = kivalasztottDatum.toLocaleString("hu-HU", {
-      month: "long",
-    });
-    const honapNeveNagyBetuvel =
-      honapNeve.charAt(0).toUpperCase() + honapNeve.slice(1);
-    const ev = kivalasztottDatum.getFullYear();
-    return (
-      <Text style={styles.egysorosHonapSzoveg}>
-        {ev} - {honapNeveNagyBetuvel}
-      </Text>
-    );
-  };
+ 
   const BecsukottNezetesNaptarHeader = () => {
     const honapNeve = kivalasztottDatum.toLocaleString("hu-HU", {
       month: "long",
@@ -188,11 +177,7 @@ const Tanulo_Datumok = ({ atkuld }) => {
       honapNeve.charAt(0).toUpperCase() + honapNeve.slice(1);
     return <Text>{honapNeveNagyBetuvel}</Text>;
   };
-  const honapValtas = (irany) => {
-    const ujDatum = new Date(kivalasztottDatum);
-    ujDatum.setMonth(kivalasztottDatum.getMonth() + irany);
-    setKivalasztottDatum(ujDatum);
-  };
+  
   const datumMegnyomas = (day) => {
     const ujDatum = new Date(kivalasztottDatum);
     if (isNaN(ujDatum)) {
@@ -209,8 +194,8 @@ const Tanulo_Datumok = ({ atkuld }) => {
   const jelenlegiHet = () => {
     const hetElsoNapja = new Date(kivalasztottDatum);
     hetElsoNapja.setDate(
-      kivalasztottDatum.getDate() - kivalasztottDatum.getDay() + 1
-    ); // mindig hétfőnél kezdjük a hetet
+      kivalasztottDatum.getDate() - kivalasztottDatum.getDay()
+    ); // mindig vasárnappal kezdjük a hetet, mert ha nem az elején van, akkor nem fogja normálisan bevenni a kattintást (valamiért a vasárnap a 0. nap a JS-ben)
 
     return Array.from({ length: 7 }, (_, i) => {
       const nap = new Date(hetElsoNapja);
@@ -218,13 +203,12 @@ const Tanulo_Datumok = ({ atkuld }) => {
       return nap;
     }).filter(Boolean); // töröljük a null értékeket
   };
-  const handleSwipeLeft = () => {
+  const balraGombMegnyomas = () => {
     const ujDatum = new Date(kivalasztottDatum);
     ujDatum.setDate(kivalasztottDatum.getDate() + 7); // 7 nappal előre
     setKivalasztottDatum(ujDatum);
   };
-
-  const handleSwipeRight = () => {
+  const jobbraGombMegnyomas = () => {
     const ujDatum = new Date(kivalasztottDatum);
     ujDatum.setDate(kivalasztottDatum.getDate() - 7); // 7 nappal hátra
     setKivalasztottDatum(ujDatum);
@@ -246,7 +230,7 @@ const Tanulo_Datumok = ({ atkuld }) => {
           <View style={styles.collapsedRow}>
             {/*------------------------------ A HÉTNEK A SORA !!! --------------------------*/}
             <View style={styles.weekRow}>
-              <TouchableOpacity onPress={handleSwipeRight}>
+              <TouchableOpacity onPress={jobbraGombMegnyomas}>
                 <Ionicons name="chevron-back-outline" size={30} color="black" />
               </TouchableOpacity>
 
@@ -269,7 +253,7 @@ const Tanulo_Datumok = ({ atkuld }) => {
                         ? styles.weekendDay
                         : styles.weekDay, // Hétvégéknek piros háttér
                       nap.toDateString() === kivalasztottDatum.toDateString() &&
-                        styles.kivalasztottdatum,
+                      styles.kivalasztottdatum,
                       isWeekend && styles.weekendDayText, // Hétvégéknek piros szöveg
                       hasClass && styles.vanAznapOra,
                     ]}
@@ -279,8 +263,8 @@ const Tanulo_Datumok = ({ atkuld }) => {
                       style={[
                         styles.weekDayText,
                         nap.toDateString() ===
-                          kivalasztottDatum.toDateString() &&
-                          styles.kivalasztottSzoveg,
+                        kivalasztottDatum.toDateString() &&
+                        styles.kivalasztottSzoveg,
                         isWeekend && styles.weekendDayText, // Hétvégéknek piros szöveg
                       ]}
                     >
@@ -290,9 +274,9 @@ const Tanulo_Datumok = ({ atkuld }) => {
                       style={[
                         styles.weekDayNumber,
                         nap.toDateString() ===
-                          kivalasztottDatum.toDateString() &&
-                          styles.kivalasztottSzoveg,
-                        isWeekend && styles.weekDayNumber,
+                        kivalasztottDatum.toDateString() &&
+                        styles.kivalasztottSzoveg,
+                        isWeekend && nap.toDateString() !== kivalasztottDatum.toDateString() && styles.weekDayNumber,
                       ]}
                     >
                       {nap.getDate()}
@@ -301,7 +285,7 @@ const Tanulo_Datumok = ({ atkuld }) => {
                 );
               })}
 
-              <TouchableOpacity onPress={handleSwipeLeft}>
+              <TouchableOpacity onPress={balraGombMegnyomas}>
                 <Ionicons
                   name="chevron-forward-outline"
                   size={30}
@@ -397,74 +381,22 @@ const Tanulo_Datumok = ({ atkuld }) => {
             })
           ) : (
             <Text style={styles.nincsOra}>
-              {`${kivalasztottDatum.getDate()}${
-                kivalasztottDatum.getDate() % 2 === 0 ? "-án" : "-én"
-              } nem lesz órád, úgyhogy ne felejts el aznap pihenni! :)`}
+              {`${kivalasztottDatum.getDate()}${kivalasztottDatum.getDate() % 2 === 0 ? "-án" : "-én"
+                } nem lesz órád, úgyhogy ne felejts el aznap pihenni! :)`}
             </Text>
           )}
         </View>
       )}
       {/* ------------------------------------------- KINYITOTT NAGY NAPTÁR NÉZET -------------------------------- */}
+      {/* ------------------------------------------- KINYITOTT NAGY NAPTÁR NÉZET -------------------------------- */}
       {naptarLenyitas && (
-        <View>
-          <View style={{ marginTop: 20 }}>
-            <Calendar
-              style={styles.kalendar}
-              renderHeader={() => NaptarHeaderBetoltes()}
-              onDayPress={(day) => {
-                console.log("selected day", day);
-                datumMegnyomas(day);
-              }}
-              onPressArrowLeft={() => {
-                honapValtas(-1);
-              }}
-              onPressArrowRight={() => {
-                honapValtas(1);
-              }}
-              //onVisibleMonthsChange={(months) => {
-              // Frissítjük az állapotot az első látható hónap alapján
-              //if (months.length > 0) {
-              //setKivalasztottDatum(new Date(months[0].dateString));
-              //}
-              //}}
-              theme={{
-                backgroundColor: "#ffffff",
-                calendarBackground: "#ffffff",
-                textSectionTitleColor: "#b6c1cd",
-                selectedDayBackgroundColor: "#00adf5",
-                selectedDayTextColor: "purple",
-                todayTextColor: "#00adf5",
-                dayTextColor: "#2d4150",
-                textDisabledColor: "#dd99ee",
-              }}
-              markedDates={{
-                [kivalasztottDatum]: {
-                  selected: true,
-                  disableTouchEvent: true,
-                  selectedDotColor: "orange",
-                },
-                "2025-01-10": {
-                  selected: true,
-                  marked: true,
-                  selectedColor: "green",
-                },
-                "2025-01-17": { marked: true },
-                "2025-01-16": { marked: true },
-                "2025-01-15": { marked: true },
-              }}
-              locale={"hu"}
-            />
-          </View>
-          {/*------------------------------ NAPTÁR KI BE NYITÓS GOMB !!! --------------------------*/}
-
-          <TouchableOpacity onPress={naptarToggle} style={styles.kibenyitogomb}>
-            {naptarLenyitas ? (
-              <Ionicons name="chevron-up-outline" size={30} color="white" />
-            ) : (
-              <Ionicons name="chevron-down-outline" size={30} color="white" />
-            )}
-          </TouchableOpacity>
-        </View>
+        <TanuloKinyitottDatumok
+          naptarLenyitas={naptarLenyitas}
+          naptarToggle={naptarToggle}
+          datumMegnyomas={datumMegnyomas}
+          kivalasztottDatum={kivalasztottDatum}
+          styles={styles}
+        />
       )}
     </View>
   );

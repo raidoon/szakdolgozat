@@ -73,7 +73,7 @@ const Tanulo_BejelentkezesUtan = ({ navigation, route }) => {
           if (route.name === "Tanulo_Kezdolap") {
             iconName = focused ? "home" : "home-outline";
           } else if (route.name === "Tanulo_Profil") {
-            iconName = focused ? "person" : "person-outline";
+            iconName = focused ? "settings" : "settings-outline";
           } else if (route.name === "Tanulo_Datumok") {
             iconName = focused ? "calendar" : "calendar-outline";
           } else if (route.name === "Tanulo_Befizetesek") {
@@ -81,7 +81,7 @@ const Tanulo_BejelentkezesUtan = ({ navigation, route }) => {
           }
           return <Ionicons name={iconName} size={size} color={color} />;
         },
-        tabBarActiveTintColor: "#5a4fcf",
+        tabBarActiveTintColor: "#0077B6",
         tabBarInactiveTintColor: "gray",
       })}
     >
@@ -105,7 +105,7 @@ const Tanulo_BejelentkezesUtan = ({ navigation, route }) => {
 
       <Tab.Screen
         name="Tanulo_Profil"
-        options={{ title: "Profil" }}
+        options={{ title: "Beállítások" }}
         children={() => <Tanulo_Profil atkuld={adatok} />}
       />
     </Tab.Navigator>

@@ -96,32 +96,6 @@ const Tanulo_Profil = ({atkuld}) => {
           </View>
         </Ripple>
       </View>
-      <View style={Styles.profil_gombDiv}> {/**BEÁLLÍTÁSOK */}
-        <Ripple
-          rippleColor="rgb(0,0,0)"
-          rippleOpacity={0.05}
-          rippleDuration={300}
-          rippleCentered={true}
-          rippleFades={false}
-          rippleContainerBorderRadius={20}
-          style={[Styles.profileGombok, Styles.profil_gombDiv]}
-          onPress={() =>
-            navigation.navigate("Tanuló Profil", {
-              screen: "Beallitasok",
-            })
-          }
-        >
-          <View style={styles.elsoFlex}>
-            <Ionicons name="settings-outline" size={25} color="purple" />
-          </View>
-          <View styles={styles.masodikFlex}>
-            <Text style={{ fontSize: 20 }}>Beállítások</Text>
-          </View>
-          <View style={styles.harmadikFlex}>
-            <Ionicons name="chevron-forward-outline" size={25} color="gray" />
-          </View>
-        </Ripple>
-      </View>
       <View style={Styles.profil_gombDiv}> {/*KAPCSOLAT */}
         <Ripple
           rippleColor="rgb(0,0,0)"
@@ -152,7 +126,7 @@ const Tanulo_Profil = ({atkuld}) => {
           </View>
         </Ripple>
       </View>
-      <View style={Styles.profil_gombDiv}>
+      <View style={Styles.profil_gombDiv}> {/*KIJELENTKEZÉS */}
         <Ripple
           rippleColor="rgb(0,0,0)"
           rippleOpacity={0.05}
