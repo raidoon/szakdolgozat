@@ -17,7 +17,7 @@ export default function Oktato_AktualisTanulok({ route }) {
             const adat = {
                 oktato_id: atkuld.oktato_id,
             }
-            alert(atkuld.oktato_id)
+            //alert(atkuld.oktato_id)
             console.log("Elküldött adat:", JSON.stringify({ "oktato_id": atkuld.oktato_id }));
 
             const response = await fetch(Ipcim.Ipcim + "/aktualisDiakok", {
@@ -48,7 +48,7 @@ export default function Oktato_AktualisTanulok({ route }) {
     }, []); 
 
     const katt = (tanulo) => {
-        
+        alert(tanulo.tanulo_felhasznaloID)
         navigation.navigate("Oktato_TanuloAOrak", { tanulo });
     };
 
