@@ -81,7 +81,11 @@ const Tanulo_BejelentkezesUtan = ({ navigation, route }) => {
           }
           return <Ionicons name={iconName} size={size} color={color} />;
         },
-        tabBarActiveTintColor: "#0077B6",
+        //tabBarActiveTintColor: "#0077B6",
+        //tabBarActiveTintColor: "#5c4ce3",
+        //tabBarActiveTintColor: "tomato",
+        tabBarActiveTintColor: "#fff",
+        tabBarActiveBackgroundColor: '#6A5AE0',
         tabBarInactiveTintColor: "gray",
       })}
     >

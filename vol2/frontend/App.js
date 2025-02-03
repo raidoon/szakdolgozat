@@ -17,7 +17,7 @@ import Tanulo_Profil from "./screens/tanulo/Tanulo_Profil";
 //tanulo profilon belüli menük
 import SzemelyesAdatok from "./screens/tanulo/ProfilScreens/SzemelyesAdatok";
 import JelszoMegvaltoztatasa from "./screens/tanulo/ProfilScreens/JelszoMegvaltoztatasa";
-import Beallitasok from "./screens/tanulo/ProfilScreens/Beallitasok";
+
 import Kapcsolat from "./screens/tanulo/ProfilScreens/Kapcsolat";
 
 //oktato profilok
@@ -70,7 +70,6 @@ function TanuloProfilStack() {
     <Stack.Navigator screenOptions={{ headerShown: true }}>
       <Stack.Screen name="SzemelyesAdatok" options={{title:"Személyes adatok módosítása"}} component={SzemelyesAdatok} />
       <Stack.Screen name="JelszoMegvaltoztatasa" options={{title:"Jelszó megváltoztatása"}} component={JelszoMegvaltoztatasa} />
-      <Stack.Screen name="Beallitasok" options={{title:"Beállítások"}} component={Beallitasok} />
       <Stack.Screen name="Kapcsolat" options={{title:"Kapcsolat felvétele"}} component={Kapcsolat} />
     </Stack.Navigator>
   );

@@ -3,6 +3,7 @@ import { View, Text, TouchableOpacity } from "react-native";
 import { Calendar } from "react-native-calendars";
 import { ScrollView } from "react-native-gesture-handler";
 import Ionicons from "react-native-vector-icons/Ionicons";
+import Styles from "../../Styles";
 
 const TanuloKinyitottDatumok = ({
   naptarLenyitas,
@@ -13,24 +14,15 @@ const TanuloKinyitottDatumok = ({
   styles,
   orakLista,
 }) => {
-  const honapValtas = (irany) => {
-    const ujDatum = new Date(kivalasztottDatum);
-    ujDatum.setMonth(kivalasztottDatum.getMonth() + irany);
-    setKivalasztottDatum(ujDatum);
-  };
-
-  const NaptarHeaderBetoltes = ({ kivalasztottDatum }) => {
-    const honapNeve = kivalasztottDatum.toLocaleString("hu-HU", {
-      month: "long",
+  const megjeloltNapok = () => {
+    const megjelolve = {};
+    orakLista.forEach((item) => {
+      const datum = new Date(item.ora_datuma);
+      const datumSzoveggeAlakitva = datum.toISOString().split("T")[0]; // Formázott dátum YYYY-MM-DD formátumban
+      // Beállítjuk a marked dátumokat a naptárhoz
+      megjelolve[datumSzoveggeAlakitva] = { marked: true };
     });
-    const honapNeveNagyBetuvel =
-      honapNeve.charAt(0).toUpperCase() + honapNeve.slice(1);
-    const ev = kivalasztottDatum.getFullYear();
-    return (
-      <Text style={styles.egysorosHonapSzoveg}>
-        {ev} - {honapNeveNagyBetuvel}
-      </Text>
-    );
+    return megjelolve;
   };
 
   return (
@@ -38,20 +30,16 @@ const TanuloKinyitottDatumok = ({
       <View style={{ marginTop: 20 }}>
         <Calendar
           style={styles.kalendar}
-          renderHeader={() => (
-            <NaptarHeaderBetoltes kivalasztottDatum={kivalasztottDatum} />
-          )}
+          //renderHeader={() => (<NaptarHeaderBetoltes kivalasztottDatum={kivalasztottDatum} />)}
           onDayPress={(day) => {
             console.log("selected day", day);
             datumMegnyomas(day);
           }}
           onPressArrowLeft={(subtractMonth) => {
             subtractMonth();
-            honapValtas(-1);
           }}
           onPressArrowRight={(addMonth) => {
             addMonth();
-            honapValtas(1);
           }}
           current={kivalasztottDatum.toISOString().split("T")[0]} // Ensure the calendar updates with the new date
           theme={{
@@ -64,7 +52,8 @@ const TanuloKinyitottDatumok = ({
             dayTextColor: "#2d4150",
             textDisabledColor: "#dd99ee",
           }}
-          markedDates={{
+          // a markedDates prop dinamikusan generálva adatbázis alapján
+          /*markedDates={{
             [kivalasztottDatum.toISOString().split("T")[0]]: {
               selected: true,
               disableTouchEvent: true,
@@ -78,55 +67,72 @@ const TanuloKinyitottDatumok = ({
             "2025-01-17": { marked: true },
             "2025-01-16": { marked: true },
             "2025-01-15": { marked: true },
-          }}
+          }}*/
+          markedDates={megjeloltNapok()}
           locale={"hu"}
         />
       </View>
-      <TouchableOpacity onPress={naptarToggle} style={styles.kibenyitogomb}>
+      {/*--------------------------------- DÁTUM KI BE NYITOGATÓS GOMB ---------------------------------*/}
+      <View >
+        
+      <TouchableOpacity onPress={naptarToggle}>
         {naptarLenyitas ? (
-          <Ionicons name="chevron-up-outline" size={30} color="white" />
+          <View style={Styles.naptarNyitogatoGombView}>
+            <Text style={{color:'#black', fontSize: 16 }}>Naptár becsukása</Text>
+            <Ionicons name="chevron-up-outline" size={30} color="black" />
+          </View>
         ) : (
-          <Ionicons name="chevron-down-outline" size={30} color="white" />
+          <View style={Styles.naptarNyitogatoGombView}>
+            <Text style={{color:'#black',}}>Naptár kinyitása</Text>
+            <Ionicons name="chevron-down-outline" size={30} color="white" />
+          </View>
         )}
       </TouchableOpacity>
+      </View>
+      {/*--------------------------------- AZ ÖSSZES ÓRA KIÍRATÁSA ---------------------------------*/}
+      {orakLista
+        .sort(
+          (a, b) => new Date(b.ora_datuma) - new Date(a.ora_datuma) //a legrégebbi óra legyen legalul
+        )
+        .map((item, index) => {
+          const date = new Date(item.ora_datuma);
+          const honapNap = date
+            .toLocaleDateString("hu-HU", {
+              year: "numeric",
+              month: "2-digit",
+              day: "2-digit",
+            })
+            .replace(/\//g, ".");
+          const oraPerc = date.toLocaleTimeString("hu-HU", {
+            hour: "2-digit",
+            minute: "2-digit",
+            hour12: false,
+          });
 
-      {orakLista.map((item, index) => {
-        const date = new Date(item.ora_datuma);
-        const honapNap = date
-          .toLocaleDateString("hu-HU", {
-            year: "numeric",
-            month: "2-digit",
-            day: "2-digit",
-          })
-          .replace(/\//g, ".");
-        const oraPerc = date.toLocaleTimeString("hu-HU", {
-          hour: "2-digit",
-          minute: "2-digit",
-          hour12: false,
-        });
+          const hatterszinTomb = [
+            "#FDEEDC",
+            "#D6EFFF",
+            "#F5D8E8",
+            "#E8DFF5",
+            //"#48cae4",
+          ]; // háttér színek a különböző elemeknek
+          const hatterszinAzOraknak =
+            hatterszinTomb[index % hatterszinTomb.length]; // haladunk szép sorban a színekkel
 
-        const hatterszinTomb = [
-          "#FDEEDC",
-          "#D6EFFF",
-          "#F5D8E8",
-          "#E8DFF5",
-          "#48cae4",
-        ]; // háttér színek a különböző elemeknek
-        const hatterszinAzOraknak =
-          hatterszinTomb[index % hatterszinTomb.length]; // haladunk szép sorban a színekkel
-
-        return (
-          <View
-            key={item.ora_id}
-            style={[styles.eventItem, { backgroundColor: hatterszinAzOraknak }]}
-          >
-            <Text style={styles.eventTitle}>{`${honapNap}`}</Text>
-            <Text style={styles.eventTime}>{` ${oraPerc}`}</Text>
-          </View>
-        );
-      })}
+          return (
+            <View
+              key={item.ora_id}
+              style={[
+                styles.OraView,
+                { backgroundColor: hatterszinAzOraknak },
+              ]}
+            >
+              <Text style={styles.eventTitle}>{`${honapNap}`}</Text>
+              <Text style={styles.eventTime}>{` ${oraPerc}`}</Text>
+            </View>
+          );
+        })}
     </ScrollView>
   );
 };
-
 export default TanuloKinyitottDatumok;

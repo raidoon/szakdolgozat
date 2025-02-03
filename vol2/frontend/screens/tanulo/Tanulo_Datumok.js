@@ -227,6 +227,29 @@ const Tanulo_Datumok = ({ atkuld }) => {
         <RefreshControl refreshing={frissites} onRefresh={frissitesKozben} />
       }
     >
+      {/*------------------------------ KÖVETKEZŐ ÓRA BUBORÉK !!! --------------------------*/}
+      {/** 
+      <View style={styles.oraContainer}>
+      <View
+        style={{
+          flexDirection: "row",
+          alignItems: "center",
+          justifyContent: "space-between",
+          width: "100%",
+          minHeight: 100,
+        }}
+      >
+        <View>
+          <Text style={styles.oraTitle}>Következő óra:</Text>
+          <Text style={styles.oraOsszeg}>
+            {koviOra.length > 0
+              ? koviOraFormazasa(koviOra[0].ora_datuma)
+              : "Egyenlőre még nincs beírva következő óra!"}
+          </Text>
+        </View>
+      </View>
+    </View>
+    */}
       {/* ------------------------------ BEZÁRT EGY SOROS NAPTÁR NÉZET -------------------------------------- */}
       {!naptarLenyitas && (
         <View>
@@ -303,7 +326,6 @@ const Tanulo_Datumok = ({ atkuld }) => {
               </TouchableOpacity>
             </View>
           </View>
-
           {/*------------------------------ NAPTÁR KI BE NYITÓS GOMB !!! --------------------------*/}
           <TouchableOpacity onPress={naptarToggle}>
             {naptarLenyitas ? (
@@ -312,34 +334,15 @@ const Tanulo_Datumok = ({ atkuld }) => {
               </View>
             ) : (
               <View style={styles.kibenyitogomb}>
-                <Text style={{ fontSize: 18, color: "#fff" }}>
-                  Összes óra megtekintése
-                </Text>
-                <Ionicons name="chevron-down-outline" size={40} color="white" />
+                <Ionicons name="chevron-down-outline" size={30} color="white" />
               </View>
             )}
           </TouchableOpacity>
-          {/*------------------------------ KÖVETKEZŐ ÓRA BUBORÉK !!! --------------------------*/}
-          <View style={styles.oraContainer}>
-            <View
-              style={{
-                flexDirection: "row",
-                alignItems: "center",
-                justifyContent: "space-between",
-                width: "100%",
-              }}
-            >
-              <View>
-                <Text style={styles.oraTitle}>Következő óra:</Text>
-                <Text style={styles.oraOsszeg}>
-                  {koviOra.length > 0
-                    ? koviOraFormazasa(koviOra[0].ora_datuma)
-                    : "Egyenlőre még nincs beírva következő óra!"}
-                </Text>
-              </View>
-            </View>
-          </View>
           {/*------------------------------ AZ ÓRÁK FELSOROLÁSA --------------------------*/}
+          <Text style={styles.tranzakcioTitle}>
+              Órák a kiválaszott napon:
+            </Text>
+          {/* Csak akkor írjuk ki a "Órák a kiválasztott napon:" szöveget, ha van óra az aktuális napon */}
           {orakLista.some((item) => {
             const date = new Date(item.ora_datuma);
             return (
@@ -349,22 +352,38 @@ const Tanulo_Datumok = ({ atkuld }) => {
               date.getDate() === kivalasztottDatum.getDate()
             );
           }) ? (
-            orakLista.map((item, index) => {
-              //index adja meg a tömb elemét
+            <Text style={styles.tranzakcioTitle}>
+              Órák a kiválaszott napon:
+            </Text> // itt íródik ki a szöveg, ha van óra
+          ) : null}
+          {/* Az órák listázása */}
+          {orakLista.some((item) => {
+            const date = new Date(item.ora_datuma);
+            return (
+              kivalasztottDatum &&
+              date.getFullYear() === kivalasztottDatum.getFullYear() &&
+              date.getMonth() === kivalasztottDatum.getMonth() &&
+              date.getDate() === kivalasztottDatum.getDate()
+            );
+          }) ? (
+            orakLista.map((item) => {
+              // A kiválasztott dátum óráinak megjelenítése
               const date = new Date(item.ora_datuma);
-              const honapNap = date
-                .toLocaleDateString("hu-HU", {
-                  year: "numeric",
-                  month: "2-digit",
-                  day: "2-digit",
-                })
-                .replace(/\//g, ".");
+
+              // A hónap rövid neve (pl. "FEB") és a nap (pl. "03")
+              const honap = date
+                .toLocaleDateString("hu-HU", { month: "short" })
+                .toUpperCase(); // Rövid hónapnév
+              const nap = date.toLocaleDateString("hu-HU", { day: "2-digit" });
+
               const oraPerc = date.toLocaleTimeString("hu-HU", {
                 hour: "2-digit",
                 minute: "2-digit",
                 hour12: false,
               });
-
+              //meghatározzuk, hogy az adott óra egy tanóra, vagy pedig vizsga lesz!
+              const oraTipusSzoveg =
+                item.ora_tipusID === 1 ? `Tanóra` : `Vizsga!`;
               if (
                 kivalasztottDatum &&
                 date.getFullYear() === kivalasztottDatum.getFullYear() &&
@@ -372,18 +391,40 @@ const Tanulo_Datumok = ({ atkuld }) => {
                 date.getDate() === kivalasztottDatum.getDate()
               ) {
                 return (
-                  <View key={item.ora_id} style={[styles.eventItem]}>
-                    <Text style={styles.eventTitle}>{`${honapNap}`}</Text>
-                    <Text style={styles.eventTime}>{` ${oraPerc}`}</Text>
+                  <View key={item.ora_id} style={[styles.OraView]}>
+                    <View>
+                      <Text style={styles.oraBaloldal}>{`${honap}`}</Text>
+                      <Text style={styles.oraBaloldal}>{`${nap}`}</Text>
+                    </View>
+                    <Text styles={styles.oraKozepsoResz}>{`${oraTipusSzoveg}`}</Text>
+                    <Text style={styles.oraJobbOldal}>{`${oraPerc}`}</Text>
                   </View>
                 );
               }
             })
           ) : (
             <Text style={styles.nincsOra}>
-              {`${kivalasztottDatum.getDate()}${
-                kivalasztottDatum.getDate() % 2 === 0 ? "-án" : "-én"
-              } nem lesz órád, úgyhogy ne felejts el aznap pihenni! :)`}
+              {kivalasztottDatum.getDate() <= 5
+                ? // Ha a nap kisebb vagy egyenlő mint 5
+                  `${kivalasztottDatum.getDate()}${
+                    [1, 4, 5, 21, 31].includes(kivalasztottDatum.getDate() % 10)
+                      ? ".-én"
+                      : [2, 3, 22, 23].includes(
+                          kivalasztottDatum.getDate() % 10
+                        )
+                      ? ".-án"
+                      : ".-án"
+                  } egyelőre üres a napod, de ne izgulj, biztosan jön majd valami! 😎✨`
+                : // Ha a nap nagyobb mint 5
+                  `${kivalasztottDatum.getDate()}${
+                    [1, 2, 4, 5, 7, 9, 10, 21, 31].includes(
+                      kivalasztottDatum.getDate() % 10
+                    ) || kivalasztottDatum.getDate() === 10
+                      ? ".-én"
+                      : [3, 22, 23].includes(kivalasztottDatum.getDate() % 10)
+                      ? ".-án"
+                      : ".-án"
+                  } most még nincs órád, de ne aggódj, biztosan be lesz pótolva! 😊👌`}
             </Text>
           )}
         </View>
@@ -396,6 +437,7 @@ const Tanulo_Datumok = ({ atkuld }) => {
           datumMegnyomas={datumMegnyomas}
           kivalasztottDatum={kivalasztottDatum}
           orakLista={orakLista}
+          setKivalasztottDatum={setKivalasztottDatum}
           styles={styles}
         />
       )}
@@ -411,6 +453,11 @@ const styles = StyleSheet.create({
     textAlign: "center",
     marginBottom: 20,
     color: "#4A4AFC",
+  },
+  tranzakcioTitle: {
+    fontSize: 18,
+    fontWeight: "bold",
+    marginBottom: 10,
   },
   collapsedRow: {
     width: "auto",
@@ -476,22 +523,38 @@ const styles = StyleSheet.create({
     borderBottomColor: "#2EC0F9", // Kiemelés ha van óra aznap
   },
   //----------------------------------- egy soros naptár vége
-  eventItem: {
-    borderRadius: 10,
+  OraView: {
+    margin: 10,
+    borderRadius: 20,
     padding: 16,
-    marginBottom: 10,
     backgroundColor: "#fff",
-    elevation: 3,
+    elevation: 6,
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
+    minHeight: 90,
   },
-  eventTitle: {
-    fontSize: 16,
+  oraBaloldal: {
+    fontSize: 20,
     fontWeight: "bold",
     marginBottom: 5,
+    flex: 1,
+    textAlign: "center",
   },
-  eventTime: {
-    fontSize: 14,
+  oraKozepsoResz: {
+    backgroundColor: "green",
+    fontSize: 20,
+    fontWeight: "bold",
+    marginBottom: 5,
+    flex: 1,
+    textAlign: "center",
+  },
+  oraJobbOldal: {
+    fontSize: 18,
     color: "#555",
+    textAlign: "right",
   },
+  //-------------- óra view vége
   container: {
     flex: 1,
     backgroundColor: "#f5f5f5",
@@ -537,6 +600,7 @@ const styles = StyleSheet.create({
     color: "#888",
     fontStyle: "italic",
     marginTop: 20,
+    fontSize: 16
   },
   toggleButton: {
     alignSelf: "center",

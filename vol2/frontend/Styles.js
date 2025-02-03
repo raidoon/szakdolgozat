@@ -1,6 +1,7 @@
 import { StyleSheet } from "react-native";
 
 const Styles = StyleSheet.create({
+  //------------------------------------------ cimek
   focim: {
     fontSize: 30,
     fontWeight: "bold",
@@ -113,6 +114,16 @@ const Styles = StyleSheet.create({
    }
 */
   //------------------------------------ REGISZTRACIO.JS
+  //------------------------------------ TANULO_ORAI
+  naptarNyitogatoGombView:{
+    flexDirection: 'row', 
+    alignItems:'center',
+    justifyContent: 'center',
+    backgroundColor: '#ccccff',
+    elevation: 3,
+    marginBottom: 20,
+    minHeight:60
+  },
   //------------------------------------ TANULO_PROFIL
   profil_gombDiv: {
     flexDirection: "row",
