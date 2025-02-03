@@ -26,7 +26,7 @@ const Tanulo_Kezdolap = ({ atkuld }) => {
         felhasznalo_id: atkuld.felhasznalo_id,
       };
       const oraAdat = {
-        ora_diakja: atkuld.ora_diakja, 
+        ora_diakja: atkuld.tanulo_id, 
       }
       if(oraAdat){
         //---------- a következő óra időpontja
@@ -37,7 +37,7 @@ const Tanulo_Kezdolap = ({ atkuld }) => {
         });
         const oraResponse = await ora.json();
         setKoviOra(oraResponse);
-        console.log("következő óra: ", oraResponse);
+        //console.log("következő óra: ", oraResponse);
       }
       if (adat) {  
         //---------- eddigi befizetések összege

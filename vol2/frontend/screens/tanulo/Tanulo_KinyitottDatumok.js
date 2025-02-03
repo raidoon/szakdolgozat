@@ -1,9 +1,18 @@
-import React from 'react';
-import { View, Text, TouchableOpacity } from 'react-native';
-import { Calendar } from 'react-native-calendars';
-import Ionicons from 'react-native-vector-icons/Ionicons';
+import React from "react";
+import { View, Text, TouchableOpacity } from "react-native";
+import { Calendar } from "react-native-calendars";
+import { ScrollView } from "react-native-gesture-handler";
+import Ionicons from "react-native-vector-icons/Ionicons";
 
-const TanuloKinyitottDatumok = ({ naptarLenyitas, naptarToggle, datumMegnyomas, kivalasztottDatum, setKivalasztottDatum, styles }) => {
+const TanuloKinyitottDatumok = ({
+  naptarLenyitas,
+  naptarToggle,
+  datumMegnyomas,
+  kivalasztottDatum,
+  setKivalasztottDatum,
+  styles,
+  orakLista,
+}) => {
   const honapValtas = (irany) => {
     const ujDatum = new Date(kivalasztottDatum);
     ujDatum.setMonth(kivalasztottDatum.getMonth() + irany);
@@ -25,11 +34,13 @@ const TanuloKinyitottDatumok = ({ naptarLenyitas, naptarToggle, datumMegnyomas, 
   };
 
   return (
-    <View>
+    <ScrollView>
       <View style={{ marginTop: 20 }}>
         <Calendar
           style={styles.kalendar}
-          renderHeader={() => <NaptarHeaderBetoltes kivalasztottDatum={kivalasztottDatum} />}
+          renderHeader={() => (
+            <NaptarHeaderBetoltes kivalasztottDatum={kivalasztottDatum} />
+          )}
           onDayPress={(day) => {
             console.log("selected day", day);
             datumMegnyomas(day);
@@ -42,7 +53,7 @@ const TanuloKinyitottDatumok = ({ naptarLenyitas, naptarToggle, datumMegnyomas, 
             addMonth();
             honapValtas(1);
           }}
-          current={kivalasztottDatum.toISOString().split('T')[0]} // Ensure the calendar updates with the new date
+          current={kivalasztottDatum.toISOString().split("T")[0]} // Ensure the calendar updates with the new date
           theme={{
             backgroundColor: "#ffffff",
             calendarBackground: "#ffffff",
@@ -54,7 +65,7 @@ const TanuloKinyitottDatumok = ({ naptarLenyitas, naptarToggle, datumMegnyomas, 
             textDisabledColor: "#dd99ee",
           }}
           markedDates={{
-            [kivalasztottDatum.toISOString().split('T')[0]]: {
+            [kivalasztottDatum.toISOString().split("T")[0]]: {
               selected: true,
               disableTouchEvent: true,
               selectedDotColor: "orange",
@@ -78,7 +89,43 @@ const TanuloKinyitottDatumok = ({ naptarLenyitas, naptarToggle, datumMegnyomas, 
           <Ionicons name="chevron-down-outline" size={30} color="white" />
         )}
       </TouchableOpacity>
-    </View>
+
+      {orakLista.map((item, index) => {
+        const date = new Date(item.ora_datuma);
+        const honapNap = date
+          .toLocaleDateString("hu-HU", {
+            year: "numeric",
+            month: "2-digit",
+            day: "2-digit",
+          })
+          .replace(/\//g, ".");
+        const oraPerc = date.toLocaleTimeString("hu-HU", {
+          hour: "2-digit",
+          minute: "2-digit",
+          hour12: false,
+        });
+
+        const hatterszinTomb = [
+          "#FDEEDC",
+          "#D6EFFF",
+          "#F5D8E8",
+          "#E8DFF5",
+          "#48cae4",
+        ]; // háttér színek a különböző elemeknek
+        const hatterszinAzOraknak =
+          hatterszinTomb[index % hatterszinTomb.length]; // haladunk szép sorban a színekkel
+
+        return (
+          <View
+            key={item.ora_id}
+            style={[styles.eventItem, { backgroundColor: hatterszinAzOraknak }]}
+          >
+            <Text style={styles.eventTitle}>{`${honapNap}`}</Text>
+            <Text style={styles.eventTime}>{` ${oraPerc}`}</Text>
+          </View>
+        );
+      })}
+    </ScrollView>
   );
 };
 
