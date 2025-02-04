@@ -9,11 +9,11 @@ export default function Oktato_Kezdolap({atkuld}){
     const navigation = useNavigation();
     const letoltes=async ()=>{
         //alert("hello")
-        alert(atkuld.oktato_felhasznaloID)
+        //alert(atkuld.oktato_felhasznaloID)
  var adatok={
     "oktatoid":atkuld
  }
-        const x=await fetch("http://192.168.10.58:3000/egyOktatoDiakjai",{
+        const x=await fetch("http://192.168.10.58:3000/egyOktatoAdatai",{
             method: "POST",
             body: JSON.stringify(adatok),
             headers: {"Content-type": "application/json; charset=UTF-8"}
@@ -23,6 +23,10 @@ export default function Oktato_Kezdolap({atkuld}){
         alert(JSON.stringify(y))
     }
   
+    
+
+
+
     useEffect(()=>{
         letoltes()
         
@@ -34,11 +38,11 @@ export default function Oktato_Kezdolap({atkuld}){
             <View>
             <Text>Sikeres bejelentkezés! </Text>
             <Text>{atkuld ? `Felhasználó ID: ${atkuld.oktato_felhasznaloID}` : "Nincs adat"}</Text>
-            <Text>hello</Text>
-            
-
+            <Text>Üdvözlünk {atkuld.oktato_neve} !</Text>
             
             </View>
+
+            <View></View>
         </View>
     );
 }

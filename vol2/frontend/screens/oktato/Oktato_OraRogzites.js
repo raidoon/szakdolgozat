@@ -48,7 +48,7 @@ export default function Oktato_OraRogzites({ route }) {
         var adat={
           "oktato_id":atkuld.oktato_id
       }
-        const response = await fetch(`${Ipcim.Ipcim}/egyOktatoDiakjai`, {
+        const response = await fetch(`${Ipcim.Ipcim}/aktualisDiakok`, {
           method: "POST",
           body: JSON.stringify(adat),
           headers: {"Content-type": "application/json; charset=UTF-8"}
@@ -56,7 +56,7 @@ export default function Oktato_OraRogzites({ route }) {
         const data = await response.json();
         setDiakTomb(data.map((item) => ({ label: item.tanulo_neve, value: item.tanulo_id })));
       } catch (error) {
-        console.error("Hiba az egyOktatoDiakjai adatok betöltésekor:", error);
+        console.error("Hiba az aktualisDiakok adatok betöltésekor:", error);
       }
     };
     fetchDiakok();
