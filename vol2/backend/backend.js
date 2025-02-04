@@ -446,7 +446,7 @@ app.post("/aktualisDiakok", (req, res) => {
   console.log("hello");
   kapcsolat();
   connection.query(
-    `SELECT tanulo_id,tanulo_neve
+    `SELECT *
     FROM tanulo_adatok AS tanulo
     INNER JOIN oktato_adatok AS oktato
     ON tanulo.tanulo_oktatoja = oktato.oktato_id
@@ -498,7 +498,7 @@ app.post("/diakokOrai", (req, res) => {
   console.log("hello");
   kapcsolat();
   connection.query(
-    `SELECT tanulo_neve, ora_datuma, ora_teljesitve
+    `SELECT *
     FROM felhasznaloi_adatok AS felhasznalo
     INNER JOIN tanulo_adatok AS tanulo
     ON felhasznalo.felhasznalo_id=tanulo.tanulo_felhasznaloID
