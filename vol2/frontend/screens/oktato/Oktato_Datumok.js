@@ -16,7 +16,7 @@ export default function Oktato_Datumok({atkuld}){
       var adat={
           "oktatoid":atkuld.oktato_id
       }
-      const x=await fetch(Ipcim.Ipcim +"/oraRogzites/aktualisDiakok",{
+      const x=await fetch(Ipcim.Ipcim +"/oraFelvitel/aktualisDiakok/levizsgazottDiakok",{
           method: "POST",
           body: JSON.stringify(adat),
           headers: {"Content-type": "application/json; charset=UTF-8"}
@@ -46,6 +46,10 @@ export default function Oktato_Datumok({atkuld}){
     navigation.navigate("Oktato_AktualisTanulok", { tanulo });
 };
   
+const kattlevizsgazott = (tanulo) => {
+      
+  navigation.navigate("Oktato_LevizsgazottTanulok", { tanulo });
+};
   
   return (
     <View style={Oktato_Styles.diakok_container}>
@@ -67,6 +71,13 @@ export default function Oktato_Datumok({atkuld}){
         onPress={() => navigation.navigate("Oktato_AktualisTanulok", { atkuld })}
       >
         <Text style={Oktato_Styles.navigateButtonText}>Aktuális Tanulók</Text>
+      </TouchableOpacity>
+
+      <TouchableOpacity
+        style={Oktato_Styles.navigateButton}
+        onPress={() => navigation.navigate("Oktato_LevizsgazottTanulok", { atkuld })}
+      >
+        <Text style={Oktato_Styles.navigateButtonText}>Levizsgázott Tanulók</Text>
       </TouchableOpacity>
     </View>
   );

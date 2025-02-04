@@ -2,10 +2,11 @@ import { useEffect, useState } from "react";
 import { View, Text, StyleSheet, FlatList, TouchableOpacity } from "react-native";
 import Ipcim from "../../Ipcim";
 
-export default function Oktato_TanuloAOrak({ route }) {
+export default function Oktato_TanuloLOrak({ route }) {
     const { tanulo } = route.params;
     const [adatok, setAdatok] = useState([]);
-    
+    const [teljesitve,setTeljesitve]=useState("")
+    const [isChecked, setChecked] = useState(false);
 
     const letoltes = async () => {
         try {
@@ -78,16 +79,7 @@ export default function Oktato_TanuloAOrak({ route }) {
                             <Text>{item.ora_datuma.split("T")[0]}</Text>
                             <Text>{item.ora_datuma.split("T")[1].split(".")[0]}</Text>
                             <Text>{item.ora_teljesitve}</Text>
-                            {item.ora_teljesitve==0
-                            ?
-                            <TouchableOpacity 
-                                style={{ backgroundColor: "#fff" }} 
-                               /* onPress={() => megerositVagyVissza(item)}*/>
-                                <Text style={{ color: "red" }}>Megerősítés</Text>
-                            </TouchableOpacity> 
-                            : <Text>Teljesítve</Text>
-                            }
-                            
+                           
                            
 
                         </View>

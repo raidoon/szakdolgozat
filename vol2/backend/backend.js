@@ -330,6 +330,31 @@ app.post("/tanuloOsszesOraja", (req, res) => {
   connection.end();
 });
 //------------------------------------------------ TANULÓI LEKÉRDEZÉSEK VÉGE
+
+//------------------------------------------------ OKTATÓI LEKÉRDEZÉSEK
+//---------------------------Oktató adatai
+app.post("/egyOktatoAdatai", (req, res) => {
+  console.log("hello");
+  kapcsolat();
+  connection.query(
+    `SELECT *
+    FROM oktato_adatok
+    WHERE oktato.oktato_id=?`,
+    [req.body.oktato_id],
+    (err, rows, fields) => {
+      if (err) {
+        console.log(err);
+        res.status(500).send("Hiba");
+      } else {
+        console.log(rows);
+        res.status(200).send(rows);
+      }
+    }
+  );
+  connection.end();
+});
+
+
 //------------------------adott oktatóhoz tartozó tanulók neveinek megjelenítése post bevitel1
 app.post("/egyOktatoDiakjai", (req, res) => {
   console.log("hello");
@@ -471,7 +496,7 @@ app.post("/levizsgazottDiakok", (req, res) => {
   console.log("hello");
   kapcsolat();
   connection.query(
-    `SELECT tanulo_id,tanulo_neve
+    `SELECT *
     FROM tanulo_adatok AS tanulo
     INNER JOIN oktato_adatok AS oktato
     ON tanulo.tanulo_oktatoja = oktato.oktato_id
@@ -520,6 +545,32 @@ app.post("/diakokOrai", (req, res) => {
 });
 
 //-------------------
+app.post("/koviOra", (req, res) => {
+  console.log("hello");
+  kapcsolat();
+  connection.query(
+    `SELECT * 
+    FROM oktato_adatok AS oktato
+    INNER JOIN ora_adatok AS ora
+    ON oktato.oktato_id=ora.ora_oktatoja 
+    WHERE oktato_id = ? 
+      AND ora.ora_datuma > NOW() 
+    ORDER BY ora.ora_datuma 
+    LIMIT 1;`,
+    [req.body.oktato_id],
+    (err, rows, fields) => {
+      if (err) {
+        console.log(err);
+        res.status(500).send("Hiba");
+      } else {
+        console.log(rows);
+        res.status(200).send(rows);
+      }
+    }
+  );
+  connection.end();
+});
+
 app.listen(port, () => {
   console.log(`Example app listening on port ${port}`);
 });
