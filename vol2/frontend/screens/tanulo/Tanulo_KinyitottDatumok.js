@@ -78,12 +78,12 @@ const TanuloKinyitottDatumok = ({
       <TouchableOpacity onPress={naptarToggle}>
         {naptarLenyitas ? (
           <View style={Styles.naptarNyitogatoGombView}>
-            <Text style={{color:'#black', fontSize: 16 }}>Naptár becsukása</Text>
-            <Ionicons name="chevron-up-outline" size={30} color="black" />
+            <Text style={{color:'#fff', fontSize: 16 }}>Naptár becsukása</Text>
+            <Ionicons name="chevron-up-outline" size={30} color="white" />
           </View>
         ) : (
           <View style={Styles.naptarNyitogatoGombView}>
-            <Text style={{color:'#black',}}>Naptár kinyitása</Text>
+            <Text style={{color:'#fff',}}>Naptár kinyitása</Text>
             <Ionicons name="chevron-down-outline" size={30} color="white" />
           </View>
         )}

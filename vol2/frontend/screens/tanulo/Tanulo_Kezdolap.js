@@ -236,7 +236,7 @@ const styles = StyleSheet.create({
     width: '100%'
   },
   udvozloView: {
-    backgroundColor: "#dfe6e9", //#dfe6e9
+    backgroundColor: "#EDE7E3", //#dfe6e9
     padding: 20,
     borderBottomLeftRadius: 20,
     borderBottomRightRadius: 20,
@@ -255,7 +255,7 @@ const styles = StyleSheet.create({
   },
   befizetesContainer: {
     margin: 20,
-    backgroundColor: "#023E8A", //"#8338ec", //"#5A4FCF", //#6c5ce7
+    backgroundColor: "#3BC14A", //"#8338ec", //"#5A4FCF", //#6c5ce7
     padding: 15,
     borderRadius: 15,
     alignItems: "center",
@@ -263,18 +263,18 @@ const styles = StyleSheet.create({
   },
   befizetesTitle: {
     fontSize: 16,
-    color: "#fff",
+    color: "white",
   },
   befizetesOsszeg: {
     fontSize: 24,
     fontWeight: "bold",
-    color: "#fff",
+    color: "white",
     marginTop: 5,
   },
   tartozasContainer:{
     marginLeft: 20,
     marginRight: 20,
-    backgroundColor: '#0077B6',
+    backgroundColor: '#4DA167',
     padding: 15,
     borderRadius: 15,
     alignItems: 'center',
@@ -282,17 +282,17 @@ const styles = StyleSheet.create({
   },
   tartozasTitle:{
     fontSize: 16,
-    color: '#fff',
+    color: 'white',
   },
   tartozasOsszeg:{
     fontSize: 24,
     fontWeight: "bold",
-    color: "#fff",
+    color: "white",
     marginTop: 5,
   },
   oraContainer: {
     margin: 20,
-    backgroundColor: "#CAF0F8", //"#C49991", //"#5E7CE2", //"#A06CD5",
+    backgroundColor: "#EDE7E3", //"#CAF0F8", //"#C49991", //"#5E7CE2", //"#A06CD5",
     padding: 15,
     borderRadius: 15,
     alignItems: "center",
@@ -300,11 +300,14 @@ const styles = StyleSheet.create({
   },
   oraTitle: {
     fontSize: 16,
-    color: "#03045E",
+    //color: "#03045E",
+    color: 'black'
   },
   oraOsszeg: {
     fontSize: 24,
-    color: "#03045E",
+    //color: "#03045E",
+    color: 'black',
+    fontWeight: 'bold',
     width: "auto",
     marginRight: 20
   },

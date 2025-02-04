@@ -119,7 +119,7 @@ const Styles = StyleSheet.create({
     flexDirection: 'row', 
     alignItems:'center',
     justifyContent: 'center',
-    backgroundColor: '#ccccff',
+    backgroundColor: '#4DA167',
     elevation: 3,
     marginBottom: 20,
     minHeight:60

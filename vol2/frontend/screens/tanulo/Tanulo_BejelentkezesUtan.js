@@ -84,8 +84,13 @@ const Tanulo_BejelentkezesUtan = ({ navigation, route }) => {
         //tabBarActiveTintColor: "#0077B6",
         //tabBarActiveTintColor: "#5c4ce3",
         //tabBarActiveTintColor: "tomato",
-        tabBarActiveTintColor: "#fff",
-        tabBarActiveBackgroundColor: '#6A5AE0',
+        //tabBarActiveTintColor: "#fff",
+        tabBarActiveTintColor: '#3BC14A',
+        //tabBarActiveTintColor: "#183A37",
+        //tabBarActiveBackgroundColor: '#6A5AE0',
+        //tabBarActiveBackgroundColor: '#183A37',
+        //tabBarActiveBackgroundColor: '#776472',
+        tabBarActiveBackgroundColor: '#fff',
         tabBarInactiveTintColor: "gray",
       })}
     >

@@ -206,7 +206,7 @@ const Tanulo_Befizetesek = ({ atkuld }) => {
         onPress={() => szamologepGombNyomas("C")}
         style={styles.szamologepGomb}
       >
-        <Text style={styles.szamologepSzoveg}>C</Text>
+        <Text style={styles.szamologepSzovegC}>C</Text>
       </TouchableOpacity>
       <TouchableOpacity
         onPress={() => szamologepGombNyomas("0")}
@@ -218,7 +218,7 @@ const Tanulo_Befizetesek = ({ atkuld }) => {
         onPress={() => szamologepGombNyomas("torles")}
         style={styles.szamologepGomb}
       >
-        <Text style={styles.szamologepSzoveg}>⌫</Text>
+        <Text style={styles.szamologepSzovegDEL}>⌫</Text>
       </TouchableOpacity>
     </View>
   );
@@ -550,7 +550,7 @@ const styles = StyleSheet.create({
   modalCloseBtn: {
     marginTop: 20,
     padding: 10,
-    backgroundColor: "#5c4ce3",
+    backgroundColor: "#6B6054",
     borderRadius: 5,
   },
   modalCloseText: {
@@ -574,13 +574,13 @@ const styles = StyleSheet.create({
   cim: {
     fontSize: 24,
     fontWeight: "bold",
-    color: "#5c4ce3",
+    color: "#3BC14A",
     marginBottom: 20,
   },
   osszegBeiras: {
     fontSize: 40,
     fontWeight: "bold",
-    color: "#5c4ce3",
+    color: "#3BC14A",
     textAlign: "center",
     marginBottom: 10,
   },
@@ -591,14 +591,15 @@ const styles = StyleSheet.create({
     textAlign: "center",
   },
   felvetelGomb: {
-    backgroundColor: "#5c4ce3",
+    backgroundColor: "#4DA167",
     paddingVertical: 15,
     paddingHorizontal: 40,
     borderRadius: 10,
     marginBottom: 20,
+    elevation: 10
   },
   felvetelGombSzoveg: {
-    color: "#fff",
+    color: "white",
     fontSize: 18,
     fontWeight: "bold",
   },
@@ -611,7 +612,7 @@ const styles = StyleSheet.create({
     width: 80,
     height: 80,
     backgroundColor: "#fff",
-    borderColor: "#dcdcdc",
+    borderColor: "#EDE7E3",
     borderWidth: 1,
     alignItems: "center",
     justifyContent: "center",
@@ -621,7 +622,17 @@ const styles = StyleSheet.create({
   },
   szamologepSzoveg: {
     fontSize: 24,
-    color: "#5c4ce3",
+    color: "#6B6054",
+    fontWeight: "bold",
+  },
+  szamologepSzovegC:{
+    fontSize: 24,
+    color: "#FFA62B",
+    fontWeight: "bold",
+  },
+  szamologepSzovegDEL:{
+    fontSize: 24,
+    color: "red",
     fontWeight: "bold",
   },
   tranzakcioContainer: {
@@ -684,7 +695,8 @@ const styles = StyleSheet.create({
     borderRadius: 30,
   },
   checkedCheckbox: {
-    backgroundColor: "#5c4ce3",
+    backgroundColor: "#FFA62B",
+    borderColor: '#FFA62B'
   },
   checkboxView: {
     flexDirection: "row",

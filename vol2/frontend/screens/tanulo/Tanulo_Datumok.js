@@ -452,7 +452,7 @@ const styles = StyleSheet.create({
     fontWeight: "bold",
     textAlign: "center",
     marginBottom: 20,
-    color: "#4A4AFC",
+    color: "#4DA167",
   },
   tranzakcioTitle: {
     fontSize: 18,
@@ -503,7 +503,8 @@ const styles = StyleSheet.create({
     fontWeight: "500",
   },
   kivalasztottdatum: {
-    backgroundColor: "#6A5AE0", // Lila háttér a kiválasztott naphoz
+    //backgroundColor: "#6A5AE0", // Lila háttér a kiválasztott naphoz
+    backgroundColor: '#3BC14A',
   },
   weekDayText: {
     fontSize: 18,
@@ -520,7 +521,8 @@ const styles = StyleSheet.create({
   },
   vanAznapOra: {
     borderBottomWidth: 4,
-    borderBottomColor: "#2EC0F9", // Kiemelés ha van óra aznap
+    //borderBottomColor: "#2EC0F9", // Kiemelés ha van óra aznap
+    borderBottomColor: '#FFA62B'
   },
   //----------------------------------- egy soros naptár vége
   OraView: {
@@ -618,7 +620,7 @@ const styles = StyleSheet.create({
     marginVertical: 10,
     padding: 10,
     //backgroundColor: "#4A4AFC",
-    backgroundColor: "#ccccff",
+    backgroundColor: "#4DA167",
     borderRadius: 30,
     alignItems: "center",
     textAlign: "center",
