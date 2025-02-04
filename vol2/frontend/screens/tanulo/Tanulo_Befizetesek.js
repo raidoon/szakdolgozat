@@ -464,7 +464,7 @@ const Tanulo_Befizetesek = ({ atkuld }) => {
                 Összeg: {kivalasztottTranzakcio.befizetesek_osszeg} Ft
               </Text>
               <Text style={styles.modalText}>
-                Dátum:{" "}
+                Befizetve:{" "}
                 {(() => {
                   const eredetiDatum = new Date(
                     kivalasztottTranzakcio.befizetesek_ideje
@@ -550,7 +550,8 @@ const styles = StyleSheet.create({
   modalCloseBtn: {
     marginTop: 20,
     padding: 10,
-    backgroundColor: "#6B6054",
+    //backgroundColor: "#6B6054", //barnás earth vibes
+    backgroundColor: '#6A5AE0',
     borderRadius: 5,
   },
   modalCloseText: {
@@ -574,13 +575,15 @@ const styles = StyleSheet.create({
   cim: {
     fontSize: 24,
     fontWeight: "bold",
-    color: "#3BC14A",
+    //color: "#3BC14A", //zöld
+    color: "#6A5AE0", //lila
     marginBottom: 20,
   },
   osszegBeiras: {
     fontSize: 40,
     fontWeight: "bold",
-    color: "#3BC14A",
+    //color: "#3BC14A", //zöld
+    color:"#6A5AE0", //lila
     textAlign: "center",
     marginBottom: 10,
   },
@@ -591,7 +594,8 @@ const styles = StyleSheet.create({
     textAlign: "center",
   },
   felvetelGomb: {
-    backgroundColor: "#4DA167",
+    //backgroundColor: "#4DA167", //zöld
+    backgroundColor: "#6A5AE0",
     paddingVertical: 15,
     paddingHorizontal: 40,
     borderRadius: 10,
@@ -695,8 +699,10 @@ const styles = StyleSheet.create({
     borderRadius: 30,
   },
   checkedCheckbox: {
-    backgroundColor: "#FFA62B",
-    borderColor: '#FFA62B'
+    //backgroundColor: "#FFA62B", //narancs a zöldhöz
+    //borderColor: '#FFA62B' //narancs a zöldhöz
+    backgroundColor: '#FFA62B',
+    //borderColor: '#cae9ff'
   },
   checkboxView: {
     flexDirection: "row",

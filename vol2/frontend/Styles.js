@@ -119,7 +119,8 @@ const Styles = StyleSheet.create({
     flexDirection: 'row', 
     alignItems:'center',
     justifyContent: 'center',
-    backgroundColor: '#4DA167',
+    //backgroundColor: '#4DA167', //zöld
+    backgroundColor: '#ccccff', //lila
     elevation: 3,
     marginBottom: 20,
     minHeight:60

@@ -126,7 +126,7 @@ const Tanulo_Profil = ({ atkuld }) => {
   </Ripple>
 </View>
 
-<View style={Styles.profil_gombDiv}>
+<View style={styles.kijelentkezoGombView}>
   {/* KIJELENTKEZÉS */}
   <Ripple
     rippleColor="rgb(0,0,0)"
@@ -135,18 +135,10 @@ const Tanulo_Profil = ({ atkuld }) => {
     rippleCentered={true}
     rippleFades={false}
     rippleContainerBorderRadius={20}
-    style={[Styles.profileGombok, Styles.profil_gombDiv]}
+    style={[styles.kijelentkezoGombRipple]}
     onPress={kijelentkeztetesAlert}
   >
-    <View style={styles.elsoFlex}>
-      <Ionicons name="log-out-outline" size={25} color="red" />
-    </View>
-    <View style={styles.masodikFlex}>
-      <Text style={{ fontSize: 20 }}>Kijelentkezés</Text>
-    </View>
-    <View style={styles.harmadikFlex}>
-      <Ionicons name="chevron-forward-outline" size={25} color="gray" />
-    </View>
+      <Text style={styles.kijelentkezoGombText}>Kijelentkezés</Text>
   </Ripple>
 </View>
 
@@ -171,5 +163,22 @@ const styles = StyleSheet.create({
     flex: 0,
     marginRight: 0,
   },
+  kijelentkezoGombView:{
+    backgroundColor: 'red',
+    opacity: 0.7,
+    padding: 20,
+    width: 'auto',
+    borderRadius: 40,
+    marginTop: 30,
+    marginRight: 50,
+    marginLeft: 50
+  },
+  kijelentkezoGombRipple:{
+  },
+  kijelentkezoGombText:{
+    fontSize: 20,
+    fontWeight: 'bold',
+    color: 'black'
+  }
 });
 export default Tanulo_Profil;

@@ -227,29 +227,8 @@ const Tanulo_Datumok = ({ atkuld }) => {
         <RefreshControl refreshing={frissites} onRefresh={frissitesKozben} />
       }
     >
-      {/*------------------------------ KÖVETKEZŐ ÓRA BUBORÉK !!! --------------------------*/}
-      {/** 
-      <View style={styles.oraContainer}>
-      <View
-        style={{
-          flexDirection: "row",
-          alignItems: "center",
-          justifyContent: "space-between",
-          width: "100%",
-          minHeight: 100,
-        }}
-      >
-        <View>
-          <Text style={styles.oraTitle}>Következő óra:</Text>
-          <Text style={styles.oraOsszeg}>
-            {koviOra.length > 0
-              ? koviOraFormazasa(koviOra[0].ora_datuma)
-              : "Egyenlőre még nincs beírva következő óra!"}
-          </Text>
-        </View>
-      </View>
-    </View>
-    */}
+      
+
       {/* ------------------------------ BEZÁRT EGY SOROS NAPTÁR NÉZET -------------------------------------- */}
       {!naptarLenyitas && (
         <View>
@@ -326,6 +305,27 @@ const Tanulo_Datumok = ({ atkuld }) => {
               </TouchableOpacity>
             </View>
           </View>
+          {/*------------------------------ KÖVETKEZŐ ÓRA BUBORÉK !!! --------------------------*/}
+      <View style={styles.oraContainer}>
+      <View
+        style={{
+          flexDirection: "row",
+          alignItems: "center",
+          justifyContent: "space-between",
+          width: "100%",
+          minHeight: 50,
+        }}
+      >
+        <View>
+          <Text style={styles.oraTitle}>Következő óra:</Text>
+          <Text style={styles.oraOsszeg}>
+            {koviOra.length > 0
+              ? koviOraFormazasa(koviOra[0].ora_datuma)
+              : "Egyenlőre még nincs beírva következő óra!"}
+          </Text>
+        </View>
+      </View>
+    </View>
           {/*------------------------------ NAPTÁR KI BE NYITÓS GOMB !!! --------------------------*/}
           <TouchableOpacity onPress={naptarToggle}>
             {naptarLenyitas ? (
@@ -338,11 +338,8 @@ const Tanulo_Datumok = ({ atkuld }) => {
               </View>
             )}
           </TouchableOpacity>
+
           {/*------------------------------ AZ ÓRÁK FELSOROLÁSA --------------------------*/}
-          <Text style={styles.tranzakcioTitle}>
-              Órák a kiválaszott napon:
-            </Text>
-          {/* Csak akkor írjuk ki a "Órák a kiválasztott napon:" szöveget, ha van óra az aktuális napon */}
           {orakLista.some((item) => {
             const date = new Date(item.ora_datuma);
             return (
@@ -355,7 +352,9 @@ const Tanulo_Datumok = ({ atkuld }) => {
             <Text style={styles.tranzakcioTitle}>
               Órák a kiválaszott napon:
             </Text> // itt íródik ki a szöveg, ha van óra
-          ) : null}
+          ) :  <Text style={styles.tranzakcioTitle}>
+          Órák a kiválaszott napon:
+        </Text>}
           {/* Az órák listázása */}
           {orakLista.some((item) => {
             const date = new Date(item.ora_datuma);
@@ -452,7 +451,8 @@ const styles = StyleSheet.create({
     fontWeight: "bold",
     textAlign: "center",
     marginBottom: 20,
-    color: "#4DA167",
+    //color: "#4DA167", //zöld
+    color: '#6A5AE0' //lila
   },
   tranzakcioTitle: {
     fontSize: 18,
@@ -503,8 +503,8 @@ const styles = StyleSheet.create({
     fontWeight: "500",
   },
   kivalasztottdatum: {
-    //backgroundColor: "#6A5AE0", // Lila háttér a kiválasztott naphoz
-    backgroundColor: '#3BC14A',
+    backgroundColor: "#6A5AE0", // lila
+    //backgroundColor: '#3BC14A', // zöld
   },
   weekDayText: {
     fontSize: 18,
@@ -517,12 +517,12 @@ const styles = StyleSheet.create({
     color: "#333",
   },
   kivalasztottSzoveg: {
-    color: "#FFFFFF", // Fehér szöveg a kiválasztott napon
+    color: "#FFFFFF", 
   },
   vanAznapOra: {
     borderBottomWidth: 4,
-    //borderBottomColor: "#2EC0F9", // Kiemelés ha van óra aznap
-    borderBottomColor: '#FFA62B'
+    borderBottomColor: "#2EC0F9", // kék kiemelés
+    //borderBottomColor: '#FFA62B' //narancs kiemelés (a zöldhöz)
   },
   //----------------------------------- egy soros naptár vége
   OraView: {
@@ -604,42 +604,44 @@ const styles = StyleSheet.create({
     marginTop: 20,
     fontSize: 16
   },
-  toggleButton: {
-    alignSelf: "center",
-    marginVertical: 10,
-    padding: 10,
-    backgroundColor: "#4A4AFC",
-    borderRadius: 5,
-  },
-  toggleButtonText: {
-    color: "#FFF",
-    fontWeight: "bold",
-  },
   kibenyitogomb: {
     alignSelf: "center",
     marginVertical: 10,
     padding: 10,
     //backgroundColor: "#4A4AFC",
-    backgroundColor: "#4DA167",
+    //backgroundColor: "#4DA167",
+    backgroundColor:'#ccccff',
     borderRadius: 30,
     alignItems: "center",
     textAlign: "center",
   },
   oraContainer: {
-    margin: 20,
-    backgroundColor: "#ccccff", //"#C49991", //"#5E7CE2", //"#A06CD5",
-    padding: 15,
+    marginHorizontal: 20,
+    marginBottom: 15,
+    backgroundColor: "#ffffff",
+    //backgroundColor: '#BDBDBD',
+    //backgroundColor:'#81C784',
+    padding: 20,
     borderRadius: 15,
-    alignItems: "center",
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.1,
+    shadowRadius: 6,
     elevation: 3,
+    marginRight: 0,
+    marginLeft: 0,
+    marginTop: 20
   },
   oraTitle: {
     fontSize: 16,
-    color: "black",
+    color: "#6A5AE0",
+    fontWeight: "500",
   },
   oraOsszeg: {
-    fontSize: 24,
-    color: "#32174d",
+    fontSize: 20,
+    color: "#2d3436",
+    fontWeight: "600",
+    marginTop: 5,
   },
 });
 export default Tanulo_Datumok;
