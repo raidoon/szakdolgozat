@@ -12,6 +12,7 @@ import Styles from "../../Styles";
 import Ionicons from "react-native-vector-icons/Ionicons";
 import Ipcim from "../../Ipcim";
 import { Alert } from "react-native";
+import Penz from '../../assets/bitcoin-cash-money.svg';
 
 const Tanulo_Befizetesek = ({ atkuld }) => {
   const [frissites, setFrissites] = useState(false); //https://reactnative.dev/docs/refreshcontrol
@@ -288,11 +289,17 @@ const Tanulo_Befizetesek = ({ atkuld }) => {
       {/* --------------------------------------LEGUTÓBBI TRANZAKCIÓS RÉSZ---------------------------------------- */}
       {szamologepLathatoe ? null : (
         <View style={styles.tranzakcioContainer}>
-          <Text style={styles.tranzakcioTitle}>Legutóbbi Tranzakciók</Text>
-          {befizetLista.length===null ? (
-            <Text style={styles.nincsOra}>Egyenlőre még nem történt befizetés!</Text>
+          
+          {befizetLista.length===0 ? (
+            <View style={{alignItems: 'center'}}>
+            <Penz width={100} height={100} marginTop={50}/>
+        
+            <Text style={styles.nincsOra}>Itt láthatod majd az összes tranzakciódat, és azt, hogy el vannak-e fogadva!</Text>
+          </View>
           ) : (
-            befizetLista
+            <View>
+              <Text style={styles.tranzakcioTitle}>Legutóbbi Tranzakciók</Text>
+              {befizetLista
             .sort(
               (a, b) =>
                 new Date(b.befizetesek_ideje) - new Date(a.befizetesek_ideje)
@@ -438,7 +445,8 @@ const Tanulo_Befizetesek = ({ atkuld }) => {
                   </View>
                 );
               }
-            })
+            })}
+            </View>
           )}
         </View>
       )}
@@ -550,8 +558,8 @@ const styles = StyleSheet.create({
   modalCloseBtn: {
     marginTop: 20,
     padding: 10,
-    //backgroundColor: "#6B6054", //barnás earth vibes
-    backgroundColor: '#6A5AE0',
+    backgroundColor: "#6B6054", //barnás earth vibes
+    //backgroundColor: '#6A5AE0',
     borderRadius: 5,
   },
   modalCloseText: {
@@ -576,14 +584,16 @@ const styles = StyleSheet.create({
     fontSize: 24,
     fontWeight: "bold",
     //color: "#3BC14A", //zöld
-    color: "#6A5AE0", //lila
+    //color: "#6A5AE0", //lila
+    color:'#6B6054', //earthy vibes
     marginBottom: 20,
   },
   osszegBeiras: {
     fontSize: 40,
     fontWeight: "bold",
     //color: "#3BC14A", //zöld
-    color:"#6A5AE0", //lila
+    //color:"#6A5AE0", //lila
+    color:'#6B6054', //earthy vibes
     textAlign: "center",
     marginBottom: 10,
   },
@@ -594,8 +604,10 @@ const styles = StyleSheet.create({
     textAlign: "center",
   },
   felvetelGomb: {
-    //backgroundColor: "#4DA167", //zöld
-    backgroundColor: "#6A5AE0",
+    backgroundColor: "#4DA167", //zöld
+    //backgroundColor: "#6A5AE0", //lila
+    //backgroundColor: '#FF6B6B',
+    //backgroundColor: '#6B6054', //earthy vibes
     paddingVertical: 15,
     paddingHorizontal: 40,
     borderRadius: 10,

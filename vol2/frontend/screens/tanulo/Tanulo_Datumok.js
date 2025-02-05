@@ -321,7 +321,7 @@ const Tanulo_Datumok = ({ atkuld }) => {
           <Text style={styles.oraOsszeg}>
             {koviOra.length > 0
               ? koviOraFormazasa(koviOra[0].ora_datuma)
-              : "Egyenlőre még nincs beírva következő óra!"}
+              : "Egyelőre még nincs beírva következő óra!"}
           </Text>
         </View>
       </View>

@@ -75,14 +75,17 @@ const Tanulo_BejelentkezesUtan = ({ navigation, route }) => {
             iconName = focused ? "settings" : "settings-outline";
           } else if (route.name === "Tanulo_Datumok") {
             iconName = focused ? "car-sport" : "car-sport-outline";
-          } else if (route.name === "Tanulo_Befizetesek") {
+          } else if (route.name === "Tanulo_Befizetesek") 
+          {
             iconName = focused ? "cash" : "cash-outline";
+            
           }
           return <Ionicons name={iconName} size={size} color={color} />;
         },
         //tabBarActiveTintColor: "#0077B6", //kékeszöld
         //tabBarActiveTintColor: "#5c4ce3", // sötét lila
-        tabBarActiveTintColor: "#6A5AE0", //árnyalatnyival világosabb lila
+        //tabBarActiveTintColor: "#6A5AE0", //árnyalatnyival világosabb lila
+        tabBarActiveTintColor: route.name === "Tanulo_Befizetesek" ? "#2E9B3D" : route.name==="Tanulo_Datumok" ? "#FF6B6B" : "#6A5AE0",
         //tabBarActiveTintColor: '#FF6B6B',
         //tabBarActiveTintColor: "tomato",
         //tabBarActiveTintColor: "#fff",
