@@ -10,6 +10,7 @@ import { useNavigation } from "@react-navigation/native";
 import React, { useState, useEffect } from "react";
 import Styles from "../../Styles";
 import Ipcim from "../../Ipcim";
+import Penz from '../../assets/bitcoin-cash-money.svg';
 
 const Tanulo_Kezdolap = ({ atkuld }) => {
   const navigation = useNavigation();
@@ -20,7 +21,6 @@ const Tanulo_Kezdolap = ({ atkuld }) => {
   const [koviOra, setKoviOra] = useState([]);
   const [betolt, setBetolt] = useState(true);
   const [hiba, setHiba] = useState(null);
-
   const adatokBetoltese = async () => {
     try {
       const adat = {
@@ -71,11 +71,9 @@ const Tanulo_Kezdolap = ({ atkuld }) => {
       setBetolt(false);
     }
   };
-
   useEffect(() => {
     adatokBetoltese();
   }, []);
-
   if (betolt) {
     return (
       <View style={Styles.bejelentkezes_Container}>
@@ -83,7 +81,6 @@ const Tanulo_Kezdolap = ({ atkuld }) => {
       </View>
     );
   }
-
   const koviOraFormazasa = (adatBresponseJSON) => {
     const datum = new Date(adatBresponseJSON);
     const honapNevekMagyarul = [
@@ -106,7 +103,6 @@ const Tanulo_Kezdolap = ({ atkuld }) => {
     const perc = datum.getMinutes().toString().padStart(2, "0");
     return `${honap} ${nap} - ${ora}:${perc} óra`;
   };
-
   if (hiba) {
     return (
       <View style={Styles.bejelentkezes_Container}>
@@ -114,7 +110,6 @@ const Tanulo_Kezdolap = ({ atkuld }) => {
       </View>
     );
   }
-
   return (
     <ScrollView style={styles.egeszOldal}>
       {/* ---------------------------------------ÜDVÖZLÉS---------------------------------------- */}
@@ -122,7 +117,6 @@ const Tanulo_Kezdolap = ({ atkuld }) => {
         <Text style={styles.udvozloSzoveg}>Üdvözöljük!</Text>
         <Text style={styles.userNev}>{atkuld.tanulo_neve}</Text>
       </View>
-
       {/* ----------------------------------BEFIZETÉSEK---------------------------------------- */}
       <TouchableOpacity
         style={styles.befizetesContainer}
@@ -140,7 +134,6 @@ const Tanulo_Kezdolap = ({ atkuld }) => {
           <Ionicons name="chevron-forward-outline" size={30} color="#fff" />
         </View>
       </TouchableOpacity>
-
       {/* ----------------------------------TARTOZÁSOK---------------------------------------- */}
       <View style={styles.tartozasContainer}>
         <View style={styles.cardContent}>
@@ -154,7 +147,6 @@ const Tanulo_Kezdolap = ({ atkuld }) => {
           </View>
         </View>
       </View>
-
       {/* --------------------------------------KÖVETKEZŐ ÓRA---------------------------------------- */}
       <TouchableOpacity
         style={styles.oraContainer}
@@ -166,18 +158,22 @@ const Tanulo_Kezdolap = ({ atkuld }) => {
             <Text style={styles.oraOsszeg}>
               {koviOra.length > 0
                 ? koviOraFormazasa(koviOra[0].ora_datuma)
-                : "Egyenlőre még nincs beírva következő óra!"}
+                : "Egyelőre még nincs beírva következő óra!"}
             </Text>
           </View>
           <Ionicons name="chevron-forward-outline" size={30} color="#6A5AE0" />
         </View>
       </TouchableOpacity>
-
       {/* --------------------------------------LEGUTÓBBI TRANZAKCIÓ---------------------------------------- */}
       <View style={styles.tranzakcioContainer}>
         <Text style={styles.tranzakcioTitle}>Legutóbbi Tranzakciók</Text>
-        {befizetLista.length === null ? (
-          <Text style={styles.nincsOra}>Egyenlőre még nem történt befizetés!</Text>
+        {befizetLista.length === 0 ? (
+          <View style={{alignItems: 'center'}}>
+
+            <Penz width={100} height={100}/>
+        
+            <Text style={styles.nincsOra}>Itt fognak megjelenni a legutóbbi tranzakciók, de egyelőre még nem történt befizetés!</Text>
+          </View>
         ) : (
           befizetLista
             .sort((a, b) => new Date(b.befizetesek_ideje) - new Date(a.befizetesek_ideje))
@@ -195,7 +191,6 @@ const Tanulo_Kezdolap = ({ atkuld }) => {
     </ScrollView>
   );
 };
-
 export default Tanulo_Kezdolap;
 
 const styles = StyleSheet.create({
@@ -222,6 +217,7 @@ const styles = StyleSheet.create({
     fontSize: 20,
     color: "#6A5AE0",
     fontWeight: "600",
+    paddingTop: 20
   },
   userNev: {
     fontSize: 24,
@@ -239,8 +235,6 @@ const styles = StyleSheet.create({
     marginHorizontal: 20,
     marginBottom: 15,
     backgroundColor: "#6A5AE0",
-    //backgroundColor: '#2196F3',
-    //backgroundColor: '#4DA167',
     padding: 20,
     borderRadius: 15,
     shadowColor: "#000",
@@ -263,9 +257,7 @@ const styles = StyleSheet.create({
   tartozasContainer: {
     marginHorizontal: 20,
     marginBottom: 15,
-    //backgroundColor: "#FF6B6B",
-    //backgroundColor: '#4DA167',
-    backgroundColor:'#ccccff',
+    backgroundColor: "#FF6B6B",
     padding: 20,
     borderRadius: 15,
     shadowColor: "#000",
@@ -276,21 +268,19 @@ const styles = StyleSheet.create({
   },
   tartozasTitle: {
     fontSize: 16,
-    color: "black",
+    color: "#fff",
     fontWeight: "500",
   },
   tartozasOsszeg: {
     fontSize: 24,
     fontWeight: "700",
-    color: "black",
+    color: "#fff",
     marginTop: 5,
   },
   oraContainer: {
     marginHorizontal: 20,
     marginBottom: 15,
     backgroundColor: "#ffffff",
-    //backgroundColor: '#BDBDBD',
-    //backgroundColor:'#81C784',
     padding: 20,
     borderRadius: 15,
     shadowColor: "#000",
@@ -319,6 +309,7 @@ const styles = StyleSheet.create({
     fontWeight: "700",
     color: "#2d3436",
     marginBottom: 15,
+    marginTop: 20
   },
   nincsOra: {
     textAlign: "center",

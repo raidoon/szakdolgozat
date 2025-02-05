@@ -83,6 +83,7 @@ const Tanulo_BejelentkezesUtan = ({ navigation, route }) => {
         //tabBarActiveTintColor: "#0077B6", //kékeszöld
         //tabBarActiveTintColor: "#5c4ce3", // sötét lila
         tabBarActiveTintColor: "#6A5AE0", //árnyalatnyival világosabb lila
+        //tabBarActiveTintColor: '#FF6B6B',
         //tabBarActiveTintColor: "tomato",
         //tabBarActiveTintColor: "#fff",
         //tabBarActiveTintColor: '#3BC14A', // zöld
