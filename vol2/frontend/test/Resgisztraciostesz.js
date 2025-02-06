@@ -6,6 +6,7 @@ import {
   Alert,
   TouchableOpacity,
   StyleSheet,
+  BackHandler,
 } from "react-native";
 import Ripple from "react-native-material-ripple";
 import { Octicons, Ionicons } from "@expo/vector-icons";
@@ -26,27 +27,31 @@ export default function Regisztracio({ navigation }) {
   const [email, setEmail] = useState("");
   const [nev, setNev] = useState("");
   const [jelszo, setJelszo] = useState("");
-  const [telefonszam, setTelefonszam] = useState("");
-  const [telefonszamHiba, setTelefonszamHiba] = useState(false); // Hibajelzés
-  const [telefonbaKattintas, setTelefonbaKattintas] = useState(false);
   const [joaJelszo, setJoaJelszo] = useState("");
   const [jelszoMutatasa, setJelszoMutatasa] = useState(false);
   const [masodikJelszoMutatasa, setMasodikJelszoMutatasa] = useState(false);
   const [tanulo, setTanulo] = useState(false);
   const [oktato, setOktato] = useState(false);
+  const [telefonszam, setTelefonszam] = useState(""); // A beírt telefonszám
+  const [telefonszamHiba, setTelefonszamHiba] = useState(false); // Hibajelzés
+  const [isFocused, setIsFocused] = useState(false); // Képviseli, hogy fókuszálva van a mező
 
   //------------------------------- DROPDOWN
   const [kinyitDropdown, setKinyitDropdown] = useState(false);
-  //------------------------------- TELEFONSZÁM ELLENŐRZÉS
-  const handleTelefonszamChange = (karakter) => {
-    let csakSzam = karakter.replace(/[^0-9]/g, "");
-    if (csakSzam.lenght > 9) {
-      csakSzam = csakSzam.slice(0, 9);
+  //------------------------------- HIBÁK
+  const handleTelefonszamChange = (text) => {
+    // Remove the "+36" prefix if it exists in the text and only allow 9 digits.
+    let cleanedText = text.replace(/[^0-9]/g, ""); // Only allow digits
+
+    // Limit the input to 9 digits (max phone number length)
+    if (cleanedText.length > 9) {
+      cleanedText = cleanedText.slice(0, 9);
     }
-    else{
-      setTelefonszamHiba(true);
-    }
-    setTelefonszam(csakSzam);
+
+    // Set error flag if the number is less than 9 digits
+    setTelefonszamHiba(cleanedText.length < 9);
+
+    setTelefonszam(cleanedText); // Update the phone number
   };
 
   const Regisztralas = async () => {
@@ -119,6 +124,14 @@ export default function Regisztracio({ navigation }) {
       }
     };
     fetchData();
+    const backAction = () => true; // Megakadályozza a visszalépést
+
+    const backHandler = BackHandler.addEventListener(
+      "hardwareBackPress",
+      backAction
+    );
+
+    return () => backHandler.remove(); // Eltávolítás, ha a komponens elhagyja a képernyőt
   }, []);
 
   return (
@@ -174,26 +187,25 @@ export default function Regisztracio({ navigation }) {
       </View>
 
       <View style={styles.container}>
-        <View style={[styles.inputWrapper, telefonszamHiba && { borderColor: "red" }]}>
+        <View style={styles.inputWrapper}>
           <Ionicons name="call-outline" size={20} color="#FF6C00" />
           <TextInput
-            style={[styles.input]}
+            style={[
+              styles.input,
+              telefonszamHiba && { borderColor: "red" }, // Red border if there's an error
+            ]}
             placeholder="Telefonszám"
             keyboardType="numeric"
-            value={telefonszam}
+            value={`+36 ${telefonszam}`} // Only add +36 here to the display
             onChangeText={handleTelefonszamChange}
-            maxLength={11}
-            onFocus={() => {
-              setTelefonbaKattintas(true);
-              
-            }}
-            onBlur={() => setTelefonbaKattintas(false)}
+            maxLength={12} // Allow max 12 characters (+36 + 9 digits)
           />
         </View>
-        {/*üzenet ha a telefonszám kevesebb mint 9 karakter!*/}
-        {telefonszamHiba && telefonbaKattintas && (
-          <Text style={styles.hibasTelefonszam}>
-            Hibás telefonszám! Kérjük adjon meg 11 számjegyet.
+
+        {/* Error message if the number is less than 9 digits */}
+        {telefonszamHiba && (
+          <Text style={styles.errorText}>
+            Hibás telefonszám! Kérlek, adj meg 9 számjegyet.
           </Text>
         )}
       </View>
@@ -280,13 +292,6 @@ export default function Regisztracio({ navigation }) {
 }
 
 const styles = StyleSheet.create({
-  hibasTelefonszam: {
-    color: "red",
-    fontSize: 12,
-    marginBottom: 15,
-    marginTop: 0,
-    textAlign: 'center'
-  },
   inputWrapper: {
     flexDirection: "row",
     alignItems: "center",

@@ -6,6 +6,7 @@ import {
   Alert,
   TouchableOpacity,
   StyleSheet,
+  BackHandler
 } from "react-native";
 import Styles from "../../Styles";
 import { Octicons, Ionicons } from "@expo/vector-icons";
@@ -15,6 +16,7 @@ import Ipcim from "../../Ipcim";
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const LoginScreen = ({ navigation }) => {
+  
   const [felhasznalo_email, setFelhasznaloEmail] = useState('');
   const [felhasznalo_jelszo, setFelhasznaloJelszo] = useState('');
 
@@ -36,6 +38,12 @@ const LoginScreen = ({ navigation }) => {
       }
     };
     bejelentkezesEllenorzes();
+    const backAction = () => true; // Megakadályozza a visszalépést
+    const backHandler = BackHandler.addEventListener(
+      'hardwareBackPress',
+      backAction
+    );
+    return () => backHandler.remove(); // Eltávolítás, ha a komponens elhagyja a képernyőt
   }, []);
 
   const bejelentkeztetes = async () => {

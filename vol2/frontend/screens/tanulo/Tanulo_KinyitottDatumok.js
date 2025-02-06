@@ -1,5 +1,5 @@
 import React from "react";
-import { View, Text, TouchableOpacity } from "react-native";
+import { View, Text, TouchableOpacity, StyleSheet } from "react-native";
 import { Calendar } from "react-native-calendars";
 import { ScrollView } from "react-native-gesture-handler";
 import Ionicons from "react-native-vector-icons/Ionicons";
@@ -71,24 +71,24 @@ const TanuloKinyitottDatumok = ({
           markedDates={megjeloltNapok()}
           locale={"hu"}
         />
-      </View>
-      {/*--------------------------------- DÁTUM KI BE NYITOGATÓS GOMB ---------------------------------*/}
-      <View >
-        
-      <TouchableOpacity onPress={naptarToggle}>
-        {naptarLenyitas ? (
-          <View style={Styles.naptarNyitogatoGombView}>
-            <Text style={{color:'black', fontSize: 16 }}>Naptár becsukása</Text>
-            <Ionicons name="chevron-up-outline" size={30} color="black" />
-          </View>
-        ) : (
-          <View style={Styles.naptarNyitogatoGombView}>
-            <Text style={{color:'#fff',}}>Naptár kinyitása</Text>
-            <Ionicons name="chevron-down-outline" size={30} color="white" />
-          </View>
-        )}
-      </TouchableOpacity>
-      </View>
+      
+       {/*--------------------------------- DÁTUM KI BE NYITOGATÓS GOMB ---------------------------------*/}
+       <TouchableOpacity onPress={naptarToggle}>
+          {naptarLenyitas ? (
+            <View style={Styles.naptarNyitogatoGombView}>
+              <Text style={{ color: "black", fontSize: 16 }}>
+                Naptár becsukása
+              </Text>
+              <Ionicons name="chevron-up-outline" size={30} color="black" />
+            </View>
+          ) : (
+            <View style={Styles.naptarNyitogatoGombView}>
+              <Text style={{ color: "#fff" }}>Naptár kinyitása</Text>
+              <Ionicons name="chevron-down-outline" size={30} color="white" />
+            </View>
+          )}
+        </TouchableOpacity>
+        </View>
       {/*--------------------------------- AZ ÖSSZES ÓRA KIÍRATÁSA ---------------------------------*/}
       {orakLista
         .sort(
@@ -122,10 +122,7 @@ const TanuloKinyitottDatumok = ({
           return (
             <View
               key={item.ora_id}
-              style={[
-                styles.OraView,
-                { backgroundColor: hatterszinAzOraknak },
-              ]}
+              style={[styles.OraView, { backgroundColor: hatterszinAzOraknak }]}
             >
               <Text style={styles.eventTitle}>{`${honapNap}`}</Text>
               <Text style={styles.eventTime}>{` ${oraPerc}`}</Text>
@@ -135,4 +132,9 @@ const TanuloKinyitottDatumok = ({
     </ScrollView>
   );
 };
+const styles = StyleSheet.create({
+  kalendar:{
+    marginTop: 0
+  }
+})
 export default TanuloKinyitottDatumok;

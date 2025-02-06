@@ -227,8 +227,6 @@ const Tanulo_Datumok = ({ atkuld }) => {
         <RefreshControl refreshing={frissites} onRefresh={frissitesKozben} />
       }
     >
-      
-
       {/* ------------------------------ BEZÁRT EGY SOROS NAPTÁR NÉZET -------------------------------------- */}
       {!naptarLenyitas && (
         <View>
@@ -305,39 +303,43 @@ const Tanulo_Datumok = ({ atkuld }) => {
               </TouchableOpacity>
             </View>
           </View>
-          {/*------------------------------ KÖVETKEZŐ ÓRA BUBORÉK !!! --------------------------*/}
-      <View style={styles.oraContainer}>
-      <View
-        style={{
-          flexDirection: "row",
-          alignItems: "center",
-          justifyContent: "space-between",
-          width: "100%",
-          minHeight: 50,
-        }}
-      >
-        <View>
-          <Text style={styles.oraTitle}>Következő óra:</Text>
-          <Text style={styles.oraOsszeg}>
-            {koviOra.length > 0
-              ? koviOraFormazasa(koviOra[0].ora_datuma)
-              : "Egyelőre még nincs beírva következő óra!"}
-          </Text>
-        </View>
-      </View>
-    </View>
           {/*------------------------------ NAPTÁR KI BE NYITÓS GOMB !!! --------------------------*/}
           <TouchableOpacity onPress={naptarToggle}>
             {naptarLenyitas ? (
-              <View style={styles.kibenyitogomb}>
-                <Ionicons name="chevron-up-outline" size={30} color="white" />
+              <View style={Styles.naptarNyitogatoGombView}>
+                <Text style={{ color: "black", fontSize: 16 }}>
+                  Naptár becsukása
+                </Text>
+                <Ionicons name="chevron-up-outline" size={30} color="black" />
               </View>
             ) : (
-              <View style={styles.kibenyitogomb}>
-                <Ionicons name="chevron-down-outline" size={30} color="white" />
+              <View style={Styles.naptarNyitogatoGombView}>
+                <Text style={{ color: "black", fontSize: 16 }}>Naptár kinyitása</Text>
+                <Ionicons name="chevron-down-outline" size={30} color="black" />
               </View>
             )}
           </TouchableOpacity>
+          {/*------------------------------ KÖVETKEZŐ ÓRA BUBORÉK !!! --------------------------*/}
+          <View style={styles.oraContainer}>
+            <View
+              style={{
+                flexDirection: "row",
+                alignItems: "center",
+                justifyContent: "space-between",
+                width: "100%",
+                minHeight: 50,
+              }}
+            >
+              <View>
+                <Text style={styles.oraTitle}>Következő óra:</Text>
+                <Text style={styles.oraOsszeg}>
+                  {koviOra.length > 0
+                    ? koviOraFormazasa(koviOra[0].ora_datuma)
+                    : "Egyelőre még nincs beírva következő óra!"}
+                </Text>
+              </View>
+            </View>
+          </View>
 
           {/*------------------------------ AZ ÓRÁK FELSOROLÁSA --------------------------*/}
           {orakLista.some((item) => {
@@ -352,9 +354,11 @@ const Tanulo_Datumok = ({ atkuld }) => {
             <Text style={styles.tranzakcioTitle}>
               Órák a kiválaszott napon:
             </Text> // itt íródik ki a szöveg, ha van óra
-          ) :  <Text style={styles.tranzakcioTitle}>
-          Órák a kiválaszott napon:
-        </Text>}
+          ) : (
+            <Text style={styles.tranzakcioTitle}>
+              Órák a kiválaszott napon:
+            </Text>
+          )}
           {/* Az órák listázása */}
           {orakLista.some((item) => {
             const date = new Date(item.ora_datuma);
@@ -395,7 +399,9 @@ const Tanulo_Datumok = ({ atkuld }) => {
                       <Text style={styles.oraBaloldal}>{`${honap}`}</Text>
                       <Text style={styles.oraBaloldal}>{`${nap}`}</Text>
                     </View>
-                    <Text styles={styles.oraKozepsoResz}>{`${oraTipusSzoveg}`}</Text>
+                    <Text
+                      styles={styles.oraKozepsoResz}
+                    >{`${oraTipusSzoveg}`}</Text>
                     <Text style={styles.oraJobbOldal}>{`${oraPerc}`}</Text>
                   </View>
                 );
@@ -452,7 +458,7 @@ const styles = StyleSheet.create({
     textAlign: "center",
     marginBottom: 20,
     //color: "#4DA167", //zöld
-    color: '#6A5AE0' //lila
+    color: "#6A5AE0", //lila
   },
   tranzakcioTitle: {
     fontSize: 18,
@@ -465,7 +471,9 @@ const styles = StyleSheet.create({
     height: 120,
     paddingVertical: 10,
     paddingHorizontal: 10,
-    borderRadius: 15,
+    //borderRadius: 15,
+    borderTopRightRadius: 15,
+    borderTopLeftRadius: 15,
     elevation: 5, // Árnyék Androidos telón
     shadowColor: "#000",
     shadowOffset: { width: 0, height: 2 },
@@ -517,7 +525,7 @@ const styles = StyleSheet.create({
     color: "#333",
   },
   kivalasztottSzoveg: {
-    color: "#FFFFFF", 
+    color: "#FFFFFF",
   },
   vanAznapOra: {
     borderBottomWidth: 4,
@@ -602,7 +610,7 @@ const styles = StyleSheet.create({
     color: "#888",
     fontStyle: "italic",
     marginTop: 20,
-    fontSize: 16
+    fontSize: 16,
   },
   kibenyitogomb: {
     alignSelf: "center",
@@ -610,7 +618,7 @@ const styles = StyleSheet.create({
     padding: 10,
     //backgroundColor: "#4A4AFC",
     //backgroundColor: "#4DA167",
-    backgroundColor:'#ccccff',
+    backgroundColor: "#ccccff",
     borderRadius: 30,
     alignItems: "center",
     textAlign: "center",
@@ -630,7 +638,7 @@ const styles = StyleSheet.create({
     elevation: 3,
     marginRight: 0,
     marginLeft: 0,
-    marginTop: 20
+    marginTop: 20,
   },
   oraTitle: {
     fontSize: 16,
