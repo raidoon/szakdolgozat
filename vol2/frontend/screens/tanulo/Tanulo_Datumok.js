@@ -130,16 +130,12 @@ const Tanulo_Datumok = ({ atkuld }) => {
           });
           const oraResponse = await ora.json();
           setKoviOra(oraResponse);
-          //console.log("következő óra: ", oraResponse);
         }
       }
     } catch (err) {
       setHiba(err.message);
     } finally {
       setBetolt(false);
-      console.log(
-        "tanulo_datumok screen --> az adatok betöltése hiba nélkül lefutott"
-      );
     }
   };
   useEffect(() => {
@@ -314,7 +310,9 @@ const Tanulo_Datumok = ({ atkuld }) => {
               </View>
             ) : (
               <View style={Styles.naptarNyitogatoGombView}>
-                <Text style={{ color: "black", fontSize: 16 }}>Naptár kinyitása</Text>
+                <Text style={{ color: "black", fontSize: 16 }}>
+                  Naptár kinyitása
+                </Text>
                 <Ionicons name="chevron-down-outline" size={30} color="black" />
               </View>
             )}
@@ -409,9 +407,9 @@ const Tanulo_Datumok = ({ atkuld }) => {
             })
           ) : (
             <Text style={styles.nincsOra}>
-              {kivalasztottDatum.getDate() <= 5
-                ? // Ha a nap kisebb vagy egyenlő mint 5
-                  `${kivalasztottDatum.getDate()}${
+              {kivalasztottDatum.getDate() <= 5 &&
+              kivalasztottDatum.getDate() >= new Date().getDate()
+                ? `${kivalasztottDatum.getDate()}${
                     [1, 4, 5, 21, 31].includes(kivalasztottDatum.getDate() % 10)
                       ? ".-én"
                       : [2, 3, 22, 23].includes(
@@ -420,8 +418,9 @@ const Tanulo_Datumok = ({ atkuld }) => {
                       ? ".-án"
                       : ".-án"
                   } egyelőre üres a napod, de ne izgulj, biztosan jön majd valami! 😎✨`
-                : // Ha a nap nagyobb mint 5
-                  `${kivalasztottDatum.getDate()}${
+                : kivalasztottDatum.getDate() > 5 &&
+                  kivalasztottDatum.getDate() >= new Date().getDate()
+                ? `${kivalasztottDatum.getDate()}${
                     [1, 2, 4, 5, 7, 9, 10, 21, 31].includes(
                       kivalasztottDatum.getDate() % 10
                     ) || kivalasztottDatum.getDate() === 10
@@ -429,7 +428,16 @@ const Tanulo_Datumok = ({ atkuld }) => {
                       : [3, 22, 23].includes(kivalasztottDatum.getDate() % 10)
                       ? ".-án"
                       : ".-án"
-                  } most még nincs órád, de ne aggódj, biztosan be lesz pótolva! 😊👌`}
+                  } nincs órád, úgyhogy ne felejts el pihenni! 😊👌`
+                : `${kivalasztottDatum.getDate()}${
+                    [1, 4, 5, 21, 31].includes(kivalasztottDatum.getDate() % 10)
+                      ? ".-én"
+                      : [2, 3, 22, 23].includes(
+                          kivalasztottDatum.getDate() % 10
+                        )
+                      ? ".-án"
+                      : ".-án"
+                  } nem volt órád.`}
             </Text>
           )}
         </View>

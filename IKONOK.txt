@@ -13,3 +13,16 @@ Key points about CC0:
 Commercial Use: You can use the icon in any project, including paid or commercial apps.
 No Attribution Required: You're not required to give credit to the author, though it's always appreciated.
 Modification: You can modify the icon if needed, and use it without restrictions.
+
+------
+2. ELFOGADVA IKON : https://iconduck.com/emojis/47308/check-mark-button
+LICENSE: Creative Commons Attribution 4.0 International  
+--
+the icon is under  (CC BY 4.0)
+---
+Key points about CC BY 4.0:
+This licence lets others distribute, remix, tweak, and build upon your work, even commercially, as long as they credit you for the original creation.
+Attribution: You must give appropriate credit to the original author(s) of the icon. This typically involves listing their name, a link to the license, and a statement indicating if any changes were made to the original.
+Commercial Use: The CC BY 4.0 license explicitly allows commercial use, meaning you can use the icon in a paid app without any restrictions regarding monetization.
+Modifications: You can modify the icon if needed, but you must clearly indicate that changes were made (if any).
+License Link: You need to include a link to the full license (e.g., the URL to the CC BY 4.0 license text).

@@ -21,7 +21,6 @@ const Tanulo_BejelentkezesUtan = ({ navigation, route }) => {
     try {
       const adatok = await AsyncStorage.getItem("bejelentkezve");
       if (adatok) {
-        console.log(adatok);
         const user = JSON.parse(adatok);
         const response = await fetch(Ipcim.Ipcim + "/sajatAdatokT", {
           method: "POST",

@@ -14,7 +14,6 @@ import Penz from '../../assets/bitcoin-cash-money.svg';
 
 const Tanulo_Kezdolap = ({ atkuld }) => {
   const navigation = useNavigation();
-  console.log("Atküldött adat a bejelentkezés után: ", atkuld);
   const [sumBefizetes, setSumBefizetes] = useState([]);
   const [sumTartozas, setSumTartozas] = useState([]);
   const [befizetLista, setBefizetLista] = useState([]);
