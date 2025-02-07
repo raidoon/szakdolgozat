@@ -4,25 +4,25 @@ import { Ionicons } from "@expo/vector-icons";
 import { LinearGradient } from "expo-linear-gradient";
 
 const AutosiskolanakAkarokFizetni = ({ navigation }) => {
-  const [amount, setAmount] = useState("");
+  const [osszeg, setOsszeg] = useState("");
 
   const handlePayment = () => {
     // Handle payment logic here
-    alert(`Fizetés elküldve: ${amount} Ft`);
+    alert(`Fizetés elküldve: ${osszeg} Ft`);
   };
 
   return (
     <LinearGradient colors={["#ffffff", "#f0f4ff"]} style={styles.container}>
       <ScrollView contentContainerStyle={styles.scrollContainer}>
         <Text style={styles.title}>Autósiskolának fizetés</Text>
-        <Text style={styles.subtitle}>Add meg az összeget, amit szeretnél fizetni az autósiskolának.</Text>
+        <Text style={styles.subtitle}>Add meg az összeget, amit kifizettél az autósiskolának.</Text>
 
         <TextInput
           style={styles.input}
           placeholder="Összeg (Ft)"
           keyboardType="numeric"
-          value={amount}
-          onChangeText={setAmount}
+          value={osszeg}
+          onChangeText={setOsszeg}
         />
 
         <TouchableOpacity style={styles.payButton} onPress={handlePayment}>

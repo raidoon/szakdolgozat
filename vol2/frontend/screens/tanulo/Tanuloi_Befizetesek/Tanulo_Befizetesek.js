@@ -16,7 +16,8 @@ import Elfogadva from "../../../assets/elfogadva.svg";
 import Elutasitva from "../../../assets/elutasitva.svg";
 import Elfogadasravar from "../../../assets/elfogadasravar.svg";
 
-const Tanulo_Befizetesek = ({ atkuld }) => {
+const Tanulo_Befizetesek = ({route } ) => {
+  const { atkuld } = route.params;
   const [frissites, setFrissites] = useState(false); //https://reactnative.dev/docs/refreshcontrol
   const [befizetLista, setBefizetLista] = useState([]);
   const [betolt, setBetolt] = useState(true);
@@ -227,8 +228,12 @@ const Tanulo_Befizetesek = ({ atkuld }) => {
       }
     >
       {/* --------------------------------------SZÁMOLÓGÉP---------------------------------------- */}
+      {/* Figyelmeztető szöveg megváltoztatása ||függ: számológép látható-e */}
+      {/*
+      
+      
       <View style={styles.container}>
-        {/* Figyelmeztető szöveg megváltoztatása ||függ: számológép látható-e */}
+        
         {szamologepLathatoe ? (
           <View style={styles.container2}>
             <TouchableOpacity onPress={osszegMegnyomas}>
@@ -281,6 +286,8 @@ const Tanulo_Befizetesek = ({ atkuld }) => {
 
         {szamologepLathatoe && szamologepBetoltes()}
       </View>
+      
+      */}
 
       {/* --------------------------------------LEGUTÓBBI TRANZAKCIÓS RÉSZ---------------------------------------- */}
       {szamologepLathatoe ? null : (
@@ -296,7 +303,8 @@ const Tanulo_Befizetesek = ({ atkuld }) => {
             </View>
           ) : (
             <View>
-              <Text style={styles.tranzakcioTitle}>Legutóbbi Tranzakciók</Text>
+              {/* <Text style={styles.tranzakcioTitle}>Legutóbbi Tranzakciók</Text> */}
+              
               {befizetLista
                 .sort(
                   (a, b) =>

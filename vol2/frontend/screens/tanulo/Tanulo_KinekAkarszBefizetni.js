@@ -1,16 +1,25 @@
 import React from "react";
-import { View, Text, TouchableOpacity, StyleSheet, ScrollView } from "react-native";
+import {
+  View,
+  Text,
+  TouchableOpacity,
+  StyleSheet,
+  ScrollView,
+} from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import { LinearGradient } from "expo-linear-gradient";
 import { useNavigation } from "@react-navigation/native";
 import OktatonakAkarokFizetni from "./Tanuloi_Befizetesek/OktatonakAkarokFizetni";
-const Tanulo_KinekAkarszBefizetni = () => {
+import Tanulo_Befizetesek from "./Tanuloi_Befizetesek/Tanulo_Befizetesek";
+const Tanulo_KinekAkarszBefizetni = ({atkuld}) => {
   const navigation = useNavigation();
   return (
     <LinearGradient colors={["#ffffff", "#f0f4ff"]} style={styles.container}>
       <ScrollView contentContainerStyle={styles.scrollContainer}>
-        <Text style={styles.title}>Kinek szeretnél befizetni?</Text>
-        <Text style={styles.subtitle}>Válaszd ki, hogy kinél fizetted be a tanóra/vizsga díjat.</Text>
+        <Text style={styles.title}>Kinél fizettél?</Text>
+        <Text style={styles.subtitle}>
+          Válaszd ki, hogy kinél fizetted be a tanóra vagy a vizsga díját.
+        </Text>
 
         {/* FIZETÉS AZ OKTATÓNAK */}
         <TouchableOpacity
@@ -18,12 +27,16 @@ const Tanulo_KinekAkarszBefizetni = () => {
           onPress={() =>
             navigation.navigate("Tanuló Pénzügyek", {
               screen: "OktatonakAkarokFizetni",
-            })}
+            })
+          }
         >
           {/*<LinearGradient colors={["#6a11cb", "#2575fc"]} style={styles.gradient}>*/}
-          <LinearGradient colors={["#6A5AE0", "#6a11cb"]} style={styles.gradient}>
+          <LinearGradient
+            colors={["#6A5AE0", "#6a11cb"]}
+            style={styles.gradient}
+          >
             <Ionicons name="person" size={30} color="#fff" />
-            <Text style={styles.buttonText}>Oktatónak fizetek</Text>
+            <Text style={styles.buttonText}>Oktatónak fizettem</Text>
           </LinearGradient>
         </TouchableOpacity>
 
@@ -33,24 +46,35 @@ const Tanulo_KinekAkarszBefizetni = () => {
           onPress={() =>
             navigation.navigate("Tanuló Pénzügyek", {
               screen: "AutosiskolanakAkarokFizetni",
-            })}
+            })
+          }
         >
           {/*  <LinearGradient colors={["#ff7e5f", "#feb47b"]} style={styles.gradient}> */}
-          <LinearGradient colors={["#ff7e5f", "#FF6B6B"]} style={styles.gradient}>
+          <LinearGradient
+            colors={["#ff7e5f", "#FF6B6B"]}
+            style={styles.gradient}
+          >
             <Ionicons name="school" size={30} color="#fff" />
-            <Text style={styles.buttonText}>Autósiskolának fizetek</Text>
+            <Text style={styles.buttonText}>Autósiskolának fizettem</Text>
           </LinearGradient>
         </TouchableOpacity>
 
         {/* FIZETÉSI ELŐZMÉNYEK AZ ÖSSZES BEFIZETÉSHEZ !!! */}
         <TouchableOpacity
           style={styles.historyButton}
-          onPress={() =>
-            navigation.navigate("Tanuló Pénzügyek", {
-              screen: "FizetesiElozmenyek",
-            })}
+          //onPress={() => navigation.navigate("Tanuló Pénzügyek", {screen: "FizetesiElozmenyek",})}
+          onPress={() => navigation.navigate("Tanuló Pénzügyek", {
+            screen: "Tanulo_Befizetesek", 
+            params: { atkuld: atkuld }
+          })}
+          
         >
-          <Ionicons name="time" size={24} color="#2575fc" />
+          <Ionicons
+            name="time"
+            size={24}
+            color="#6A5AE0"
+            //color="#2575fc"
+          />
           <Text style={styles.historyButtonText}>Fizetési előzmények</Text>
         </TouchableOpacity>
       </ScrollView>
@@ -117,7 +141,8 @@ const styles = StyleSheet.create({
   },
   historyButtonText: {
     fontSize: 16,
-    color: "#2575fc",
+    //color: "#2575fc",
+    color: "#6A5AE0",
     marginLeft: 10,
   },
 });

@@ -70,6 +70,7 @@ function TanuloPenzugyStack(){
       <Stack.Screen name="AutosiskolanakAkarokFizetni" options={{title:"Befizetés az autósiskola számára"}} component={AutosiskolanakAkarokFizetni}/>
       <Stack.Screen name="OktatonakAkarokFizetni" options={{title:"Befizetés az oktató számára"}} component={OktatonakAkarokFizetni}/>
       <Stack.Screen name="FizetesiElozmenyek" options={{title:"Fizetési előzmények"}} component={FizetesiElozmenyek}/>
+      <Stack.Screen name="Tanulo_Befizetesek" options={{title:"Fizetési előzmények"}} component={Tanulo_Befizetesek}/>
     </Stack.Navigator>
   );
 }
