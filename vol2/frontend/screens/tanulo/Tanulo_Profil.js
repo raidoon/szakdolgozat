@@ -1,173 +1,132 @@
 import React from "react";
-import {
-  View,
-  Text,
-  StyleSheet,
-  Alert
-} from "react-native";
+import { View, Text, StyleSheet, Alert } from "react-native";
 import Ripple from "react-native-material-ripple";
 import Styles from "../../Styles";
 import Ionicons from "react-native-vector-icons/Ionicons";
 import { useNavigation } from "@react-navigation/native";
-import AsyncStorage from '@react-native-async-storage/async-storage';
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
-const Tanulo_Profil = ({atkuld}) => {
+const Tanulo_Profil = ({ atkuld }) => {
   const navigation = useNavigation();
 
   const kijelentkeztetesAlert = () => {
-    Alert.alert('Figyelem!','Biztosan ki szeretne jelentkezni?', [
+    Alert.alert("Figyelem!", "Biztosan ki szeretne jelentkezni?", [
       {
-        text: 'Mégse',
-        onPress: () => console.log('mégse megnyomva'),
-        style: 'cancel',
+        text: "Mégse",
+        onPress: () => console.log("mégse megnyomva"),
+        style: "cancel",
       },
       {
-        text: 'Igen',
-        onPress: () => kijelentkeztetes()
-      }
-    ])
+        text: "Igen",
+        onPress: () => kijelentkeztetes(),
+      },
+    ]);
   };
+
   const kijelentkeztetes = async () => {
-    await AsyncStorage.removeItem('bejelentkezve');
-    navigation.navigate('Bejelentkezes');
+    await AsyncStorage.removeItem("bejelentkezve");
+    navigation.navigate("Bejelentkezes");
   };
 
   return (
-    <View style={styles.default}>
-      <View >
-        <Text style={{ textAlign: "center" }}>felhasználó profilkép?</Text>
+    <View style={styles.container}>
+      <View style={styles.profileHeader}>
+        <Text style={styles.profileImagePlaceholder}>felhasználó profilkép?</Text>
+        <Text style={styles.profileName}>{atkuld.tanulo_neve}</Text>
+        <Text style={styles.profileEmail}>{atkuld.felhasznalo_email}</Text>
       </View>
 
-      <View>
-        <Text style={[Styles.focim,{textAlign:'center'}]}>{atkuld.tanulo_neve}</Text>
-        <Text style={[Styles.alcim,{textAlign:'center'}]}>{atkuld.felhasznalo_email}</Text>
-      </View>
-
-      <View style={Styles.profil_gombDiv}> {/** SZEMÉLYES ADATOK */}
+      <View style={styles.menuContainer}>
         <Ripple
-          rippleColor="rgb(0,0,0)"
-          rippleOpacity={0.05}
-          rippleDuration={300}
-          rippleCentered={true}
-          rippleFades={false}
-          rippleContainerBorderRadius={20}
-          style={[Styles.profileGombok, Styles.profil_gombDiv]}
-          onPress={() =>
-            navigation.navigate("Tanuló Profil", {
-              screen: "SzemelyesAdatok",
-            })
-          }
+          style={styles.menuItem}
+          onPress={() => navigation.navigate("Tanuló Profil", { screen: "SzemelyesAdatok" })}
         >
-          <View style={styles.elsoFlex}>
-            <Ionicons name="person-outline" size={25} color="green" />
-          </View>
-          <View styles={styles.masodikFlex}>
-            <Text style={{ fontSize: 20 }}>Személyes adatok </Text>
-          </View>
-          <View style={styles.harmadikFlex}>
-            <Ionicons name="chevron-forward-outline" size={25} color="gray" />
-          </View>
+          <Ionicons name="person-outline" size={24} color="#4CAF50" />
+          <Text style={styles.menuItemText}>Személyes adatok</Text>
+          <Ionicons name="chevron-forward-outline" size={24} color="#888" />
+        </Ripple>
+
+        <Ripple
+          style={styles.menuItem}
+          onPress={() => navigation.navigate("Tanuló Profil", { screen: "JelszoMegvaltoztatasa" })}
+        >
+          <Ionicons name="shield-half-outline" size={24} color="#2196F3" />
+          <Text style={styles.menuItemText}>Jelszó megváltoztatása</Text>
+          <Ionicons name="chevron-forward-outline" size={24} color="#888" />
+        </Ripple>
+
+        <Ripple
+          style={styles.menuItem}
+          onPress={() => navigation.navigate("Tanuló Profil", { screen: "Kapcsolat" })}
+        >
+          <Ionicons name="information-circle-outline" size={24} color="#333" />
+          <Text style={styles.menuItemText}>Kapcsolat</Text>
+          <Ionicons name="chevron-forward-outline" size={24} color="#888" />
         </Ripple>
       </View>
 
-      <View style={Styles.profil_gombDiv}> {/*JELSZÓ MEGVÁLTOZTATÁSA */}
-        <Ripple
-          rippleColor="rgb(0,0,0)"
-          rippleOpacity={0.05}
-          rippleDuration={300}
-          rippleCentered={true}
-          rippleFades={false}
-          rippleContainerBorderRadius={20}
-          style={[Styles.profileGombok, Styles.profil_gombDiv]}
-          onPress={() =>
-            navigation.navigate("Tanuló Profil", {
-              screen: "JelszoMegvaltoztatasa",
-            })
-          }
-        >
-          <View style={styles.elsoFlex}>
-            <Ionicons name="shield-half-outline" size={25} color="blue" />
-          </View>
-          <View styles={styles.masodikFlex}>
-            <Text style={{ fontSize: 20 }}>Jelszó megváltoztatása</Text>
-          </View>
-          <View style={styles.harmadikFlex}>
-            <Ionicons name="chevron-forward-outline" size={25} color="gray" />
-          </View>
-        </Ripple>
-      </View>
-      <View style={Styles.profil_gombDiv}> {/*KAPCSOLAT */}
-        <Ripple
-          rippleColor="rgb(0,0,0)"
-          rippleOpacity={0.05}
-          rippleDuration={300}
-          rippleCentered={true}
-          rippleFades={false}
-          rippleContainerBorderRadius={20}
-          style={[Styles.profileGombok, Styles.profil_gombDiv]}
-          onPress={() =>
-            navigation.navigate("Tanuló Profil", {
-              screen: "Kapcsolat",
-            })
-          }
-        >
-          <View style={[styles.elsoFlex]}>
-            <Ionicons
-              name="information-circle-outline"
-              size={25}
-              color="black"
-            />
-          </View>
-          <View styles={styles.masodikFlex}>
-            <Text style={{ fontSize: 20 }}>Kapcsolat</Text>
-          </View>
-          <View style={styles.harmadikFlex}>
-            <Ionicons name="chevron-forward-outline" size={25} color="gray" />
-          </View>
-        </Ripple>
-      </View>
-      <View style={Styles.profil_gombDiv}> {/*KIJELENTKEZÉS */}
-        <Ripple
-          rippleColor="rgb(0,0,0)"
-          rippleOpacity={0.05}
-          rippleDuration={300}
-          rippleCentered={true}
-          rippleFades={false}
-          rippleContainerBorderRadius={20}
-          style={[Styles.profileGombok, Styles.profil_gombDiv]}
-          onPress={kijelentkeztetesAlert}
-        >
-          <View style={styles.elsoFlex}>
-            <Ionicons name="log-out-outline" size={25} color="red" />
-          </View>
-
-          <Text style={{ fontSize: 20 }}>Kijelentkezés</Text>
-
-          <View style={[styles.harmadikFlex]}>
-            <Ionicons name="chevron-forward-outline" size={25} color="gray" />
-          </View>
-        </Ripple>
-      </View>
+      <Ripple style={styles.logoutButton} onPress={kijelentkeztetesAlert}>
+        <Text style={styles.logoutButtonText}>Kijelentkezés</Text>
+      </Ripple>
     </View>
   );
-}
+};
 
 const styles = StyleSheet.create({
-  default: {
+  container: {
     flex: 1,
-    flexDirection: "column",
-    backgroundColor: "#fff",
-    alignItems: 'center',
-    textAlign: 'center'
+    backgroundColor: "#F5F5F5",
+    padding: 20,
   },
-  elsoFlex: {
-    flex: 0,
-    marginLeft: 30,
-    marginRight: 10,
+  profileHeader: {
+    alignItems: "center",
+    marginBottom: 30,
   },
-  harmadikFlex: {
-    flex: 0,
-    marginRight: 0,
+  profileImagePlaceholder: {
+    fontSize: 16,
+    color: "#888",
+    marginBottom: 10,
+  },
+  profileName: {
+    fontSize: 24,
+    fontWeight: "bold",
+    color: "#333",
+    marginBottom: 5,
+  },
+  profileEmail: {
+    fontSize: 16,
+    color: "#888",
+  },
+  menuContainer: {
+    backgroundColor: "#FFF",
+    borderRadius: 15,
+    paddingHorizontal: 15,
+  },
+  menuItem: {
+    flexDirection: "row",
+    alignItems: "center",
+    paddingVertical: 15,
+    borderBottomWidth: 1,
+    borderBottomColor: "#EEE",
+  },
+  menuItemText: {
+    flex: 1,
+    fontSize: 18,
+    color: "#333",
+    marginLeft: 15,
+  },
+  logoutButton: {
+    backgroundColor: "#FF4444",
+    borderRadius: 25,
+    padding: 15,
+    alignItems: "center",
+    marginTop: 30,
+  },
+  logoutButtonText: {
+    fontSize: 18,
+    fontWeight: "bold",
+    color: "#FFF",
   },
 });
+
 export default Tanulo_Profil;

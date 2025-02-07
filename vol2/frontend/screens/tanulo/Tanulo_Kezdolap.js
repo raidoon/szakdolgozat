@@ -10,10 +10,10 @@ import { useNavigation } from "@react-navigation/native";
 import React, { useState, useEffect } from "react";
 import Styles from "../../Styles";
 import Ipcim from "../../Ipcim";
+import Penz from '../../assets/bitcoin-cash-money.svg';
 
 const Tanulo_Kezdolap = ({ atkuld }) => {
   const navigation = useNavigation();
-  console.log("Atküldött adat a bejelentkezés után: ", atkuld);
   const [sumBefizetes, setSumBefizetes] = useState([]);
   const [sumTartozas, setSumTartozas] = useState([]);
   const [befizetLista, setBefizetLista] = useState([]);
@@ -26,39 +26,33 @@ const Tanulo_Kezdolap = ({ atkuld }) => {
         felhasznalo_id: atkuld.felhasznalo_id,
       };
       const oraAdat = {
-        ora_diakja: atkuld.ora_diakja, 
-      }
-      if(oraAdat){
-        //---------- a következő óra időpontja
+        ora_diakja: atkuld.tanulo_id,
+      };
+      if (oraAdat) {
         const ora = await fetch(Ipcim.Ipcim + "/tanuloKovetkezoOraja", {
           method: "POST",
           body: JSON.stringify(oraAdat),
-          headers: {"Content-type": "application/json; charset=UTF-8" },
+          headers: { "Content-type": "application/json; charset=UTF-8" },
         });
         const oraResponse = await ora.json();
         setKoviOra(oraResponse);
-        console.log("következő óra: ", oraResponse);
       }
-      if (adat) {  
-        //---------- eddigi befizetések összege
+      if (adat) {
         const osszeg = await fetch(Ipcim.Ipcim + "/tanuloSUMbefizetes", {
           method: "POST",
           body: JSON.stringify(adat),
           headers: { "Content-type": "application/json; charset=UTF-8" },
         });
-        //----------- az összes eddigi befizetés listája
         const befizetesek = await fetch(Ipcim.Ipcim + "/befizetesListaT", {
           method: "POST",
           body: JSON.stringify(adat),
           headers: { "Content-type": "application/json; charset=UTF-8" },
         });
-        //----------- eddigi tartozás / elfogadásra váró SUM
-        const tartozas = await fetch(Ipcim.Ipcim + "/tanuloSUMtartozas",{
+        const tartozas = await fetch(Ipcim.Ipcim + "/tanuloSUMtartozas", {
           method: "POST",
           body: JSON.stringify(adat),
-          headers: {"Content-type": "application/json; charset=UTF-8"},
+          headers: { "Content-type": "application/json; charset=UTF-8" },
         });
-        //----------- ellenőrzések
         if (!osszeg.ok || !befizetesek.ok || !tartozas.ok) {
           throw new Error("Hiba történt a fizetések betöltésekor!");
         }
@@ -79,7 +73,6 @@ const Tanulo_Kezdolap = ({ atkuld }) => {
   useEffect(() => {
     adatokBetoltese();
   }, []);
-  //---------------------------------- ADATOK BETÖLTÉSE
   if (betolt) {
     return (
       <View style={Styles.bejelentkezes_Container}>
@@ -87,22 +80,28 @@ const Tanulo_Kezdolap = ({ atkuld }) => {
       </View>
     );
   }
-  //---------------------------------- DÁTUM FORMÁZÁSA AZ ÓRÁHOZ
   const koviOraFormazasa = (adatBresponseJSON) => {
     const datum = new Date(adatBresponseJSON);
-    // Külön formázott dátum (pl. JANUÁR 31)
     const honapNevekMagyarul = [
-      'január', 'Február', 'Március', 'Április', 'Május', 'Június',
-      'Július', 'Augusztus', 'Szeptember', 'Október', 'November', 'December'
+      "január",
+      "Február",
+      "Március",
+      "Április",
+      "Május",
+      "Június",
+      "Július",
+      "Augusztus",
+      "Szeptember",
+      "Október",
+      "November",
+      "December",
     ];
     const nap = datum.getDate();
     const honap = honapNevekMagyarul[datum.getMonth()].toUpperCase();
-    // Külön formázott idő (pl. 7:00)
     const ora = datum.getHours();
-    const perc = datum.getMinutes().toString().padStart(2, '0'); // 2 számjegyre formázva
+    const perc = datum.getMinutes().toString().padStart(2, "0");
     return `${honap} ${nap} - ${ora}:${perc} óra`;
   };
-  //-------------------------------- HIBA KEZELÉS
   if (hiba) {
     return (
       <View style={Styles.bejelentkezes_Container}>
@@ -120,42 +119,31 @@ const Tanulo_Kezdolap = ({ atkuld }) => {
       {/* ----------------------------------BEFIZETÉSEK---------------------------------------- */}
       <TouchableOpacity
         style={styles.befizetesContainer}
-        onPress={() => navigation.navigate("Tanulo_Befizetesek")}
+        onPress={() => navigation.navigate("Tanulo_KinekAkarszBefizetni")}
       >
-        <View
-          style={{
-            flexDirection: "row",
-            alignItems: "center",
-            justifyContent: "space-between",
-            width: "100%",
-          }}
-        >
+        <View style={styles.cardContent}>
           <View>
             <Text style={styles.befizetesTitle}>Eddig befizetve:</Text>
             <Text style={styles.befizetesOsszeg}>
-              {sumBefizetes[0].osszesBefizetes===null ? "0 Ft" : `${sumBefizetes[0].osszesBefizetes} Ft`}
+              {sumBefizetes[0].osszesBefizetes === null
+                ? "0 Ft"
+                : `${sumBefizetes[0].osszesBefizetes} Ft`}
             </Text>
           </View>
-          <Ionicons name="chevron-forward-outline" size={40} color="white"/>
+          <Ionicons name="chevron-forward-outline" size={30} color="#fff" />
         </View>
       </TouchableOpacity>
       {/* ----------------------------------TARTOZÁSOK---------------------------------------- */}
       <View style={styles.tartozasContainer}>
-      <View
-          style={{
-            flexDirection: "row",
-            alignItems: "center",
-            justifyContent: "space-between",
-            width: "100%",
-          }}
-        >
+        <View style={styles.cardContent}>
           <View>
             <Text style={styles.tartozasTitle}>Tartozás/elfogadásra váró befizetés:</Text>
             <Text style={styles.tartozasOsszeg}>
-              {sumTartozas[0].osszesTartozas===null ? "0 Ft" : `${sumTartozas[0].osszesTartozas} Ft`}
+              {sumTartozas[0].osszesTartozas === null
+                ? "0 Ft"
+                : `${sumTartozas[0].osszesTartozas} Ft`}
             </Text>
           </View>
-          
         </View>
       </View>
       {/* --------------------------------------KÖVETKEZŐ ÓRA---------------------------------------- */}
@@ -163,66 +151,41 @@ const Tanulo_Kezdolap = ({ atkuld }) => {
         style={styles.oraContainer}
         onPress={() => navigation.navigate("Tanulo_Datumok")}
       >
-        <View
-          style={{
-            flexDirection: "row",
-            alignItems: "center",
-            justifyContent: "space-between",
-            width: "100%",
-          }}
-        >
+        <View style={styles.cardContent}>
           <View>
-        <Text style={styles.oraTitle}>Következő óra időpontja:</Text>
-        <Text style={styles.oraOsszeg}>
-        {koviOra.length > 0 ? koviOraFormazasa(koviOra[0].ora_datuma) : "Egyenlőre még nincs beírva következő óra!"}
-          </Text>
-        </View>
-        <View styles={{marginRight: 30}}><Ionicons name="chevron-forward-outline" size={40} color="#03045e"/></View>
+            <Text style={styles.oraTitle}>Következő óra időpontja:</Text>
+            <Text style={styles.oraOsszeg}>
+              {koviOra.length > 0
+                ? koviOraFormazasa(koviOra[0].ora_datuma)
+                : "Egyelőre még nincs beírva következő óra!"}
+            </Text>
+          </View>
+          <Ionicons name="chevron-forward-outline" size={30} color="#6A5AE0" />
         </View>
       </TouchableOpacity>
       {/* --------------------------------------LEGUTÓBBI TRANZAKCIÓ---------------------------------------- */}
       <View style={styles.tranzakcioContainer}>
         <Text style={styles.tranzakcioTitle}>Legutóbbi Tranzakciók</Text>
-          {befizetLista.length===null ? (
-            <Text style={styles.nincsOra}>Egyenlőre még nem történt befizetés!</Text>
-          ):(
-            befizetLista
-          .sort(
-            (a, b) =>
-              new Date(b.befizetesek_ideje) - new Date(a.befizetesek_ideje)
-          ) //dátum szerint csökkenő sorrendbe tesszük a lista elemeit
-          .slice(0, 3) //csak az utolsó 3 befizetést akarom kiíratni, a többi majd a "Befizetéseim" fülön lesz
-          .map((item) => {
-            if (item.befizetesek_tipusID == 1) {
-              return (
-                <View
-                  style={styles.legutobbiTranzakciok}
-                  key={item.befizetesek_id}
-                >
-                  <Text style={styles.tranzakciosText}>Tanóra díj</Text>
-                  <Text style={styles.tranzakciosOsszeg}>
-                    {" "}
-                    - {item.befizetesek_osszeg} Ft
-                  </Text>
-                </View>
-              );
-            }
-            return (
-              <View
-                style={styles.legutobbiTranzakciok}
-                key={item.befizetesek_id}
-              >
-                <Text style={styles.tranzakciosText}>Vizsga díj</Text>
-                <Text style={styles.tranzakciosOsszeg}>
-                  {" "}
-                  - {item.befizetesek_osszeg} Ft
-                </Text>
-              </View>
-            );
-          })
-          )}
+        {befizetLista.length === 0 ? (
+          <View style={{alignItems: 'center'}}>
 
-        {}
+            <Penz width={100} height={100}/>
+        
+            <Text style={styles.nincsOra}>Itt fognak megjelenni a legutóbbi tranzakciók, de egyelőre még nem történt befizetés!</Text>
+          </View>
+        ) : (
+          befizetLista
+            .sort((a, b) => new Date(b.befizetesek_ideje) - new Date(a.befizetesek_ideje))
+            .slice(0, 3)
+            .map((item) => (
+              <View style={styles.legutobbiTranzakciok} key={item.befizetesek_id}>
+                <Text style={styles.tranzakciosText}>
+                  {item.befizetesek_tipusID == 1 ? "Tanóra díj" : "Vizsga díj"}
+                </Text>
+                <Text style={styles.tranzakciosOsszeg}>- {item.befizetesek_osszeg} Ft</Text>
+              </View>
+            ))
+        )}
       </View>
     </ScrollView>
   );
@@ -232,89 +195,120 @@ export default Tanulo_Kezdolap;
 const styles = StyleSheet.create({
   egeszOldal: {
     flex: 1,
-    backgroundColor: "#f5f5f5",
-    width: '100%'
+    backgroundColor: "#f8f9fa",
+    height: '100%',
+    paddingTop: 0
   },
   udvozloView: {
-    backgroundColor: "#dfe6e9", //#dfe6e9
-    padding: 20,
+    backgroundColor: "#ffffff",
+    padding: 25,
     borderBottomLeftRadius: 20,
     borderBottomRightRadius: 20,
-    alignItems: "left",
-    marginTop: 45,
+    marginBottom: 20,
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.1,
+    shadowRadius: 6,
+    elevation: 3,
+    paddingTop: 30
   },
   udvozloSzoveg: {
-    fontSize: 18,
-    color: "#636e72",
-    fontWeight: "bold",
+    fontSize: 20,
+    color: "#6A5AE0",
+    fontWeight: "600",
+    paddingTop: 20
   },
   userNev: {
-    fontSize: 22,
+    fontSize: 24,
     color: "#2d3436",
-    fontWeight: "bold",
+    fontWeight: "700",
+    marginTop: 5,
+  },
+  cardContent: {
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "space-between",
+    width: "100%",
   },
   befizetesContainer: {
-    margin: 20,
-    backgroundColor: "#023E8A", //"#8338ec", //"#5A4FCF", //#6c5ce7
-    padding: 15,
+    marginHorizontal: 20,
+    marginBottom: 15,
+    backgroundColor: "#6A5AE0",
+    padding: 20,
     borderRadius: 15,
-    alignItems: "center",
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.1,
+    shadowRadius: 6,
     elevation: 3,
   },
   befizetesTitle: {
     fontSize: 16,
     color: "#fff",
+    fontWeight: "500",
   },
   befizetesOsszeg: {
     fontSize: 24,
-    fontWeight: "bold",
+    fontWeight: "700",
     color: "#fff",
     marginTop: 5,
   },
-  tartozasContainer:{
-    marginLeft: 20,
-    marginRight: 20,
-    backgroundColor: '#0077B6',
-    padding: 15,
+  tartozasContainer: {
+    marginHorizontal: 20,
+    marginBottom: 15,
+    backgroundColor: "#FF6B6B",
+    padding: 20,
     borderRadius: 15,
-    alignItems: 'center',
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.1,
+    shadowRadius: 6,
     elevation: 3,
   },
-  tartozasTitle:{
+  tartozasTitle: {
     fontSize: 16,
-    color: '#fff',
+    color: "#fff",
+    fontWeight: "500",
   },
-  tartozasOsszeg:{
+  tartozasOsszeg: {
     fontSize: 24,
-    fontWeight: "bold",
+    fontWeight: "700",
     color: "#fff",
     marginTop: 5,
   },
   oraContainer: {
-    margin: 20,
-    backgroundColor: "#CAF0F8", //"#C49991", //"#5E7CE2", //"#A06CD5",
-    padding: 15,
+    marginHorizontal: 20,
+    marginBottom: 15,
+    backgroundColor: "#ffffff",
+    padding: 20,
     borderRadius: 15,
-    alignItems: "center",
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.1,
+    shadowRadius: 6,
     elevation: 3,
   },
   oraTitle: {
     fontSize: 16,
-    color: "#03045E",
+    color: "#6A5AE0",
+    fontWeight: "500",
   },
   oraOsszeg: {
-    fontSize: 24,
-    color: "#03045E",
-    width: "auto",
-    marginRight: 20
+    fontSize: 20,
+    color: "#2d3436",
+    fontWeight: "600",
+    marginTop: 5,
   },
   tranzakcioContainer: {
-    margin: 20,
+    marginHorizontal: 20,
+    marginBottom: 20,
   },
   tranzakcioTitle: {
     fontSize: 18,
-    fontWeight: "bold",
-    marginBottom: 10,
+    fontWeight: "700",
+    color: "#2d3436",
+    marginBottom: 15,
+    marginTop: 20
   },
   nincsOra: {
     textAlign: "center",
@@ -325,23 +319,24 @@ const styles = StyleSheet.create({
   legutobbiTranzakciok: {
     flexDirection: "row",
     justifyContent: "space-between",
-    backgroundColor: "#fff",
+    backgroundColor: "#ffffff",
     padding: 15,
     borderRadius: 10,
     marginBottom: 10,
-    elevation: 3,
     shadowColor: "#000",
+    shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.1,
-    shadowRadius: 3,
-    shadowOffset: { width: 0, height: 1 },
+    shadowRadius: 6,
+    elevation: 3,
   },
   tranzakciosText: {
     fontSize: 16,
     color: "#2d3436",
+    fontWeight: "500",
   },
   tranzakciosOsszeg: {
     fontSize: 16,
-    fontWeight: "bold",
-    color: "#d63031",
+    fontWeight: "600",
+    color: "#FF6B6B",
   },
 });
