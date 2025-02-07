@@ -25,76 +25,120 @@ function CustomCheckbox({ label, isChecked, onPress }) {
 export default function Regisztracio({ navigation }) {
   const [email, setEmail] = useState("");
   const [nev, setNev] = useState("");
+  const [tanulo, setTanulo] = useState(false);
+  const [oktato, setOktato] = useState(false);
+  //---------------------------------------------------- JELSZAVAK
   const [jelszo, setJelszo] = useState("");
-  const [telefonszam, setTelefonszam] = useState("");
-  const [telefonszamHiba, setTelefonszamHiba] = useState(false); // Hibajelzés
-  const [telefonbaKattintas, setTelefonbaKattintas] = useState(false);
   const [joaJelszo, setJoaJelszo] = useState("");
   const [jelszoMutatasa, setJelszoMutatasa] = useState(false);
   const [masodikJelszoMutatasa, setMasodikJelszoMutatasa] = useState(false);
-  const [tanulo, setTanulo] = useState(false);
-  const [oktato, setOktato] = useState(false);
-
+  const [jelszoHiba, setJelszoHiba] = useState("");
+  //---------------------------------------------------- TELEFONSZÁMOK
+  const [telefonszam, setTelefonszam] = useState("");
+  const [telefonszamHiba, setTelefonszamHiba] = useState(false); // Hibajelzés
+  const [telefonbaKattintas, setTelefonbaKattintas] = useState(false);
   //------------------------------- DROPDOWN
   const [kinyitDropdown, setKinyitDropdown] = useState(false);
+  const [ertekek, setErtekek] = useState([]);
+  const [autosiskola, setAutosiskola] = useState("");
   //------------------------------- TELEFONSZÁM ELLENŐRZÉS
-  const handleTelefonszamChange = (karakter) => {
-    let csakSzam = karakter.replace(/[^0-9]/g, "");
-    if (csakSzam.lenght > 9) {
-      csakSzam = csakSzam.slice(0, 9);
+  const handleTelefonszamChange = (text) => {
+    // Ellenőrizzük, hogy a +36 megmaradjon az elején
+    if (!text.startsWith("+36")) {
+      text = "+36" + text.replace("+36", "");
     }
-    else{
+    // Csak 9 számjegy engedélyezése a +36 után
+    const szamResz = text.slice(3).replace(/\D/g, ""); // Csak számjegyeket enged
+    if (szamResz.length <= 9) {
+      setTelefonszam("+36" + szamResz);
+    }
+    // Hiba, ha a szám hossza nem megfelelő
+    if (szamResz.length !== 9) {
       setTelefonszamHiba(true);
+    } else {
+      setTelefonszamHiba(false);
     }
-    setTelefonszam(csakSzam);
   };
-
+  //----------------------------------------- JELSZÓ ELLENŐRZÉS
+  const jelszoEllenorzes = (pass) => {
+    //legyen benne legalább 1 db nagybetű, legyen legalább 8 karakter hosszú, max 20 karakter hosszú és tartalmazzon 1 db számot is
+    const passwordRegex = /^(?=.*[A-Z])(?=.*\d)[A-Za-z\d]{8,20}$/;
+    return passwordRegex.test(pass);
+  };
+  //-------------------------------- REGISZTRÁCIÓ
   const Regisztralas = async () => {
+    let valid = true;
+    if (!jelszoEllenorzes(jelszo)) {
+      if (jelszo.length < 8) {
+        setJelszoHiba("A jelszónak legalább 8 karakter hosszúnak kell lennie!");
+        valid = false;
+      } else if (jelszo.length > 20) {
+        setJelszoHiba("A jelszó maximum 20 karakter hosszú lehet!");
+        valid = false;
+      } else {
+        setJelszoHiba(
+          "A jelszónak tartalmaznia kell legalább egy darab nagybetűt és egy darab számot."
+        );
+        valid = false;
+      }
+    } else if (jelszo !== joaJelszo) {
+      setJelszoHiba("A jelszavak nem egyeznek meg.");
+      valid = false;
+    } else {
+      setJelszoHiba("");
+    }
+    if (!handleTelefonszamChange(telefonszam)) {
+      setTelefonszamHiba("Hibás telefonszám!");
+      valid = false;
+    } else {
+      setTelefonszamHiba("");
+    }
     const tipus = tanulo ? 2 : oktato ? 1 : null;
     if (!autosiskola || !email || !jelszo || !telefonszam || !tipus || !nev) {
       Alert.alert("Kérlek, töltsd ki az összes mezőt!");
+      valid = false;
       return;
     }
     if (jelszo !== joaJelszo) {
       Alert.alert("A jelszavak nem egyeznek meg!");
+      valid = false;
       return;
     }
     if (!tanulo && !oktato) {
       Alert.alert("Kérlek, válaszd ki, hogy tanuló vagy vagy oktató!");
+      valid = false;
       return;
     }
-    try {
-      const response = await fetch(Ipcim.Ipcim + "/regisztracio", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          autosiskola,
-          email,
-          jelszo,
-          telefonszam,
-          tipus,
-          nev,
-        }),
-      });
+    if (valid) {
+      try {
+        const response = await fetch(Ipcim.Ipcim + "/regisztracio", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            autosiskola,
+            email,
+            jelszo,
+            telefonszam,
+            tipus,
+            nev,
+          }),
+        });
 
-      if (response.ok) {
-        Alert.alert("Sikeres regisztráció!");
-        navigation.replace("Bejelentkezes");
-      } else {
-        const errorMessage = await response.text();
-        Alert.alert("Hiba", errorMessage);
+        if (response.ok) {
+          Alert.alert("Sikeres regisztráció!");
+          navigation.replace("Bejelentkezes");
+        } else {
+          const errorMessage = await response.text();
+          Alert.alert("Hiba", errorMessage);
+        }
+      } catch (error) {
+        console.error(error);
+        Alert.alert("Hálózati hiba", "Kérjük, próbálkozz újra.");
       }
-    } catch (error) {
-      console.error(error);
-      Alert.alert("Hálózati hiba", "Kérjük, próbálkozz újra.");
     }
   };
-  // dropdown értékeinek tárolására
-  const [ertekek, setErtekek] = useState([]);
-  const [autosiskola, setAutosiskola] = useState("");
-
   // API hívás az autósiskolák listájához
   useEffect(() => {
     const fetchData = async () => {
@@ -174,31 +218,43 @@ export default function Regisztracio({ navigation }) {
       </View>
 
       <View style={styles.container}>
-        <View style={[styles.inputWrapper, telefonszamHiba && { borderColor: "red" }]}>
+        <View
+          style={[
+            styles.inputWrapper,
+            telefonszamHiba && { borderColor: "red" },
+          ]}
+        >
           <Ionicons name="call-outline" size={20} color="#FF6C00" />
           <TextInput
-            style={[styles.input]}
-            placeholder="Telefonszám"
+            style={styles.input}
             keyboardType="numeric"
             value={telefonszam}
             onChangeText={handleTelefonszamChange}
-            maxLength={11}
+            placeholder="Telefonszám"
+            maxLength={12} // +36 (3 karakter) + 9 számjegy
             onFocus={() => {
               setTelefonbaKattintas(true);
-              
+              if (telefonszam === "") {
+                setTelefonszam("+36");
+              }
             }}
-            onBlur={() => setTelefonbaKattintas(false)}
+            onBlur={() => {
+              setTelefonbaKattintas(false);
+              if (telefonszam === "+36") {
+                setTelefonszam("");
+              }
+            }}
           />
         </View>
-        {/*üzenet ha a telefonszám kevesebb mint 9 karakter!*/}
-        {telefonszamHiba && telefonbaKattintas && (
+        {/* Hibaüzenet, ha a telefonszám hibás */}
+        {telefonszamHiba && (
           <Text style={styles.hibasTelefonszam}>
-            Hibás telefonszám! Kérjük adjon meg 11 számjegyet.
+            Hibás telefonszám! Kérjük adjon meg 9 számjegyet a +36 után.
           </Text>
         )}
       </View>
 
-      <View style={styles.inputWrapper}>
+      <View style={[styles.inputWrapper, jelszoHiba && { borderColor: "red" }]}>
         <Octicons name="lock" size={20} color="#FF6C00" />
         <TextInput
           style={styles.input}
@@ -216,6 +272,8 @@ export default function Regisztracio({ navigation }) {
           />
         </TouchableOpacity>
       </View>
+      {/* Hibaüzenet, ha a jelszó hibás */}
+      {jelszoHiba && <Text style={styles.hibasTelefonszam}>{jelszoHiba}</Text>}
 
       <View style={styles.inputWrapper}>
         <Octicons name="lock" size={20} color="#FF6C00" />
@@ -285,7 +343,7 @@ const styles = StyleSheet.create({
     fontSize: 12,
     marginBottom: 15,
     marginTop: 0,
-    textAlign: 'center'
+    textAlign: "center",
   },
   inputWrapper: {
     flexDirection: "row",
@@ -312,7 +370,8 @@ const styles = StyleSheet.create({
     marginRight: 8,
   },
   checkedCheckbox: {
-    backgroundColor: "#000",
+    //backgroundColor: "#000",
+    backgroundColor: '#FF6C00'
   },
   label: {
     fontSize: 16,

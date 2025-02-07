@@ -1,353 +1,101 @@
-import React, { useState, useEffect } from "react";
-import {
-  View,
-  Text,
-  TextInput,
-  Alert,
-  TouchableOpacity,
-  StyleSheet,
-  BackHandler,
-} from "react-native";
-import Ripple from "react-native-material-ripple";
-import { Octicons, Ionicons } from "@expo/vector-icons";
-import Styles from "../../Styles";
-import Ipcim from "../../Ipcim";
-import DropDownPicker from "react-native-dropdown-picker";
+import React, { useState } from "react";
+import { View, Text, TextInput, TouchableOpacity, Alert } from "react-native";
+import { useNavigation } from "@react-navigation/native";
+import Styles from "../Styles";
 
-function CustomCheckbox({ label, isChecked, onPress }) {
-  return (
-    <TouchableOpacity style={styles.checkboxContainer} onPress={onPress}>
-      <View style={[styles.checkbox, isChecked && styles.checkedCheckbox]} />
-      <Text style={styles.label}>{label}</Text>
-    </TouchableOpacity>
-  );
-}
-
-export default function Regisztracio({ navigation }) {
+export default function Regisztracio() {
+  const navigation = useNavigation();
+  const [username, setUsername] = useState("");
   const [email, setEmail] = useState("");
-  const [nev, setNev] = useState("");
-  const [jelszo, setJelszo] = useState("");
-  const [joaJelszo, setJoaJelszo] = useState("");
-  const [jelszoMutatasa, setJelszoMutatasa] = useState(false);
-  const [masodikJelszoMutatasa, setMasodikJelszoMutatasa] = useState(false);
-  const [tanulo, setTanulo] = useState(false);
-  const [oktato, setOktato] = useState(false);
-  const [telefonszam, setTelefonszam] = useState(""); // A beírt telefonszám
-  const [telefonszamHiba, setTelefonszamHiba] = useState(false); // Hibajelzés
-  const [isFocused, setIsFocused] = useState(false); // Képviseli, hogy fókuszálva van a mező
+  const [phone, setPhone] = useState("");
+  const [password, setPassword] = useState("");
+  const [confirmPassword, setConfirmPassword] = useState("");
+  const [phoneError, setPhoneError] = useState("");
+  const [passwordError, setPasswordError] = useState("");
 
-  //------------------------------- DROPDOWN
-  const [kinyitDropdown, setKinyitDropdown] = useState(false);
-  //------------------------------- HIBÁK
-  const handleTelefonszamChange = (text) => {
-    // Remove the "+36" prefix if it exists in the text and only allow 9 digits.
-    let cleanedText = text.replace(/[^0-9]/g, ""); // Only allow digits
-
-    // Limit the input to 9 digits (max phone number length)
-    if (cleanedText.length > 9) {
-      cleanedText = cleanedText.slice(0, 9);
-    }
-
-    // Set error flag if the number is less than 9 digits
-    setTelefonszamHiba(cleanedText.length < 9);
-
-    setTelefonszam(cleanedText); // Update the phone number
+  const validatePhoneNumber = (number) => {
+    const phoneRegex = /^[0-9]{10}$/;
+    return phoneRegex.test(number);
   };
 
-  const Regisztralas = async () => {
-    const tipus = tanulo ? 2 : oktato ? 1 : null;
-    if (!autosiskola || !email || !jelszo || !telefonszam || !tipus || !nev) {
-      Alert.alert("Kérlek, töltsd ki az összes mezőt!");
-      return;
-    }
-    if (jelszo !== joaJelszo) {
-      Alert.alert("A jelszavak nem egyeznek meg!");
-      return;
-    }
-    if (!tanulo && !oktato) {
-      Alert.alert("Kérlek, válaszd ki, hogy tanuló vagy vagy oktató!");
-      return;
-    }
-    try {
-      const response = await fetch(Ipcim.Ipcim + "/regisztracio", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          autosiskola,
-          email,
-          jelszo,
-          telefonszam,
-          tipus,
-          nev,
-        }),
-      });
+  const validatePassword = (pass) => {
+    const passwordRegex = /^(?=.*[A-Z])(?=.*\d)[A-Za-z\d]{8,20}$/;
+    return passwordRegex.test(pass);
+  };
 
-      if (response.ok) {
-        Alert.alert("Sikeres regisztráció!");
-        navigation.replace("Bejelentkezes");
-      } else {
-        const errorMessage = await response.text();
-        Alert.alert("Hiba", errorMessage);
-      }
-    } catch (error) {
-      console.error(error);
-      Alert.alert("Hálózati hiba", "Kérjük, próbálkozz újra.");
+  const handleRegistration = () => {
+    let valid = true;
+
+    if (!validatePhoneNumber(phone)) {
+      setPhoneError("Hibás telefonszám! Kérlek, adj meg egy 10 számjegyű számot.");
+      valid = false;
+    } else {
+      setPhoneError("");
+    }
+
+    if (!validatePassword(password)) {
+      setPasswordError("A jelszónak 8-20 karakteresnek kell lennie, tartalmaznia kell legalább egy nagybetűt és egy számot.");
+      valid = false;
+    } else if (password !== confirmPassword) {
+      setPasswordError("A jelszavak nem egyeznek meg.");
+      valid = false;
+    } else {
+      setPasswordError("");
+    }
+
+    if (valid) {
+      // Ide jöhet az API hívás vagy a regisztrációs logika
+      Alert.alert("Sikeres regisztráció!");
     }
   };
-  // dropdown értékeinek tárolására
-  const [ertekek, setErtekek] = useState([]);
-  const [autosiskola, setAutosiskola] = useState("");
-
-  // API hívás az autósiskolák listájához
-  useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const response = await fetch(Ipcim.Ipcim + "/autosiskolalista");
-        const text = await response.text();
-        console.log("API válasz szövege:", text);
-        if (response.ok) {
-          const data = JSON.parse(text);
-          const dropdownData = data.map((item) => ({
-            label: item.autosiskola_nev,
-            value: item.autosiskola_id,
-          }));
-          setErtekek(dropdownData);
-        } else {
-          console.log("API válasz nem volt sikeres:", response.status);
-          Alert.alert("Hiba", "Hiba történt az adatok betöltésekor.");
-        }
-      } catch (error) {
-        console.error("Hiba történt az API híváskor:", error);
-        Alert.alert("Hálózati hiba", "Kérjük, próbálkozz újra.");
-      }
-    };
-    fetchData();
-    const backAction = () => true; // Megakadályozza a visszalépést
-
-    const backHandler = BackHandler.addEventListener(
-      "hardwareBackPress",
-      backAction
-    );
-
-    return () => backHandler.remove(); // Eltávolítás, ha a komponens elhagyja a képernyőt
-  }, []);
 
   return (
-    <View style={Styles.bejelentkezes_Container}>
-      <Text style={Styles.focim}>Regisztráció</Text>
-      <Text style={Styles.alcim}>Először add meg az adataidat</Text>
-
-      <DropDownPicker
-        min={1}
-        max={1}
-        open={kinyitDropdown}
-        value={autosiskola}
-        items={ertekek}
-        setOpen={setKinyitDropdown}
-        setValue={setAutosiskola}
-        setItems={setErtekek}
-        style={{
-          backgroundColor: "#f7f7f7",
-          color: "#FF6C00",
-          marginBottom: 15,
-        }}
-        containerStyle={{}}
-        disabledStyle={{
-          opacity: 0.5,
-        }}
-        textStyle={{
-          color: "#FF6C00",
-          textAlign: "center",
-          fontWeight: "bold",
-          fontSize: 16,
-        }}
-        placeholder="Válassz autósiskolát"
-      />
-
+    <View style={styles.container}>
+      <Text style={styles.title}>Regisztráció</Text>
       <View style={styles.inputWrapper}>
-        <Octicons name="mail" size={20} color="#FF6C00" />
         <TextInput
           style={styles.input}
-          placeholder="Email"
-          keyboardType="email-address"
+          placeholder="Felhasználónév"
+          value={username}
+          onChangeText={setUsername}
+        />
+        <TextInput
+          style={styles.input}
+          placeholder="Email cím"
           value={email}
           onChangeText={setEmail}
+          keyboardType="email-address"
         />
-      </View>
-      <View style={styles.inputWrapper}>
-        <Octicons name="person" size={20} color="#FF6C00" />
         <TextInput
           style={styles.input}
-          placeholder="Teljes név"
-          value={nev}
-          onChangeText={setNev}
+          placeholder="Telefonszám"
+          value={phone}
+          onChangeText={setPhone}
+          keyboardType="phone-pad"
         />
-      </View>
-
-      <View style={styles.container}>
-        <View style={styles.inputWrapper}>
-          <Ionicons name="call-outline" size={20} color="#FF6C00" />
-          <TextInput
-            style={[
-              styles.input,
-              telefonszamHiba && { borderColor: "red" }, // Red border if there's an error
-            ]}
-            placeholder="Telefonszám"
-            keyboardType="numeric"
-            value={`+36 ${telefonszam}`} // Only add +36 here to the display
-            onChangeText={handleTelefonszamChange}
-            maxLength={12} // Allow max 12 characters (+36 + 9 digits)
-          />
-        </View>
-
-        {/* Error message if the number is less than 9 digits */}
-        {telefonszamHiba && (
-          <Text style={styles.errorText}>
-            Hibás telefonszám! Kérlek, adj meg 9 számjegyet.
-          </Text>
-        )}
-      </View>
-
-      <View style={styles.inputWrapper}>
-        <Octicons name="lock" size={20} color="#FF6C00" />
+        {phoneError ? <Text style={styles.errorText}>{phoneError}</Text> : null}
         <TextInput
           style={styles.input}
           placeholder="Jelszó"
-          secureTextEntry={!jelszoMutatasa}
-          value={jelszo}
-          onChangeText={setJelszo}
-          maxLength={20}
+          value={password}
+          onChangeText={setPassword}
+          secureTextEntry
         />
-        <TouchableOpacity onPress={() => setJelszoMutatasa(!jelszoMutatasa)}>
-          <Ionicons
-            name={jelszoMutatasa ? "eye" : "eye-off"}
-            size={20}
-            color="#FF6C00"
-          />
-        </TouchableOpacity>
-      </View>
-
-      <View style={styles.inputWrapper}>
-        <Octicons name="lock" size={20} color="#FF6C00" />
         <TextInput
           style={styles.input}
-          placeholder="Jelszó mégegyszer"
-          secureTextEntry={!masodikJelszoMutatasa}
-          value={joaJelszo}
-          onChangeText={setJoaJelszo}
-          maxLength={20}
+          placeholder="Jelszó megerősítése"
+          value={confirmPassword}
+          onChangeText={setConfirmPassword}
+          secureTextEntry
         />
-        <TouchableOpacity
-          onPress={() => setMasodikJelszoMutatasa(!masodikJelszoMutatasa)}
-        >
-          <Ionicons
-            name={masodikJelszoMutatasa ? "eye" : "eye-off"}
-            size={20}
-            color="#FF6C00"
-          />
-        </TouchableOpacity>
+        {passwordError ? <Text style={styles.errorText}>{passwordError}</Text> : null}
       </View>
-
-      <View>
-        <CustomCheckbox
-          label="Tanuló vagyok"
-          isChecked={tanulo}
-          onPress={() => {
-            setTanulo(true);
-            setOktato(false);
-          }}
-        />
-        <CustomCheckbox
-          label="Oktató vagyok"
-          isChecked={oktato}
-          onPress={() => {
-            setOktato(true);
-            setTanulo(false);
-          }}
-        />
-      </View>
-
-      <Ripple
-        rippleColor="white"
-        rippleOpacity={0.2}
-        rippleDuration={300}
-        style={styles.signupButton}
-        onPress={Regisztralas}
-      >
-        <Text style={styles.signupButtonText}>REGISZTRÁCIÓ</Text>
-      </Ripple>
-
-      <TouchableOpacity
-        onPress={() => navigation.replace("Bejelentkezes")}
-        style={{ marginTop: 20 }}
-      >
-        <Text style={styles.bottomText}>
-          Már van fiókod? <Text style={styles.linkText}>Jelentkezz be</Text>
-        </Text>
+      <TouchableOpacity style={styles.button} onPress={handleRegistration}>
+        <Text style={styles.buttonText}>Regisztráció</Text>
+      </TouchableOpacity>
+      <TouchableOpacity onPress={() => navigation.navigate("Login")}> 
+        <Text style={styles.link}>Vissza a bejelentkezéshez</Text>
       </TouchableOpacity>
     </View>
   );
-}
-
-const styles = StyleSheet.create({
-  inputWrapper: {
-    flexDirection: "row",
-    alignItems: "center",
-    backgroundColor: "#f7f7f7",
-    borderWidth: 1,
-    borderColor: "#ccc",
-    borderRadius: 8,
-    paddingHorizontal: 10,
-    width: "100%",
-    height: 50,
-    marginBottom: 15,
-  },
-  checkboxContainer: {
-    flexDirection: "row",
-    alignItems: "center",
-    marginBottom: 10,
-  },
-  checkbox: {
-    width: 20,
-    height: 20,
-    borderWidth: 1,
-    borderColor: "#000",
-    marginRight: 8,
-  },
-  checkedCheckbox: {
-    backgroundColor: "#000",
-  },
-  label: {
-    fontSize: 16,
-  },
-  input: {
-    flex: 1,
-    marginLeft: 10,
-    fontSize: 16,
-    color: "#000",
-  },
-  signupButton: {
-    backgroundColor: "#020202",
-    paddingVertical: 12,
-    paddingHorizontal: 30,
-    borderRadius: 8,
-    width: "100%",
-    alignItems: "center",
-    marginTop: 20,
-  },
-  signupButtonText: {
-    color: "#fff",
-    fontWeight: "bold",
-    fontSize: 16,
-  },
-  bottomText: {
-    color: "#888",
-    fontSize: 14,
-  },
-  linkText: {
-    color: "#FF6C00",
-    fontWeight: "bold",
-  },
-});
+} 
