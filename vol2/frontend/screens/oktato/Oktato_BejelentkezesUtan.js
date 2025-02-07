@@ -1,7 +1,7 @@
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
-import Oktato_Kifizetesek from "./Oktato_Kifizetesek";
+import Oktato_Kifizetesek from "./Oktato_Befizetesek";
 import Oktato_Kezdolap from "./Oktato_Kezdolap";
 import Oktato_Datumok from "./Oktato_Datumok";
 import Oktato_Profil from "./Oktato_Profil";

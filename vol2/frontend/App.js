@@ -24,7 +24,7 @@ import Kapcsolat from "./screens/tanulo/ProfilScreens/Kapcsolat";
 import Oktato_BejelentkezesUtan from "./screens/oktato/Oktato_BejelentkezesUtan";
 import Oktato_Kezdolap from "./screens/oktato/Oktato_Kezdolap";
 import Oktato_Datumok from "./screens/oktato/Oktato_Datumok";
-import Oktato_Kifizetesek from "./screens/oktato/Oktato_Kifizetesek";
+import Oktato_Befizetesek from "./screens/oktato/Oktato_Befizetesek";
 import Oktato_Profil from "./screens/oktato/Oktato_Profil";
 import Oktato_Diakok from "./screens/oktato/Oktato_Diakok";
 import Oktato_TanuloReszletei from "./screens/oktato/Oktato_TanuloReszletei";
@@ -33,6 +33,17 @@ import Oktato_AktualisTanulok from "./screens/oktato/Oktato_AktualisTanulok";
 import Oktato_LevizsgazottTanulok from "./screens/oktato/Oktato_LevizsgazottTanulok";
 import Oktato_TanuloAOrak from "./screens/oktato/Oktato_TanuloAOrak";
 import Oktato_TanuloLOrak from "./screens/oktato/Oktato_TanuloLOrak";
+import Oktato_MegerositesrevaroOrak from "./screens/oktato/Oktato_MegerositesrevaroOrak";
+import Oktato_MegerositOra from "./screens/oktato/Oktato_MegerositOra";
+import Oktato_BefizetesRogzites from "./screens/oktato/Oktato_BefizetesRogzites";
+import Oktato_ATBefizetesek from "./screens/oktato/Oktato_ATBefizetesek";
+import Oktato_LTBefizetesek from "./screens/oktato/Oktato_LTBefizetesek";
+import Oktato_MegerositesrevaroFizetes from "./screens/oktato/Oktato_MegerositesrevaroFizetes";
+import Oktato_MegerositBefizetes from "./screens/oktato/Oktato_MegerositBefizetes";
+import Oktato_TanuloABefizetesek from "./screens/oktato/Oktato_TanuloABefizetesek";
+import Oktato_TanuloLBefizetesek from "./screens/oktato/Oktato_TanuloLBefizetesek";
+
+
 
 
 const Stack = createStackNavigator();
@@ -47,7 +58,7 @@ function OktatoMenuStack(){
         }}>
       
       <Stack.Screen name={"Oktato_Datumok"} component={Oktato_Datumok}/>
-      <Stack.Screen name={"Oktato_Kifizetesek"} component={Oktato_Kifizetesek}/>
+      <Stack.Screen name={"Oktato_Befizetesek"} component={Oktato_Befizetesek}/>
       <Stack.Screen name={"Oktato_Profil"} component={Oktato_Profil}/>
       <Stack.Screen name={"Oktato_Diakok"} component={Oktato_Diakok}/>
     </Stack.Navigator>
@@ -95,6 +106,15 @@ export default function App() {
         <Stack.Screen name="Oktato_LevizsgazottTanulok" component={Oktato_LevizsgazottTanulok} />
         <Stack.Screen name="Oktato_TanuloAOrak" component={Oktato_TanuloAOrak} />
         <Stack.Screen name="Oktato_TanuloLOrak" component={Oktato_TanuloLOrak} />
+        <Stack.Screen name="Oktato_MegerositesrevaroOrak" component={Oktato_MegerositesrevaroOrak} />
+        <Stack.Screen name="Oktato_MegerositOra" component={Oktato_MegerositOra} />
+        <Stack.Screen name="Oktato_BefizetesRogzites" component={Oktato_BefizetesRogzites} />
+        <Stack.Screen name="Oktato_ATBefizetesek" component={Oktato_ATBefizetesek} />
+        <Stack.Screen name="Oktato_LTBefizetesek" component={Oktato_LTBefizetesek} />
+        <Stack.Screen name="Oktato_MegerositBefizetes" component={Oktato_MegerositBefizetes} />
+        <Stack.Screen name="Oktato_MegerositesrevaroFizetes" component={Oktato_MegerositesrevaroFizetes} />
+        <Stack.Screen name="Oktato_TanuloABefizetesek" component={Oktato_TanuloABefizetesek} />
+        <Stack.Screen name="Oktato_TanuloLBefizetesek" component={Oktato_TanuloLBefizetesek} />
       </Stack.Navigator>
     </NavigationContainer>
   );

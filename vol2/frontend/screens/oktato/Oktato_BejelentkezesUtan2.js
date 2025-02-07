@@ -1,7 +1,7 @@
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
-import Oktato_Kifizetesek from "./Oktato_Kifizetesek";
+import Oktato_Befizetesek from "./Oktato_Befizetesek";
 import Oktato_Kezdolap from "./Oktato_Kezdolap";
 import Oktato_Datumok from "./Oktato_Datumok";
 import Oktato_Profil from "./Oktato_Profil";
@@ -77,7 +77,7 @@ const Oktato_BejelentkezesUtan2 = ({ navigation, route }) => {
             iconName = focused ? "person" : "person-outline";
           } else if (route.name === "Oktato_Datumok") {
             iconName = focused ? "calendar" : "calendar-outline";
-          } else if (route.name === "Oktato_Kifizetesek") {
+          } else if (route.name === "Oktato_Befizetesek") {
             iconName = focused ? "cash" : "cash-outline";
           }else if(route.name === "Oktato_Diakok"){
             iconName = focused ? "people" : "people-outline";
@@ -99,9 +99,9 @@ const Oktato_BejelentkezesUtan2 = ({ navigation, route }) => {
           children={() => <Oktato_Datumok atkuld={storedData} />} />
 
       <Tab.Screen
-          name="Oktato_Kifizetesek" 
-          options={{title:"Kifizetések"}} 
-          children={() => <Oktato_Kifizetesek atkuld={storedData} />} />
+          name="Oktato_Befizetesek" 
+          options={{title:"Befizetések"}} 
+          children={() => <Oktato_Befizetesek atkuld={storedData} />} />
 
       <Tab.Screen
             name="Oktato_Diakok" 

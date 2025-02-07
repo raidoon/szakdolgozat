@@ -571,6 +571,159 @@ app.post("/koviOra", (req, res) => {
   connection.end();
 });
 
+//---------------------------------
+app.post("/nemkeszOrak", (req, res) => {
+  console.log("hello");
+  kapcsolat();
+  connection.query(
+    `SELECT *
+    FROM tanulo_adatok AS tanulo
+    INNER JOIN oktato_adatok AS oktato
+    ON tanulo.tanulo_oktatoja = oktato.oktato_id
+    INNER JOIN ora_adatok AS ora
+    ON tanulo.tanulo_id = ora.ora_diakja
+    WHERE ora.ora_teljesitve=0 AND oktato.oktato_id=?
+    GROUP BY tanulo.tanulo_neve;`,
+    [req.body.oktato_id],
+    (err, rows, fields) => {
+      if (err) {
+        console.log(err);
+        res.status(500).send("Hiba");
+      } else {
+        console.log(rows);
+        res.status(200).send(rows);
+      }
+    }
+  );
+  connection.end();
+});
+//------------------------------------
+app.post("/egyDiakNemKeszOrai", (req, res) => {
+  console.log("hello");
+  kapcsolat();
+  connection.query(
+    `SELECT *
+    FROM felhasznaloi_adatok AS felhasznalo
+    INNER JOIN tanulo_adatok AS tanulo
+    ON felhasznalo.felhasznalo_id=tanulo.tanulo_felhasznaloID
+    INNER JOIN ora_adatok AS ora
+    ON tanulo.tanulo_id= ora.ora_diakja 
+    WHERE ora.ora_teljesitve=0 AND tanulo_felhasznaloID = ?`,
+    [req.body.tanulo_felhasznaloID],
+    (err, rows, fields) => {
+      if (err) {
+        console.log(err);
+        res.status(500).send("Hiba");
+      } else {
+        console.log(rows);
+        res.status(200).send(rows);
+      }
+    }
+  );
+  connection.end();
+});
+
+
+
+//---------------------------
+app.put('/oraMegerosit', (req, res) => {
+  kapcsolat()
+  connection.query(`
+    UPDATE ora_adatok SET ora_teljesitve=1 where ora_id = ?; 
+    `,[req.body.ora_id], (err, rows, fields) => {
+    if (err) {
+      console.log("Hiba")
+      console.log(err)
+      res.status(500).send("Hiba")
+    }
+    else {
+      console.log("Sikeres módosítás!")
+      res.status(200).send("Sikeres módosítás!")
+    }
+  })
+  connection.end()
+})
+//---------------------------
+app.post("/diakokBefizetesei", (req, res) => {
+  console.log("hello");
+  kapcsolat();
+  connection.query(
+    `SELECT *
+    FROM felhasznaloi_adatok AS felhasznalo
+    INNER JOIN tanulo_adatok AS tanulo
+    ON felhasznalo.felhasznalo_id=tanulo.tanulo_felhasznaloID
+    INNER JOIN befizetesek
+    ON tanulo.tanulo_id= befizetesek_tanuloID
+    WHERE tanulo_felhasznaloID = ?`,
+    [req.body.tanulo_felhasznaloID],
+    (err, rows, fields) => {
+      if (err) {
+        console.log(err);
+        res.status(500).send("Hiba");
+      } else {
+        console.log(rows);
+        res.status(200).send(rows);
+      }
+    }
+  );
+  connection.end();
+});
+//----------------------------------------
+app.post("/nemkeszBefizetesek", (req, res) => {
+  console.log("hello");
+  kapcsolat();
+  connection.query(
+    `SELECT *
+    FROM tanulo_adatok AS tanulo
+    INNER JOIN oktato_adatok AS oktato
+    ON tanulo.tanulo_oktatoja = oktato.oktato_id
+    INNER JOIN befizetesek
+    ON tanulo.tanulo_id = befizetesek.befizetesek_tanuloID
+    WHERE befizetesek.befizetesek_jovahagyva=0 AND oktato.oktato_id=?
+    GROUP BY tanulo.tanulo_neve;`,
+    [req.body.oktato_id],
+    (err, rows, fields) => {
+      if (err) {
+        console.log(err);
+        res.status(500).send("Hiba");
+      } else {
+        console.log(rows);
+        res.status(200).send(rows);
+      }
+    }
+  );
+  connection.end();
+});
+
+
+//-------------------------------
+app.post("/egyDiakNemKeszOrai", (req, res) => {
+  console.log("hello");
+  kapcsolat();
+  connection.query(
+    `SELECT *
+    FROM felhasznaloi_adatok AS felhasznalo
+    INNER JOIN tanulo_adatok AS tanulo
+    ON felhasznalo.felhasznalo_id=tanulo.tanulo_felhasznaloID
+    INNER JOIN befizetesek
+    ON tanulo.tanulo_id= befizetesek.befizetesek_tanuloID
+    WHERE befizetesek.befizetesek_jovahagyva=0 AND tanulo_felhasznaloID = ?`,
+    [req.body.tanulo_felhasznaloID],
+    (err, rows, fields) => {
+      if (err) {
+        console.log(err);
+        res.status(500).send("Hiba");
+      } else {
+        console.log(rows);
+        res.status(200).send(rows);
+      }
+    }
+  );
+  connection.end();
+});
+
+
+
 app.listen(port, () => {
   console.log(`Example app listening on port ${port}`);
 });
