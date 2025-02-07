@@ -119,7 +119,7 @@ const Tanulo_Kezdolap = ({ atkuld }) => {
       {/* ----------------------------------BEFIZETÉSEK---------------------------------------- */}
       <TouchableOpacity
         style={styles.befizetesContainer}
-        onPress={() => navigation.navigate("Tanulo_Befizetesek")}
+        onPress={() => navigation.navigate("Tanulo_KinekAkarszBefizetni")}
       >
         <View style={styles.cardContent}>
           <View>

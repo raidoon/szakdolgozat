@@ -8,14 +8,13 @@ import {
   Modal,
   RefreshControl,
 } from "react-native";
-import Styles from "../../Styles";
-import Ionicons from "react-native-vector-icons/Ionicons";
-import Ipcim from "../../Ipcim";
+import Styles from "../../../Styles";
+import Ipcim from "../../../Ipcim";
 import { Alert } from "react-native";
-import Penz from "../../assets/bitcoin-cash-money.svg";
-import Elfogadva from "../../assets/elfogadva.svg";
-import Elutasitva from "../../assets/elutasitva.svg";
-import Elfogadasravar from "../../assets/elfogadasravar.svg";
+import Penz from "../../../assets/bitcoin-cash-money.svg";
+import Elfogadva from "../../../assets/elfogadva.svg";
+import Elutasitva from "../../../assets/elutasitva.svg";
+import Elfogadasravar from "../../../assets/elfogadasravar.svg";
 
 const Tanulo_Befizetesek = ({ atkuld }) => {
   const [frissites, setFrissites] = useState(false); //https://reactnative.dev/docs/refreshcontrol

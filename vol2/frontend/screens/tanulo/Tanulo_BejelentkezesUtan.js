@@ -3,12 +3,13 @@ import { Text, View, Button } from "react-native";
 import Tanulo_Kezdolap from "./Tanulo_Kezdolap";
 import Tanulo_Profil from "./Tanulo_Profil";
 import Tanulo_Datumok from "./Tanulo_Datumok";
-import Tanulo_Befizetesek from "./Tanulo_Befizetesek";
+import Tanulo_Befizetesek from "./Tanuloi_Befizetesek/Tanulo_Befizetesek";
 import Ipcim from "../../Ipcim";
 import Ionicons from "react-native-vector-icons/Ionicons";
 import { useState, useEffect } from "react";
 import Styles from "../../Styles";
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import Tanulo_KinekAkarszBefizetni from "./Tanulo_KinekAkarszBefizetni";
 
 const Tab = createBottomTabNavigator();
 
@@ -74,7 +75,7 @@ const Tanulo_BejelentkezesUtan = ({ navigation, route }) => {
             iconName = focused ? "settings" : "settings-outline";
           } else if (route.name === "Tanulo_Datumok") {
             iconName = focused ? "car-sport" : "car-sport-outline";
-          } else if (route.name === "Tanulo_Befizetesek") 
+          } else if (route.name === "Tanulo_KinekAkarszBefizetni") 
           {
             iconName = focused ? "cash" : "cash-outline";
             
@@ -83,8 +84,8 @@ const Tanulo_BejelentkezesUtan = ({ navigation, route }) => {
         },
         //tabBarActiveTintColor: "#0077B6", //kékeszöld
         //tabBarActiveTintColor: "#5c4ce3", // sötét lila
-        //tabBarActiveTintColor: "#6A5AE0", //árnyalatnyival világosabb lila
-        tabBarActiveTintColor: route.name === "Tanulo_Befizetesek" ? "#2E9B3D" : route.name==="Tanulo_Datumok" ? "#FF6B6B" : "#6A5AE0",
+        tabBarActiveTintColor: "#6A5AE0", //árnyalatnyival világosabb lila
+        //tabBarActiveTintColor: route.name === "Tanulo_KinekAkarszBefizetni" ? "#2E9B3D" : route.name==="Tanulo_Datumok" ? "#FF6B6B" : "#6A5AE0",
         //tabBarActiveTintColor: '#FF6B6B',
         //tabBarActiveTintColor: "tomato",
         //tabBarActiveTintColor: "#fff",
@@ -120,9 +121,9 @@ const Tanulo_BejelentkezesUtan = ({ navigation, route }) => {
       />
 
       <Tab.Screen
-        name="Tanulo_Befizetesek"
+        name="Tanulo_KinekAkarszBefizetni"
         options={{ headerShown: false, title: "Pénzügy" }}
-        children={() => <Tanulo_Befizetesek atkuld={adatok} />}
+        children={() => <Tanulo_KinekAkarszBefizetni atkuld={adatok} />}
       />
 
       <Tab.Screen

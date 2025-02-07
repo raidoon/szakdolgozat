@@ -31,9 +31,6 @@ const Tanulo_Profil = ({ atkuld }) => {
     <View style={styles.default}>
       
         <Text style={{ textAlign: "center" }}>felhasználó profilkép?</Text>
-      
-
-
         <Text style={[Styles.focim, { textAlign: "center" }]}>
           {atkuld.tanulo_neve}
         </Text>
