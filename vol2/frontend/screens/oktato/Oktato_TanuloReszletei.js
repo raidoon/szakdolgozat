@@ -7,7 +7,6 @@ export default function Oktato_TanuloReszletei({ route }) {
     const [adatok, setAdatok] = useState([]);
     const [email, setEmail] = useState("");
     const [telefonszam, setTelefonszam]=useState("");
-
     const letoltes = async () => {
         try {
             const adat = {

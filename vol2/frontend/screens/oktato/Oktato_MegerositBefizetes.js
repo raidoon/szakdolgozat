@@ -92,7 +92,7 @@ export default function Oktato_MegerositBefizetes({ route }) {
 
                         </View>
                     )}
-                    keyExtractor={item => item.ora_id} 
+                    keyExtractor={item => item.befizetesek_id} 
                 />
 
 

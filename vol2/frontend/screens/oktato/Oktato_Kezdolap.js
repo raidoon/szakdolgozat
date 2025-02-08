@@ -29,6 +29,7 @@ export default function Oktato_Kezdolap({atkuld}) {
       console.log(y)
       
 
+      
   }
 
   useEffect(()=>{

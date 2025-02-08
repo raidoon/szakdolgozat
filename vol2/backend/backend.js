@@ -448,10 +448,10 @@ app.get("/valasztTipus", (req, res) => {
 app.post("/tanuloReszletei", (req, res) => {
   kapcsolat();
   connection.query(
-    `select felhasznalo_id,tanulo_id,felhasznalo_email,felhasznalo_telefonszam,tanulo_neve,tanulo_levizsgazott
-    from felhasznaloi_adatok 
-    inner join tanulo_adatok on felhasznaloi_adatok.felhasznalo_id=tanulo_adatok.tanulo_felhasznaloID  
-    where tanulo_felhasznaloID = ?`,
+    `SELECT *
+    FROM felhasznaloi_adatok 
+    INNER JOIN tanulo_adatok ON felhasznaloi_adatok.felhasznalo_id=tanulo_adatok.tanulo_felhasznaloID  
+    WHERE tanulo_felhasznaloID = ?`,
     [req.body.tanulo_felhasznaloID],
     (err, rows, fields) => {
       if (err) {
@@ -553,6 +553,8 @@ app.post("/koviOra", (req, res) => {
     FROM oktato_adatok AS oktato
     INNER JOIN ora_adatok AS ora
     ON oktato.oktato_id=ora.ora_oktatoja 
+    INNER JOIN tanulo_adatok AS tanulo
+    ON ora.ora_diakja=tanulo.tanulo_id
     WHERE oktato_id = ? 
       AND ora.ora_datuma > NOW() 
     ORDER BY ora.ora_datuma 
@@ -697,7 +699,7 @@ app.post("/nemkeszBefizetesek", (req, res) => {
 
 
 //-------------------------------
-app.post("/egyDiakNemKeszOrai", (req, res) => {
+app.post("/egyDiakNemKeszBefizetesei", (req, res) => {
   console.log("hello");
   kapcsolat();
   connection.query(

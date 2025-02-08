@@ -49,13 +49,13 @@ export default function Oktato_MegerositesrevaroFizetes({ route }) {
 
     const katt = (tanulo) => {
         alert(tanulo.tanulo_felhasznaloID)
-        navigation.navigate("Oktato_MegerositOra", { tanulo });
+        navigation.navigate("Oktato_MegerositBefizetes", { tanulo });
     };
 
     return (
         <View style={Oktato_Styles.diakok_container}>
             <View>
-                <Text>Aktuális Diákok</Text>
+                <Text>Megerősítésre váró fizetések</Text>
             </View>
 
             <View>

@@ -55,7 +55,7 @@ export default function Oktato_LTBefizetesek({ route }) {
     return (
         <View style={Oktato_Styles.diakok_container}>
             <View>
-                <Text>Aktuális Diákok</Text>
+                <Text>Levizsgázott Diákok</Text>
             </View>
 
             <View>
