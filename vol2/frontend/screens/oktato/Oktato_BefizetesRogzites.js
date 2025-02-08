@@ -22,6 +22,7 @@ export default function Oktato_BefizetesRogzites({ route }) {
   const [date, setDate] = useState(new Date());
   const [show, setShow] = useState(false);
   const [datum, setDatum] = useState("");
+  const [osszeg, setOsszeg] = useState("");
   const [szoveg, setSzoveg] = useState("");
   const [isChecked, setChecked] = useState(false);
 
@@ -63,30 +64,31 @@ export default function Oktato_BefizetesRogzites({ route }) {
   }, [atkuld]);
 
   const felvitel = async () => {
-    if (!datum || !selectedValue || !selectedDiak) {
+    if (!datum || !selectedValue || !selectedDiak|| !osszeg) {
       alert("A kötelező mezőket töltsd ki!");
       return;
     }
 //alert(selectedValue)
     const adatok = {
-      bevitel1:selectedValue,
+      bevitel1: selectedDiak,
       bevitel2: atkuld.oktato_id,
-      bevitel3: selectedDiak,
-      bevitel4: datum
+      bevitel3: selectedValue,
+      bevitel4: osszeg,
+      bevitel5: datum
       
       //megjegyzes: szoveg || "",
     };
 
     try {
-      const response = await fetch(Ipcim.Ipcim + "/oraFelvitel", {
+      const response = await fetch(Ipcim.Ipcim + "/befizetesFelvitel", {
         method: "POST",
         body: JSON.stringify(adatok),
         headers: { "Content-type": "application/json; charset=UTF-8" },
       });
       const text = await response.text();
-      alert("Óra sikeresen rögzítve: " + text);
+      alert("Befizetés sikeresen rögzítve: " + text);
     } catch (error) {
-      console.error("Hiba az óra rögzítésében:", error);
+      console.error("Hiba a befizetés rögzítésében:", error);
     }
   };
 
@@ -101,7 +103,7 @@ export default function Oktato_BefizetesRogzites({ route }) {
 
   return (
     <View style={styles.container}>
-      <Text style={styles.title}>Új óra rögzítése:</Text>
+      <Text style={styles.title}>Új befizetés rögzítése:</Text>
       <Text>{atkuld ? `Felhasználó ID: ${atkuld.oktato_id}` : "Nincs adat"}</Text>
 
       {/* Dropdown: Óratípus */}
@@ -134,22 +136,18 @@ export default function Oktato_BefizetesRogzites({ route }) {
         onChange={(item) => setSelectedDiak(item.value)}
       />
 
-      <View style={styles.inputContainer}>
-        <TextInput
-          style={styles.input}
-          placeholder="Megjegyzés (opcionális)"
-          onChangeText={setSzoveg}
-          value={szoveg}
-        />
-        <TouchableOpacity onPress={() => setSzoveg("")} style={styles.clearButton}>
-          <Text style={styles.clearText}>Törlés</Text>
-        </TouchableOpacity>
-      </View>
+      <TextInput
+              style={styles.input}
+              placeholder="Összeg"
+              keyboardType="numeric"
+              value={osszeg}
+              onChangeText={setOsszeg}
+            />
 
       <Button title="Dátum kiválasztása" onPress={() => setShow(true)} />
       {datum ? <Text style={styles.date}>{datum}</Text> : null}
 
-      <Button title="Új óra felvitele" onPress={felvitel} />
+      <Button title="Új befizetés felvitele" onPress={felvitel} />
       {show && (
         <DateTimePicker
           value={date}
@@ -216,5 +214,11 @@ const styles = StyleSheet.create({
     padding: 5,
     textAlign: "center",
     marginVertical: 10,
+  },
+  input: {
+    width: "100%",
+    borderWidth: 1,
+    padding: 10,
+    marginBottom: 10,
   },
 });

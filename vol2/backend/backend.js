@@ -722,7 +722,31 @@ app.post("/egyDiakNemKeszOrai", (req, res) => {
   connection.end();
 });
 
-
+//--------------------------BefizetesFelvitel
+app.post("/befizetesFelvitel", (req, res) => {
+  kapcsolat();
+  connection.query(
+    `INSERT INTO befizetesek VALUES (NULL, ?, ?, ?, ?, ?, 1 )`,
+    [
+      req.body.bevitel1,
+      req.body.bevitel2,
+      req.body.bevitel3,
+      req.body.bevitel4,
+      req.body.bevitel5,
+    ],
+    (err, rows, fields) => {
+      if (err) {
+        console.log("Hiba");
+        console.log(err);
+        res.status(500).send("Hiba");
+      } else {
+        console.log("Sikeres felvitel!");
+        res.status(200).send("Sikeres felvitel!");
+      }
+    }
+  );
+  connection.end();
+});
 
 app.listen(port, () => {
   console.log(`Example app listening on port ${port}`);
