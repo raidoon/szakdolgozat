@@ -42,6 +42,8 @@ import Oktato_MegerositBefizetes from "./screens/oktato/Oktato_MegerositBefizete
 import Oktato_TanuloABefizetesek from "./screens/oktato/Oktato_TanuloABefizetesek";
 import Oktato_TanuloLBefizetesek from "./screens/oktato/Oktato_TanuloLBefizetesek";
 import Oktato_KovetkezoOra from "./screens/oktato/Oktato_KovetkezoOra";
+import Oktato_AKTUALIS from "./screens/oktato/Oktato_AKTUALIS";
+import Oktato_LEVIZSGAZOTT from "./screens/oktato/Oktato_LEVIZSGAZOTT";
 
 
 
@@ -128,6 +130,8 @@ export default function App() {
         <Stack.Screen name="Oktato_TanuloABefizetesek" component={Oktato_TanuloABefizetesek} />
         <Stack.Screen name="Oktato_TanuloLBefizetesek" component={Oktato_TanuloLBefizetesek} />
         <Stack.Screen name="Oktato_KovetkezoOra" component={Oktato_KovetkezoOra} />
+        <Stack.Screen name="Oktato_AKTUALIS" component={Oktato_AKTUALIS} />
+        <Stack.Screen name="Oktato_LEVIZSGAZOTT" component={Oktato_LEVIZSGAZOTT} />
       </Stack.Navigator>
     </NavigationContainer>
   );

@@ -4,7 +4,7 @@ import { useNavigation } from '@react-navigation/native';
 import Oktato_Styles from "../../Oktato_Styles";
 import Ipcim from "../../Ipcim";
 
-export default function Oktato_AktualisTanulok({ route }) {
+export default function Oktato_LEVIZSGAZOTT({ route }) {
     const { atkuld } = route.params;
     const [adatok, setAdatok] = useState([]);
     const navigation = useNavigation();
@@ -20,7 +20,7 @@ export default function Oktato_AktualisTanulok({ route }) {
             //alert(atkuld.oktato_id)
             console.log("Elküldött adat:", JSON.stringify({ "oktato_id": atkuld.oktato_id }));
 
-            const response = await fetch(Ipcim.Ipcim + "/aktualisDiakok", {
+            const response = await fetch(Ipcim.Ipcim + "/levizsgazottDiakok", {
                 method: "POST",
                 body: JSON.stringify(adat),
                 headers: { "Content-type": "application/json; charset=UTF-8" }
@@ -49,13 +49,13 @@ export default function Oktato_AktualisTanulok({ route }) {
 
     const katt = (tanulo) => {
         alert(tanulo.tanulo_felhasznaloID)
-        navigation.navigate("Oktato_TanuloAOrak", { tanulo });
+        navigation.navigate("Oktato_TanuloReszletei", { tanulo });
     };
 
     return (
         <View style={Oktato_Styles.diakok_container}>
             <View>
-                <Text> Diákok</Text>
+                <Text>Levizsgázott Diákok</Text>
             </View>
 
             <View>

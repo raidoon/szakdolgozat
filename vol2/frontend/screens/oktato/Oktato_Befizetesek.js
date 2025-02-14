@@ -45,10 +45,6 @@ export default function Oktato_Befizetesek({atkuld}) {
     navigation.navigate("Oktato_ATBefizetesek", { tanulo });
 };
 
-const kattlevizsgazott = (tanulo) => {
-      
-  navigation.navigate("Oktato_LTBefizetesek", { tanulo });
-};
 
 const kattmaradek = (tanulo) => {
       
@@ -74,15 +70,9 @@ const kattmaradek = (tanulo) => {
         style={Oktato_Styles.navigateButton}
         onPress={() => navigation.navigate("Oktato_ATBefizetesek", { atkuld })}
       >
-        <Text style={Oktato_Styles.navigateButtonText}>Aktuális</Text>
+        <Text style={Oktato_Styles.navigateButtonText}>Diákok Befizui</Text>
       </TouchableOpacity>
 
-      <TouchableOpacity
-        style={Oktato_Styles.navigateButton}
-        onPress={() => navigation.navigate("Oktato_LTBefizetesek", { atkuld })}
-      >
-        <Text style={Oktato_Styles.navigateButtonText}>Levizsgázott</Text>
-      </TouchableOpacity>
     
       <TouchableOpacity
         style={Oktato_Styles.navigateButton}

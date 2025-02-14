@@ -8,16 +8,15 @@ export default function Oktato_MegerositesrevaroOrak({ route }) {
     const { atkuld } = route.params;
     const [adatok, setAdatok] = useState([]);
     const navigation = useNavigation();
+
     console.log(atkuld);
 
     const letoltes = async () => {
-        
-        
         try {
             const adat = {
                 oktato_id: atkuld.oktato_id,
-            }
-            //alert(atkuld.oktato_id)
+            };
+
             console.log("Elküldött adat:", JSON.stringify({ "oktato_id": atkuld.oktato_id }));
 
             const response = await fetch(Ipcim.Ipcim + "/nemkeszOrak", {
@@ -33,49 +32,46 @@ export default function Oktato_MegerositesrevaroOrak({ route }) {
             }
 
             const data = await response.json();
-            //alert(JSON.stringify(data))
             setAdatok(data);
-
         } catch (error) {
             console.error("Hiba az API-hívás során:", error);
             alert("Nem sikerült az adatok letöltése. Ellenőrizd az API-t.");
         }
-        
-    }
+    };
 
     useEffect(() => {
         letoltes();
-    }, []); 
+    }, []);
 
     const katt = (tanulo) => {
-        alert(tanulo.tanulo_felhasznaloID)
         navigation.navigate("Oktato_MegerositOra", { tanulo });
     };
 
     return (
         <View style={Oktato_Styles.diakok_container}>
             <View>
-                <Text>Megerősítésre váró órák</Text>
+                <Text style={Oktato_Styles.focim}>Megerősítésre váró órák</Text>
             </View>
 
             <View>
-                <Text>hello</Text>
-
-                
-                <FlatList
-                    data={adatok}
-                    renderItem={({ item }) => (
-                        <View>
-                            <Text>{item.tanulo_neve}</Text>
-                            <TouchableOpacity 
-                                style={{ backgroundColor: "#0000ff" }} 
-                                onPress={() => katt(item)}>
-                                <Text style={{ color: "white" }}>Továbbiak</Text>
-                            </TouchableOpacity>
-                        </View>
-                    )}
-                    keyExtractor={item => item.tanulo_id.toString()} 
-                />
+                {adatok.length === 0 ? (
+                    <Text style={Oktato_Styles.nincsOra}>Nincs megerősítésre váró óra.</Text>
+                ) : (
+                    <FlatList
+                        data={adatok}
+                        renderItem={({ item }) => (
+                            <View style={Oktato_Styles.oraKartya}>
+                                <Text style={Oktato_Styles.nev}>{item.tanulo_neve}</Text>
+                                <TouchableOpacity 
+                                    style={Oktato_Styles.gomb} 
+                                    onPress={() => katt(item)}>
+                                    <Text style={Oktato_Styles.gombSzoveg}>Továbbiak</Text>
+                                </TouchableOpacity>
+                            </View>
+                        )}
+                        keyExtractor={item => item.tanulo_id.toString()}
+                    />
+                )}
             </View>
         </View>
     );

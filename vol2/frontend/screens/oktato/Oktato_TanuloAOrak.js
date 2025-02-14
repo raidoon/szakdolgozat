@@ -1,19 +1,17 @@
 import { useEffect, useState } from "react";
-import { View, Text, StyleSheet, FlatList, TouchableOpacity } from "react-native";
+import { View, Text, StyleSheet, FlatList, TouchableOpacity, Alert } from "react-native";
 import Ipcim from "../../Ipcim";
 
 export default function Oktato_TanuloAOrak({ route }) {
     const { tanulo } = route.params;
     const [adatok, setAdatok] = useState([]);
-    
+    const [loading, setLoading] = useState(true);
 
     const letoltes = async () => {
         try {
-            const adat = {
-                tanulo_felhasznaloID: tanulo.tanulo_felhasznaloID,
-            }
+            const adat = { tanulo_felhasznaloID: tanulo.tanulo_felhasznaloID };
 
-            console.log("Elküldött adat:", JSON.stringify({ "felhasznalo_ID": tanulo.tanulo_felhasznaloID }));
+            console.log("Elküldött adat:", JSON.stringify(adat));
 
             const response = await fetch(Ipcim.Ipcim + "/diakokOrai", {
                 method: "POST",
@@ -21,84 +19,97 @@ export default function Oktato_TanuloAOrak({ route }) {
                 headers: { "Content-type": "application/json; charset=UTF-8" }
             });
 
-            console.log("API válasz:", response);
-
             if (!response.ok) {
-                throw new Error(`Hiba történt: ${response.statusText}`);
+                const errorMessage = await response.text();
+                throw new Error(`Hiba történt: ${response.status} - ${errorMessage}`);
             }
 
             const data = await response.json();
-            //alert(JSON.stringify(data))
             setAdatok(data);
-           
-            
-
-           /* // Ha van adat, az első órát beállítjuk
-            if (Array.isArray(data) && data.length > 0) {
-                const elsoOra = data[0];
-                console.log("Első óra adat:", elsoOra);}
-*/
-               
-            
         } catch (error) {
             console.error("Hiba az API-hívás során:", error);
             alert("Nem sikerült az adatok letöltése.");
+        } finally {
+            setLoading(false);
         }
-    }
+    };
 
     useEffect(() => {
         letoltes();
     }, []);
 
-    /*const megerositVagyVissza=(id)=>{
-        
-        let uj=[...adatTomb]
-        for (elem of uj){
-          if (elem.id==id){
-            if (elem.kesz==0)
-              elem.kesz=1
-            else
-              elem.kesz=0
-          }
+    const megerositVagyVissza = (ora_id) => {
+        Alert.alert(
+            "Megerősítés", 
+            "Biztos meg akarod erősíteni?", 
+            [
+                {
+                    
+                    text: "Igen", 
+                    onPress: () => megerositOra(ora_id) 
+                },
+                { 
+                    text: "Mégse",
+                    style: "cancel"
+                }
+            ]
+        );
+    };
+
+    const megerositOra = async (ora_id) => {
+        try {
+            const response = await fetch(Ipcim.Ipcim + "/oraMegerosit", {
+                method: "POST",
+                body: JSON.stringify({ ora_id }),
+                headers: { "Content-type": "application/json; charset=UTF-8" }
+            });
+
+            if (!response.ok) {
+                throw new Error("Nem sikerült frissíteni az állapotot");
+            }
+
+            // Állapot frissítése a kliensoldalon
+            setAdatok(prevAdatok =>
+                prevAdatok.map(ora =>
+                    ora.ora_id === ora_id ? { ...ora, ora_teljesitve: 1 } : ora
+                )
+            );
+        } catch (error) {
+            console.error("Hiba történt:", error);
+            alert("Nem sikerült az óra állapotának frissítése.");
         }
-        setAdatTomb(uj)
-        storeData(uj)
-      }
-*/
+    };
+
     return (
         <View style={stilus.elso}>
-            <View>
-                <Text style={stilus.szoveg}>Részletek</Text>
-                <Text>{tanulo.tanulo_neve}</Text>
-                
+            <Text style={stilus.szoveg}>Részletek</Text>
+            <Text style={stilus.nev}>{tanulo.tanulo_neve}</Text>
+
+            {loading ? (
+                <Text>Betöltés...</Text>
+            ) : (
                 <FlatList
                     data={adatok}
                     renderItem={({ item }) => (
-                        <View>
-                            <Text>{item.ora_datuma.split("T")[0]}</Text>
+                        <View style={stilus.oraKartya}>
+                            <Text style={stilus.datum}>{item.ora_datuma.split("T")[0]}</Text>
                             <Text>{item.ora_datuma.split("T")[1].split(".")[0]}</Text>
-                            <Text>{item.ora_teljesitve}</Text>
-                            {item.ora_teljesitve==0
-                            ?
-                            <TouchableOpacity 
-                                style={{ backgroundColor: "#fff" }} 
-                               /* onPress={() => megerositVagyVissza(item)}*/>
-                                <Text style={{ color: "red" }}>Megerősítés</Text>
-                            </TouchableOpacity> 
-                            : <Text>Teljesítve</Text>
-                            }
-                            
-                           
-
+                            <Text style={{ color: item.ora_teljesitve ? "green" : "red" }}>
+                                {item.ora_teljesitve ? "Teljesítve" : "Nincs teljesítve"}
+                            </Text>
+                            {!item.ora_teljesitve && (
+                                <TouchableOpacity 
+                                    style={stilus.gomb} 
+                                    onPress={() => megerositVagyVissza(item.ora_id)}
+                                >
+                                    <Text style={stilus.gombSzoveg}>Megerősítés</Text>
+                                </TouchableOpacity>
+                            )}
                         </View>
                     )}
-                    keyExtractor={item => item.ora_id} 
+                    keyExtractor={item => item.ora_id.toString()} 
                 />
-
-
-              
-                
-            </View>
+            )}
         </View>
     );
 }
@@ -110,10 +121,41 @@ const stilus = StyleSheet.create({
         alignItems: "center",
         justifyContent: "center",
         padding: 20,
-        
     },
     szoveg: {
         fontSize: 50,
         fontStyle: "italic",
+    },
+    nev: {
+        fontSize: 20,
+        fontWeight: "bold",
+        marginBottom: 20,
+    },
+    oraKartya: {
+        backgroundColor: "#f9f9f9",
+        padding: 10,
+        marginBottom: 10,
+        borderRadius: 10,
+        width: 300,
+        alignItems: "center",
+        shadowColor: "#000",
+        shadowOffset: { width: 0, height: 2 },
+        shadowOpacity: 0.2,
+        shadowRadius: 2,
+        elevation: 3,
+    },
+    datum: {
+        fontWeight: "bold",
+        fontSize: 16,
+    },
+    gomb: {
+        marginTop: 10,
+        backgroundColor: "#007bff",
+        padding: 8,
+        borderRadius: 5,
+    },
+    gombSzoveg: {
+        color: "#fff",
+        fontWeight: "bold",
     },
 });

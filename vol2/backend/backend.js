@@ -628,23 +628,34 @@ app.post("/egyDiakNemKeszOrai", (req, res) => {
 
 
 //---------------------------
-app.put('/oraMegerosit', (req, res) => {
-  kapcsolat()
+app.post('/oraMegerosit', (req, res) => {
+  kapcsolat();
   connection.query(`
-    UPDATE ora_adatok SET ora_teljesitve=1 where ora_id = ?; 
-    `,[req.body.ora_id], (err, rows, fields) => {
+    UPDATE ora_adatok SET ora_teljesitve=1 WHERE ora_id = ?; 
+  `, [req.body.ora_id], (err, rows) => {
     if (err) {
-      console.log("Hiba")
-      console.log(err)
-      res.status(500).send("Hiba")
+      console.error("Hiba:", err);
+      return res.status(500).json({ message: "Hiba történt!" });
     }
-    else {
-      console.log("Sikeres módosítás!")
-      res.status(200).send("Sikeres módosítás!")
+    res.json({ message: "Óra megerősítve!" });
+  });
+  connection.end();
+});
+
+app.post('/oraElutasit', (req, res) => {
+  kapcsolat();
+  connection.query(`
+    UPDATE ora_adatok SET ora_teljesitve=2 WHERE ora_id = ?; 
+  `, [req.body.ora_id], (err, rows) => {
+    if (err) {
+      console.error("Hiba:", err);
+      return res.status(500).json({ message: "Hiba történt!" });
     }
-  })
-  connection.end()
-})
+    res.json({ message: "Óra elutasítva!" });
+  });
+  connection.end();
+});
+
 //---------------------------
 app.post("/diakokBefizetesei", (req, res) => {
   console.log("hello");
@@ -749,6 +760,38 @@ app.post("/befizetesFelvitel", (req, res) => {
   );
   connection.end();
 });
+
+
+//---------------------------
+app.post('/fizetesMegerosit', (req, res) => {
+  kapcsolat();
+  connection.query(`
+    UPDATE befizetesek SET befizetesek_jovahagyva=1 WHERE befizetesek_id = ?; 
+  `, [req.body.befizetesek_id], (err, rows) => {
+    if (err) {
+      console.error("Hiba:", err);
+      return res.status(500).json({ message: "Hiba történt!" });
+    }
+    res.json({ message: "Óra megerősítve!" });
+  });
+  connection.end();
+});
+
+app.post('/fizetesElutasit', (req, res) => {
+  kapcsolat();
+  connection.query(`
+    UPDATE befizetesek SET befizetesek_jovahagyva=2 WHERE befizetesek_id = ?; 
+  `, [req.body.befizetesek_id], (err, rows) => {
+    if (err) {
+      console.error("Hiba:", err);
+      return res.status(500).json({ message: "Hiba történt!" });
+    }
+    res.json({ message: "Óra elutasítva!" });
+  });
+  connection.end();
+});
+
+
 
 app.listen(port, () => {
   console.log(`Example app listening on port ${port}`);

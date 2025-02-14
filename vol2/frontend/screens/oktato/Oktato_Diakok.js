@@ -1,78 +1,77 @@
-import { useState, useEffect } from "react";
-import { View, Text, FlatList, TouchableOpacity } from "react-native";
+import { useState,useEffect } from "react";
+import { View, Text, Button, FlatList, TouchableOpacity } from "react-native";
 import { useNavigation } from '@react-navigation/native';
 import Oktato_Styles from "../../Oktato_Styles";
 import Ipcim from "../../Ipcim";
 
-export default function Oktato_Diakok({ atkuld }) {
-    const [adatok, setAdatok] = useState([]);
-    const navigation = useNavigation();
-    console.log(atkuld);
 
-    const letoltes = async () => {
-        try {
-            const adat = {
-                oktato_id: atkuld.oktato_id,
-            }
-            console.log("API hívás indítása...");
-            console.log("Elküldött adat:", JSON.stringify({ "oktatoid": atkuld.oktato_id }));
+export default function Oktato_Diakok({atkuld}){
+  const [adatok,setAdatok]=useState([])
+  const navigation = useNavigation();
+  console.log(atkuld)
 
-            const response = await fetch(Ipcim.Ipcim + "/egyOktatoDiakjai", {
-                method: "POST",
-                body: JSON.stringify(adat),
-                headers: { "Content-type": "application/json; charset=UTF-8" }
-            });
+  const letoltes=async ()=>{
+      //alert("hello")
+     alert(atkuld.oktato_id)
+      var adat={
+          "oktatoid":atkuld.oktato_id
+      }
+      const x=await fetch(Ipcim.Ipcim +"/aktualisDiakok/levizsgazottDiakok",{
+          method: "POST",
+          body: JSON.stringify(adat),
+          headers: {"Content-type": "application/json; charset=UTF-8"}
+      })
+      
+      console.log(x)
+      const y=await x.json() 
+      
+      setAdatok(y)
+      alert(JSON.stringify(y))
+      console.log(y)
+      
 
-            console.log("API válasz:", response);
+  }
 
-            if (!response.ok) {
-                throw new Error(`Hiba történt: ${response.statusText}`);
-            }
+  useEffect(()=>{
+      letoltes()
+      
+  },[])
+  
 
-            const data = await response.json();
-            console.log("Betöltött adatok:", data);
-            setAdatok(data);
+  const kattaktual = (tanulo) => {
+      
+    navigation.navigate("Oktato_AKTUALIS", { tanulo });
+};
+  
+const kattlevi = (tanulo) => {
+      
+    navigation.navigate("Oktato_LEVIZSGAZOTT", { tanulo });
+};
 
-        } catch (error) {
-            console.error("Hiba az API-hívás során:", error);
-            alert("Nem sikerült az adatok letöltése. Ellenőrizd az API-t.");
-        }
-    }
+  return (
+    <View style={Oktato_Styles.diakok_container}>
+      <Text style={Oktato_Styles.title}>Diákok</Text>
+      <FlatList
+        data={adatok}
+        
+      />
+      
+     
+      <TouchableOpacity
+        style={Oktato_Styles.navigateButton}
+        onPress={() => navigation.navigate("Oktato_AKTUALIS", { atkuld })}
+      >
+        <Text style={Oktato_Styles.navigateButtonText}>Aktuális Tanulók</Text>
+      </TouchableOpacity>
 
-    useEffect(() => {
-        letoltes();
-    }, []); // Az üres tömb biztosítja, hogy csak egyszer fusson le a letoltes()
+      <TouchableOpacity
+        style={Oktato_Styles.navigateButton}
+        onPress={() => navigation.navigate("Oktato_LEVIZSGAZOTT", { atkuld })}
+      >
+        <Text style={Oktato_Styles.navigateButtonText}>Levizsgázott Tanulók</Text>
+      </TouchableOpacity>
 
-    const katt = (tanulo) => {
-        // Navigálás a "Oktato_TanuloReszletei" képernyőre
-        navigation.navigate("Oktato_TanuloReszletei", { tanulo });
-    };
-
-    return (
-        <View style={Oktato_Styles.diakok_container}>
-            <View>
-                <Text>Minden Diák</Text>
-            </View>
-
-            <View>
-                
-
-                {/* FlatList a diákok adatainak megjelenítésére */}
-                <FlatList
-                    data={adatok}
-                    renderItem={({ item }) => (
-                        <View>
-                            <Text>{item.tanulo_neve}</Text>
-                            <TouchableOpacity 
-                                style={{ backgroundColor: "#0000ff" }} 
-                                onPress={() => katt(item)}>
-                                <Text style={{ color: "white" }}>Részletek</Text>
-                            </TouchableOpacity>
-                        </View>
-                    )}
-                    keyExtractor={item => item.tanulo_id.toString()} // Típuskonverzió, ha szükséges
-                />
-            </View>
-        </View>
-    );
+      
+    </View>
+  );
 }

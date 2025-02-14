@@ -8,17 +8,11 @@ export default function Oktato_MegerositesrevaroFizetes({ route }) {
     const { atkuld } = route.params;
     const [adatok, setAdatok] = useState([]);
     const navigation = useNavigation();
-    console.log(atkuld);
 
     const letoltes = async () => {
-        
-        
         try {
-            const adat = {
-                oktato_id: atkuld.oktato_id,
-            }
-            //alert(atkuld.oktato_id)
-            console.log("Elküldött adat:", JSON.stringify({ "oktato_id": atkuld.oktato_id }));
+            const adat = { oktato_id: atkuld.oktato_id };
+            console.log("Elküldött adat:", JSON.stringify(adat));
 
             const response = await fetch(Ipcim.Ipcim + "/nemkeszBefizetesek", {
                 method: "POST",
@@ -26,57 +20,46 @@ export default function Oktato_MegerositesrevaroFizetes({ route }) {
                 headers: { "Content-type": "application/json; charset=UTF-8" }
             });
 
-            console.log("API válasz:", response);
-
             if (!response.ok) {
                 throw new Error(`Hiba történt: ${response.statusText}`);
             }
 
             const data = await response.json();
-            //alert(JSON.stringify(data))
             setAdatok(data);
-
         } catch (error) {
             console.error("Hiba az API-hívás során:", error);
             alert("Nem sikerült az adatok letöltése. Ellenőrizd az API-t.");
         }
-        
-    }
+    };
 
     useEffect(() => {
         letoltes();
-    }, []); 
+    }, []);
 
     const katt = (tanulo) => {
-        alert(tanulo.tanulo_felhasznaloID)
         navigation.navigate("Oktato_MegerositBefizetes", { tanulo });
     };
 
     return (
         <View style={Oktato_Styles.diakok_container}>
-            <View>
-                <Text>Megerősítésre váró fizetések</Text>
-            </View>
+            <Text style={Oktato_Styles.focim}>Megerősítésre váró fizetések</Text>
 
-            <View>
-                <Text>hello</Text>
-
-                
+            {adatok.length === 0 ? (
+                <Text style={Oktato_Styles.nincsOra}>Nincs megerősítésre váró befizetés.</Text>
+            ) : (
                 <FlatList
                     data={adatok}
                     renderItem={({ item }) => (
-                        <View>
-                            <Text>{item.tanulo_neve}</Text>
-                            <TouchableOpacity 
-                                style={{ backgroundColor: "#0000ff" }} 
-                                onPress={() => katt(item)}>
-                                <Text style={{ color: "white" }}>Továbbiak</Text>
+                        <View style={Oktato_Styles.oraKartya}>
+                            <Text style={Oktato_Styles.nev}>{item.tanulo_neve}</Text>
+                            <TouchableOpacity style={Oktato_Styles.gomb} onPress={() => katt(item)}>
+                                <Text style={Oktato_Styles.gombSzoveg}>Továbbiak</Text>
                             </TouchableOpacity>
                         </View>
                     )}
-                    keyExtractor={item => item.tanulo_id.toString()} 
+                    keyExtractor={(item) => item.tanulo_id.toString()}
                 />
-            </View>
+            )}
         </View>
     );
 }

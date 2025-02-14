@@ -55,7 +55,7 @@ export default function Oktato_ATBefizetesek({ route }) {
     return (
         <View style={Oktato_Styles.diakok_container}>
             <View>
-                <Text>Aktuális Diákok</Text>
+                <Text>Diákok</Text>
             </View>
 
             <View>

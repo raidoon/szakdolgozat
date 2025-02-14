@@ -93,6 +93,12 @@ const Oktato_BejelentkezesUtan2 = ({ navigation, route }) => {
           options={{ title: "Kezdőlap" }}
           children={() => <Oktato_Kezdolap atkuld={storedData} />}/>
 
+
+      <Tab.Screen
+                  name="Oktato_Diakok" 
+                  options={{title:"Diákok"}} 
+                  children={() => <Oktato_Diakok atkuld={storedData} />} />
+                  
       <Tab.Screen 
           name="Oktato_Datumok" 
           options={{title:"Dátumok"}}
@@ -102,11 +108,6 @@ const Oktato_BejelentkezesUtan2 = ({ navigation, route }) => {
           name="Oktato_Befizetesek" 
           options={{title:"Befizetések"}} 
           children={() => <Oktato_Befizetesek atkuld={storedData} />} />
-
-      <Tab.Screen
-            name="Oktato_Diakok" 
-            options={{title:"Diákok"}} 
-            children={() => <Oktato_Diakok atkuld={storedData} />} />
 
       <Tab.Screen 
           name="Oktato_Profil" 

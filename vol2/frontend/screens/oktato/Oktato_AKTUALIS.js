@@ -4,7 +4,7 @@ import { useNavigation } from '@react-navigation/native';
 import Oktato_Styles from "../../Oktato_Styles";
 import Ipcim from "../../Ipcim";
 
-export default function Oktato_AktualisTanulok({ route }) {
+export default function Oktato_AKTUALIS({ route }) {
     const { atkuld } = route.params;
     const [adatok, setAdatok] = useState([]);
     const navigation = useNavigation();
@@ -49,13 +49,13 @@ export default function Oktato_AktualisTanulok({ route }) {
 
     const katt = (tanulo) => {
         alert(tanulo.tanulo_felhasznaloID)
-        navigation.navigate("Oktato_TanuloAOrak", { tanulo });
+        navigation.navigate("Oktato_TanuloReszletei", { tanulo });
     };
 
     return (
         <View style={Oktato_Styles.diakok_container}>
             <View>
-                <Text> Diákok</Text>
+                <Text>Aktuális Diákok</Text>
             </View>
 
             <View>

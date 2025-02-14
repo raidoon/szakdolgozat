@@ -41,6 +41,45 @@ const Oktato_Styles = StyleSheet.create({
     textTransform: "uppercase",
     letterSpacing: 1.5, // Szebb kinézet
   },
+  focim: {
+    fontSize: 24,
+    fontWeight: "bold",
+    marginBottom: 15,
+},
+nincsOra: {
+    fontSize: 18,
+    color: "gray",
+    marginTop: 20,
+},
+oraKartya: {
+    backgroundColor: "#fff",
+    padding: 15,
+    marginVertical: 8,
+    borderRadius: 10,
+    shadowColor: "#000",
+    shadowOpacity: 0.1,
+    shadowRadius: 4,
+    elevation: 3,
+    width: "90%",
+    alignItems: "center",
+},
+nev: {
+    fontSize: 20,
+    fontWeight: "bold",
+    marginBottom: 10,
+},
+gomb: {
+    backgroundColor: "#007bff",
+    paddingVertical: 10,
+    paddingHorizontal: 20,
+    borderRadius: 5,
+    marginTop: 10,
+},
+gombSzoveg: {
+    color: "#fff",
+    fontSize: 16,
+    fontWeight: "bold",
+},
 })
 
 export default Oktato_Styles;
