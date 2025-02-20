@@ -73,7 +73,14 @@ export default function Oktato_KovetkezoOra({route}) {
   
   
   {kovetkezoOra && (
-                <Text>Következő óra: {kovetkezoOra.ora_datuma.split("T")[0]} - {kovetkezoOra.tanulo_neve}</Text>
+                <Text>
+  Következő óra: {
+    new Date(new Date(kovetkezoOra.ora_datuma).setDate(new Date(kovetkezoOra.ora_datuma).getDate() + 1))
+      .toISOString()
+      .split("T")[0]
+  } - {kovetkezoOra.tanulo_neve}
+</Text>
+
             )}
   
   </View>

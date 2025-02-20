@@ -763,6 +763,7 @@ app.post("/befizetesFelvitel", (req, res) => {
 
 
 //---------------------------
+
 app.post('/fizetesMegerosit', (req, res) => {
   kapcsolat();
   connection.query(`
@@ -776,6 +777,8 @@ app.post('/fizetesMegerosit', (req, res) => {
   });
   connection.end();
 });
+
+//---------------------------------------------
 
 app.post('/fizetesElutasit', (req, res) => {
   kapcsolat();
@@ -791,7 +794,31 @@ app.post('/fizetesElutasit', (req, res) => {
   connection.end();
 });
 
-
+//-------------------------------------
+app.post("/egyNapOraja", (req, res) => {
+  console.log("hello");
+  kapcsolat();
+  connection.query(
+    `SELECT *
+    FROM oktato_adatok AS oktato
+    INNER JOIN ora_adatok AS ora
+    ON oktato.oktato_id = ora.ora_oktatoja
+    INNER JOIN tanulo_adatok AS tanulo
+    ON ora.ora_diakja = tanulo.tanulo_id
+    WHERE oktato.oktato_id=?`,
+    [req.body.oktato_id],
+    (err, rows, fields) => {
+      if (err) {
+        console.log(err);
+        res.status(500).send("Hiba");
+      } else {
+        console.log(rows);
+        res.status(200).send(rows);
+      }
+    }
+  );
+  connection.end();
+});
 
 app.listen(port, () => {
   console.log(`Example app listening on port ${port}`);
