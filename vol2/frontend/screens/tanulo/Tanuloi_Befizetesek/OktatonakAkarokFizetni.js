@@ -12,29 +12,90 @@ import { LinearGradient } from "expo-linear-gradient";
 
 const OktatonakAkarokFizetni = ({ navigation }) => {
   const [osszeg, setOsszeg] = useState("");
+  const [szamologepLathatoe, setSzamologepLathatoe] = useState(false);
+  const [tanora, setTanora] = useState(true);
+  const [vizsga, setVizsga] = useState(false);
   //-------------------------------------------------------------
-
+  //------------------------------------------------------------- CHECKBOX
+  function SajatCheckbox({ label, isChecked, onPress }) {
+    return (
+      <TouchableOpacity style={styles.checkboxContainer} onPress={onPress}>
+        <View style={[styles.checkbox, isChecked && styles.checkedCheckbox]} />
+        <Text style={{ fontSize: 17 }}>{label}</Text>
+      </TouchableOpacity>
+    );
+  }
   const handlePayment = () => {
     // Handle payment logic here
     alert(`Fizetés elküldve: ${osszeg} Ft`);
+  };
+  //-------------------------------
+  const szamologepBetoltes = () => (
+    <View style={styles.szamologepView}>
+      {[...Array(9).keys()].map((_, i) => (
+        <TouchableOpacity
+          key={i + 1}
+          onPress={() => szamologepGombNyomas((i + 1).toString())}
+          style={styles.szamologepGomb}
+        >
+          <Text style={styles.szamologepSzoveg}>{i + 1}</Text>
+        </TouchableOpacity>
+      ))}
+      <TouchableOpacity
+        onPress={() => szamologepGombNyomas("C")}
+        style={styles.szamologepGomb}
+      >
+        <Text style={styles.szamologepSzovegC}>C</Text>
+      </TouchableOpacity>
+      <TouchableOpacity
+        onPress={() => szamologepGombNyomas("0")}
+        style={styles.szamologepGomb}
+      >
+        <Text style={styles.szamologepSzoveg}>0</Text>
+      </TouchableOpacity>
+      <TouchableOpacity
+        onPress={() => szamologepGombNyomas("torles")}
+        style={styles.szamologepGomb}
+      >
+        <Text style={styles.szamologepSzovegDEL}>⌫</Text>
+      </TouchableOpacity>
+    </View>
+  );
+  const osszegMegnyomas = () => {
+    setSzamologepLathatoe(!szamologepLathatoe);
+  };
+  const szamologepGombNyomas = (key) => {
+    if (key === "torles") {
+      setOsszeg(osszeg.slice(0, -1));
+    } else if (key === "C") {
+      setOsszeg("");
+    } else {
+      setOsszeg(osszeg + key);
+    }
   };
 
   return (
     <LinearGradient colors={["#ffffff", "#f0f4ff"]} style={styles.container}>
       <ScrollView contentContainerStyle={styles.scrollContainer}>
-        <Text style={styles.title}>Oktatónak fizetés</Text>
+        <Text style={styles.title}>Fizetés az oktatónál</Text>
         <Text style={styles.subtitle}>
           A felvenni kívánt összeget az oktatód fogja jóváhagyni, amennyiben
           tényleg kifizetted neki!
         </Text>
 
-        <TextInput
+        {/* <TextInput
           style={styles.input}
           placeholder="Összeg (Ft)"
           keyboardType="numeric"
           value={osszeg}
           onChangeText={setOsszeg}
-        />
+          onPress={osszegMegnyomas}
+        /> */}
+        <TouchableOpacity onPress={osszegMegnyomas} style={styles.input}>
+          <Text style={styles.osszegBeiras}>
+            {osszeg ? `${osszeg} Ft` : "Összeg (Ft)"}
+          </Text>
+        </TouchableOpacity>
 
         <TouchableOpacity style={styles.payButton} onPress={handlePayment}>
           <LinearGradient
@@ -45,6 +106,8 @@ const OktatonakAkarokFizetni = ({ navigation }) => {
             <Text style={styles.payButtonText}>Fizetés elküldése</Text>
           </LinearGradient>
         </TouchableOpacity>
+
+        {szamologepLathatoe && szamologepBetoltes()}
       </ScrollView>
     </LinearGradient>
   );
@@ -53,6 +116,15 @@ const OktatonakAkarokFizetni = ({ navigation }) => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
+  },
+  osszegBeiras: {
+    fontSize: 40,
+    fontWeight: "bold",
+    //color: "#3BC14A", //zöld
+    //color:"#6A5AE0", //lila
+    color: "#6B6054", //earthy vibes
+    textAlign: "center",
+    marginBottom: 10,
   },
   scrollContainer: {
     flexGrow: 1,
@@ -84,6 +156,12 @@ const styles = StyleSheet.create({
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.1,
     shadowRadius: 5,
+  },
+  osszegBeiras: {
+    //color: "#3BC14A", //zöld
+    //color:"#6A5AE0", //lila
+    color: "gray",
+    fontSize: 18,
   },
   payButton: {
     width: "100%",
@@ -151,7 +229,6 @@ const styles = StyleSheet.create({
     textAlign: "center",
   },
   container: {
-    marginTop: 50,
     flex: 1,
     backgroundColor: "#f3f0fa",
     alignItems: "center",
@@ -170,15 +247,6 @@ const styles = StyleSheet.create({
     //color: "#6A5AE0", //lila
     color: "#6B6054", //earthy vibes
     marginBottom: 20,
-  },
-  osszegBeiras: {
-    fontSize: 40,
-    fontWeight: "bold",
-    //color: "#3BC14A", //zöld
-    //color:"#6A5AE0", //lila
-    color: "#6B6054", //earthy vibes
-    textAlign: "center",
-    marginBottom: 10,
   },
   figyelmeztetes: {
     fontSize: 16,
@@ -300,7 +368,8 @@ const styles = StyleSheet.create({
   checkedCheckbox: {
     //backgroundColor: "#FFA62B", //narancs a zöldhöz
     //borderColor: '#FFA62B' //narancs a zöldhöz
-    backgroundColor: "#FFA62B",
+    //backgroundColor: "#FFA62B", //narancs
+    backgroundColor: "#6A5AE0", //lila
     //borderColor: '#cae9ff'
   },
   checkboxView: {
