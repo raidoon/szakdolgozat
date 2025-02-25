@@ -16,18 +16,12 @@ import Elfogadva from "../../../assets/elfogadva.svg";
 import Elutasitva from "../../../assets/elutasitva.svg";
 import Elfogadasravar from "../../../assets/elfogadasravar.svg";
 
-const Tanulo_Befizetesek = ({route } ) => {
+const Tanulo_Befizetesek = ({ route }) => {
   const { atkuld } = route.params;
   const [frissites, setFrissites] = useState(false); //https://reactnative.dev/docs/refreshcontrol
   const [befizetLista, setBefizetLista] = useState([]);
   const [betolt, setBetolt] = useState(true);
   const [hiba, setHiba] = useState(null);
-  //------------------------------------------------------------- ÚJ VÁLTOZÓK
-  const [osszeg, setOsszeg] = useState("");
-  const [szamologepLathatoe, setSzamologepLathatoe] = useState(false);
-  //-------------------------------------------------------------
-  const [tanora, setTanora] = useState(true);
-  const [vizsga, setVizsga] = useState(false);
   //------------------------------------------------------------- MODAL
   const [kivalasztottTranzakcio, setKivalasztottTranzakcio] = useState(null);
   const [modalLathatoe, setModalLathatoe] = useState(false);
@@ -41,15 +35,6 @@ const Tanulo_Befizetesek = ({route } ) => {
     setModalLathatoe(false);
     setKivalasztottTranzakcio(null);
   };
-  //------------------------------------------------------------- CHECKBOX
-  function SajatCheckbox({ label, isChecked, onPress }) {
-    return (
-      <TouchableOpacity style={styles.checkboxContainer} onPress={onPress}>
-        <View style={[styles.checkbox, isChecked && styles.checkedCheckbox]} />
-        <Text style={{ fontSize: 17 }}>{label}</Text>
-      </TouchableOpacity>
-    );
-  }
 
   //------------------------------------------------------------- BEFIZETÉSEK BETÖLTÉSE
   const adatokBetoltese = async () => {
@@ -80,7 +65,17 @@ const Tanulo_Befizetesek = ({route } ) => {
   useEffect(() => {
     adatokBetoltese();
   }, []);
-
+  //------------------------------------------------------------- FIZETÉSI IKON LEKÉRDEZÉSE
+  const FizetesiIkonKivalasztas = (status) => {
+    switch (status) {
+      case 1:
+        return <Elfogadva width={40} height={40} />; //<Ionicons name="checkmark-circle" size={20} color="#4CAF50" />; // Jóváhagyva
+      case 2:
+        return <Elutasitva width={28} height={28} />; //<Ionicons name="close-circle" size={20} color="#F44336" />; // Elutasítva
+      default:
+        return <Elfogadasravar width={20} height={20} />; //<Ionicons name="time" size={20} color="#FFA000" />; // Függőben
+    }
+  };
   //-------------------------------------------------------------  OLDAL FRISSÍTÉSE
   const frissitesKozben = useCallback(() => {
     setFrissites(true);
@@ -105,121 +100,6 @@ const Tanulo_Befizetesek = ({route } ) => {
       </View>
     );
   }
-  {
-    /* -------------------------------------- ÖSSZEG FELVITELE AZ ADATBÁZISBA ---------------------------------------- */
-  }
-  const osszegFelvitele = async () => {
-    if (osszeg != 0) {
-      if (osszeg.startsWith("0")) {
-        Alert.alert("Hiba!", "Az összeg nem kezdődhet 0-val!", [
-          {
-            text: "RENDBEN",
-          },
-        ]);
-      } else {
-        const tipusID = tanora ? 1 : vizsga ? 2 : null;
-        //jelenlegi idő
-        const datum = new Date();
-        // Dátum formázása YYYY-MM-DD HH:MM:SS formában (az adatbázisban datetimenak van beállítva!!)
-        const formazottDatum =
-          datum.getFullYear() +
-          "-" +
-          ("0" + (datum.getMonth() + 1)).slice(-2) +
-          "-" +
-          ("0" + datum.getDate()).slice(-2) +
-          " " +
-          ("0" + datum.getHours()).slice(-2) +
-          ":" +
-          ("0" + datum.getMinutes()).slice(-2) +
-          ":" +
-          ("0" + datum.getSeconds()).slice(-2);
-
-        const adat = {
-          befizetesek_tanuloID: atkuld.tanulo_id, //5
-          befizetesek_oktatoID: atkuld.tanulo_oktatoja, //7
-          befizetesek_tipusID: tipusID, //1 vagy 2
-          befizetesek_osszeg: osszeg, //összeg
-          befizetesek_ideje: formazottDatum,
-        };
-
-        try {
-          const valasz = await fetch(Ipcim.Ipcim + "/tanuloBefizetesFelvitel", {
-            method: "POST",
-            body: JSON.stringify(adat),
-            headers: {
-              "Content-Type": "application/json; charset=UTF-8",
-            },
-          });
-          // Válasz szöveges formátumban, így text() metódussal dolgozunk
-          const valaszText = await valasz.text();
-          if (valasz.ok) {
-            Alert.alert("Siker", valaszText); // A szöveget közvetlenül jelenítjük meg
-          } else {
-            Alert.alert(
-              "Hiba",
-              valaszText || "A befizetés felvitele nem sikerült."
-            );
-          }
-        } catch (error) {
-          Alert.alert("Hiba", `Hiba történt: ${error.message}`);
-        }
-
-        setOsszeg(""); //törlöm a beírt összeget a felvitel után!!!
-        adatokBetoltese();
-      }
-    } else
-      Alert.alert("Hiba!", "A befizetni kívánt összeg nem lehet 0!", [
-        { text: "Értem" },
-      ]);
-  };
-  {
-    /* --------------------------------------SZÁMOLÓGÉP KINÉZET ÉS FUNKCIÓ---------------------------------------- */
-  }
-  const osszegMegnyomas = () => {
-    setSzamologepLathatoe(!szamologepLathatoe);
-  };
-  // számológép gombok
-  const szamologepGombNyomas = (key) => {
-    if (key === "torles") {
-      setOsszeg(osszeg.slice(0, -1));
-    } else if (key === "C") {
-      setOsszeg("");
-    } else {
-      setOsszeg(osszeg + key);
-    }
-  };
-  // -------------------------------------------------------- SZÁMOLÓGÉP VIEW ----------------------------------------------------
-  const szamologepBetoltes = () => (
-    <View style={styles.szamologepView}>
-      {[...Array(9).keys()].map((_, i) => (
-        <TouchableOpacity
-          key={i + 1}
-          onPress={() => szamologepGombNyomas((i + 1).toString())}
-          style={styles.szamologepGomb}
-        >
-          <Text style={styles.szamologepSzoveg}>{i + 1}</Text>
-        </TouchableOpacity>
-      ))}
-      <TouchableOpacity
-        onPress={() => szamologepGombNyomas("C")}
-        style={styles.szamologepGomb}
-      >
-        <Text style={styles.szamologepSzovegC}>C</Text>
-      </TouchableOpacity>
-      <TouchableOpacity
-        onPress={() => szamologepGombNyomas("0")}
-        style={styles.szamologepGomb}
-      >
-        <Text style={styles.szamologepSzoveg}>0</Text>
-      </TouchableOpacity>
-      <TouchableOpacity
-        onPress={() => szamologepGombNyomas("torles")}
-        style={styles.szamologepGomb}
-      >
-        <Text style={styles.szamologepSzovegDEL}>⌫</Text>
-      </TouchableOpacity>
-    </View>
-  );
 
   return (
     <ScrollView
@@ -227,226 +107,54 @@ const Tanulo_Befizetesek = ({route } ) => {
         <RefreshControl refreshing={frissites} onRefresh={frissitesKozben} />
       }
     >
-      {/* --------------------------------------SZÁMOLÓGÉP---------------------------------------- */}
-      {/* Figyelmeztető szöveg megváltoztatása ||függ: számológép látható-e */}
-      {/*
-      
-      
-      <View style={styles.container}>
-        
-        {szamologepLathatoe ? (
-          <View style={styles.container2}>
-            <TouchableOpacity onPress={osszegMegnyomas}>
-              <Text style={styles.cim}>Kattints az összegre</Text>
-              <Text style={styles.osszegBeiras}>
-                {osszeg ? `${osszeg} Ft` : "0.00 Ft"}
-              </Text>
-            </TouchableOpacity>
-            <Text style={styles.figyelmeztetes}>
-              A felvenni kívánt összeget az oktatód fogja jóváhagyni, amennyiben
-              tényleg kifizetted neki!
+      {/* --------------------------------------------- FIZETÉSI ELŐZMÉNYEK LISTA ---------------------------- */}
+      <ScrollView contentContainerStyle={styles.tranzakcioContainer}>
+        <Text style={styles.nincsOra}>
+          Itt láthatod az összes korábbi és folyamatban lévő tranzakciót.
+        </Text>
+        <Text style={styles.vanOra}>
+          A részletek megtekintéséhez kattints a tranzakcióra!
+        </Text>
+
+        {befizetLista.length === 0 ? (
+          <View style={{ alignItems: "center" }}>
+            <Penz width={100} height={100} marginTop={50} />
+            <Text style={styles.nincsOra}>
+              Itt látod majd az összes korábbi és aktuális tranzakciódat, ezek
+              részleteit, és azt, hogy el vannak-e fogadva!
             </Text>
-            <View style={styles.checkboxView}>
-              <SajatCheckbox
-                label="Tanóra"
-                isChecked={tanora}
-                onPress={() => {
-                  setTanora(true);
-                  setVizsga(false);
-                }}
-              />
-              <SajatCheckbox
-                label="Vizsga"
-                isChecked={vizsga}
-                onPress={() => {
-                  setVizsga(true);
-                  setTanora(false);
-                }}
-              />
-            </View>
           </View>
         ) : (
-          <View style={styles.container2}>
-            <TouchableOpacity onPress={osszegMegnyomas}>
-              <Text style={styles.cim}>Kattints az összegre</Text>
-              <Text style={styles.osszegBeiras}>
-                {osszeg ? `${osszeg} Ft` : "0.00 Ft"}
-              </Text>
-            </TouchableOpacity>
-            <Text style={styles.figyelmeztetes}>
-              Az alkalmazásban rögzített tranzakciók kizárólag szemléltető
-              jellegűek, és nem vonódnak le a bankkártyádról!
-            </Text>
-          </View>
+          befizetLista
+            .sort(
+              (a, b) =>
+                new Date(b.befizetesek_ideje) - new Date(a.befizetesek_ideje)
+            )
+            .map((item) => (
+              <TouchableOpacity
+                key={item.befizetesek_id}
+                style={styles.legutobbiTranzakciok}
+                onPress={() => modalNyitas(item)}
+              >
+                <View style={styles.tranzakciosTextContainer}>
+                  <Text style={styles.tranzakciosText}>
+                    {item.befizetesek_tipusID === 1
+                      ? "Tanóra díj"
+                      : "Vizsga díj"}
+                  </Text>
+                  {FizetesiIkonKivalasztas(item.befizetesek_jovahagyva)}
+                </View>
+                <Text style={{ color: "gray", fontStyle: "italic" }}>
+                  {new Date(item.befizetesek_ideje).toLocaleDateString()}
+                </Text>
+                <Text style={styles.tranzakciosOsszeg}>
+                  - {item.befizetesek_osszeg} Ft
+                </Text>
+              </TouchableOpacity>
+            ))
         )}
+      </ScrollView>
 
-        <TouchableOpacity style={styles.felvetelGomb} onPress={osszegFelvitele}>
-          <Text style={styles.felvetelGombSzoveg}>Összeg felvétele</Text>
-        </TouchableOpacity>
-
-        {szamologepLathatoe && szamologepBetoltes()}
-      </View>
-      
-      */}
-
-      {/* --------------------------------------LEGUTÓBBI TRANZAKCIÓS RÉSZ---------------------------------------- */}
-      {szamologepLathatoe ? null : (
-        <View style={styles.tranzakcioContainer}>
-          {befizetLista.length === 0 ? (
-            <View style={{ alignItems: "center" }}>
-              <Penz width={100} height={100} marginTop={50} />
-
-              <Text style={styles.nincsOra}>
-                Itt láthatod majd az összes tranzakciódat, és azt, hogy el
-                vannak-e fogadva!
-              </Text>
-            </View>
-          ) : (
-            <View>
-              {/* <Text style={styles.tranzakcioTitle}>Legutóbbi Tranzakciók</Text> */}
-              
-              {befizetLista
-                .sort(
-                  (a, b) =>
-                    new Date(b.befizetesek_ideje) -
-                    new Date(a.befizetesek_ideje)
-                )
-                .map((item) => {
-                  {
-                    /* --------------------------------------JÓVÁHAGYVA---------------------------------------- */
-                  }
-                  if (item.befizetesek_jovahagyva == 1) {
-                    if (item.befizetesek_tipusID == 1) {
-                      return (
-                        <View key={item.befizetesek_id}>
-                          <TouchableOpacity
-                            style={styles.legutobbiTranzakciok}
-                            onPress={() => modalNyitas(item)}
-                          >
-                            <View style={styles.tranzakciosTextContainer}>
-                              <Text style={styles.tranzakciosText}>
-                                Tanóra díj
-                              </Text>
-                              <Elfogadva width={40} height={40} />
-                            </View>
-                            <Text style={styles.tranzakciosOsszeg}>
-                              {" "}
-                              - {item.befizetesek_osszeg} Ft
-                            </Text>
-                          </TouchableOpacity>
-                        </View>
-                      );
-                    }
-                    return (
-                      <View key={item.befizetesek_id}>
-                          <TouchableOpacity
-                            style={styles.legutobbiTranzakciok}
-                            onPress={() => modalNyitas(item)}
-                          >
-                            <View style={styles.tranzakciosTextContainer}>
-                              <Text style={styles.tranzakciosText}>
-                                Vizsga díj
-                              </Text>
-                              <Elfogadva width={40} height={40} />
-                            </View>
-                            <Text style={styles.tranzakciosOsszeg}>
-                              {" "}
-                              - {item.befizetesek_osszeg} Ft
-                            </Text>
-                          </TouchableOpacity>
-                        </View>
-                    );
-                  } else if (item.befizetesek_jovahagyva == 2) {
-                    {
-                      /* ELUTASÍTOTT BEFIZETÉSEK */
-                    }
-                    if (item.befizetesek_tipusID == 1) {
-                      return (
-                        <View key={item.befizetesek_id}>
-                          <TouchableOpacity
-                            style={styles.legutobbiTranzakciok}
-                            onPress={() => modalNyitas(item)}
-                          >
-                            <View style={styles.tranzakciosTextContainer}>
-                              <Text style={styles.tranzakciosText}>
-                                Tanóra díj
-                              </Text>
-                              <Elutasitva width={28} height={28} />
-                            </View>
-                            <Text style={styles.tranzakciosOsszeg}>
-                              {" "}
-                              - {item.befizetesek_osszeg} Ft
-                            </Text>
-                          </TouchableOpacity>
-                        </View>
-                      );
-                    }
-                    return (
-                      <View key={item.befizetesek_id}>
-                          <TouchableOpacity
-                            style={styles.legutobbiTranzakciok}
-                            onPress={() => modalNyitas(item)}
-                          >
-                            <View style={styles.tranzakciosTextContainer}>
-                              <Text style={styles.tranzakciosText}>
-                                Vizsga díj
-                              </Text>
-                              <Elutasitva width={28} height={28} />
-                            </View>
-                            <Text style={styles.tranzakciosOsszeg}>
-                              {" "}
-                              - {item.befizetesek_osszeg} Ft
-                            </Text>
-                          </TouchableOpacity>
-                        </View>
-                    );
-                  } else {
-                    if (item.befizetesek_tipusID == 1) {
-                      return (
-                        <View key={item.befizetesek_id}>
-                          <TouchableOpacity
-                            style={styles.legutobbiTranzakciok}
-                            onPress={() => modalNyitas(item)}
-                          >
-                            <View style={styles.tranzakciosTextContainer}>
-                              <Text style={styles.tranzakciosText}>
-                                Tanóra díj
-                              </Text>
-                              <Elfogadasravar width={20} height={20} />
-                            </View>
-                            <Text style={styles.tranzakciosOsszeg}>
-                              {" "}
-                              - {item.befizetesek_osszeg} Ft
-                            </Text>
-                          </TouchableOpacity>
-                        </View>
-                      );
-                    }
-                    return (
-                      <View key={item.befizetesek_id}>
-                          <TouchableOpacity
-                            style={styles.legutobbiTranzakciok}
-                            onPress={() => modalNyitas(item)}
-                          >
-                            <View style={styles.tranzakciosTextContainer}>
-                              <Text style={styles.tranzakciosText}>
-                                Vizsga díj
-                              </Text>
-                              <Elfogadasravar width={20} height={20} />
-                            </View>
-                            <Text style={styles.tranzakciosOsszeg}>
-                              {" "}
-                              - {item.befizetesek_osszeg} Ft
-                            </Text>
-                          </TouchableOpacity>
-                        </View>
-                    );
-                  }
-                })}
-            </View>
-          )}
-        </View>
-      )}
       {/*-------------------------------------------- MODAL ----------------------------------------------*/}
       {kivalasztottTranzakcio && (
         <Modal
@@ -457,36 +165,58 @@ const Tanulo_Befizetesek = ({route } ) => {
           <View style={styles.modalOverlay}>
             <View style={styles.modalContent}>
               <Text style={styles.modalTitle}>TRANZAKCIÓ RÉSZLETEI</Text>
-              <Text style={styles.modalText}>
-                Típus:{" "}
-                {kivalasztottTranzakcio.befizetesek_tipusID === 1 ? (
-                  <>{"tanóra díj"}</>
-                ) : (
-                  <>{"vizsga díj"}</>
-                )}
-              </Text>
-              <Text style={styles.modalText}>
-                Összeg: {kivalasztottTranzakcio.befizetesek_osszeg} Ft
-              </Text>
-              <Text style={styles.modalText}>
-                Befizetve:{" "}
-                {(() => {
-                  const eredetiDatum = new Date(
-                    kivalasztottTranzakcio.befizetesek_ideje
-                  );
-                  const formazottDatum =
-                    eredetiDatum.getFullYear() +
-                    "." +
-                    ("0" + (eredetiDatum.getMonth() + 1)).slice(-2) +
-                    "." +
-                    ("0" + eredetiDatum.getDate()).slice(-2) +
-                    " " +
-                    ("0" + eredetiDatum.getHours()).slice(-2) +
-                    ":" +
-                    ("0" + eredetiDatum.getMinutes()).slice(-2);
-                  return formazottDatum;
-                })()}
-              </Text>
+
+              <View style={{ flexDirection: "row" }}>
+                <Text style={styles.modalKiemeltText}>Típus: </Text>
+                <Text style={styles.modalText}>
+                  {kivalasztottTranzakcio.befizetesek_tipusID === 1 ? (
+                    <>{"tanóra díj"}</>
+                  ) : (
+                    <>{"vizsga díj"}</>
+                  )}
+                </Text>
+              </View>
+
+              <View style={{ flexDirection: "row" }}>
+                <Text style={styles.modalKiemeltText}>Összeg: </Text>
+                <Text style={styles.modalText}>
+                  {kivalasztottTranzakcio.befizetesek_osszeg} Ft
+                </Text>
+              </View>
+
+              <View style={{ flexDirection: "row" }}>
+                <Text style={styles.modalKiemeltText}>Befizetve: </Text>
+                <Text style={styles.modalText}>
+                  {(() => {
+                    const eredetiDatum = new Date(
+                      kivalasztottTranzakcio.befizetesek_ideje
+                    );
+                    const formazottDatum =
+                      eredetiDatum.getFullYear() +
+                      "." +
+                      ("0" + (eredetiDatum.getMonth() + 1)).slice(-2) +
+                      "." +
+                      ("0" + eredetiDatum.getDate()).slice(-2) +
+                      " " +
+                      ("0" + eredetiDatum.getHours()).slice(-2) +
+                      ":" +
+                      ("0" + eredetiDatum.getMinutes()).slice(-2);
+                    return formazottDatum;
+                  })()}
+                </Text>
+              </View>
+
+              <View style={{ flexDirection: "row" }}>
+                <Text style={styles.modalKiemeltText}>Összeget megkapta: </Text>
+                <Text style={styles.modalText}>
+                  {kivalasztottTranzakcio.befizetesek_kinek === 1 ? (
+                    <>{"oktató"}</>
+                  ) : (
+                    <>{"autósiskola"}</>
+                  )}
+                </Text>
+              </View>
+
               <Text style={styles.modalText}>
                 {kivalasztottTranzakcio.befizetesek_jovahagyva === 1 ? (
                   <>
@@ -536,10 +266,20 @@ export default Tanulo_Befizetesek;
 const styles = StyleSheet.create({
   nincsOra: {
     textAlign: "center",
+    //color: "#888",
+    //fontStyle: "italic",
+    marginTop: 20,
+    marginBottom: 10,
+    fontSize: 16,
+  },
+  vanOra: {
+    textAlign: "center",
     color: "#888",
     fontStyle: "italic",
-    marginTop: 20,
+    marginBottom: 20,
+    fontSize: 16,
   },
+  //---------------------------- MODÁL KEZDETE
   modalOverlay: {
     flex: 1,
     justifyContent: "center",
@@ -559,6 +299,13 @@ const styles = StyleSheet.create({
     marginBottom: 10,
     textAlign: "center",
   },
+  modalKiemeltText: {
+    fontSize: 16,
+    marginBottom: 5,
+    textAlign: "left",
+    fontWeight: "800",
+    color: "#6A5AE0",
+  },
   modalText: {
     fontSize: 16,
     marginBottom: 5,
@@ -567,8 +314,8 @@ const styles = StyleSheet.create({
   modalCloseBtn: {
     marginTop: 20,
     padding: 10,
-    backgroundColor: "#6B6054", //barnás earth vibes
-    //backgroundColor: '#6A5AE0',
+    //backgroundColor: "#6B6054", //barnás earth vibes
+    backgroundColor: "#6A5AE0", //lila
     borderRadius: 5,
   },
   modalCloseText: {
@@ -576,6 +323,7 @@ const styles = StyleSheet.create({
     fontSize: 16,
     textAlign: "center",
   },
+  //------------------------------- MODÁL VÉGE
   container: {
     marginTop: 50,
     flex: 1,
@@ -597,77 +345,9 @@ const styles = StyleSheet.create({
     color: "#6B6054", //earthy vibes
     marginBottom: 20,
   },
-  osszegBeiras: {
-    fontSize: 40,
-    fontWeight: "bold",
-    //color: "#3BC14A", //zöld
-    //color:"#6A5AE0", //lila
-    color: "#6B6054", //earthy vibes
-    textAlign: "center",
-    marginBottom: 10,
-  },
-  figyelmeztetes: {
-    fontSize: 16,
-    color: "#8e8e93",
-    marginBottom: 5,
-    textAlign: "center",
-  },
-  felvetelGomb: {
-    backgroundColor: "#4DA167", //zöld
-    //backgroundColor: "#6A5AE0", //lila
-    //backgroundColor: '#FF6B6B',
-    //backgroundColor: '#6B6054', //earthy vibes
-    paddingVertical: 15,
-    paddingHorizontal: 40,
-    borderRadius: 10,
-    marginBottom: 20,
-    elevation: 10,
-  },
-  felvetelGombSzoveg: {
-    color: "white",
-    fontSize: 18,
-    fontWeight: "bold",
-  },
-  szamologepView: {
-    flexDirection: "row",
-    flexWrap: "wrap",
-    justifyContent: "center",
-  },
-  szamologepGomb: {
-    width: 80,
-    height: 80,
-    backgroundColor: "#fff",
-    borderColor: "#EDE7E3",
-    borderWidth: 1,
-    alignItems: "center",
-    justifyContent: "center",
-    margin: 5,
-    borderRadius: 10,
-    elevation: 2,
-  },
-  szamologepSzoveg: {
-    fontSize: 24,
-    color: "#6B6054",
-    fontWeight: "bold",
-  },
-  szamologepSzovegC: {
-    fontSize: 24,
-    color: "#FFA62B",
-    fontWeight: "bold",
-  },
-  szamologepSzovegDEL: {
-    fontSize: 24,
-    color: "red",
-    fontWeight: "bold",
-  },
   tranzakcioContainer: {
     backgroundColor: "#f3f0fa",
     margin: 20,
-  },
-  tranzakcioTitle: {
-    fontSize: 18,
-    fontWeight: "bold",
-    marginBottom: 10,
   },
   legutobbiTranzakciok: {
     flexDirection: "row",
@@ -683,12 +363,10 @@ const styles = StyleSheet.create({
     shadowRadius: 3,
     shadowOffset: { width: 0, height: 1 },
   },
-
   tranzakciosTextContainer: {
     flexDirection: "row",
     alignItems: "center",
   },
-
   tranzakciosText: {
     fontSize: 16,
     marginRight: 3,
@@ -697,40 +375,5 @@ const styles = StyleSheet.create({
     fontSize: 17,
     fontWeight: "bold",
     color: "#d63031",
-  },
-  inputWrapper: {
-    flexDirection: "row",
-    alignItems: "center",
-    backgroundColor: "#f7f7f7",
-    borderWidth: 1,
-    borderColor: "#ccc",
-    borderRadius: 8,
-    paddingHorizontal: 10,
-    width: "100%",
-    height: 50,
-    marginBottom: 15,
-  },
-  checkboxContainer: {
-    flexDirection: "row",
-    alignItems: "center",
-    marginRight: 20,
-  },
-  checkbox: {
-    width: 25,
-    height: 25,
-    borderWidth: 1,
-    borderColor: "#000",
-    marginRight: 8,
-    borderRadius: 30,
-  },
-  checkedCheckbox: {
-    //backgroundColor: "#FFA62B", //narancs a zöldhöz
-    //borderColor: '#FFA62B' //narancs a zöldhöz
-    backgroundColor: "#FFA62B",
-    //borderColor: '#cae9ff'
-  },
-  checkboxView: {
-    flexDirection: "row",
-    alignContent: "space-between",
   },
 });

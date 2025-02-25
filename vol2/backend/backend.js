@@ -242,7 +242,7 @@ app.post("/tanuloSUMtartozas", (req, res) => {
 app.post("/befizetesListaT", (req, res) => {
   kapcsolat();
   connection.query(
-    `SELECT befizetesek.befizetesek_id, befizetesek.befizetesek_osszeg, befizetesek.befizetesek_ideje, befizetesek_tipusID, befizetesek_jovahagyva FROM befizetesek INNER JOIN tanulo_adatok ON befizetesek.befizetesek_tanuloID=tanulo_adatok.tanulo_id INNER JOIN felhasznaloi_adatok ON tanulo_adatok.tanulo_felhasznaloID=felhasznaloi_adatok.felhasznalo_id WHERE felhasznalo_id = ?`,
+    `SELECT befizetesek.befizetesek_id, befizetesek.befizetesek_osszeg, befizetesek.befizetesek_ideje, befizetesek_tipusID, befizetesek_jovahagyva,befizetesek.befizetesek_kinek FROM befizetesek INNER JOIN tanulo_adatok ON befizetesek.befizetesek_tanuloID=tanulo_adatok.tanulo_id INNER JOIN felhasznaloi_adatok ON tanulo_adatok.tanulo_felhasznaloID=felhasznaloi_adatok.felhasznalo_id WHERE felhasznalo_id = ?`,
     [req.body.felhasznalo_id],
     (err, rows, fields) => {
       if (err) {
