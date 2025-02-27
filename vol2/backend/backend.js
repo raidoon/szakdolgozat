@@ -641,7 +641,7 @@ app.post('/oraMegerosit', (req, res) => {
   });
   connection.end();
 });
-
+//---------------------------------------
 app.post('/oraElutasit', (req, res) => {
   kapcsolat();
   connection.query(`
@@ -796,29 +796,36 @@ app.post('/fizetesElutasit', (req, res) => {
 
 //-------------------------------------
 app.post("/egyNapOraja", (req, res) => {
-  console.log("hello");
+  console.log("Lekérdezés egy adott napra...");
+  const { oktato_id, datum } = req.body; // Az oktató ID és a dátum az API kérésből
+
   kapcsolat();
-  connection.query(
-    `SELECT *
+
+  const query = `
+    SELECT *
     FROM oktato_adatok AS oktato
     INNER JOIN ora_adatok AS ora
-    ON oktato.oktato_id = ora.ora_oktatoja
+      ON oktato.oktato_id = ora.ora_oktatoja
     INNER JOIN tanulo_adatok AS tanulo
-    ON ora.ora_diakja = tanulo.tanulo_id
-    WHERE oktato.oktato_id=?`,
-    [req.body.oktato_id],
-    (err, rows, fields) => {
-      if (err) {
-        console.log(err);
-        res.status(500).send("Hiba");
-      } else {
-        console.log(rows);
-        res.status(200).send(rows);
-      }
+      ON ora.ora_diakja = tanulo.tanulo_id
+    WHERE oktato.oktato_id = ? 
+      AND DATE(ora.ora_datuma) = DATE(?)
+  `;
+
+  connection.query(query, [oktato_id, datum], (err, rows) => {
+    if (err) {
+      console.log("Hiba az adatbázis lekérdezésében:", err);
+      res.status(500).send("Hiba történt");
+    } else {
+      console.log("Lekérdezett órák:", rows);
+      res.status(200).json(rows);
     }
-  );
+  });
+
   connection.end();
 });
+
+
 
 app.listen(port, () => {
   console.log(`Example app listening on port ${port}`);

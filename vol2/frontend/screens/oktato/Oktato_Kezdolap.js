@@ -15,7 +15,7 @@ export default function Oktato_Kezdolap({atkuld}) {
       var adat={
           "oktatoid":atkuld.oktato_id
       }
-      const x=await fetch(Ipcim.Ipcim +"/",{
+      const x=await fetch(Ipcim.Ipcim +"/egyOktatoAdatai",{
           method: "POST",
           body: JSON.stringify(adat),
           headers: {"Content-type": "application/json; charset=UTF-8"}
