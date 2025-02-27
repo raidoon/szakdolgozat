@@ -69,11 +69,11 @@ const Tanulo_Befizetesek = ({ route }) => {
   const FizetesiIkonKivalasztas = (status) => {
     switch (status) {
       case 1:
-        return <Elfogadva width={40} height={40} />; //<Ionicons name="checkmark-circle" size={20} color="#4CAF50" />; // Jóváhagyva
+        return <Elfogadva width={40} height={40} />; // Jóváhagyva
       case 2:
-        return <Elutasitva width={28} height={28} />; //<Ionicons name="close-circle" size={20} color="#F44336" />; // Elutasítva
+        return <Elutasitva width={28} height={28} />; // Elutasítva
       default:
-        return <Elfogadasravar width={20} height={20} />; //<Ionicons name="time" size={20} color="#FFA000" />; // Függőben
+        return <Elfogadasravar width={20} height={20} />; // Függőben
     }
   };
   //-------------------------------------------------------------  OLDAL FRISSÍTÉSE

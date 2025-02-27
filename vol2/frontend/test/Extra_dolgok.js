@@ -1,135 +1,69 @@
-//------------------------------------------------------------- ÚJ VÁLTOZÓK
-  const [osszeg, setOsszeg] = useState("");
-  const [szamologepLathatoe, setSzamologepLathatoe] = useState(false);
-  //-------------------------------------------------------------
-  const [tanora, setTanora] = useState(true);
-  const [vizsga, setVizsga] = useState(false);
-//------------------------------------------------------------- CHECKBOX
-function SajatCheckbox({ label, isChecked, onPress }) {
-  return (
-    <TouchableOpacity style={styles.checkboxContainer} onPress={onPress}>
-      <View style={[styles.checkbox, isChecked && styles.checkedCheckbox]} />
-      <Text style={{ fontSize: 17 }}>{label}</Text>
-    </TouchableOpacity>
-  );
-}
-// -------------------------------------------------------- SZÁMOLÓGÉP VIEW ----------------------------------------------------
-  const szamologepBetoltes = () => (
-    <View style={styles.szamologepView}>
-      {[...Array(9).keys()].map((_, i) => (
-        <TouchableOpacity
-          key={i + 1}
-          onPress={() => szamologepGombNyomas((i + 1).toString())}
-          style={styles.szamologepGomb}
-        >
-          <Text style={styles.szamologepSzoveg}>{i + 1}</Text>
-        </TouchableOpacity>
-      ))}
-      <TouchableOpacity
-        onPress={() => szamologepGombNyomas("C")}
-        style={styles.szamologepGomb}
-      >
-        <Text style={styles.szamologepSzovegC}>C</Text>
-      </TouchableOpacity>
-      <TouchableOpacity
-        onPress={() => szamologepGombNyomas("0")}
-        style={styles.szamologepGomb}
-      >
-        <Text style={styles.szamologepSzoveg}>0</Text>
-      </TouchableOpacity>
-      <TouchableOpacity
-        onPress={() => szamologepGombNyomas("torles")}
-        style={styles.szamologepGomb}
-      >
-        <Text style={styles.szamologepSzovegDEL}>⌫</Text>
-      </TouchableOpacity>
-    </View>
-  );
-    /* -------------------------------------- ÖSSZEG FELVITELE AZ ADATBÁZISBA ---------------------------------------- */
-  
-  const osszegFelvitele = async () => {
-    if (osszeg != 0) {
-      if (osszeg.startsWith("0")) {
-        Alert.alert("Hiba!", "Az összeg nem kezdődhet 0-val!", [
-          {
-            text: "RENDBEN",
-          },
-        ]);
-      } else {
-        const tipusID = tanora ? 1 : vizsga ? 2 : null;
-        //jelenlegi idő
-        const datum = new Date();
-        // Dátum formázása YYYY-MM-DD HH:MM:SS formában (az adatbázisban datetimenak van beállítva!!)
-        const formazottDatum =
-          datum.getFullYear() +
-          "-" +
-          ("0" + (datum.getMonth() + 1)).slice(-2) +
-          "-" +
-          ("0" + datum.getDate()).slice(-2) +
-          " " +
-          ("0" + datum.getHours()).slice(-2) +
-          ":" +
-          ("0" + datum.getMinutes()).slice(-2) +
-          ":" +
-          ("0" + datum.getSeconds()).slice(-2);
-
-        const adat = {
-          befizetesek_tanuloID: atkuld.tanulo_id, //5
-          befizetesek_oktatoID: atkuld.tanulo_oktatoja, //7
-          befizetesek_tipusID: tipusID, //1 vagy 2
-          befizetesek_osszeg: osszeg, //összeg
-          befizetesek_ideje: formazottDatum,
-        };
-
-        try {
-          const valasz = await fetch(Ipcim.Ipcim + "/tanuloBefizetesFelvitel", {
-            method: "POST",
-            body: JSON.stringify(adat),
-            headers: {
-              "Content-Type": "application/json; charset=UTF-8",
-            },
-          });
-          // Válasz szöveges formátumban, így text() metódussal dolgozunk
-          const valaszText = await valasz.text();
-          if (valasz.ok) {
-            Alert.alert("Siker", valaszText); // A szöveget közvetlenül jelenítjük meg
-          } else {
-            Alert.alert(
-              "Hiba",
-              valaszText || "A befizetés felvitele nem sikerült."
-            );
-          }
-        } catch (error) {
-          Alert.alert("Hiba", `Hiba történt: ${error.message}`);
-        }
-
-        setOsszeg(""); //törlöm a beírt összeget a felvitel után!!!
-        adatokBetoltese();
-      }
-    } else
-      Alert.alert("Hiba!", "A befizetni kívánt összeg nem lehet 0!", [
-        { text: "Értem" },
+/* -------------------------------------- ÖSSZEG FELVITELE AZ ADATBÁZISBA ---------------------------------------- */
+const osszegFelvitele = async () => {
+  if (osszeg != 0) {
+    if (osszeg.startsWith("0")) {
+      Alert.alert("Hiba!", "Az összeg nem kezdődhet 0-val!", [
+        {
+          text: "RENDBEN",
+        },
       ]);
-  };
-  {
-    /* --------------------------------------SZÁMOLÓGÉP KINÉZET ÉS FUNKCIÓ---------------------------------------- */
-  }
-  const osszegMegnyomas = () => {
-    setSzamologepLathatoe(!szamologepLathatoe);
-  };
-  // számológép gombok
-  const szamologepGombNyomas = (key) => {
-    if (key === "torles") {
-      setOsszeg(osszeg.slice(0, -1));
-    } else if (key === "C") {
-      setOsszeg("");
     } else {
-      setOsszeg(osszeg + key);
+      const tipusID = tanora ? 1 : vizsga ? 2 : null;
+      //jelenlegi idő
+      const datum = new Date();
+      // Dátum formázása YYYY-MM-DD HH:MM:SS formában (az adatbázisban datetimenak van beállítva!!)
+      const formazottDatum =
+        datum.getFullYear() +
+        "-" +
+        ("0" + (datum.getMonth() + 1)).slice(-2) +
+        "-" +
+        ("0" + datum.getDate()).slice(-2) +
+        " " +
+        ("0" + datum.getHours()).slice(-2) +
+        ":" +
+        ("0" + datum.getMinutes()).slice(-2) +
+        ":" +
+        ("0" + datum.getSeconds()).slice(-2);
+
+      const adat = {
+        befizetesek_tanuloID: atkuld.tanulo_id, //5
+        befizetesek_oktatoID: atkuld.tanulo_oktatoja, //7
+        befizetesek_tipusID: tipusID, //1 vagy 2
+        befizetesek_osszeg: osszeg, //összeg
+        befizetesek_ideje: formazottDatum,
+      };
+
+      try {
+        const valasz = await fetch(Ipcim.Ipcim + "/tanuloBefizetesFelvitel", {
+          method: "POST",
+          body: JSON.stringify(adat),
+          headers: {
+            "Content-Type": "application/json; charset=UTF-8",
+          },
+        });
+        // Válasz szöveges formátumban, így text() metódussal dolgozunk
+        const valaszText = await valasz.text();
+        if (valasz.ok) {
+          Alert.alert("Siker", valaszText); // A szöveget közvetlenül jelenítjük meg
+        } else {
+          Alert.alert(
+            "Hiba",
+            valaszText || "A befizetés felvitele nem sikerült."
+          );
+        }
+      } catch (error) {
+        Alert.alert("Hiba", `Hiba történt: ${error.message}`);
+      }
+
+      setOsszeg(""); //törlöm a beírt összeget a felvitel után!!!
+      adatokBetoltese();
     }
-  };
-{
-  /* --------------------------------------SZÁMOLÓGÉP---------------------------------------- */
-}
+  } else
+    Alert.alert("Hiba!", "A befizetni kívánt összeg nem lehet 0!", [
+      { text: "Értem" },
+    ]);
+};
+{/* --------------------------------------SZÁMOLÓGÉP---------------------------------------- */}
 {/* Figyelmeztető szöveg megváltoztatása ||függ: számológép látható-e */}
 <View style={styles.container}>
   {szamologepLathatoe ? (
@@ -184,10 +118,9 @@ function SajatCheckbox({ label, isChecked, onPress }) {
 
   {szamologepLathatoe && szamologepBetoltes()}
 </View>;
-
 //------------------------------------------------------- EXTRA STÍLUSOK
 const styles = StyleSheet.create({
-    osszegBeiras: {
+  osszegBeiras: {
     fontSize: 40,
     fontWeight: "bold",
     //color: "#3BC14A", //zöld
@@ -202,7 +135,7 @@ const styles = StyleSheet.create({
     marginBottom: 5,
     textAlign: "center",
   },
-   felvetelGomb: {
+  felvetelGomb: {
     backgroundColor: "#4DA167", //zöld
     //backgroundColor: "#6A5AE0", //lila
     //backgroundColor: '#FF6B6B',
@@ -290,4 +223,8 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     alignContent: "space-between",
   },
-})
+});
+//color: "#3BC14A", //zöld
+//color:"#6A5AE0", //lila
+//color: "#6B6054", //earthy vibes
+//backgroundColor: "#FFA62B", //narancs
