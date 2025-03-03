@@ -450,8 +450,14 @@ app.post("/tanuloReszletei", (req, res) => {
   connection.query(
     `SELECT *
     FROM felhasznaloi_adatok 
-    INNER JOIN tanulo_adatok ON felhasznaloi_adatok.felhasznalo_id=tanulo_adatok.tanulo_felhasznaloID  
-    WHERE tanulo_felhasznaloID = ?`,
+    INNER JOIN tanulo_adatok AS tanulo ON felhasznaloi_adatok.felhasznalo_id=tanulo.tanulo_felhasznaloID  
+    INNER JOIN oktato_adatok AS oktato
+    ON tanulo.tanulo_oktatoja = oktato.oktato_id
+    INNER JOIN ora_adatok AS ora
+    ON tanulo.tanulo_id = ora.ora_diakja
+    INNER JOIN befizetesek
+    ON tanulo.tanulo_id = befizetesek.befizetesek_tanuloID
+    WHERE tanulo.tanulo_levizsgazott=0 AND tanulo_felhasznaloID = ?`,
     [req.body.tanulo_felhasznaloID],
     (err, rows, fields) => {
       if (err) {
@@ -465,6 +471,37 @@ app.post("/tanuloReszletei", (req, res) => {
   );
   connection.end();
 });
+
+
+//-------------------------------
+
+app.post("/levizsgazottTanuloReszletei", (req, res) => {
+    const connection = kapcsolat();
+    connection.connect();
+
+    const { tanulo_felhasznaloID } = req.body;
+
+    const query = `
+        SELECT *
+        FROM felhasznaloi_adatok 
+        INNER JOIN tanulo_adatok AS tanulo ON felhasznaloi_adatok.felhasznalo_id=tanulo.tanulo_felhasznaloID  
+        INNER JOIN oktato_adatok AS oktato ON tanulo.tanulo_oktatoja = oktato.oktato_id
+        INNER JOIN ora_adatok AS ora ON tanulo.tanulo_id = ora.ora_diakja
+        INNER JOIN befizetesek ON tanulo.tanulo_id = befizetesek.befizetesek_tanuloID
+        WHERE tanulo.tanulo_levizsgazott=1 AND tanulo.tanulo_felhasznaloID = ?`;
+
+    connection.query(query, [tanulo_felhasznaloID], (err, rows) => {
+        if (err) {
+            console.error("SQL hiba:", err);
+            res.status(500).json({ hiba: "Lekérdezési hiba történt" });
+        } else {
+            console.log("Lekérdezett adatok:", rows);
+            res.status(200).json(rows);
+        }
+        connection.end();
+    });
+});
+
 
 //----------------------
 app.post("/aktualisDiakok", (req, res) => {
@@ -514,8 +551,6 @@ app.post("/levizsgazottDiakok", (req, res) => {
   );
   connection.end();
 });
-
-
 
 //----------------
 

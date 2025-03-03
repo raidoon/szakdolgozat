@@ -70,7 +70,7 @@ const kattmaradek = (tanulo) => {
         style={Oktato_Styles.navigateButton}
         onPress={() => navigation.navigate("Oktato_ATBefizetesek", { atkuld })}
       >
-        <Text style={Oktato_Styles.navigateButtonText}>Diákok Befizui</Text>
+        <Text style={Oktato_Styles.navigateButtonText}>Diákok Befizetései</Text>
       </TouchableOpacity>
 
     
@@ -78,7 +78,7 @@ const kattmaradek = (tanulo) => {
         style={Oktato_Styles.navigateButton}
         onPress={() => navigation.navigate("Oktato_MegerositesrevaroFizetes", { atkuld })}
       >
-        <Text style={Oktato_Styles.navigateButtonText}>Megerősítésre váró</Text>
+        <Text style={Oktato_Styles.navigateButtonText}>Jóváhagyásra váró befizetések</Text>
       </TouchableOpacity>
     </View>
   );

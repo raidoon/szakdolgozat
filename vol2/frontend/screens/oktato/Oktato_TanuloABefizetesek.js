@@ -44,13 +44,15 @@ export default function Oktato_TanuloABefizetesek({ route }) {
             "Biztos meg akarod erősíteni?", 
             [
                 {
-                    
-                    text: "Igen", 
-                    onPress: () => megerositFiz(befizetesek_id) 
-                },
-                { 
                     text: "Mégse",
                     style: "cancel"
+                   
+                },
+                { 
+                   
+
+                    text: "Igen", 
+                    onPress: () => megerositFiz(befizetesek_id) 
                 }
             ]
         );
