@@ -258,30 +258,36 @@ app.post("/befizetesListaT", (req, res) => {
 });
 //------------------------------------------------ TANULÓ BEFIZETÉS FELVÉTELE
 app.post("/tanuloBefizetesFelvitel", (req, res) => {
+  console.log("Request received on /tanuloBefizetesFelvitel");
   const {
     befizetesek_tanuloID,
     befizetesek_oktatoID,
     befizetesek_tipusID,
     befizetesek_osszeg,
     befizetesek_ideje,
+    befizetesek_kinek
   } = req.body;
-  // Use the existing connection, do not reconnect
+    // Ensure you log the request body to check if it's properly received
+    console.log("Request Body:", req.body);
+
   kapcsolat();
   connection.query(
-    `INSERT INTO befizetesek (befizetesek_tanuloID, befizetesek_oktatoID, befizetesek_tipusID, befizetesek_osszeg, befizetesek_ideje, befizetesek_jovahagyva) 
-     VALUES (?, ?, ?, ?, ?, 0)`,
+    `INSERT INTO befizetesek (befizetesek_id, befizetesek_tanuloID, befizetesek_oktatoID, befizetesek_tipusID, befizetesek_osszeg, befizetesek_ideje, befizetesek_jovahagyva, befizetesek_kinek) 
+     VALUES (NULL,?, ?, ?, ?, ?, 0, ?)`,
     [
       befizetesek_tanuloID,
       befizetesek_oktatoID,
       befizetesek_tipusID,
       befizetesek_osszeg,
       befizetesek_ideje,
+      befizetesek_kinek
     ],
     (err, rows) => {
       if (err) {
-        console.log(err);
+        console.log("Database error:", err);
         res.status(500).send("Hiba történt a befizetés felvitele során!");
       } else {
+        console.log("Database query successful:", rows);
         res.status(200).send("A befizetés felvitele sikerült!");
       }
     }

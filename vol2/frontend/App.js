@@ -13,7 +13,7 @@ import Tanulo_Befizetesek from "./screens/tanulo/Tanuloi_Befizetesek/Tanulo_Befi
 import Tanulo_KinekAkarszBefizetni from "./screens/tanulo/Tanulo_KinekAkarszBefizetni";
 import AutosiskolanakAkarokFizetni from "./screens/tanulo/Tanuloi_Befizetesek/AutosiskolanakAkarokFizetni";
 import OktatonakAkarokFizetni from "./screens/tanulo/Tanuloi_Befizetesek/OktatonakAkarokFizetni";
-import FizetesiElozmenyek from "./screens/tanulo/Tanuloi_Befizetesek/FizetesiElozmenyek";
+//import FizetesiElozmenyek from "./screens/tanulo/Tanuloi_Befizetesek/FizetesiElozmenyek";
 //-------------------------tanulo profilon belüli menük
 import SzemelyesAdatok from "./screens/tanulo/ProfilScreens/SzemelyesAdatok";
 import JelszoMegvaltoztatasa from "./screens/tanulo/ProfilScreens/JelszoMegvaltoztatasa";
@@ -85,7 +85,6 @@ function TanuloPenzugyStack(){
     <Stack.Navigator screenOptions={{ headerShown: true }}>
       <Stack.Screen name="AutosiskolanakAkarokFizetni" options={{title:"Befizetés az autósiskola számára"}} component={AutosiskolanakAkarokFizetni}/>
       <Stack.Screen name="OktatonakAkarokFizetni" options={{title:"Befizetés az oktató számára"}} component={OktatonakAkarokFizetni}/>
-      <Stack.Screen name="FizetesiElozmenyek" options={{title:"Fizetési előzmények"}} component={FizetesiElozmenyek}/>
       <Stack.Screen name="Tanulo_Befizetesek" options={{title:"Fizetési előzmények"}} component={Tanulo_Befizetesek}/>
     </Stack.Navigator>
   );

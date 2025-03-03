@@ -1,10 +1,8 @@
 import React, { useState } from "react";
-import {View,Text,TouchableOpacity,StyleSheet,ScrollView,Alert,} from "react-native";
+import { View, Text, TouchableOpacity, StyleSheet, ScrollView, Alert } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import { LinearGradient } from "expo-linear-gradient";
-import Ipcim from "../../../Ipcim";
-const OktatonakAkarokFizetni = ({ route }) => {
-  const {atkuld} = route.params;
+const OktatonakAkarokFizetni = ({ navigation }) => {
   const [osszeg, setOsszeg] = useState("");
   const [szamologepLathatoe, setSzamologepLathatoe] = useState(false);
   const [tanora, setTanora] = useState(true);
@@ -20,14 +18,14 @@ const OktatonakAkarokFizetni = ({ route }) => {
   }
   /* -------------------------------------- ÖSSZEG FELVITELE AZ ADATBÁZISBA ---------------------------------------- */
   const osszegFelvitele = async () => {
-    console.log("összeg felvitel gomb megnyomva. Összeg: ", osszeg)
     if (osszeg === "" || parseFloat(osszeg) === 0) {
       Alert.alert("Hiba!", "A befizetni kívánt összeg nem lehet 0!", [
         { text: "Értem" },
       ]);
       return;
     }
-    else if (osszeg.startsWith("0") && osszeg !== "0") {
+
+    if (osszeg.startsWith("0") && osszeg !== "0") {
       Alert.alert("Hiba!", "Az összeg nem kezdődhet 0-val!", [
         {
           text: "RENDBEN",
@@ -35,56 +33,51 @@ const OktatonakAkarokFizetni = ({ route }) => {
       ]);
       return;
     }
-    else{
-      const tipusID = tanora ? 1 : vizsga ? 2 : null;
-      const datum = new Date();
-      const formazottDatum =
-        datum.getFullYear() +
-        "-" +
-        ("0" + (datum.getMonth() + 1)).slice(-2) +
-        "-" +
-        ("0" + datum.getDate()).slice(-2) +
-        " " +
-        ("0" + datum.getHours()).slice(-2) +
-        ":" +
-        ("0" + datum.getMinutes()).slice(-2) +
-        ":" +
-        ("0" + datum.getSeconds()).slice(-2);
-      const adat = {
-        befizetesek_tanuloID: atkuld.tanulo_id, //5
-        befizetesek_oktatoID: atkuld.tanulo_oktatoja, //7
-        befizetesek_tipusID: tipusID, //1 vagy 2
-        befizetesek_osszeg: osszeg, //összeg
-        befizetesek_ideje: formazottDatum,
-        befizetesek_kinek: 1, // 1=oktatónál történt befizetés
-      };
-      console.log("Adat küldése a backendnek:", adat); // Debugging: Log the data being sent
-      try {
-        const valasz = await fetch(Ipcim.Ipcim + "/tanuloBefizetesFelvitel", {
-          method: "POST",
-          body: JSON.stringify(adat), // Ensure this is properly formatted JSON
-          headers: {
-            "Content-Type": "application/json; charset=UTF-8", // Ensure the correct content type
-          },
-        });
 
-        console.log("Fetch Response:", valasz.ok); // Log this to see if the response is ok
+    const tipusID = tanora ? 1 : vizsga ? 2 : null;
+    const datum = new Date();
+    const formazottDatum =
+      datum.getFullYear() +
+      "-" +
+      ("0" + (datum.getMonth() + 1)).slice(-2) +
+      "-" +
+      ("0" + datum.getDate()).slice(-2) +
+      " " +
+      ("0" + datum.getHours()).slice(-2) +
+      ":" +
+      ("0" + datum.getMinutes()).slice(-2) +
+      ":" +
+      ("0" + datum.getSeconds()).slice(-2);
 
-        const valaszText = await valasz.text();
-        console.log("Backend válasz:", valaszText); // Debugging: Log the backend response
-        if (valasz.ok) {
-          Alert.alert("Siker", valaszText);
-        } else {
-          Alert.alert("Hiba", valaszText || "A befizetés felvitele nem sikerült.");
-        }
-      } catch (error) {
-        console.error("Fetch Error:", error); // Debugging: Log any fetch errors
-        Alert.alert("Hiba", `Hiba történt: ${error.message}`);
+    const adat = {
+      befizetesek_tanuloID: atkuld.tanulo_id, //5
+      befizetesek_oktatoID: atkuld.tanulo_oktatoja, //7
+      befizetesek_tipusID: tipusID, //1 vagy 2
+      befizetesek_osszeg: osszeg, //összeg
+      befizetesek_ideje: formazottDatum,
+      befizetesek_kinek: 1,
+    };
+
+    try {
+      const valasz = await fetch(Ipcim.Ipcim + "/tanuloBefizetesFelvitel", {
+        method: "POST",
+        body: JSON.stringify(adat),
+        headers: {
+          "Content-Type": "application/json; charset=UTF-8",
+        },
+      });
+      const valaszText = await valasz.text();
+      if (valasz.ok) {
+        Alert.alert("Siker", valaszText);
+      } else {
+        Alert.alert("Hiba", valaszText || "A befizetés felvitele nem sikerült.");
       }
-    
-      setOsszeg(""); // Törlöm a beírt összeget a felvitel után!!!
-      adatokBetoltese();
+    } catch (error) {
+      Alert.alert("Hiba", `Hiba történt: ${error.message}`);
     }
+
+    setOsszeg(""); //törlöm a beírt összeget a felvitel után!!!
+    adatokBetoltese();
   };
   const szamologepBetoltes = () => (
     <View style={styles.szamologepView}>
@@ -122,31 +115,19 @@ const OktatonakAkarokFizetni = ({ route }) => {
   };
   const szamologepGombNyomas = (key) => {
     if (key === "torles") {
-      setOsszeg((elozoOsszeg) => {
-        const ujOsszeg = elozoOsszeg.slice(0, -1);
-        console.log("Jelenlegi összeg (törlés után):", ujOsszeg);
-        return ujOsszeg;
-      });
+      setOsszeg(osszeg.slice(0, -1));
     } else if (key === "C") {
       setOsszeg("");
-      console.log("Jelenlegi összeg (törölve):", "");
     } else {
-      setOsszeg((elozoOsszeg) => {
-        const ujOsszeg = elozoOsszeg + key;
-        console.log("Jelenlegi összeg (hozzáadva):", ujOsszeg);
-        return ujOsszeg;
-      });
+      setOsszeg(osszeg + key);
     }
   };
   return (
-    <LinearGradient
-      colors={["#ffffff", "#f0f4ff"]}
-      style={styles.lineargradientContainer}
-    >
-      {szamologepLathatoe ? (
-        <ScrollView contentContainerStyle={{ alignContent: "center" }}>
-          <View style={styles.container2}>
-            {/*-------------------------------------- SZÁMOLÓGÉP LÁTHATÓ -----------------------*/}
+    <LinearGradient colors={["#ffffff", "#f0f4ff"]} style={styles.container}>
+      <ScrollView contentContainerStyle={{ alignContent: "center" }}>
+        {szamologepLathatoe ? (
+          <View style={styles.container2}> 
+          {/*-------------------------------------- SZÁMOLÓGÉP LÁTHATÓ */}
             <Text style={styles.title}>FIGYELEM!</Text>
             <Text style={styles.subtitle}>
               Az alkalmazásban rögzített tranzakciók kizárólag szemléltető
@@ -177,60 +158,59 @@ const OktatonakAkarokFizetni = ({ route }) => {
               </Text>
             </TouchableOpacity>
             {/*----------------------------------- FIZETÉS ELKÜLDÉSE GOMB ----------------- */}
-            <TouchableOpacity
-              style={styles.payButton}
-              onPress={osszegFelvitele}
-            >
-              <LinearGradient
-                colors={["#6a11cb", "#2575fc"]}
-                style={styles.gradient}
-              >
-                <Ionicons name="card" size={24} color="#fff" />
-                <Text style={styles.payButtonText}>Fizetés elküldése</Text>
-              </LinearGradient>
-            </TouchableOpacity>
+        <TouchableOpacity
+          style={styles.payButton}
+          onPress={osszegFelvitele}
+        >
+          <LinearGradient
+            colors={["#6a11cb", "#2575fc"]}
+            style={styles.gradient}
+          >
+            <Ionicons name="card" size={24} color="#fff" />
+            <Text style={styles.payButtonText}>Fizetés elküldése</Text>
+          </LinearGradient>
+        </TouchableOpacity>
             {szamologepBetoltes()}
           </View>
-        </ScrollView>
-      ) : (
-        <ScrollView contentContainerStyle={styles.scrollContainer}>
-          <Text style={styles.title}>Fizetés az oktatónál</Text>
-          <Text style={styles.subtitle}>
-            A felvenni kívánt összeget az oktatód fogja jóváhagyni, amennyiben
-            tényleg kifizetted neki!
-          </Text>
-          <TouchableOpacity onPress={osszegMegnyomas} style={styles.input}>
-            <Text style={styles.osszegBeiras}>
-              {osszeg ? `${osszeg} Ft` : "Összeg (Ft)"}
+        ) : (
+          <View style={styles.container2}>
+            <Text style={styles.title}>Fizetés az oktatónál</Text>
+            <Text style={styles.subtitle}>
+              A felvenni kívánt összeget az oktatód fogja jóváhagyni, amennyiben
+              tényleg kifizetted neki!
             </Text>
-          </TouchableOpacity>
-          {/*----------------------------------- FIZETÉS ELKÜLDÉSE GOMB ----------------- */}
-          <TouchableOpacity style={styles.payButton} onPress={osszegFelvitele}>
-            <LinearGradient
-              colors={["#6a11cb", "#2575fc"]}
-              style={styles.gradient}
-            >
-              <Ionicons name="card" size={24} color="#fff" />
-              <Text style={styles.payButtonText}>Fizetés elküldése</Text>
-            </LinearGradient>
-          </TouchableOpacity>
-        </ScrollView>
-      )}
+            <TouchableOpacity onPress={osszegMegnyomas} style={styles.input}>
+              <Text style={styles.osszegBeiras}>
+                {osszeg ? `${osszeg} Ft` : "Összeg (Ft)"}
+              </Text>
+            </TouchableOpacity>
+            {/*----------------------------------- FIZETÉS ELKÜLDÉSE GOMB ----------------- */}
+        <TouchableOpacity
+          style={styles.payButton}
+          onPress={osszegFelvitele}
+        >
+          <LinearGradient
+            colors={["#6a11cb", "#2575fc"]}
+            style={styles.gradient}
+          >
+            <Ionicons name="card" size={24} color="#fff" />
+            <Text style={styles.payButtonText}>Fizetés elküldése</Text>
+          </LinearGradient>
+        </TouchableOpacity>
+          </View>
+        )}
+      </ScrollView>
     </LinearGradient>
   );
 };
 const styles = StyleSheet.create({
-  lineargradientContainer: {
+  container: {
     flex: 1,
+    padding: 20,
+    verticalAlign: "middle",
   },
   container2: {
     flex: 1,
-    alignItems: "center",
-    padding: 20,
-  },
-  scrollContainer: {
-    flexGrow: 1,
-    justifyContent: "center",
     alignItems: "center",
     padding: 20,
   },
@@ -240,6 +220,11 @@ const styles = StyleSheet.create({
     color: "#6B6054", //earthy vibes
     textAlign: "center",
     marginBottom: 10,
+  },
+  scrollContainer: {
+    flexGrow: 1,
+    justifyContent: "center",
+    alignItems: "center",
   },
   title: {
     fontSize: 24,
@@ -255,7 +240,7 @@ const styles = StyleSheet.create({
   input: {
     width: "100%",
     height: 50,
-    justifyContent: "center",
+    justifyContent: 'center',
     backgroundColor: "#fff",
     borderRadius: 10,
     paddingHorizontal: 15,
@@ -299,6 +284,41 @@ const styles = StyleSheet.create({
     color: "#888",
     fontStyle: "italic",
     marginTop: 20,
+  },
+  modalOverlay: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
+    backgroundColor: "rgba(0, 0, 0, 0.5)",
+  },
+  modalContent: {
+    backgroundColor: "#fff",
+    padding: 20,
+    borderRadius: 10,
+    width: 300,
+    elevation: 5,
+  },
+  modalTitle: {
+    fontSize: 18,
+    fontWeight: "bold",
+    marginBottom: 10,
+    textAlign: "center",
+  },
+  modalText: {
+    fontSize: 16,
+    marginBottom: 5,
+    textAlign: "left",
+  },
+  modalCloseBtn: {
+    marginTop: 20,
+    padding: 10,
+    backgroundColor: "#6B6054",
+    borderRadius: 5,
+  },
+  modalCloseText: {
+    color: "#fff",
+    fontSize: 16,
+    textAlign: "center",
   },
   cim: {
     fontSize: 24,
@@ -389,7 +409,7 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     alignContent: "space-between",
     marginTop: 20,
-    marginBottom: 10,
+    marginBottom: 10
   },
 });
 export default OktatonakAkarokFizetni;

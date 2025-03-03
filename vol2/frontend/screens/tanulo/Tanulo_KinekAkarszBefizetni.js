@@ -27,6 +27,7 @@ const Tanulo_KinekAkarszBefizetni = ({atkuld}) => {
           onPress={() =>
             navigation.navigate("Tanuló Pénzügyek", {
               screen: "OktatonakAkarokFizetni",
+              params: {atkuld} //tovább adjuk az oktatóshoz
             })
           }
         >
@@ -46,6 +47,7 @@ const Tanulo_KinekAkarszBefizetni = ({atkuld}) => {
           onPress={() =>
             navigation.navigate("Tanuló Pénzügyek", {
               screen: "AutosiskolanakAkarokFizetni",
+              params: {atkuld} //tovább adjuk az autósiskoláshoz
             })
           }
         >

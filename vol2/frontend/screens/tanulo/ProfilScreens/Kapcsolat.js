@@ -25,9 +25,9 @@ export default function Kapcsolat() {
       </View>
 
       <View style={Styles.kapcsolatBuborek}>
-        <Text>social media elérhetőségek</Text>
-        <Text>github pl ?</Text>
-        <Text>akarunk egyáltalán marketinget?</Text>
+        <Text>Az app készítői:</Text>
+        <Text>1</Text>
+        <Text>2</Text>
       </View>
     </View>
   );
