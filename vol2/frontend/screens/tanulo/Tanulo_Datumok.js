@@ -5,6 +5,7 @@ import { Ionicons } from "@expo/vector-icons";
 import Styles from "../../Styles";
 import Ipcim from "../../Ipcim";
 import TanuloKinyitottDatumok from "./Tanulo_KinyitottDatumok";
+import { ActivityIndicator } from 'react-native';
 const Tanulo_Datumok = ({ atkuld }) => {
   const ma = new Date();
   const [kivalasztottDatum, setKivalasztottDatum] = useState(ma);
@@ -126,16 +127,19 @@ const Tanulo_Datumok = ({ atkuld }) => {
   //------------------------------------------------------------- OLDAL FRISSÍTÉSE
   const frissitesKozben = useCallback(() => {
     setFrissites(true);
+    setBetolt(true);
     setTimeout(() => {
       adatokBetoltese();
       setFrissites(false);
+      setBetolt(false);
     }, 2000);
   }, []);
   //-------------------------
   if (betolt) {
     return (
-      <View style={Styles.bejelentkezes_Container}>
-        <Text>Korábbi tranzakciók betöltése folyamatban...</Text>
+      <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center', padding: 20 }}>
+         <ActivityIndicator size="large" color="#007BFF" />
+        <Text style={styles.betoltesText}>Az óráid betöltése folyamatban van. Kérjük, légy türelemmel...</Text>
       </View>
     );
   }
@@ -421,10 +425,7 @@ const Tanulo_Datumok = ({ atkuld }) => {
         <TanuloKinyitottDatumok
           naptarLenyitas={naptarLenyitas}
           naptarToggle={naptarToggle}
-          //datumMegnyomas={datumMegnyomas}
-          //kivalasztottDatum={kivalasztottDatum}
           orakLista={orakLista}
-          //setKivalasztottDatum={setKivalasztottDatum}
           styles={styles}
         />
       )}
@@ -433,32 +434,53 @@ const Tanulo_Datumok = ({ atkuld }) => {
 };
 
 const styles = StyleSheet.create({
+  betoltesText:{
+    fontSize: 16,
+    color: '#666',
+    textAlign: 'center',
+    marginTop: 20,
+  },
   kalendar: {
     marginTop: 0,
   },
-  sectionHeader: {
+  elkovetkezendoOrakView: {
     flexDirection: "row",
     justifyContent: "space-between",
     alignItems: "center",
     padding: 10,
     backgroundColor: "#f0f0f0",
+    borderWidth: 1,
+    borderColor: "gray",
+    marginTop: 20
   },
-  sectionHeaderText: {
+  elkovetkezendoOrakText: {
     fontSize: 18,
     fontWeight: "bold",
+    //color: "#5c4ce3"
   },
   OraView: {
     padding: 15,
     marginVertical: 5,
     borderRadius: 10,
   },
-  eventTitle: {
+  elkovetkezendoOraCim: {
     fontSize: 16,
     fontWeight: "bold",
   },
-  eventTime: {
+  elkovetkezendoOraIdeje: {
     fontSize: 14,
     color: "#666",
+  },
+  oraTitle: {
+    fontSize: 16,
+    color: "#6A5AE0",
+    fontWeight: "500",
+  },
+  oraOsszeg: {
+    fontSize: 20,
+    color: "#2d3436",
+    fontWeight: "600",
+    marginTop: 5,
   },
   //------------------------------------ a mai dátum is legyen olyan hátteres mint a kiválasztott, de más színnel
   maiDatum: {
@@ -658,17 +680,6 @@ const styles = StyleSheet.create({
     marginRight: 0,
     marginLeft: 0,
     marginTop: 20,
-  },
-  oraTitle: {
-    fontSize: 16,
-    color: "#6A5AE0",
-    fontWeight: "500",
-  },
-  oraOsszeg: {
-    fontSize: 20,
-    color: "#2d3436",
-    fontWeight: "600",
-    marginTop: 5,
   },
 });
 export default Tanulo_Datumok;

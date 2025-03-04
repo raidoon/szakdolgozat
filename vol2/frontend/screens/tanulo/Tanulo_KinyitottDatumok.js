@@ -13,49 +13,60 @@ const TanuloKinyitottDatumok = ({
 }) => {
   const ma = new Date();
   const [kivalasztottDatum, setKivalasztottDatum] = useState(ma);
-  const [upcomingCollapsed, setUpcomingCollapsed] = useState(true);
-  const [finishedCollapsed, setFinishedCollapsed] = useState(true);
+  const [elkovetkezendoCollapsed, setElkovetkezendoCollapsed] = useState(true);
+  const [teljesitettCollapsed, setTeljesitettCollapsed] = useState(true);
   const megjeloltNapok = () => {
     const megjelolve = {};
     orakLista.forEach((item) => {
       const datum = new Date(item.ora_datuma);
       const datumSzoveggeAlakitva = datum.toISOString().split("T")[0];
-      megjelolve[datumSzoveggeAlakitva] = { marked: true };
+      megjelolve[datumSzoveggeAlakitva] = { 
+        marked: true,
+        //dotColor: "#6A5AE0",
+        //activeOpacity: 0,
+      };
     });
-    // Add the selected date to the markedDates object
-    const selectedDate = kivalasztottDatum.toISOString().split("T")[0];
-    megjelolve[selectedDate] = { selected: true, marked: true };
+    // Hozzáadjuk a kiválasztott dátumot a megjelölt dátumokhoz
+    const kivalasztottDatumMegjelolve = kivalasztottDatum
+      .toISOString()
+      .split("T")[0];
+    megjelolve[kivalasztottDatumMegjelolve] = { 
+      selected: true, 
+      marked: true,
+      //dotColor: "#6A5AE0",
+      //activeOpacity: 0,
+    };
     return megjelolve;
   };
   const datumMegnyomas = (day) => {
     const ujDatum = new Date(day.dateString);
     setKivalasztottDatum(ujDatum);
   };
-  const separateClasses = () => {
-    const now = new Date();
-    const upcoming = [];
-    const finished = [];
-
-    orakLista.forEach((item) => {
-      const itemDate = new Date(item.ora_datuma);
-      if (itemDate > now) {
-        upcoming.push(item);
+  const orakKulonvalasztasa = () => {
+    const elkovetkezendoOra = [];
+    const teljesitettOra = [];
+    //----------------------------------- ha az óra időpontja korábban van, mint a jelenlegi idő, akkor a teljesített órákhoz adjuk,
+    //----------------------------------- ha később, akkor a még hátralévő órákhoz
+    orakLista.forEach((ora) => {
+      const oraIdopontja = new Date(ora.ora_datuma);
+      if (oraIdopontja > ma) {
+        elkovetkezendoOra.push(ora);
       } else {
-        finished.push(item);
+        teljesitettOra.push(ora);
       }
     });
 
-    return { upcoming, finished };
+    return { elkovetkezendoOra, teljesitettOra };
   };
-  const { upcoming, finished } = separateClasses();
+  const { elkovetkezendoOra, teljesitettOra } = orakKulonvalasztasa();
   return (
     <ScrollView>
       <View style={{ marginTop: 20 }}>
         <Calendar
           style={styles.kalendar}
-          onDayPress={(day) => {
-            console.log("selected day", day);
-            datumMegnyomas(day);
+          onDayPress={(nap) => {
+            console.log("kiválasztott dátum:", nap);
+            datumMegnyomas(nap);
           }}
           onPressArrowLeft={(subtractMonth) => subtractMonth()}
           onPressArrowRight={(addMonth) => addMonth()}
@@ -108,93 +119,126 @@ const TanuloKinyitottDatumok = ({
       </View>
       {/*----------------------------------- ELKÖVETKEZENDŐ ÓRÁK -------------------------------- */}
       <TouchableOpacity
-        onPress={() => setUpcomingCollapsed(!upcomingCollapsed)}
+        onPress={() => setElkovetkezendoCollapsed(!elkovetkezendoCollapsed)}
       >
-        <View style={styles.sectionHeader}>
-          <Text style={styles.sectionHeaderText}>Elkövetkezendő Órák</Text>
+        <View style={styles.elkovetkezendoOrakView}>
+          <Text style={styles.elkovetkezendoOrakText}>Elkövetkezendő Órák</Text>
           <Ionicons
             name={
-              upcomingCollapsed ? "chevron-down-outline" : "chevron-up-outline"
+              elkovetkezendoCollapsed
+                ? "chevron-down-outline"
+                : "chevron-up-outline"
             }
             size={24}
             color="black"
           />
         </View>
       </TouchableOpacity>
-      <Collapsible collapsed={upcomingCollapsed}>
-        {upcoming.map((item, index) => {
-          const date = new Date(item.ora_datuma);
-          const honapNap = date
-            .toLocaleDateString("hu-HU", {
-              year: "numeric",
-              month: "2-digit",
-              day: "2-digit",
-            })
-            .replace(/\//g, ".");
-          const oraPerc = date.toLocaleTimeString("hu-HU", {
-            hour: "2-digit",
-            minute: "2-digit",
-            hour12: false,
-          });
-          const hatterszinTomb = ["#FDEEDC", "#D6EFFF", "#F5D8E8", "#E8DFF5"];
-          const hatterszinAzOraknak = hatterszinTomb[index % hatterszinTomb.length];
-          return (
-            <View
-              key={item.ora_id}
-              style={[styles.OraView, { backgroundColor: hatterszinAzOraknak }]}
-            >
-              <Text style={styles.eventTitle}>{`${honapNap}`}</Text>
-              <Text style={styles.eventTime}>{` ${oraPerc}`}</Text>
-            </View>
-          );
-        })}
-      </Collapsible>
+      <Collapsible collapsed={elkovetkezendoCollapsed}>
+        {elkovetkezendoOra.length === 0 ? (
+           <View style={{ alignItems: "center",minHeight: 100}}>
+            {/*<Penz width={100} height={100} />*/}
 
+            <Text style={styles.nincsOra}>
+              Itt fognak megjelenni azok az órák, amik még nincsenek teljesítve. Ezek olyan időpontok, amiket még le kell vezetned, legyen az sima tanóra, vagy vizsga.
+            </Text>
+          </View>
+        ) : (
+          elkovetkezendoOra.map((item, index) => {
+            const date = new Date(item.ora_datuma);
+            const honapNap = date
+              .toLocaleDateString("hu-HU", {
+                year: "numeric",
+                month: "2-digit",
+                day: "2-digit",
+              })
+              .replace(/\//g, ".");
+            const oraPerc = date.toLocaleTimeString("hu-HU", {
+              hour: "2-digit",
+              minute: "2-digit",
+              hour12: false,
+            });
+            const hatterszinTomb = ["#FDEEDC", "#D6EFFF", "#F5D8E8", "#E8DFF5"];
+            const hatterszinAzOraknak =
+              hatterszinTomb[index % hatterszinTomb.length];
+            return (
+              <View
+                key={item.ora_id}
+                style={[
+                  styles.OraView,
+                  { backgroundColor: hatterszinAzOraknak },
+                ]}
+              >
+                <Text style={styles.elkovetkezendoOraCim}>{`${honapNap}`}</Text>
+                <Text
+                  style={styles.elkovetkezendoOraIdeje}
+                >{` ${oraPerc}`}</Text>
+              </View>
+            );
+          })
+        )}
+      </Collapsible>
       {/*----------------------------------- MÁR TELJESÍTETT ÓRÁK -------------------------------- */}
       <TouchableOpacity
-        onPress={() => setFinishedCollapsed(!finishedCollapsed)}
+        onPress={() => setTeljesitettCollapsed(!teljesitettCollapsed)}
       >
-        <View style={styles.sectionHeader}>
-          <Text style={styles.sectionHeaderText}>Teljesített órák</Text>
+        <View style={styles.elkovetkezendoOrakView}>
+          <Text style={styles.elkovetkezendoOrakText}>Teljesített órák</Text>
           <Ionicons
             name={
-              finishedCollapsed ? "chevron-down-outline" : "chevron-up-outline"
+              teljesitettCollapsed
+                ? "chevron-down-outline"
+                : "chevron-up-outline"
             }
             size={24}
             color="black"
           />
         </View>
       </TouchableOpacity>
-      <Collapsible collapsed={finishedCollapsed}>
-        {finished.map((item, index) => {
-          const date = new Date(item.ora_datuma);
-          const honapNap = date
-            .toLocaleDateString("hu-HU", {
-              year: "numeric",
-              month: "2-digit",
-              day: "2-digit",
-            })
-            .replace(/\//g, ".");
-          const oraPerc = date.toLocaleTimeString("hu-HU", {
-            hour: "2-digit",
-            minute: "2-digit",
-            hour12: false,
-          });
+      <Collapsible collapsed={teljesitettCollapsed}>
+        {teljesitettOra.length === 0 ? (
+          <View style={{ alignItems: "center",minHeight: 100}}>
+          {/*<Penz width={100} height={100} />*/}
 
-          const hatterszinTomb = ["#FDEEDC", "#D6EFFF", "#F5D8E8", "#E8DFF5"];
-          const hatterszinAzOraknak =
-            hatterszinTomb[index % hatterszinTomb.length];
+          <Text style={styles.nincsOra}>
+          Itt fognak megjelenni azok az órák, amiket már sikeresen levezettél!
+          </Text>
+        </View>
+        ) : (
+          teljesitettOra.map((item, index) => {
+            const datum = new Date(item.ora_datuma);
+            const honapNap = datum
+              .toLocaleDateString("hu-HU", {
+                year: "numeric",
+                month: "2-digit",
+                day: "2-digit",
+              })
+              .replace(/\//g, ".");
+            const oraPerc = datum.toLocaleTimeString("hu-HU", {
+              hour: "2-digit",
+              minute: "2-digit",
+              hour12: false,
+            });
 
-          return (
-            <View
-              key={item.ora_id}
-              style={[styles.OraView, { backgroundColor: hatterszinAzOraknak }]}
-            >
-              <Text style={styles.eventTitle}>{`${honapNap}`}</Text>
-              <Text style={styles.eventTime}>{` ${oraPerc}`}</Text>
-            </View>
-          );
-        })}
+            const hatterszinTomb = ["#FDEEDC", "#D6EFFF", "#F5D8E8", "#E8DFF5"];
+            const hatterszinAzOraknak =
+              hatterszinTomb[index % hatterszinTomb.length];
+            return (
+              <View
+                key={item.ora_id}
+                style={[
+                  styles.OraView,
+                  { backgroundColor: hatterszinAzOraknak },
+                ]}
+              >
+                <Text style={styles.elkovetkezendoOraCim}>{`${honapNap}`}</Text>
+                <Text
+                  style={styles.elkovetkezendoOraIdeje}
+                >{` ${oraPerc}`}</Text>
+              </View>
+            );
+          })
+        )}
       </Collapsible>
     </ScrollView>
   );

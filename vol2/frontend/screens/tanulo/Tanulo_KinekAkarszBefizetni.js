@@ -9,8 +9,6 @@ import {
 import { Ionicons } from "@expo/vector-icons";
 import { LinearGradient } from "expo-linear-gradient";
 import { useNavigation } from "@react-navigation/native";
-import OktatonakAkarokFizetni from "./Tanuloi_Befizetesek/OktatonakAkarokFizetni";
-import Tanulo_Befizetesek from "./Tanuloi_Befizetesek/Tanulo_Befizetesek";
 const Tanulo_KinekAkarszBefizetni = ({atkuld}) => {
   const navigation = useNavigation();
   return (
@@ -20,7 +18,6 @@ const Tanulo_KinekAkarszBefizetni = ({atkuld}) => {
         <Text style={styles.subtitle}>
           Válaszd ki, hogy kinél fizetted be a tanóra vagy a vizsga díját.
         </Text>
-
         {/* FIZETÉS AZ OKTATÓNAK */}
         <TouchableOpacity
           style={styles.button}
@@ -31,7 +28,6 @@ const Tanulo_KinekAkarszBefizetni = ({atkuld}) => {
             })
           }
         >
-          {/*<LinearGradient colors={["#6a11cb", "#2575fc"]} style={styles.gradient}>*/}
           <LinearGradient
             colors={["#6A5AE0", "#6a11cb"]}
             style={styles.gradient}
@@ -40,7 +36,6 @@ const Tanulo_KinekAkarszBefizetni = ({atkuld}) => {
             <Text style={styles.buttonText}>Oktatónak fizettem</Text>
           </LinearGradient>
         </TouchableOpacity>
-
         {/*  FIZETÉS AZ AUTÓSISKOLÁNAK */}
         <TouchableOpacity
           style={styles.button}
@@ -51,7 +46,6 @@ const Tanulo_KinekAkarszBefizetni = ({atkuld}) => {
             })
           }
         >
-          {/*  <LinearGradient colors={["#ff7e5f", "#feb47b"]} style={styles.gradient}> */}
           <LinearGradient
             colors={["#ff7e5f", "#FF6B6B"]}
             style={styles.gradient}
@@ -60,11 +54,9 @@ const Tanulo_KinekAkarszBefizetni = ({atkuld}) => {
             <Text style={styles.buttonText}>Autósiskolának fizettem</Text>
           </LinearGradient>
         </TouchableOpacity>
-
         {/* FIZETÉSI ELŐZMÉNYEK AZ ÖSSZES BEFIZETÉSHEZ !!! */}
         <TouchableOpacity
           style={styles.historyButton}
-          //onPress={() => navigation.navigate("Tanuló Pénzügyek", {screen: "FizetesiElozmenyek",})}
           onPress={() => navigation.navigate("Tanuló Pénzügyek", {
             screen: "Tanulo_Befizetesek", 
             params: { atkuld: atkuld }
@@ -75,7 +67,6 @@ const Tanulo_KinekAkarszBefizetni = ({atkuld}) => {
             name="time"
             size={24}
             color="#6A5AE0"
-            //color="#2575fc"
           />
           <Text style={styles.historyButtonText}>Fizetési előzmények</Text>
         </TouchableOpacity>
@@ -83,7 +74,6 @@ const Tanulo_KinekAkarszBefizetni = ({atkuld}) => {
     </LinearGradient>
   );
 };
-
 const styles = StyleSheet.create({
   container: {
     flex: 1,

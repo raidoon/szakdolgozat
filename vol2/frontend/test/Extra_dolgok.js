@@ -224,7 +224,3 @@ const styles = StyleSheet.create({
     alignContent: "space-between",
   },
 });
-//color: "#3BC14A", //zöld
-//color:"#6A5AE0", //lila
-//color: "#6B6054", //earthy vibes
-//backgroundColor: "#FFA62B", //narancs

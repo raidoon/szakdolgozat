@@ -4,16 +4,19 @@ import {
   StyleSheet,
   ScrollView,
   TouchableOpacity,
+  RefreshControl
 } from "react-native";
 import Ionicons from "react-native-vector-icons/Ionicons";
 import { useNavigation } from "@react-navigation/native";
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import Styles from "../../Styles";
 import Ipcim from "../../Ipcim";
-import Penz from '../../assets/bitcoin-cash-money.svg';
+import Penz from "../../assets/bitcoin-cash-money.svg";
+import { ActivityIndicator } from "react-native";
 
 const Tanulo_Kezdolap = ({ atkuld }) => {
   const navigation = useNavigation();
+  const [frissites, setFrissites] = useState(false); //https://reactnative.dev/docs/refreshcontrol
   const [sumBefizetes, setSumBefizetes] = useState([]);
   const [sumTartozas, setSumTartozas] = useState([]);
   const [befizetLista, setBefizetLista] = useState([]);
@@ -70,13 +73,31 @@ const Tanulo_Kezdolap = ({ atkuld }) => {
       setBetolt(false);
     }
   };
+    //-------------------------------------------------------------  OLDAL FRISSÍTÉSE
+    const frissitesKozben = useCallback(() => {
+      setFrissites(true);
+      setBetolt(true);
+      setTimeout(() => {
+        adatokBetoltese();
+        setFrissites(false);
+        setBetolt(false);
+      }, 2000);
+    }, []);
   useEffect(() => {
     adatokBetoltese();
   }, []);
   if (betolt) {
     return (
-      <View style={Styles.bejelentkezes_Container}>
-        <Text>Adatok betöltése folyamatban...</Text>
+      <View
+        style={{
+          flex: 1,
+          justifyContent: "center",
+          alignItems: "center",
+          padding: 20,
+        }}
+      >
+        <ActivityIndicator size="large" color="#007BFF" />
+        <Text style={styles.betoltesText}>Adatok betöltése folyamatban...</Text>
       </View>
     );
   }
@@ -110,7 +131,12 @@ const Tanulo_Kezdolap = ({ atkuld }) => {
     );
   }
   return (
-    <ScrollView style={styles.egeszOldal}>
+    <ScrollView
+      style={styles.egeszOldal}
+      refreshControl={
+        <RefreshControl refreshing={frissites} onRefresh={frissitesKozben} />
+      }
+    >
       {/* ---------------------------------------ÜDVÖZLÉS---------------------------------------- */}
       <View style={styles.udvozloView}>
         <Text style={styles.udvozloSzoveg}>Üdvözöljük!</Text>
@@ -137,7 +163,9 @@ const Tanulo_Kezdolap = ({ atkuld }) => {
       <View style={styles.tartozasContainer}>
         <View style={styles.cardContent}>
           <View>
-            <Text style={styles.tartozasTitle}>Tartozás/elfogadásra váró befizetés:</Text>
+            <Text style={styles.tartozasTitle}>
+              Tartozás/elfogadásra váró befizetés:
+            </Text>
             <Text style={styles.tartozasOsszeg}>
               {sumTartozas[0].osszesTartozas === null
                 ? "0 Ft"
@@ -157,7 +185,7 @@ const Tanulo_Kezdolap = ({ atkuld }) => {
             <Text style={styles.oraOsszeg}>
               {koviOra.length > 0
                 ? koviOraFormazasa(koviOra[0].ora_datuma)
-                : "Egyelőre még nincs beírva következő óra!"}
+                : "Jelenleg nincs beírva következő óra!"}
             </Text>
           </View>
           <Ionicons name="chevron-forward-outline" size={30} color="#6A5AE0" />
@@ -167,22 +195,32 @@ const Tanulo_Kezdolap = ({ atkuld }) => {
       <View style={styles.tranzakcioContainer}>
         <Text style={styles.tranzakcioTitle}>Legutóbbi Tranzakciók</Text>
         {befizetLista.length === 0 ? (
-          <View style={{alignItems: 'center'}}>
+          <View style={{ alignItems: "center" }}>
+            <Penz width={100} height={100} />
 
-            <Penz width={100} height={100}/>
-        
-            <Text style={styles.nincsOra}>Itt fognak megjelenni a legutóbbi tranzakciók, de egyelőre még nem történt befizetés!</Text>
+            <Text style={styles.nincsOra}>
+              Itt fognak megjelenni a legutóbbi tranzakciók, amint befizetés
+              történik!
+            </Text>
           </View>
         ) : (
           befizetLista
-            .sort((a, b) => new Date(b.befizetesek_ideje) - new Date(a.befizetesek_ideje))
+            .sort(
+              (a, b) =>
+                new Date(b.befizetesek_ideje) - new Date(a.befizetesek_ideje)
+            )
             .slice(0, 3)
             .map((item) => (
-              <View style={styles.legutobbiTranzakciok} key={item.befizetesek_id}>
+              <View
+                style={styles.legutobbiTranzakciok}
+                key={item.befizetesek_id}
+              >
                 <Text style={styles.tranzakciosText}>
                   {item.befizetesek_tipusID == 1 ? "Tanóra díj" : "Vizsga díj"}
                 </Text>
-                <Text style={styles.tranzakciosOsszeg}>- {item.befizetesek_osszeg} Ft</Text>
+                <Text style={styles.tranzakciosOsszeg}>
+                  - {item.befizetesek_osszeg} Ft
+                </Text>
               </View>
             ))
         )}
@@ -193,11 +231,17 @@ const Tanulo_Kezdolap = ({ atkuld }) => {
 export default Tanulo_Kezdolap;
 
 const styles = StyleSheet.create({
+  betoltesText: {
+    fontSize: 16,
+    color: "#666",
+    textAlign: "center",
+    marginTop: 20,
+  },
   egeszOldal: {
     flex: 1,
     backgroundColor: "#f8f9fa",
-    height: '100%',
-    paddingTop: 0
+    height: "100%",
+    paddingTop: 0,
   },
   udvozloView: {
     backgroundColor: "#ffffff",
@@ -210,13 +254,13 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.1,
     shadowRadius: 6,
     elevation: 3,
-    paddingTop: 30
+    paddingTop: 30,
   },
   udvozloSzoveg: {
     fontSize: 20,
     color: "#6A5AE0",
     fontWeight: "600",
-    paddingTop: 20
+    paddingTop: 20,
   },
   userNev: {
     fontSize: 24,
@@ -308,7 +352,7 @@ const styles = StyleSheet.create({
     fontWeight: "700",
     color: "#2d3436",
     marginBottom: 15,
-    marginTop: 20
+    marginTop: 20,
   },
   nincsOra: {
     textAlign: "center",

@@ -10,12 +10,11 @@ import {
 } from "react-native";
 import Styles from "../../../Styles";
 import Ipcim from "../../../Ipcim";
-import { Alert } from "react-native";
 import Penz from "../../../assets/bitcoin-cash-money.svg";
 import Elfogadva from "../../../assets/elfogadva.svg";
 import Elutasitva from "../../../assets/elutasitva.svg";
 import Elfogadasravar from "../../../assets/elfogadasravar.svg";
-
+import { ActivityIndicator } from 'react-native';
 const Tanulo_Befizetesek = ({ route }) => {
   const { atkuld } = route.params;
   const [frissites, setFrissites] = useState(false); //https://reactnative.dev/docs/refreshcontrol
@@ -25,17 +24,14 @@ const Tanulo_Befizetesek = ({ route }) => {
   //------------------------------------------------------------- MODAL
   const [kivalasztottTranzakcio, setKivalasztottTranzakcio] = useState(null);
   const [modalLathatoe, setModalLathatoe] = useState(false);
-
   const modalNyitas = (tranzakcio) => {
     setKivalasztottTranzakcio(tranzakcio);
     setModalLathatoe(true);
   };
-
   const modalCsukas = () => {
     setModalLathatoe(false);
     setKivalasztottTranzakcio(null);
   };
-
   //------------------------------------------------------------- BEFIZETÉSEK BETÖLTÉSE
   const adatokBetoltese = async () => {
     try {
@@ -61,7 +57,6 @@ const Tanulo_Befizetesek = ({ route }) => {
       setBetolt(false);
     }
   };
-
   useEffect(() => {
     adatokBetoltese();
   }, []);
@@ -79,20 +74,22 @@ const Tanulo_Befizetesek = ({ route }) => {
   //-------------------------------------------------------------  OLDAL FRISSÍTÉSE
   const frissitesKozben = useCallback(() => {
     setFrissites(true);
+    setBetolt(true);
     setTimeout(() => {
       adatokBetoltese();
       setFrissites(false);
+      setBetolt(false);
     }, 2000);
   }, []);
   //-------------------------
   if (betolt) {
     return (
-      <View style={Styles.bejelentkezes_Container}>
-        <Text>Korábbi tranzakciók betöltése folyamatban...</Text>
+      <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center', padding: 20 }}>
+         <ActivityIndicator size="large" color="#007BFF" />
+        <Text style={styles.betoltesText}>A fizetési előzmények betöltése folyamatban van. Kérjük, légy türelemmel...</Text>
       </View>
     );
   }
-
   if (hiba) {
     return (
       <View style={Styles.bejelentkezes_Container}>
@@ -100,60 +97,59 @@ const Tanulo_Befizetesek = ({ route }) => {
       </View>
     );
   }
-
   return (
     <ScrollView
       refreshControl={
         <RefreshControl refreshing={frissites} onRefresh={frissitesKozben} />
       }
+      style={{ backgroundColor: "#f3f0fa" }}
     >
       {/* --------------------------------------------- FIZETÉSI ELŐZMÉNYEK LISTA ---------------------------- */}
-      <ScrollView contentContainerStyle={styles.tranzakcioContainer}>
-        <Text style={styles.nincsOra}>
-          Itt láthatod az összes korábbi és folyamatban lévő tranzakciót.
-        </Text>
-        <Text style={styles.vanOra}>
-          A részletek megtekintéséhez kattints a tranzakcióra!
-        </Text>
-
         {befizetLista.length === 0 ? (
-          <View style={{ alignItems: "center" }}>
+           <View style={{ flexGrow: 1, justifyContent: "center", alignItems: "center", padding: 20, minHeight: "100%" }}>
             <Penz width={100} height={100} marginTop={50} />
             <Text style={styles.nincsOra}>
-              Itt látod majd az összes korábbi és aktuális tranzakciódat, ezek
-              részleteit, és azt, hogy el vannak-e fogadva!
+            Itt megnézheted az összes korábbi és aktuális tranzakciódat, és azok részleteit.
             </Text>
+            <Text style={styles.vanOra}>Például: mikor történt a befizetés, el lett-e fogadva, és ha igen, akkor ki hagyta jóvá.</Text>
           </View>
         ) : (
-          befizetLista
-            .sort(
-              (a, b) =>
-                new Date(b.befizetesek_ideje) - new Date(a.befizetesek_ideje)
-            )
-            .map((item) => (
-              <TouchableOpacity
-                key={item.befizetesek_id}
-                style={styles.legutobbiTranzakciok}
-                onPress={() => modalNyitas(item)}
-              >
-                <View style={styles.tranzakciosTextContainer}>
-                  <Text style={styles.tranzakciosText}>
-                    {item.befizetesek_tipusID === 1
-                      ? "Tanóra díj"
-                      : "Vizsga díj"}
+          <ScrollView contentContainerStyle={styles.tranzakcioContainer}>
+            <Text style={styles.nincsOra}>
+              Itt láthatod az összes korábbi és folyamatban lévő tranzakciót.
+            </Text>
+            <Text style={styles.vanOra}>
+              A részletek megtekintéséhez kattints a tranzakcióra!
+            </Text>
+            {befizetLista
+              .sort(
+                (a, b) =>
+                  new Date(b.befizetesek_ideje) - new Date(a.befizetesek_ideje)
+              )
+              .map((item) => (
+                <TouchableOpacity
+                  key={item.befizetesek_id}
+                  style={styles.legutobbiTranzakciok}
+                  onPress={() => modalNyitas(item)}
+                >
+                  <View style={styles.tranzakciosTextContainer}>
+                    <Text style={styles.tranzakciosText}>
+                      {item.befizetesek_tipusID === 1
+                        ? "Tanóra díj"
+                        : "Vizsga díj"}
+                    </Text>
+                    {FizetesiIkonKivalasztas(item.befizetesek_jovahagyva)}
+                  </View>
+                  <Text style={{ color: "gray", fontStyle: "italic" }}>
+                    {new Date(item.befizetesek_ideje).toLocaleDateString()}
                   </Text>
-                  {FizetesiIkonKivalasztas(item.befizetesek_jovahagyva)}
-                </View>
-                <Text style={{ color: "gray", fontStyle: "italic" }}>
-                  {new Date(item.befizetesek_ideje).toLocaleDateString()}
-                </Text>
-                <Text style={styles.tranzakciosOsszeg}>
-                  - {item.befizetesek_osszeg} Ft
-                </Text>
-              </TouchableOpacity>
-            ))
+                  <Text style={styles.tranzakciosOsszeg}>
+                    - {item.befizetesek_osszeg} Ft
+                  </Text>
+                </TouchableOpacity>
+              ))}
+          </ScrollView>
         )}
-      </ScrollView>
 
       {/*-------------------------------------------- MODAL ----------------------------------------------*/}
       {kivalasztottTranzakcio && (
@@ -261,13 +257,16 @@ const Tanulo_Befizetesek = ({ route }) => {
     </ScrollView>
   );
 };
-
 export default Tanulo_Befizetesek;
 const styles = StyleSheet.create({
+  betoltesText:{
+    fontSize: 16,
+    color: '#666',
+    textAlign: 'center',
+    marginTop: 20,
+  },
   nincsOra: {
     textAlign: "center",
-    //color: "#888",
-    //fontStyle: "italic",
     marginTop: 20,
     marginBottom: 10,
     fontSize: 16,
@@ -314,8 +313,7 @@ const styles = StyleSheet.create({
   modalCloseBtn: {
     marginTop: 20,
     padding: 10,
-    //backgroundColor: "#6B6054", //barnás earth vibes
-    backgroundColor: "#6A5AE0", //lila
+    backgroundColor: "#6A5AE0",
     borderRadius: 5,
   },
   modalCloseText: {
@@ -324,34 +322,19 @@ const styles = StyleSheet.create({
     textAlign: "center",
   },
   //------------------------------- MODÁL VÉGE
-  container: {
-    marginTop: 50,
-    flex: 1,
-    backgroundColor: "#f3f0fa",
-    alignItems: "center",
-    padding: 20,
-  },
-  container2: {
-    flex: 1,
-    backgroundColor: "#f3f0fa",
-    alignItems: "center",
-    padding: 20,
-  },
   cim: {
     fontSize: 24,
     fontWeight: "bold",
-    //color: "#3BC14A", //zöld
-    //color: "#6A5AE0", //lila
-    color: "#6B6054", //earthy vibes
+    color: "#6B6054",
     marginBottom: 20,
   },
+  //--------------------------------- BEFIZETÉSEK
   tranzakcioContainer: {
-    backgroundColor: "#f3f0fa",
     margin: 20,
   },
   legutobbiTranzakciok: {
     flexDirection: "row",
-    alignItems: "center", // Az elemek középre igazítása függőlegesen
+    alignItems: "center",
     justifyContent: "space-between",
     backgroundColor: "#fff",
     padding: 15,
