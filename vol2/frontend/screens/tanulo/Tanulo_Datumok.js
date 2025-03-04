@@ -311,12 +311,11 @@ const Tanulo_Datumok = ({ atkuld }) => {
                 <Text style={styles.oraOsszeg}>
                   {koviOra.length > 0
                     ? koviOraFormazasa(koviOra[0].ora_datuma)
-                    : "Egyelőre még nincs beírva következő óra!"}
+                    : "Jelenleg nincs beírva következő óra!"}
                 </Text>
               </View>
             </View>
           </View>
-
           {/*------------------------------ AZ ÓRÁK FELSOROLÁSA --------------------------*/}
           {orakLista.some((item) => {
             const date = new Date(item.ora_datuma);
@@ -348,13 +347,11 @@ const Tanulo_Datumok = ({ atkuld }) => {
             orakLista.map((item) => {
               // A kiválasztott dátum óráinak megjelenítése
               const date = new Date(item.ora_datuma);
-
               // A hónap rövid neve (pl. "FEB") és a nap (pl. "03")
               const honap = date
                 .toLocaleDateString("hu-HU", { month: "short" })
                 .toUpperCase(); // Rövid hónapnév
               const nap = date.toLocaleDateString("hu-HU", { day: "2-digit" });
-
               const oraPerc = date.toLocaleTimeString("hu-HU", {
                 hour: "2-digit",
                 minute: "2-digit",
@@ -432,7 +429,6 @@ const Tanulo_Datumok = ({ atkuld }) => {
     </View>
   );
 };
-
 const styles = StyleSheet.create({
   betoltesText:{
     fontSize: 16,
@@ -456,7 +452,6 @@ const styles = StyleSheet.create({
   elkovetkezendoOrakText: {
     fontSize: 18,
     fontWeight: "bold",
-    //color: "#5c4ce3"
   },
   OraView: {
     padding: 15,
@@ -484,8 +479,7 @@ const styles = StyleSheet.create({
   },
   //------------------------------------ a mai dátum is legyen olyan hátteres mint a kiválasztott, de más színnel
   maiDatum: {
-    backgroundColor: "#E6E6FA", //világos lila
-    //backgroundColor: "#87CEEB", // soft sky blue
+    backgroundColor: "#E6E6FA",
     borderRadius: 15,
     minWidth: 40,
     height: 80,
@@ -498,7 +492,6 @@ const styles = StyleSheet.create({
     fontWeight: "bold",
     textAlign: "center",
     marginBottom: 20,
-    //color: "#4DA167", //zöld
     color: "#6A5AE0", //lila
   },
   tranzakcioTitle: {
@@ -512,7 +505,6 @@ const styles = StyleSheet.create({
     height: 120,
     paddingVertical: 10,
     paddingHorizontal: 10,
-    //borderRadius: 15,
     borderTopRightRadius: 15,
     borderTopLeftRadius: 15,
     elevation: 5, // Árnyék Androidos telón
@@ -531,13 +523,11 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
   weekDay: {
-    //backgroundColor: 'green',
     minWidth: 40,
     height: 80,
     borderRadius: 15,
     justifyContent: "center",
     alignItems: "center",
-    //backgroundColor: "#F0F0F0", // Alap háttérszín
   },
   weekendDay: {
     minWidth: 40,
@@ -552,8 +542,7 @@ const styles = StyleSheet.create({
     fontWeight: "500",
   },
   kivalasztottdatum: {
-    backgroundColor: "#6A5AE0", // lila
-    //backgroundColor: '#3BC14A', // zöld
+    backgroundColor: "#6A5AE0",
   },
   weekDayText: {
     fontSize: 18,
@@ -570,8 +559,7 @@ const styles = StyleSheet.create({
   },
   vanAznapOra: {
     borderBottomWidth: 4,
-    borderBottomColor: "#2EC0F9", // kék kiemelés
-    //borderBottomColor: '#FFA62B' //narancs kiemelés (a zöldhöz)
+    borderBottomColor: "#2EC0F9",
   },
   //----------------------------------- egy soros naptár vége
   OraView: {
@@ -657,8 +645,6 @@ const styles = StyleSheet.create({
     alignSelf: "center",
     marginVertical: 10,
     padding: 10,
-    //backgroundColor: "#4A4AFC",
-    //backgroundColor: "#4DA167",
     backgroundColor: "#ccccff",
     borderRadius: 30,
     alignItems: "center",
@@ -668,8 +654,6 @@ const styles = StyleSheet.create({
     marginHorizontal: 20,
     marginBottom: 15,
     backgroundColor: "#ffffff",
-    //backgroundColor: '#BDBDBD',
-    //backgroundColor:'#81C784',
     padding: 20,
     borderRadius: 15,
     shadowColor: "#000",

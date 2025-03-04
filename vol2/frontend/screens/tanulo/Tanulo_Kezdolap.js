@@ -185,7 +185,7 @@ const Tanulo_Kezdolap = ({ atkuld }) => {
             <Text style={styles.oraOsszeg}>
               {koviOra.length > 0
                 ? koviOraFormazasa(koviOra[0].ora_datuma)
-                : "Jelenleg nincs beírva következő óra!"}
+                : "Egyelőre még nincs beírva következő óra!"}
             </Text>
           </View>
           <Ionicons name="chevron-forward-outline" size={30} color="#6A5AE0" />

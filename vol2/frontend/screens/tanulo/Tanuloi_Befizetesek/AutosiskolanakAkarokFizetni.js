@@ -27,7 +27,6 @@ const AutosiskolanakAkarokFizetni = ({ route }) => {
   }
   /* -------------------------------------- ÖSSZEG FELVITELE AZ ADATBÁZISBA ---------------------------------------- */
   const osszegFelvitele = async () => {
-    console.log("összeg felvitel gomb megnyomva. Összeg: ", osszeg);
     if (osszeg === "" || parseFloat(osszeg) === 0) {
       Alert.alert("Hiba!", "A befizetni kívánt összeg nem lehet 0!", [
         { text: "Értem" },
@@ -63,20 +62,15 @@ const AutosiskolanakAkarokFizetni = ({ route }) => {
         befizetesek_ideje: formazottDatum,
         befizetesek_kinek: 0, // 1=oktatónál történt befizetés || 0 = autósiskolánál
       };
-      console.log("Adat küldése a backendnek:", adat); // Debugging: Log the data being sent
       try {
         const valasz = await fetch(Ipcim.Ipcim + "/tanuloBefizetesFelvitel", {
           method: "POST",
-          body: JSON.stringify(adat), // Ensure this is properly formatted JSON
+          body: JSON.stringify(adat),
           headers: {
-            "Content-Type": "application/json; charset=UTF-8", // Ensure the correct content type
+            "Content-Type": "application/json; charset=UTF-8",
           },
         });
-
-        console.log("Fetch Response:", valasz.ok); // Log this to see if the response is ok
-
         const valaszText = await valasz.text();
-        console.log("Backend válasz:", valaszText); // Debugging: Log the backend response
         if (valasz.ok) {
           Alert.alert("Siker", valaszText);
         } else {
@@ -86,10 +80,9 @@ const AutosiskolanakAkarokFizetni = ({ route }) => {
           );
         }
       } catch (error) {
-        console.error("Fetch Error:", error); // Debugging: Log any fetch errors
+        console.error("Fetch Error:", error);
         Alert.alert("Hiba", `Hiba történt: ${error.message}`);
       }
-
       setOsszeg(""); // Törlöm a beírt összeget a felvitel után!!!
       adatokBetoltese();
     }
@@ -132,16 +125,13 @@ const AutosiskolanakAkarokFizetni = ({ route }) => {
     if (key === "torles") {
       setOsszeg((elozoOsszeg) => {
         const ujOsszeg = elozoOsszeg.slice(0, -1);
-        console.log("Jelenlegi összeg (törlés után):", ujOsszeg);
         return ujOsszeg;
       });
     } else if (key === "C") {
       setOsszeg("");
-      console.log("Jelenlegi összeg (törölve):", "");
     } else {
       setOsszeg((elozoOsszeg) => {
         const ujOsszeg = elozoOsszeg + key;
-        console.log("Jelenlegi összeg (hozzáadva):", ujOsszeg);
         return ujOsszeg;
       });
     }

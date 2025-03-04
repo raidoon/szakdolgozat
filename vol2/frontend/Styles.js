@@ -102,28 +102,26 @@ const Styles = StyleSheet.create({
     fontSize: 16,
     color: "#000",
   },
-  /**
-   bejelentkezes_support:{
-    fontSize:17,
-    fontWeight: '600'
-   },
-   bejelentkezes_nemEngedBejelentkezni:{
-    width:'90%',
-    alignItems:'center',
-    marginTop:20
-   }
-*/
   //------------------------------------ REGISZTRACIO.JS
   //------------------------------------ TANULO_ORAI
   naptarNyitogatoGombView:{
     flexDirection: 'row', 
     alignItems:'center',
     justifyContent: 'center',
-    //backgroundColor: '#4DA167', //zöld
-    backgroundColor: '#ccccff', //lila
+    backgroundColor: '#ccccff',
     elevation: 3,
     marginBottom: 20,
     minHeight:60
+  },
+  naptarNyitogatoGombView2:{
+    flexDirection: 'row', 
+    alignItems:'center',
+    justifyContent: 'center',
+    backgroundColor: '#ccccff',
+    elevation: 3,
+    //marginBottom: 20,
+    minHeight:60,
+    width: '100%'
   },
   //------------------------------------ TANULO_PROFIL
   profil_gombDiv: {
