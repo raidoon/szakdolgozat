@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { View, Text, TouchableOpacity, FlatList, StyleSheet } from "react-native";
+import { View, Text, TouchableOpacity, FlatList, StyleSheet, RefreshControl } from "react-native";
 import { useNavigation } from '@react-navigation/native';
 import Oktato_Styles from "../../Oktato_Styles";
 import Ipcim from "../../Ipcim";
@@ -7,6 +7,7 @@ import Ipcim from "../../Ipcim";
 export default function Oktato_Kezdolap({ atkuld }) {
   const [adatok, setAdatok] = useState([]);
   const [kovetkezoOra, setKovetkezoOra] = useState(null);
+  const [refreshing, setRefreshing] = useState(false);
   const navigation = useNavigation();
 
   const letoltes = async () => {
@@ -16,7 +17,6 @@ export default function Oktato_Kezdolap({ atkuld }) {
         body: JSON.stringify({ oktatoid: atkuld.oktato_id }),
         headers: { "Content-type": "application/json; charset=UTF-8" }
       });
-
       const data = await response.json();
       setAdatok(data);
     } catch (error) {
@@ -31,7 +31,6 @@ export default function Oktato_Kezdolap({ atkuld }) {
         body: JSON.stringify({ oktato_id: atkuld.oktato_id }),
         headers: { "Content-type": "application/json; charset=UTF-8" }
       });
-
       const data = await response.json();
       if (data.length > 0) {
         setKovetkezoOra(data[0].ora_datuma);
@@ -39,6 +38,13 @@ export default function Oktato_Kezdolap({ atkuld }) {
     } catch (error) {
       console.error("Hiba a következő óra letöltésekor:", error);
     }
+  };
+
+  const onRefresh = async () => {
+    setRefreshing(true);
+    await letoltes();
+    await kovetkezoOraLetoltes();
+    setRefreshing(false);
   };
 
   useEffect(() => {
@@ -68,6 +74,9 @@ export default function Oktato_Kezdolap({ atkuld }) {
         renderItem={renderItem}
         keyExtractor={(item) => item.id.toString()}
         style={styles.list}
+        refreshControl={
+          <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
+        }
       />
 
       <TouchableOpacity
@@ -75,7 +84,7 @@ export default function Oktato_Kezdolap({ atkuld }) {
         onPress={() => navigation.navigate("Oktato_KovetkezoOra", { atkuld })}
       >
         <Text style={styles.buttonText}>
-          Következő Óra: {kovetkezoOra ? formatDateTime(kovetkezoOra) : "Nincs adat"}
+          Következő Óra: {kovetkezoOra ? formatDateTime(kovetkezoOra) : "Még nincs rögzített óra"}
         </Text>
       </TouchableOpacity>
 

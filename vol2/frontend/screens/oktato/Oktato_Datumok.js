@@ -1,5 +1,5 @@
 import { useState,useEffect } from "react";
-import { View, Text, Button, FlatList, TouchableOpacity } from "react-native";
+import { View, Text, Button, FlatList, TouchableOpacity,StyleSheet } from "react-native";
 import { useNavigation } from '@react-navigation/native';
 import Oktato_Styles from "../../Oktato_Styles";
 import Ipcim from "../../Ipcim";
@@ -83,3 +83,58 @@ const kattvaro = (tanulo) => {
     </View>
   );
 }
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    backgroundColor: "#F5F5F5",
+    padding: 20,
+  },
+  title: {
+    fontSize: 24,
+    fontWeight: "bold",
+    color: "#2C3E50",
+    marginBottom: 20,
+    textAlign: "center",
+  },
+  list: {
+    flex: 1,
+  marginBottom: 20,
+  },
+  itemContainer: {
+    backgroundColor: "#FFFFFF",
+    padding: 15,
+    borderRadius: 10,
+    marginBottom: 10,
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.1,
+    shadowRadius: 4,
+    elevation: 3,
+  },
+  itemText: {
+    fontSize: 16,
+    fontWeight: "600",
+    color: "#2C3E50",
+  },
+  itemSubText: {
+    fontSize: 14,
+    color: "#888",
+    marginTop: 5,
+  },
+  buttonContainer: {
+    marginTop: 10,
+  },
+  button: {
+    backgroundColor: "#FF6F61",
+    padding: 15,
+    borderRadius: 10,
+    alignItems: "center",
+    marginBottom: 10,
+  },
+  buttonText: {
+    color: "#FFFFFF",
+    fontSize: 16,
+    fontWeight: "600",
+  },
+});
