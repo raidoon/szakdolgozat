@@ -455,9 +455,12 @@ app.post("/tanuloReszletei", (req, res) => {
   kapcsolat();
   connection.query(
     `SELECT *
-    FROM felhasznaloi_adatok 
-    INNER JOIN tanulo_adatok ON felhasznaloi_adatok.felhasznalo_id=tanulo_adatok.tanulo_felhasznaloID  
-    WHERE tanulo_felhasznaloID = ?`,
+FROM felhasznaloi_adatok 
+INNER JOIN tanulo_adatok AS tanulo ON felhasznaloi_adatok.felhasznalo_id = tanulo.tanulo_felhasznaloID  
+LEFT JOIN oktato_adatok AS oktato ON tanulo.tanulo_oktatoja = oktato.oktato_id
+LEFT JOIN ora_adatok AS ora ON tanulo.tanulo_id = ora.ora_diakja
+LEFT JOIN befizetesek ON tanulo.tanulo_id = befizetesek.befizetesek_tanuloID
+WHERE tanulo.tanulo_levizsgazott = 0 AND tanulo_felhasznaloID = ?`,
     [req.body.tanulo_felhasznaloID],
     (err, rows, fields) => {
       if (err) {
@@ -471,6 +474,80 @@ app.post("/tanuloReszletei", (req, res) => {
   );
   connection.end();
 });
+
+
+//-------------------------------
+
+app.post("/levizsgazottTanuloReszletei", (req, res) => {
+  kapcsolat();
+  connection.query(
+    `SELECT *
+FROM felhasznaloi_adatok 
+INNER JOIN tanulo_adatok AS tanulo ON felhasznaloi_adatok.felhasznalo_id = tanulo.tanulo_felhasznaloID  
+LEFT JOIN oktato_adatok AS oktato ON tanulo.tanulo_oktatoja = oktato.oktato_id
+LEFT JOIN ora_adatok AS ora ON tanulo.tanulo_id = ora.ora_diakja
+LEFT JOIN befizetesek ON tanulo.tanulo_id = befizetesek.befizetesek_tanuloID
+WHERE tanulo.tanulo_levizsgazott = 1 AND tanulo_felhasznaloID = ?
+
+`,
+    [req.body.tanulo_felhasznaloID],
+    (err, rows, fields) => {
+      if (err) {
+        console.log(err);
+        res.status(500).send("Hiba");
+      } else {
+        console.log(rows);
+        res.status(200).send(rows);
+      }
+    }
+  );
+  connection.end();
+});
+//---------------------------
+app.post("/tanuloOsszesFizu", (req, res) => {
+  kapcsolat();
+  connection.query(
+    `SELECT SUM(befizetesek.befizetesek_osszeg) AS 'osszesBefizetett'
+     FROM befizetesek 
+     INNER JOIN tanulo_adatok ON befizetesek.befizetesek_tanuloID=tanulo_adatok.tanulo_id 
+     INNER JOIN felhasznaloi_adatok ON tanulo_adatok.tanulo_felhasznaloID=felhasznaloi_adatok.felhasznalo_id 
+     WHERE tanulo_felhasznaloID = ? AND befizetesek.befizetesek_jovahagyva = 1;`,
+    [req.body.tanulo_felhasznaloID],
+    (err, rows, fields) => {
+      if (err) {
+        console.log(err);
+        res.status(500).send("Hiba");
+      } else {
+        console.log(rows);
+        res.status(200).send(rows);
+      }
+    }
+  );
+  connection.end();
+});
+//----------------------
+app.post("/tanuloOsszesOra", (req, res) => {
+  kapcsolat();
+  connection.query(
+    `SELECT COUNT(ora_adatok.ora_id) AS 'osszesOra'
+     FROM ora_adatok
+     INNER JOIN tanulo_adatok ON ora_adatok.ora_diakja=tanulo_adatok.tanulo_id 
+     INNER JOIN felhasznaloi_adatok ON tanulo_adatok.tanulo_felhasznaloID=felhasznaloi_adatok.felhasznalo_id 
+     WHERE tanulo_felhasznaloID = ? AND ora_adatok.ora_teljesitve = 1;`,
+    [req.body.tanulo_felhasznaloID],
+    (err, rows, fields) => {
+      if (err) {
+        console.log(err);
+        res.status(500).send("Hiba");
+      } else {
+        console.log(rows);
+        res.status(200).send(rows);
+      }
+    }
+  );
+  connection.end();
+});
+
 
 //----------------------
 app.post("/aktualisDiakok", (req, res) => {
@@ -520,8 +597,6 @@ app.post("/levizsgazottDiakok", (req, res) => {
   );
   connection.end();
 });
-
-
 
 //----------------
 

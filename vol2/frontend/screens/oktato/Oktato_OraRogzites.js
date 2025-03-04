@@ -16,16 +16,17 @@ export default function Oktato_OraRogzites({ route }) {
   const { atkuld } = route.params;
 
   const [adatTomb, setAdatTomb] = useState([]);
-  const [diakTomb, setDiakTomb] = useState([]); // Új állapot a diákok dropdownhoz
-  const [selectedValue, setSelectedValue] = useState(1); //tipus
-  const [selectedDiak, setSelectedDiak] = useState(null); // Új állapot a kiválasztott diákhoz
+  const [diakTomb, setDiakTomb] = useState([]);
+  const [selectedValue, setSelectedValue] = useState(1);
+  const [selectedDiak, setSelectedDiak] = useState(null);
   const [date, setDate] = useState(new Date());
-  const [show, setShow] = useState(false);
+  const [showDatePicker, setShowDatePicker] = useState(false);
+  const [showTimePicker, setShowTimePicker] = useState(false);
   const [datum, setDatum] = useState("");
+  const [ido, setIdo] = useState("");
   const [szoveg, setSzoveg] = useState("");
   const [isChecked, setChecked] = useState(false);
 
-  // Típusok betöltése
   useEffect(() => {
     const fetchAdatok = async () => {
       try {
@@ -39,20 +40,16 @@ export default function Oktato_OraRogzites({ route }) {
     fetchAdatok();
   }, []);
 
-  // Diákok betöltése az oktató alapján
   useEffect(() => {
     const fetchDiakok = async () => {
       if (!atkuld || !atkuld.oktato_id) return;
-
       try {
-        var adat={
-          "oktato_id":atkuld.oktato_id
-      }
+        var adat = { "oktato_id": atkuld.oktato_id };
         const response = await fetch(`${Ipcim.Ipcim}/aktualisDiakok`, {
           method: "POST",
           body: JSON.stringify(adat),
-          headers: {"Content-type": "application/json; charset=UTF-8"}
-      });
+          headers: { "Content-type": "application/json; charset=UTF-8" },
+        });
         const data = await response.json();
         setDiakTomb(data.map((item) => ({ label: item.tanulo_neve, value: item.tanulo_id })));
       } catch (error) {
@@ -63,18 +60,15 @@ export default function Oktato_OraRogzites({ route }) {
   }, [atkuld]);
 
   const felvitel = async () => {
-    if (!datum || !selectedValue || !selectedDiak) {
+    if (!datum || !ido || !selectedValue || !selectedDiak) {
       alert("A kötelező mezőket töltsd ki!");
       return;
     }
-//alert(selectedValue)
     const adatok = {
-      bevitel1:selectedValue,
+      bevitel1: selectedValue,
       bevitel2: atkuld.oktato_id,
       bevitel3: selectedDiak,
-      bevitel4: datum
-      
-      //megjegyzes: szoveg || "",
+      bevitel4: `${datum} ${ido}`,
     };
 
     try {
@@ -92,10 +86,17 @@ export default function Oktato_OraRogzites({ route }) {
 
   const valtozikDatum = (event, selectedDatum) => {
     if (selectedDatum) {
-      setShow(false);
+      setShowDatePicker(false);
       setDatum(
         `${selectedDatum.getFullYear()}-${selectedDatum.getMonth() + 1}-${selectedDatum.getDate()}`
       );
+    }
+  };
+
+  const valtozikIdo = (event, selectedIdo) => {
+    if (selectedIdo) {
+      setShowTimePicker(false);
+      setIdo(`${selectedIdo.getHours()}:${selectedIdo.getMinutes()}`);
     }
   };
 
@@ -104,7 +105,6 @@ export default function Oktato_OraRogzites({ route }) {
       <Text style={styles.title}>Új óra rögzítése:</Text>
       <Text>{atkuld ? `Felhasználó ID: ${atkuld.oktato_id}` : "Nincs adat"}</Text>
 
-      {/* Dropdown: Óratípus */}
       <Text style={styles.label}>Válassz típust:</Text>
       <Dropdown
         style={styles.dropdown}
@@ -119,7 +119,6 @@ export default function Oktato_OraRogzites({ route }) {
         onChange={(item) => setSelectedValue(item.value)}
       />
 
-      {/* Dropdown: Diákok */}
       <Text style={styles.label}>Válassz diákot:</Text>
       <Dropdown
         style={styles.dropdown}
@@ -134,33 +133,22 @@ export default function Oktato_OraRogzites({ route }) {
         onChange={(item) => setSelectedDiak(item.value)}
       />
 
-      <View style={styles.inputContainer}>
-        <TextInput
-          style={styles.input}
-          placeholder="Megjegyzés (opcionális)"
-          onChangeText={setSzoveg}
-          value={szoveg}
-        />
-        <TouchableOpacity onPress={() => setSzoveg("")} style={styles.clearButton}>
-          <Text style={styles.clearText}>Törlés</Text>
-        </TouchableOpacity>
-      </View>
-
-      <Button title="Dátum kiválasztása" onPress={() => setShow(true)} />
+      <Button title="Dátum kiválasztása" onPress={() => setShowDatePicker(true)} />
       {datum ? <Text style={styles.date}>{datum}</Text> : null}
+      <Button title="Idő kiválasztása" onPress={() => setShowTimePicker(true)} />
+      {ido ? <Text style={styles.date}>{ido}</Text> : null}
 
       <Button title="Új óra felvitele" onPress={felvitel} />
-      {show && (
-        <DateTimePicker
-          value={date}
-          mode="date"
-          is24Hour
-          onChange={valtozikDatum}
-        />
+      {showDatePicker && (
+        <DateTimePicker value={date} mode="date" is24Hour onChange={valtozikDatum} />
+      )}
+      {showTimePicker && (
+        <DateTimePicker value={date} mode="time" is24Hour onChange={valtozikIdo} />
       )}
     </View>
   );
 }
+
 
 const styles = StyleSheet.create({
   container: {

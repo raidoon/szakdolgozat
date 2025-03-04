@@ -1,100 +1,148 @@
-import { useState,useEffect } from "react";
-import { View, Text, Button, FlatList, TouchableOpacity, StyleSheet } from "react-native";
+import { useState, useEffect } from "react";
+import { View, Text, TouchableOpacity, FlatList, StyleSheet } from "react-native";
 import { useNavigation } from '@react-navigation/native';
 import Oktato_Styles from "../../Oktato_Styles";
 import Ipcim from "../../Ipcim";
 
-export default function Oktato_Kezdolap({atkuld}) {
-  const [adatok,setAdatok]=useState([])
+export default function Oktato_Kezdolap({ atkuld }) {
+  const [adatok, setAdatok] = useState([]);
+  const [kovetkezoOra, setKovetkezoOra] = useState(null);
   const navigation = useNavigation();
-  console.log(atkuld)
 
-  const letoltes=async ()=>{
-      
-     alert(atkuld.oktato_id)
-      var adat={
-          "oktatoid":atkuld.oktato_id
-      }
-      const x=await fetch(Ipcim.Ipcim +"/egyOktatoAdatai",{
-          method: "POST",
-          body: JSON.stringify(adat),
-          headers: {"Content-type": "application/json; charset=UTF-8"}
-      })
-      
-      console.log(x)
-      const y=await x.json() 
-      
-      setAdatok(y)
-      alert(JSON.stringify(y))
-      console.log(y)
-      
+  const letoltes = async () => {
+    try {
+      const response = await fetch(Ipcim.Ipcim + "/aktualisDiakok", {
+        method: "POST",
+        body: JSON.stringify({ oktatoid: atkuld.oktato_id }),
+        headers: { "Content-type": "application/json; charset=UTF-8" }
+      });
 
-      
-  }
-
-  useEffect(()=>{
-      letoltes()
-      
-  },[])
-  
-  const katt = (tanulo) => {
-      
-    navigation.navigate("Oktato_KovetkezoOra", { tanulo });
+      const data = await response.json();
+      setAdatok(data);
+    } catch (error) {
+      console.error("Hiba az adatok letöltésekor:", error);
+    }
   };
 
+  const kovetkezoOraLetoltes = async () => {
+    try {
+      const response = await fetch(Ipcim.Ipcim + "/koviOra", {
+        method: "POST",
+        body: JSON.stringify({ oktato_id: atkuld.oktato_id }),
+        headers: { "Content-type": "application/json; charset=UTF-8" }
+      });
 
-const kattvaro = (tanulo) => {
-      
-  navigation.navigate("Oktato_MegerositesrevaroOrak", { tanulo });
-};
+      const data = await response.json();
+      if (data.length > 0) {
+        setKovetkezoOra(data[0].ora_datuma);
+      }
+    } catch (error) {
+      console.error("Hiba a következő óra letöltésekor:", error);
+    }
+  };
 
-const kattmaradek = (tanulo) => {
-      
-  navigation.navigate("Oktato_MegerositesrevaroFizetes", { tanulo });
-};
- ;
+  useEffect(() => {
+    letoltes();
+    kovetkezoOraLetoltes();
+  }, []);
+
+  const formatDateTime = (dateTimeString) => {
+    const date = new Date(dateTimeString);
+    return `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, "0")}-${String(date.getDate()).padStart(2, "0")} ${String(date.getHours()).padStart(2, "0")}:${String(date.getMinutes()).padStart(2, "0")}`;
+  };
+
+  const renderItem = ({ item }) => (
+    <View style={styles.itemContainer}>
+      <Text style={styles.itemText}>{item.nev}</Text>
+      <Text style={styles.itemText}>{item.email}</Text>
+    </View>
+  );
+
   return (
-    <View style={Oktato_Styles.diakok_container}>
-      <Text style={Oktato_Styles.title}>Kezdőlap</Text>
+    <View style={styles.container}>
+      <Text style={styles.title}>Kezdőlap</Text>
+      <Text style={styles.welcomeText}>{atkuld ? `Üdvözlünk: ${atkuld.oktato_neve}!` : "Nincs adat"}</Text>
+
       <FlatList
         data={adatok}
-        
+        renderItem={renderItem}
+        keyExtractor={(item) => item.id.toString()}
+        style={styles.list}
       />
-      
+
       <TouchableOpacity
-        style={Oktato_Styles.navigateButton}
+        style={styles.button}
         onPress={() => navigation.navigate("Oktato_KovetkezoOra", { atkuld })}
       >
-        <Text style={Oktato_Styles.navigateButtonText}>Kövi óra</Text>
+        <Text style={styles.buttonText}>
+          Következő Óra: {kovetkezoOra ? formatDateTime(kovetkezoOra) : "Nincs adat"}
+        </Text>
       </TouchableOpacity>
 
       <TouchableOpacity
-        style={Oktato_Styles.navigateButton}
+        style={styles.button}
         onPress={() => navigation.navigate("Oktato_MegerositesrevaroOrak", { atkuld })}
       >
-        <Text style={Oktato_Styles.navigateButtonText}>Orak</Text>
+        <Text style={styles.buttonText}>Megerősítésre váró órák</Text>
       </TouchableOpacity>
-    
+
       <TouchableOpacity
-        style={Oktato_Styles.navigateButton}
+        style={styles.button}
         onPress={() => navigation.navigate("Oktato_MegerositesrevaroFizetes", { atkuld })}
       >
-        <Text style={Oktato_Styles.navigateButtonText}>Fizetes</Text>
+        <Text style={styles.buttonText}>Jóváhagyásra váró befizetések</Text>
       </TouchableOpacity>
     </View>
   );
 }
 
-  
-
 const styles = StyleSheet.create({
-  default: {
+  container: {
     flex: 1,
-    backgroundColor: "#fff",
-    alignItems: "center",
-    justifyContent: "center",
+    padding: 20,
+    backgroundColor: "#f5f5f5",
   },
-  felsorolas: {
-    margin: 30,
+  title: {
+    fontSize: 24,
+    fontWeight: "bold",
+    marginBottom: 20,
+    textAlign: "center",
+    color: "#333",
+  },
+  welcomeText: {
+    fontSize: 18,
+    marginBottom: 20,
+    textAlign: "center",
+    color: "#555",
+  },
+  list: {
+    marginBottom: 20,
+  },
+  itemContainer: {
+    backgroundColor: "#fff",
+    padding: 15,
+    marginBottom: 10,
+    borderRadius: 10,
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.1,
+    shadowRadius: 5,
+    elevation: 3,
+  },
+  itemText: {
+    fontSize: 16,
+    color: "#333",
+  },
+  button: {
+    backgroundColor: "#007bff",
+    padding: 15,
+    borderRadius: 10,
+    marginBottom: 10,
+    alignItems: "center",
+  },
+  buttonText: {
+    color: "#fff",
+    fontSize: 16,
+    fontWeight: "bold",
   },
 });

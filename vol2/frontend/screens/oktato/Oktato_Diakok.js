@@ -61,14 +61,14 @@ const kattlevi = (tanulo) => {
         style={Oktato_Styles.navigateButton}
         onPress={() => navigation.navigate("Oktato_AKTUALIS", { atkuld })}
       >
-        <Text style={Oktato_Styles.navigateButtonText}>Aktuális Tanulók</Text>
+        <Text style={Oktato_Styles.navigateButtonText}>Aktuális Diákok Adatai</Text>
       </TouchableOpacity>
 
       <TouchableOpacity
         style={Oktato_Styles.navigateButton}
         onPress={() => navigation.navigate("Oktato_LEVIZSGAZOTT", { atkuld })}
       >
-        <Text style={Oktato_Styles.navigateButtonText}>Levizsgázott Tanulók</Text>
+        <Text style={Oktato_Styles.navigateButtonText}>Levizsgázott Diákok Adatai</Text>
       </TouchableOpacity>
 
       

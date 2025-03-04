@@ -29,7 +29,7 @@ export default function Oktato_KovetkezoOra({ route }) {
 
     const letoltes = async () => {
         try {
-            const response = await fetch(Ipcim.Ipcim + "/egyOktatoAdatai", {
+            const response = await fetch(Ipcim.Ipcim + "/aktualisDiakok", {
                 method: "POST",
                 body: JSON.stringify({ oktatoid: atkuld.oktato_id }),
                 headers: { "Content-type": "application/json; charset=UTF-8" }

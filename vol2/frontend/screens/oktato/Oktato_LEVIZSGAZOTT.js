@@ -49,7 +49,7 @@ export default function Oktato_LEVIZSGAZOTT({ route }) {
 
     const katt = (tanulo) => {
         alert(tanulo.tanulo_felhasznaloID)
-        navigation.navigate("Oktato_TanuloReszletei", { tanulo });
+        navigation.navigate("Oktato_LevizsgazottTanuloReszletei", { tanulo });
     };
 
     return (
