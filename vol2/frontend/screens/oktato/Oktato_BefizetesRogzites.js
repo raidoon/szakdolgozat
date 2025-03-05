@@ -3,9 +3,9 @@ import {
   View,
   Text,
   TextInput,
-  Button,
   TouchableOpacity,
   StyleSheet,
+  ScrollView,
 } from "react-native";
 import { Dropdown } from "react-native-element-dropdown";
 import Ipcim from "../../Ipcim";
@@ -40,13 +40,12 @@ export default function Oktato_BefizetesRogzites({ route }) {
 
   useEffect(() => {
     const fetchDiakok = async () => {
-      if (!atkuld || !atkuld.oktato_id) return;
+      if (!atkuld?.oktato_id) return;
 
       try {
-        const adat = { oktato_id: atkuld.oktato_id };
         const response = await fetch(`${Ipcim.Ipcim}/aktualisDiakok`, {
           method: "POST",
-          body: JSON.stringify(adat),
+          body: JSON.stringify({ oktato_id: atkuld.oktato_id }),
           headers: { "Content-type": "application/json; charset=UTF-8" },
         });
         const data = await response.json();
@@ -64,18 +63,16 @@ export default function Oktato_BefizetesRogzites({ route }) {
       return;
     }
 
-    const adatok = {
-      bevitel1: selectedDiak,
-      bevitel2: atkuld.oktato_id,
-      bevitel3: selectedValue,
-      bevitel4: osszeg,
-      bevitel5: `${datum} ${oraPerc}`
-    };
-
     try {
       const response = await fetch(Ipcim.Ipcim + "/befizetesFelvitel", {
         method: "POST",
-        body: JSON.stringify(adatok),
+        body: JSON.stringify({
+          bevitel1: selectedDiak,
+          bevitel2: atkuld.oktato_id,
+          bevitel3: selectedValue,
+          bevitel4: osszeg,
+          bevitel5: `${datum} ${oraPerc}`,
+        }),
         headers: { "Content-type": "application/json; charset=UTF-8" },
       });
       const text = await response.text();
@@ -85,34 +82,13 @@ export default function Oktato_BefizetesRogzites({ route }) {
     }
   };
 
-  const valtozikDatum = (event, selectedDatum) => {
-    if (selectedDatum) {
-      setShowDatePicker(false);
-      setDatum(
-        `${selectedDatum.getFullYear()}-${String(selectedDatum.getMonth() + 1).padStart(2, "0")}-${String(selectedDatum.getDate()).padStart(2, "0")}`
-      );
-    }
-  };
-
-  const valtozikIdo = (event, selectedTime) => {
-    if (selectedTime) {
-      setShowTimePicker(false);
-      setOraPerc(
-        `${String(selectedTime.getHours()).padStart(2, "0")}:${String(selectedTime.getMinutes()).padStart(2, "0")}`
-      );
-    }
-  };
-
   return (
-    <View style={styles.container}>
-      <Text style={styles.title}>Új befizetés rögzítése:</Text>
-      <Text>{atkuld ? `Felhasználó ID: ${atkuld.oktato_id}` : "Nincs adat"}</Text>
+    <ScrollView contentContainerStyle={styles.container}>
+      <Text style={styles.title}>Új befizetés rögzítése</Text>
 
       <Text style={styles.label}>Válassz típust:</Text>
       <Dropdown
         style={styles.dropdown}
-        placeholderStyle={styles.placeholderStyle}
-        selectedTextStyle={styles.selectedTextStyle}
         data={adatTomb}
         maxHeight={300}
         labelField="label"
@@ -125,8 +101,6 @@ export default function Oktato_BefizetesRogzites({ route }) {
       <Text style={styles.label}>Válassz diákot:</Text>
       <Dropdown
         style={styles.dropdown}
-        placeholderStyle={styles.placeholderStyle}
-        selectedTextStyle={styles.selectedTextStyle}
         data={diakTomb}
         maxHeight={300}
         labelField="label"
@@ -144,20 +118,31 @@ export default function Oktato_BefizetesRogzites({ route }) {
         onChangeText={setOsszeg}
       />
 
-      <Button title="Dátum kiválasztása" onPress={() => setShowDatePicker(true)} />
-      {datum ? <Text style={styles.date}>{datum}</Text> : null}
+      <TouchableOpacity style={styles.button} onPress={() => setShowDatePicker(true)}>
+        <Text style={styles.buttonText}>Dátum kiválasztása</Text>
+      </TouchableOpacity>
+      {datum ? <Text style={styles.dateText}>{datum}</Text> : null}
 
-      <Button title="Idő kiválasztása" onPress={() => setShowTimePicker(true)} />
-      {oraPerc ? <Text style={styles.date}>{oraPerc}</Text> : null}
+      <TouchableOpacity style={styles.button} onPress={() => setShowTimePicker(true)}>
+        <Text style={styles.buttonText}>Idő kiválasztása</Text>
+      </TouchableOpacity>
+      {oraPerc ? <Text style={styles.dateText}>{oraPerc}</Text> : null}
 
-      <Button title="Új befizetés felvitele" onPress={felvitel} />
+      <TouchableOpacity style={styles.submitButton} onPress={felvitel}>
+        <Text style={styles.submitButtonText}>Új befizetés rögzítése</Text>
+      </TouchableOpacity>
 
       {showDatePicker && (
         <DateTimePicker
           value={date}
           mode="date"
           is24Hour
-          onChange={valtozikDatum}
+          onChange={(event, selectedDatum) => {
+            if (selectedDatum) {
+              setShowDatePicker(false);
+              setDatum(selectedDatum.toISOString().split("T")[0]);
+            }
+          }}
         />
       )}
 
@@ -166,55 +151,77 @@ export default function Oktato_BefizetesRogzites({ route }) {
           value={date}
           mode="time"
           is24Hour
-          onChange={valtozikIdo}
+          onChange={(event, selectedTime) => {
+            if (selectedTime) {
+              setShowTimePicker(false);
+              setOraPerc(
+                `${String(selectedTime.getHours()).padStart(2, "0")}:${String(selectedTime.getMinutes()).padStart(2, "0")}`
+              );
+            }
+          }}
         />
       )}
-    </View>
+    </ScrollView>
   );
 }
 
 const styles = StyleSheet.create({
   container: {
-    flex: 1,
-    alignItems: "center",
-    justifyContent: "center",
     padding: 20,
+    backgroundColor: "#f7f7f7",
+    flexGrow: 2,
   },
   title: {
-    fontSize: 20,
+    fontSize: 22,
+    fontWeight: "bold",
     marginBottom: 20,
+    textAlign: "center",
   },
   label: {
     fontSize: 16,
     marginTop: 10,
+    fontWeight: "bold",
   },
   dropdown: {
     height: 50,
-    width: "100%",
-    borderWidth: 1,
-    borderRadius: 8,
+    backgroundColor: "white",
+    borderRadius: 10,
+    paddingHorizontal: 10,
     marginVertical: 10,
-    paddingHorizontal: 8,
-  },
-  placeholderStyle: {
-    fontSize: 16,
-    color: "gray",
-  },
-  selectedTextStyle: {
-    fontSize: 16,
-    color: "black",
   },
   input: {
-    width: "100%",
-    borderWidth: 1,
-    padding: 10,
-    marginBottom: 10,
-  },
-  date: {
-    backgroundColor: "yellow",
-    padding: 5,
-    textAlign: "center",
+    height: 50,
+    backgroundColor: "white",
+    borderRadius: 10,
+    paddingHorizontal: 10,
     marginVertical: 10,
   },
+  button: {
+    backgroundColor: "#5ca683",
+    padding: 12,
+    borderRadius: 15,
+    alignItems: "center",
+    marginTop: 10,
+  },
+  buttonText: {
+    color: "white",
+    fontSize: 16,
+  },
+  submitButton: {
+    backgroundColor: "#a65c98",
+    padding: 15,
+    borderRadius: 10,
+    alignItems: "center",
+    marginTop: 20,
+  },
+  submitButtonText: {
+    color: "white",
+    fontSize: 18,
+    fontWeight: "bold",
+  },
+  dateText: {
+    textAlign: "center",
+    fontSize: 16,
+    marginVertical: 5,
+  },
 });
-

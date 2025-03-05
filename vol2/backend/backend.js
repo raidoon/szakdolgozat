@@ -820,7 +820,7 @@ app.post("/egyDiakNemKeszBefizetesei", (req, res) => {
 app.post("/befizetesFelvitel", (req, res) => {
   kapcsolat();
   connection.query(
-    `INSERT INTO befizetesek VALUES (NULL, ?, ?, ?, ?, ?, 1 )`,
+    `INSERT INTO befizetesek VALUES (NULL, ?, ?, ?, ?, ?, 1, 1)`,
     [
       req.body.bevitel1,
       req.body.bevitel2,
