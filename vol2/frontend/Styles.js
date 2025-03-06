@@ -113,6 +113,14 @@ const Styles = StyleSheet.create({
     marginBottom: 20,
     minHeight:60
   },
+  naptarNyitogatoGombView2:{
+    flexDirection: 'row', 
+    alignItems:'center',
+    justifyContent: 'center',
+    backgroundColor: '#ccccff',
+    elevation: 3,
+    minHeight:60
+  },
   //------------------------------------ TANULO_PROFIL
   profil_gombDiv: {
     flexDirection: "row",
@@ -169,17 +177,15 @@ const Styles = StyleSheet.create({
     shadowRadius: 10,
     elevation: 5,
   },
-  kivalasztottDatumOraView2: {
-    backgroundColor: "#fff",
-    borderRadius: 15,
-    padding: 20,
-    marginBottom: 20,
-    shadowColor: "#6A5AE0",
-    shadowOffset: { width: 0, height: 4 },
-    shadowOpacity: 0.1,
-    shadowRadius: 10,
-    elevation: 5,
-    justifyContent: 'center',
+  kivalasztottDatumOraViewBelsoResze: {
+    flexDirection: "row",
+    alignItems: "center",
+    paddingVertical: 10,
+    //borderBottomWidth: 1,
+    //borderBottomColor: "#ddd",
+    backgroundColor: "#f8f9ff",
+    borderRadius: 10,
+    padding: 15,
   },
   kivalasztottDatumOraCim:{
     fontSize: 20,
@@ -187,32 +193,20 @@ const Styles = StyleSheet.create({
     color: "#6A5AE0",
     marginBottom: 15,
   },
-  kivalasztottDatumOsztalyElem:{
-    flexDirection: "row",
-    alignItems: "center",
-    backgroundColor: "#f8f9ff",
-    borderRadius: 10,
-    padding: 15,
-    marginBottom: 10,
-  },
-  osztalyReszletek:{
-    flex: 1,
-  },
-  osztalyNev:{
-    fontSize: 16,
+  kivalasztottDatumOraTipus:{
+  fontSize: 14,
+  color: "#666",
+  marginTop: 5,
+},
+  kivalasztottDatumOraHonapNap:{
+    fontSize: 18,
     fontWeight: "600",
     color: "#2d4150",
-  },
-  osztalyIdopont:{
-    fontSize: 14,
-    color: "#666",
-    marginTop: 5,
-  },
-  oszatlyIcon:{
-    backgroundColor: "#e8eafc",
-    borderRadius: 8,
-    padding: 10,
-    marginRight: 15,
+},
+  kivalasztottDatumOraPerc:{
+    marginLeft: "auto",
+    fontSize: 16,
+    fontWeight: "bold",
   },
   nincsOraView:{
     alignItems: "center",

@@ -110,7 +110,7 @@ const Tanulo_BejelentkezesUtan = ({ navigation, route }) => {
           headerShown: true,
           headerTitle: "Vezetési órarend",
           headerStyle:{
-            backgroundColor: '#5c4ce3'
+            backgroundColor: '#5c4ce3',
           },
           headerTintColor: '#fff',
           headerTitleStyle:{
