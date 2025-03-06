@@ -113,16 +113,6 @@ const Styles = StyleSheet.create({
     marginBottom: 20,
     minHeight:60
   },
-  naptarNyitogatoGombView2:{
-    flexDirection: 'row', 
-    alignItems:'center',
-    justifyContent: 'center',
-    backgroundColor: '#ccccff',
-    elevation: 3,
-    //marginBottom: 20,
-    minHeight:60,
-    width: '100%'
-  },
   //------------------------------------ TANULO_PROFIL
   profil_gombDiv: {
     flexDirection: "row",
@@ -133,6 +123,20 @@ const Styles = StyleSheet.create({
     width: "100%",
     marginTop: 7,
     paddingVertical: 10,
+  },
+  profilView:{
+    alignItems: "center",
+    marginBottom: 30,
+  },
+  profilNev:{
+    fontSize: 24,
+    fontWeight: "bold",
+    color: "#333",
+    marginBottom: 5,
+  },
+  profilEmail:{
+    fontSize: 16,
+    color: "#888",
   },
   //------------------------------------ PROFILSCREENS
   //--------------------- kapcsolat
@@ -153,7 +157,125 @@ const Styles = StyleSheet.create({
     minHeight: 100,
     maxHeight: 'auto',
   },
-  //--------------------------Oktato_Diakok.js
+  //-------------------------- TANULÓ KINYITOTT DÁTUMOK SCREEN
+  kivalasztottDatumOraView: {
+    backgroundColor: "#fff",
+    borderRadius: 15,
+    padding: 20,
+    marginBottom: 20,
+    shadowColor: "#6A5AE0",
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.1,
+    shadowRadius: 10,
+    elevation: 5,
+  },
+  kivalasztottDatumOraView2: {
+    backgroundColor: "#fff",
+    borderRadius: 15,
+    padding: 20,
+    marginBottom: 20,
+    shadowColor: "#6A5AE0",
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.1,
+    shadowRadius: 10,
+    elevation: 5,
+    justifyContent: 'center',
+  },
+  kivalasztottDatumOraCim:{
+    fontSize: 20,
+    fontWeight: "bold",
+    color: "#6A5AE0",
+    marginBottom: 15,
+  },
+  kivalasztottDatumOsztalyElem:{
+    flexDirection: "row",
+    alignItems: "center",
+    backgroundColor: "#f8f9ff",
+    borderRadius: 10,
+    padding: 15,
+    marginBottom: 10,
+  },
+  osztalyReszletek:{
+    flex: 1,
+  },
+  osztalyNev:{
+    fontSize: 16,
+    fontWeight: "600",
+    color: "#2d4150",
+  },
+  osztalyIdopont:{
+    fontSize: 14,
+    color: "#666",
+    marginTop: 5,
+  },
+  oszatlyIcon:{
+    backgroundColor: "#e8eafc",
+    borderRadius: 8,
+    padding: 10,
+    marginRight: 15,
+  },
+  nincsOraView:{
+    alignItems: "center",
+    padding: 20,
+  },
+  nincsOraText:{
+    fontSize: 16,
+    color: "#888",
+    textAlign: "center",
+    marginTop: 10,
+  },
+  oraDatuma:{
+    fontSize: 16,
+    fontWeight: "bold",
+    color: "#2d4150",
+  },
+  oraIdeje:{
+    fontSize: 14,
+    color: "#666",
+  },
+  oraElem:{
+    backgroundColor: "#fff",
+    borderRadius: 10,
+    padding: 16,
+    marginBottom: 10,
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.1,
+    shadowRadius: 6,
+    elevation: 3,
+  },
+  naptarView:{
+    backgroundColor: "#fff",
+    borderRadius: 10,
+    marginBottom: 20,
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.1,
+    shadowRadius: 6,
+    elevation: 3,
+  },
+  naptar:{
+    marginBottom: 10,
+  },
+  lenyiloHeader: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
+    backgroundColor: "#fff",
+    borderRadius: 10,
+    padding: 16,
+    marginBottom: 20,
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.1,
+    shadowRadius: 6,
+    elevation: 3,
+  },
+  lenyiloHeaderText: {
+    fontSize: 18,
+    fontWeight: "bold",
+    color: "#6A5AE0",
+  },
 });
 
 export default Styles;

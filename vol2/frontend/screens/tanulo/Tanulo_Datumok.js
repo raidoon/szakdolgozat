@@ -1,11 +1,24 @@
 import React, { useState, useEffect, useCallback } from "react";
-import {View,Text,StyleSheet,FlatList,TouchableOpacity,RefreshControl,ScrollView,} from "react-native";
-import {Calendar,CalendarList,Agenda,LocaleConfig,} from "react-native-calendars";
+import {
+  View,
+  Text,
+  StyleSheet,
+  FlatList,
+  TouchableOpacity,
+  RefreshControl,
+  ScrollView,
+} from "react-native";
+import {
+  Calendar,
+  CalendarList,
+  Agenda,
+  LocaleConfig,
+} from "react-native-calendars";
 import { Ionicons } from "@expo/vector-icons";
 import Styles from "../../Styles";
 import Ipcim from "../../Ipcim";
 import TanuloKinyitottDatumok from "./Tanulo_KinyitottDatumok";
-import { ActivityIndicator } from 'react-native';
+import { ActivityIndicator } from "react-native";
 const Tanulo_Datumok = ({ atkuld }) => {
   const ma = new Date();
   const [kivalasztottDatum, setKivalasztottDatum] = useState(ma);
@@ -137,9 +150,18 @@ const Tanulo_Datumok = ({ atkuld }) => {
   //-------------------------
   if (betolt) {
     return (
-      <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center', padding: 20 }}>
-         <ActivityIndicator size="large" color="#007BFF" />
-        <Text style={styles.betoltesText}>Az óráid betöltése folyamatban van. Kérjük, légy türelemmel...</Text>
+      <View
+        style={{
+          flex: 1,
+          justifyContent: "center",
+          alignItems: "center",
+          padding: 20,
+        }}
+      >
+        <ActivityIndicator size="large" color="#007BFF" />
+        <Text style={styles.betoltesText}>
+          Az óráid betöltése folyamatban van. Kérjük, légy türelemmel...
+        </Text>
       </View>
     );
   }
@@ -326,11 +348,13 @@ const Tanulo_Datumok = ({ atkuld }) => {
               date.getDate() === kivalasztottDatum.getDate()
             );
           }) ? (
-            <Text style={styles.tranzakcioTitle}>
-              Órák a kiválaszott napon:
-            </Text> // itt íródik ki a szöveg, ha van óra
+            <View>
+              <Text style={Styles.kivalasztottDatumOraCim}>
+                Órák a kiválaszott napon:
+              </Text>
+            </View>
           ) : (
-            <Text style={styles.tranzakcioTitle}>
+            <Text style={Styles.kivalasztottDatumOraCim}>
               Órák a kiválaszott napon:
             </Text>
           )}
@@ -381,39 +405,50 @@ const Tanulo_Datumok = ({ atkuld }) => {
               }
             })
           ) : (
-            <Text style={styles.nincsOra}>
-              {kivalasztottDatum.getDate() <= 5 &&
-              kivalasztottDatum.getDate() >= new Date().getDate()
-                ? `${kivalasztottDatum.getDate()}${
-                    [1, 4, 5, 21, 31].includes(kivalasztottDatum.getDate() % 10)
-                      ? ".-én"
-                      : [2, 3, 22, 23].includes(
-                          kivalasztottDatum.getDate() % 10
-                        )
-                      ? ".-án"
-                      : ".-án"
-                  } egyelőre üres a napod, de ne izgulj, biztosan jön majd valami! 😎✨`
-                : kivalasztottDatum.getDate() > 5 &&
+            <View style={Styles.kivalasztottDatumOraView}>
+              <View style={Styles.nincsOraView}>
+                <Ionicons name="calendar-outline" size={40} color="#6A5AE0" />
+                <Text style={Styles.nincsOraText}>
+                  {kivalasztottDatum.getDate() <= 5 &&
                   kivalasztottDatum.getDate() >= new Date().getDate()
-                ? `${kivalasztottDatum.getDate()}${
-                    [1, 2, 4, 5, 7, 9, 10, 21, 31].includes(
-                      kivalasztottDatum.getDate() % 10
-                    ) || kivalasztottDatum.getDate() === 10
-                      ? ".-én"
-                      : [3, 22, 23].includes(kivalasztottDatum.getDate() % 10)
-                      ? ".-án"
-                      : ".-án"
-                  } nincs órád, úgyhogy ne felejts el pihenni! 😊👌`
-                : `${kivalasztottDatum.getDate()}${
-                    [1, 4, 5, 21, 31].includes(kivalasztottDatum.getDate() % 10)
-                      ? ".-én"
-                      : [2, 3, 22, 23].includes(
+                    ? `${kivalasztottDatum.getDate()}${
+                        [1, 4, 5, 21, 31].includes(
                           kivalasztottDatum.getDate() % 10
                         )
-                      ? ".-án"
-                      : ".-án"
-                  } nem volt órád.`}
-            </Text>
+                          ? ".-én"
+                          : [2, 3, 22, 23].includes(
+                              kivalasztottDatum.getDate() % 10
+                            )
+                          ? ".-án"
+                          : ".-án"
+                      } egyelőre üres a napod, de ne izgulj, biztosan jön majd valami! 😎✨`
+                    : kivalasztottDatum.getDate() > 5 &&
+                      kivalasztottDatum.getDate() >= new Date().getDate()
+                    ? `${kivalasztottDatum.getDate()}${
+                        [1, 2, 4, 5, 7, 9, 10, 21, 31].includes(
+                          kivalasztottDatum.getDate() % 10
+                        ) || kivalasztottDatum.getDate() === 10
+                          ? ".-én"
+                          : [3, 22, 23].includes(
+                              kivalasztottDatum.getDate() % 10
+                            )
+                          ? ".-án"
+                          : ".-án"
+                      } nincs órád, úgyhogy ne felejts el pihenni! 😊👌`
+                    : `${kivalasztottDatum.getDate()}${
+                        [1, 4, 5, 21, 31].includes(
+                          kivalasztottDatum.getDate() % 10
+                        )
+                          ? ".-én"
+                          : [2, 3, 22, 23].includes(
+                              kivalasztottDatum.getDate() % 10
+                            )
+                          ? ".-án"
+                          : ".-án"
+                      } nem volt órád.`}
+                </Text>
+              </View>
+            </View>
           )}
         </View>
       )}
@@ -430,10 +465,10 @@ const Tanulo_Datumok = ({ atkuld }) => {
   );
 };
 const styles = StyleSheet.create({
-  betoltesText:{
+  betoltesText: {
     fontSize: 16,
-    color: '#666',
-    textAlign: 'center',
+    color: "#666",
+    textAlign: "center",
     marginTop: 20,
   },
   kalendar: {
@@ -447,7 +482,7 @@ const styles = StyleSheet.create({
     backgroundColor: "#f0f0f0",
     borderWidth: 1,
     borderColor: "gray",
-    marginTop: 20
+    marginTop: 20,
   },
   elkovetkezendoOrakText: {
     fontSize: 18,

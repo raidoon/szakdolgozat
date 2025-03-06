@@ -5,6 +5,7 @@ import { ScrollView } from "react-native-gesture-handler";
 import Ionicons from "react-native-vector-icons/Ionicons";
 import Collapsible from "react-native-collapsible";
 import Styles from "../../Styles";
+
 const TanuloKinyitottDatumok = ({
   naptarLenyitas,
   naptarToggle,
@@ -14,6 +15,7 @@ const TanuloKinyitottDatumok = ({
   const [kivalasztottDatum, setKivalasztottDatum] = useState(ma);
   const [elkovetkezendoCollapsed, setElkovetkezendoCollapsed] = useState(true);
   const [teljesitettCollapsed, setTeljesitettCollapsed] = useState(true);
+
   const megjeloltNapok = () => {
     const megjelolve = {};
     orakLista.forEach((item) => {
@@ -24,21 +26,30 @@ const TanuloKinyitottDatumok = ({
         dotColor: "#2EC0F9",
       };
     });
+
     const kivalasztottDatumMegjelolve = kivalasztottDatum
       .toISOString()
       .split("T")[0];
+
+    const vanEoraAkivalasztottNapon = orakLista.some((ora) => {
+      const oraDateString = new Date(ora.ora_datuma).toISOString().split("T")[0];
+      return oraDateString === kivalasztottDatumMegjelolve;
+    });
+
     megjelolve[kivalasztottDatumMegjelolve] = {
       selected: true,
-      marked: true,
-      dotColor: "#2EC0F9",
+      marked: vanEoraAkivalasztottNapon,
+      dotColor: vanEoraAkivalasztottNapon ? "#2EC0F9" : undefined,
     };
+
     return megjelolve;
   };
+
   const datumMegnyomas = (day) => {
     const ujDatum = new Date(day.dateString);
     setKivalasztottDatum(ujDatum);
   };
-  {/*----------------------------------- ÓRÁK KÜLÖN VÁLASZTÁSA -------------------------------- */}
+
   const orakKulonvalasztasa = () => {
     const elkovetkezendoOra = [];
     const teljesitettOra = [];
@@ -53,23 +64,26 @@ const TanuloKinyitottDatumok = ({
     });
     return { elkovetkezendoOra, teljesitettOra };
   };
+
   const { elkovetkezendoOra, teljesitettOra } = orakKulonvalasztasa();
+
   const vanEoraAkivalasztottNapon = () => {
     const kivalasztottDatumFormazva = kivalasztottDatum.toISOString().split("T")[0];
     return orakLista.filter((ora) => {
-      const oraDateString = new Date(ora.ora_datuma).toISOString().split("T")[0];
-      return oraDateString === kivalasztottDatumFormazva;
+      const oraFormazva = new Date(ora.ora_datuma).toISOString().split("T")[0];
+      return oraFormazva === kivalasztottDatumFormazva;
     });
   };
+
   const kivalasztottNapOrai = vanEoraAkivalasztottNapon();
+
   return (
     <ScrollView style={styles.container}>
       {/*----------------------------------- NAPTÁR RÉSZ -------------------------------- */}
-      <View style={styles.calendarContainer}>
+      <View style={Styles.naptarView}>
         <Calendar
-          style={styles.calendar}
+          style={Styles.naptar}
           onDayPress={(nap) => {
-            console.log("kiválasztott dátum:", nap);
             datumMegnyomas(nap);
           }}
           onPressArrowLeft={(subtractMonth) => subtractMonth()}
@@ -124,12 +138,12 @@ const TanuloKinyitottDatumok = ({
         </TouchableOpacity>
       </View>
       {/*----------------------------------- KIVÁLASZTOTT DÁTUM RÉSZ -------------------------------- */}
-      {kivalasztottNapOrai.length > 0 ? (
-        <View style={styles.selectedDateClassesContainer}>
-          <Text style={styles.selectedDateClassesTitle}>
-            Órák a kiválasztott napon:
-          </Text>
-          {kivalasztottNapOrai.map((ora, index) => {
+      <View style={Styles.kivalasztottDatumOraView}>
+        <Text style={Styles.kivalasztottDatumOraCim}>
+          Órák a kiválasztott napon:
+        </Text>
+        {kivalasztottNapOrai.length > 0 ? (
+          kivalasztottNapOrai.map((ora, index) => {
             const oraIdopontja = new Date(ora.ora_datuma);
             const oraIdo = oraIdopontja.toLocaleTimeString("hu-HU", {
               hour: "2-digit",
@@ -137,27 +151,32 @@ const TanuloKinyitottDatumok = ({
               hour12: false,
             });
             return (
-              <View key={index} style={styles.selectedDateClassItem}>
-                <Text style={styles.selectedDateClassText}>
-                  {ora.ora_neve} - {oraIdo}
-                </Text>
+              <View key={index} style={Styles.kivalasztottDatumOsztalyElem}>
+                <View style={Styles.oszatlyIcon}>
+                  <Ionicons name="time-outline" size={20} color="#6A5AE0" />
+                </View>
+                <View style={Styles.osztalyReszletek}>
+                  <Text style={Styles.osztalyNev}>ide jön az óra típusa/dátuma</Text>
+                  <Text style={Styles.osztalyIdopont}>{oraIdo}</Text>
+                </View>
               </View>
             );
-          })}
-        </View>
-      ) : (
-        <View style={styles.selectedDateClassesContainer}>
-          <Text style={styles.selectedDateClassesTitle}>
-            Nincsenek órák a kiválasztott napon.
-          </Text>
-        </View>
-      )}
+          })
+        ) : (
+          <View style={Styles.nincsOraView}>
+            <Ionicons name="calendar-outline" size={40} color="#6A5AE0" />
+            <Text style={Styles.nincsOraText}>
+              Nincsenek órák a kiválasztott napon.
+            </Text>
+          </View>
+        )}
+      </View>
       {/*----------------------------------- ELKÖVETKEZENDŐ ÓRÁK -------------------------------- */}
       <TouchableOpacity
         onPress={() => setElkovetkezendoCollapsed(!elkovetkezendoCollapsed)}
-        style={styles.collapsibleHeader}
+        style={Styles.lenyiloHeader}
       >
-        <Text style={styles.collapsibleHeaderText}>Elkövetkezendő Órák</Text>
+        <Text style={Styles.lenyiloHeaderText}>Elkövetkezendő órák</Text>
         <Ionicons
           name={
             elkovetkezendoCollapsed
@@ -170,8 +189,8 @@ const TanuloKinyitottDatumok = ({
       </TouchableOpacity>
       <Collapsible collapsed={elkovetkezendoCollapsed}>
         {elkovetkezendoOra.length === 0 ? (
-          <View style={styles.noClassesContainer}>
-            <Text style={styles.noClassesText}>
+          <View style={Styles.nincsOraView}>
+            <Text style={Styles.nincsOraText}>
               Itt fognak megjelenni azok az órák, amik még nincsenek teljesítve.
               Ezek olyan időpontok, amiket még le kell vezetned, legyen az sima
               tanóra, vagy vizsga.
@@ -193,9 +212,9 @@ const TanuloKinyitottDatumok = ({
               hour12: false,
             });
             return (
-              <View key={item.ora_id} style={styles.classItem}>
-                <Text style={styles.classDate}>{honapNap}</Text>
-                <Text style={styles.classTime}>{oraPerc}</Text>
+              <View key={item.ora_id} style={Styles.oraElem}>
+                <Text style={Styles.oraDatuma}>{honapNap}</Text>
+                <Text style={Styles.oraIdeje}>{oraPerc}</Text>
               </View>
             );
           })
@@ -204,9 +223,9 @@ const TanuloKinyitottDatumok = ({
       {/*----------------------------------- TELJESÍTETT ÓRÁK -------------------------------- */}
       <TouchableOpacity
         onPress={() => setTeljesitettCollapsed(!teljesitettCollapsed)}
-        style={styles.collapsibleHeader}
+        style={Styles.lenyiloHeader}
       >
-        <Text style={styles.collapsibleHeaderText}>Teljesített órák</Text>
+        <Text style={Styles.lenyiloHeaderText}>Teljesített órák</Text>
         <Ionicons
           name={
             teljesitettCollapsed
@@ -219,8 +238,8 @@ const TanuloKinyitottDatumok = ({
       </TouchableOpacity>
       <Collapsible collapsed={teljesitettCollapsed}>
         {teljesitettOra.length === 0 ? (
-          <View style={styles.noClassesContainer}>
-            <Text style={styles.noClassesText}>
+          <View style={Styles.nincsOraView}>
+            <Text style={Styles.nincsOraText}>
               Itt fognak megjelenni azok az órák, amiket már sikeresen
               levezettél!
             </Text>
@@ -241,9 +260,9 @@ const TanuloKinyitottDatumok = ({
               hour12: false,
             });
             return (
-              <View key={item.ora_id} style={styles.classItem}>
-                <Text style={styles.classDate}>{honapNap}</Text>
-                <Text style={styles.classTime}>{oraPerc}</Text>
+              <View key={item.ora_id} style={Styles.oraElem}>
+                <Text style={Styles.oraDatuma}>{honapNap}</Text>
+                <Text style={Styles.oraIdeje}>{oraPerc}</Text>
               </View>
             );
           })
@@ -252,111 +271,12 @@ const TanuloKinyitottDatumok = ({
     </ScrollView>
   );
 };
+
 const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: "#f5f5f5",
     paddingHorizontal: 1
-  },
-  calendarContainer: {
-    backgroundColor: "#fff",
-    borderRadius: 10,
-    marginBottom: 20,
-    shadowColor: "#000",
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.1,
-    shadowRadius: 6,
-    elevation: 3,
-  },
-  calendar: {
-    marginBottom: 10,
-  },
-  toggleButton: {
-    flexDirection: "row",
-    justifyContent: "center",
-    alignItems: "center",
-    padding: 10,
-    backgroundColor: "#6A5AE0",
-    borderRadius: 10,
-  },
-  toggleButtonText: {
-    color: "#fff",
-    fontSize: 16,
-    marginRight: 10,
-  },
-  selectedDateClassesContainer: {
-    backgroundColor: "#fff",
-    borderRadius: 10,
-    padding: 16,
-    marginBottom: 20,
-    shadowColor: "#000",
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.1,
-    shadowRadius: 6,
-    elevation: 3,
-  },
-  selectedDateClassesTitle: {
-    fontSize: 18,
-    fontWeight: "bold",
-    color: "#6A5AE0",
-    marginBottom: 10,
-  },
-  selectedDateClassItem: {
-    padding: 10,
-    borderBottomWidth: 1,
-    borderBottomColor: "#eee",
-  },
-  selectedDateClassText: {
-    fontSize: 16,
-    color: "#2d4150",
-  },
-  collapsibleHeader: {
-    flexDirection: "row",
-    justifyContent: "space-between",
-    alignItems: "center",
-    backgroundColor: "#fff",
-    borderRadius: 10,
-    padding: 16,
-    marginBottom: 20,
-    shadowColor: "#000",
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.1,
-    shadowRadius: 6,
-    elevation: 3,
-  },
-  collapsibleHeaderText: {
-    fontSize: 18,
-    fontWeight: "bold",
-    color: "#6A5AE0",
-  },
-  noClassesContainer: {
-    alignItems: "center",
-    padding: 20,
-  },
-  noClassesText: {
-    fontSize: 16,
-    color: "#888",
-    textAlign: "center",
-  },
-  classItem: {
-    backgroundColor: "#fff",
-    borderRadius: 10,
-    padding: 16,
-    marginBottom: 10,
-    shadowColor: "#000",
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.1,
-    shadowRadius: 6,
-    elevation: 3,
-  },
-  classDate: {
-    fontSize: 16,
-    fontWeight: "bold",
-    color: "#2d4150",
-  },
-  classTime: {
-    fontSize: 14,
-    color: "#666",
   },
 });
 export default TanuloKinyitottDatumok;

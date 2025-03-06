@@ -30,10 +30,9 @@ const Tanulo_Profil = ({ atkuld }) => {
 
   return (
     <View style={styles.container}>
-      <View style={styles.profileHeader}>
-        <Text style={styles.profileImagePlaceholder}>felhasználó profilkép?</Text>
-        <Text style={styles.profileName}>{atkuld.tanulo_neve}</Text>
-        <Text style={styles.profileEmail}>{atkuld.felhasznalo_email}</Text>
+      <View style={Styles.profilView}>
+        <Text style={Styles.profilNev}>{atkuld.tanulo_neve}</Text>
+        <Text style={Styles.profilEmail}>{atkuld.felhasznalo_email}</Text>
       </View>
 
       <View style={styles.menuContainer}>
@@ -78,24 +77,10 @@ const styles = StyleSheet.create({
     backgroundColor: "#F5F5F5",
     padding: 20,
   },
-  profileHeader: {
-    alignItems: "center",
-    marginBottom: 30,
-  },
   profileImagePlaceholder: {
     fontSize: 16,
     color: "#888",
     marginBottom: 10,
-  },
-  profileName: {
-    fontSize: 24,
-    fontWeight: "bold",
-    color: "#333",
-    marginBottom: 5,
-  },
-  profileEmail: {
-    fontSize: 16,
-    color: "#888",
   },
   menuContainer: {
     backgroundColor: "#FFF",
