@@ -47,7 +47,7 @@ export default function Oktato_TanuloAOrak({ route }) {
                 <Text>Betöltés...</Text>
             ) : (
                 <FlatList
-                    data={adatok.filter(item => item.ora_teljesitve)}
+                    data={adatok.filter(item => item.ora_allapot)}
                     renderItem={({ item }) => (
                         <View style={stilus.oraKartya}>
                             <Text style={stilus.datum}>{item.ora_datuma.split("T")[0]}</Text>

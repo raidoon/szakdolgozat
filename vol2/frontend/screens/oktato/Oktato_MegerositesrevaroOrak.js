@@ -19,7 +19,7 @@ export default function Oktato_MegerositesrevaroOrak({ route }) {
 
             console.log("Elküldött adat:", JSON.stringify({ "oktato_id": atkuld.oktato_id }));
 
-            const response = await fetch(Ipcim.Ipcim + "/nemkeszOrak", {
+            const response = await fetch(Ipcim.Ipcim + "/aktualisDiakok", {
                 method: "POST",
                 body: JSON.stringify(adat),
                 headers: { "Content-type": "application/json; charset=UTF-8" }
