@@ -50,12 +50,12 @@ export default function Oktato_MegerositesrevaroOrak({ route }) {
     return (
         <View style={Oktato_Styles.diakok_container}>
             <View>
-                <Text style={Oktato_Styles.focim}>Megerősítésre váró órák</Text>
+                <Text style={Oktato_Styles.focim}>Módosítható órák</Text>
             </View>
 
             <View>
                 {adatok.length === 0 ? (
-                    <Text style={Oktato_Styles.nincsOra}>Nincs megerősítésre váró óra.</Text>
+                    <Text style={Oktato_Styles.nincsOra}>Nincs módosítható óra.</Text>
                 ) : (
                     <FlatList
                         data={adatok}

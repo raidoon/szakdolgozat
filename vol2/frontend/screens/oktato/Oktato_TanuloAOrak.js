@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { View, Text, StyleSheet, FlatList, TouchableOpacity, Alert } from "react-native";
+import { View, Text, StyleSheet, FlatList } from "react-native";
 import Ipcim from "../../Ipcim";
 
 export default function Oktato_TanuloAOrak({ route }) {
@@ -38,48 +38,6 @@ export default function Oktato_TanuloAOrak({ route }) {
         letoltes();
     }, []);
 
-    const megerositVagyVissza = (ora_id) => {
-        Alert.alert(
-            "Megerősítés", 
-            "Biztos meg akarod erősíteni?", 
-            [
-                {
-                    
-                    text: "Igen", 
-                    onPress: () => megerositOra(ora_id) 
-                },
-                { 
-                    text: "Mégse",
-                    style: "cancel"
-                }
-            ]
-        );
-    };
-
-    const megerositOra = async (ora_id) => {
-        try {
-            const response = await fetch(Ipcim.Ipcim + "/oraMegerosit", {
-                method: "POST",
-                body: JSON.stringify({ ora_id }),
-                headers: { "Content-type": "application/json; charset=UTF-8" }
-            });
-
-            if (!response.ok) {
-                throw new Error("Nem sikerült frissíteni az állapotot");
-            }
-
-            // Állapot frissítése a kliensoldalon
-            setAdatok(prevAdatok =>
-                prevAdatok.map(ora =>
-                    ora.ora_id === ora_id ? { ...ora, ora_teljesitve: 1 } : ora
-                )
-            );
-        } catch (error) {
-            console.error("Hiba történt:", error);
-            alert("Nem sikerült az óra állapotának frissítése.");
-        }
-    };
-
     return (
         <View style={stilus.elso}>
             <Text style={stilus.szoveg}>Részletek</Text>
@@ -89,22 +47,12 @@ export default function Oktato_TanuloAOrak({ route }) {
                 <Text>Betöltés...</Text>
             ) : (
                 <FlatList
-                    data={adatok}
+                    data={adatok.filter(item => item.ora_teljesitve)}
                     renderItem={({ item }) => (
                         <View style={stilus.oraKartya}>
                             <Text style={stilus.datum}>{item.ora_datuma.split("T")[0]}</Text>
                             <Text>{item.ora_datuma.split("T")[1].split(".")[0]}</Text>
-                            <Text style={{ color: item.ora_teljesitve ? "green" : "red" }}>
-                                {item.ora_teljesitve ? "Teljesítve" : "Nincs teljesítve"}
-                            </Text>
-                            {!item.ora_teljesitve && (
-                                <TouchableOpacity 
-                                    style={stilus.gomb} 
-                                    onPress={() => megerositVagyVissza(item.ora_id)}
-                                >
-                                    <Text style={stilus.gombSzoveg}>Megerősítés</Text>
-                                </TouchableOpacity>
-                            )}
+                            <Text style={{ color: "green" }}>Teljesítve</Text>
                         </View>
                     )}
                     keyExtractor={item => item.ora_id.toString()} 
@@ -147,15 +95,5 @@ const stilus = StyleSheet.create({
     datum: {
         fontWeight: "bold",
         fontSize: 16,
-    },
-    gomb: {
-        marginTop: 10,
-        backgroundColor: "#007bff",
-        padding: 8,
-        borderRadius: 5,
-    },
-    gombSzoveg: {
-        color: "#fff",
-        fontWeight: "bold",
-    },
+    }
 });

@@ -1,7 +1,6 @@
 import { useState, useEffect } from "react";
 import { View, Text, TouchableOpacity, FlatList, StyleSheet, RefreshControl } from "react-native";
 import { useNavigation } from '@react-navigation/native';
-import Oktato_Styles from "../../Oktato_Styles";
 import Ipcim from "../../Ipcim";
 
 export default function Oktato_Kezdolap({ atkuld }) {
@@ -92,7 +91,7 @@ export default function Oktato_Kezdolap({ atkuld }) {
         style={styles.button}
         onPress={() => navigation.navigate("Oktato_MegerositesrevaroOrak", { atkuld })}
       >
-        <Text style={styles.buttonText}>Megerősítésre váró órák</Text>
+        <Text style={styles.buttonText}>Még módosítható órák</Text>
       </TouchableOpacity>
 
       <TouchableOpacity

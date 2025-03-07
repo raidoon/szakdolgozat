@@ -70,7 +70,7 @@ const kattvaro = (tanulo) => {
         style={Oktato_Styles.navigateButton}
         onPress={() => navigation.navigate("Oktato_AktualisTanulok", { atkuld })}
       >
-        <Text style={Oktato_Styles.navigateButtonText}>Diákok Órái</Text>
+        <Text style={Oktato_Styles.navigateButtonText}>Teljesített Órák</Text>
       </TouchableOpacity>
 
 
@@ -78,7 +78,7 @@ const kattvaro = (tanulo) => {
         style={Oktato_Styles.navigateButton}
         onPress={() => navigation.navigate("Oktato_MegerositesrevaroOrak", { atkuld })}
       >
-        <Text style={Oktato_Styles.navigateButtonText}>Megerősítésre váró órák</Text>
+        <Text style={Oktato_Styles.navigateButtonText}>Módosítható órák</Text>
       </TouchableOpacity>
     </View>
   );

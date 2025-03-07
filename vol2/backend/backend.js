@@ -709,33 +709,55 @@ app.post("/egyDiakNemKeszOrai", (req, res) => {
 
 
 //---------------------------
-app.post('/oraMegerosit', (req, res) => {
-  kapcsolat();
-  connection.query(`
-    UPDATE ora_adatok SET ora_teljesitve=1 WHERE ora_id = ?; 
-  `, [req.body.ora_id], (err, rows) => {
-    if (err) {
-      console.error("Hiba:", err);
-      return res.status(500).json({ message: "Hiba történt!" });
-    }
-    res.json({ message: "Óra megerősítve!" });
+// Automatikus óra teljesítés ellenőrzése
+const autoCompleteLessons = () => {
+  const query = `UPDATE ora_adatok SET ora_teljesitve = 1 
+                 WHERE ora_datuma < NOW() AND ora_teljesitve = 0
+                 AND (SELECT COUNT(*) FROM orak_modositas WHERE orak_modositas.ora_id = ora_adatok.ora_id) = 0`;
+  db.query(query, (err, result) => {
+      if (err) {
+          console.error("Error updating lessons: ", err);
+      } else {
+          console.log(`Updated ${result.affectedRows} lessons to completed.`);
+      }
   });
-  connection.end();
-});
-//---------------------------------------
-app.post('/oraElutasit', (req, res) => {
-  kapcsolat();
-  connection.query(`
-    UPDATE ora_adatok SET ora_teljesitve=2 WHERE ora_id = ?; 
-  `, [req.body.ora_id], (err, rows) => {
-    if (err) {
-      console.error("Hiba:", err);
-      return res.status(500).json({ message: "Hiba történt!" });
-    }
-    res.json({ message: "Óra elutasítva!" });
+};
+
+// Az oktató 3 napig módosíthatja az óra állapotát (megerősíthetés)
+app.post("/oraMegerosit", (req, res) => {
+  const { ora_id } = req.body;
+  const query = `UPDATE orak SET ora_teljesitve = 1 
+                 WHERE ora_id = ? AND ora_teljesitve = 3 AND TIMESTAMPDIFF(DAY, ora_datuma, NOW()) <= 3`;
+  db.query(query, [ora_id], (err, result) => {
+      if (err) {
+          res.status(500).json({ message: "Hiba történt az óra megerősítése közben." });
+      } else if (result.affectedRows === 0) {
+          res.status(400).json({ message: "Az órát már nem lehet módosítani." });
+      } else {
+          res.json({ message: "Az óra sikeresen megerősítve." });
+      }
   });
-  connection.end();
 });
+
+// Az oktató elutasíthatja az órát (az óra állapota 2 lesz)
+app.post("/oraElutasit", (req, res) => {
+  const { ora_id } = req.body;
+  const query = `UPDATE orak SET ora_teljesitve = 2 
+                 WHERE ora_id = ? AND ora_teljesitve = 3 AND TIMESTAMPDIFF(DAY, ora_datuma, NOW()) <= 3`;
+  db.query(query, [ora_id], (err, result) => {
+      if (err) {
+          res.status(500).json({ message: "Hiba történt az óra elutasítása közben." });
+      } else if (result.affectedRows === 0) {
+          res.status(400).json({ message: "Az órát már nem lehet elutasítani." });
+      } else {
+          res.json({ message: "Az óra sikeresen elutasítva." });
+      }
+  });
+});
+
+// Automatikus frissítés 10 percenként
+setInterval(autoCompleteLessons, 600000);
+
 
 //---------------------------
 app.post("/diakokBefizetesei", (req, res) => {
