@@ -1,5 +1,11 @@
 import React, { useState, useCallback } from "react";
-import { View, Text, TouchableOpacity, StyleSheet, RefreshControl } from "react-native";
+import {
+  View,
+  Text,
+  TouchableOpacity,
+  StyleSheet,
+  RefreshControl,
+} from "react-native";
 import { Calendar } from "react-native-calendars";
 import { ScrollView } from "react-native-gesture-handler";
 import Ionicons from "react-native-vector-icons/Ionicons";
@@ -27,15 +33,16 @@ const TanuloKinyitottDatumok = ({
     "A kressz már megvan, úgyhogy jöhet a vezetés!",
     "A legjobb sofőr mindig tudja, hogy mikor kell lassítani.",
     "A jó vezető nem hajt, hanem uralja az utat.",
-    "Ne rohanj, hanem haladj stílusosan!",
+    "Ne siess, inkább haladj stílusosan!",
     "Vezetni menő, de biztonságban maradni még menőbb.",
     "A legjobb vezetők nem a gyorsulásban, hanem az irányításban jeleskednek.",
     "A volán mögött minden döntés számít – válaszd meg okosan!",
     "A forgalom nem akadály, hanem kihívás. Kezeld ügyesen!",
     "Ne csak a gázt pörgesd, hanem az agyad is!", //nem gáz hanem izé az a másik mutató
-  ]
+  ];
   const maiNap = new Date().getDate();
-  const kivalasztottMondat = vezetoMondatok[(maiNap-1) % vezetoMondatok.length];
+  const kivalasztottMondat =
+    vezetoMondatok[(maiNap - 1) % vezetoMondatok.length];
   //------------------------------------------------------- OLDAL BETÖLTÉS ------------------------
   const frissitesKozben = useCallback(() => {
     setFrissites(true);
@@ -46,21 +53,23 @@ const TanuloKinyitottDatumok = ({
       setBetolt(false);
     }, 2000);
   }, [adatokBetoltese]);
-    if (betolt) {
-        return (
-          <View
-            style={{
-              flex: 1,
-              justifyContent: "center",
-              alignItems: "center",
-              padding: 20,
-            }}
-          >
-            <ActivityIndicator size="large" color="#007BFF" />
-            <Text style={styles.betoltesText}>Az óráid betöltése folyamatban van...</Text>
-          </View>
-        );
-      }
+  if (betolt) {
+    return (
+      <View
+        style={{
+          flex: 1,
+          justifyContent: "center",
+          alignItems: "center",
+          padding: 20,
+        }}
+      >
+        <ActivityIndicator size="large" color="#007BFF" />
+        <Text style={styles.betoltesText}>
+          Az óráid betöltése folyamatban van...
+        </Text>
+      </View>
+    );
+  }
   const megjeloltNapok = () => {
     const megjelolve = {};
     orakLista.forEach((item) => {
@@ -77,7 +86,9 @@ const TanuloKinyitottDatumok = ({
       .split("T")[0];
 
     const vanEoraAkivalasztottNapon = orakLista.some((ora) => {
-      const oraDateString = new Date(ora.ora_datuma).toISOString().split("T")[0];
+      const oraDateString = new Date(ora.ora_datuma)
+        .toISOString()
+        .split("T")[0];
       return oraDateString === kivalasztottDatumMegjelolve;
     });
 
@@ -113,7 +124,9 @@ const TanuloKinyitottDatumok = ({
   const { elkovetkezendoOra, teljesitettOra } = orakKulonvalasztasa();
 
   const vanEoraAkivalasztottNapon = () => {
-    const kivalasztottDatumFormazva = kivalasztottDatum.toISOString().split("T")[0];
+    const kivalasztottDatumFormazva = kivalasztottDatum
+      .toISOString()
+      .split("T")[0];
     return orakLista.filter((ora) => {
       const oraFormazva = new Date(ora.ora_datuma).toISOString().split("T")[0];
       return oraFormazva === kivalasztottDatumFormazva;
@@ -122,13 +135,13 @@ const TanuloKinyitottDatumok = ({
   const kivalasztottNapOrai = vanEoraAkivalasztottNapon();
 
   return (
-    <ScrollView 
-            style={styles.container} 
-            contentContainerStyle={{ flexGrow: 1 }} 
-            keyboardShouldPersistTaps="handled" 
-            refreshControl={
-              <RefreshControl refreshing={frissites} onRefresh={frissitesKozben} />
-            }
+    <ScrollView
+      style={styles.container}
+      contentContainerStyle={{ flexGrow: 1 }}
+      keyboardShouldPersistTaps="handled"
+      refreshControl={
+        <RefreshControl refreshing={frissites} onRefresh={frissitesKozben} />
+      }
     >
       {/*----------------------------------- NAPONTA VÁLTOZÓ MONDATOK RÉSZE -------------------------------- */}
       <LinearGradient
@@ -147,19 +160,23 @@ const TanuloKinyitottDatumok = ({
           elevation: 5,
         }}
       >
-        <View style={{
-          backgroundColor: "#ffffff",
-          borderRadius: 18,
-          padding: 20,
-          alignItems: "center",
-        }}>
-          <Text style={{
-            textAlign: "center",
-            fontSize: 18,
-            fontStyle: "italic",
-            color: "#333",
-            fontWeight: "500",
-          }}>
+        <View
+          style={{
+            backgroundColor: "#ffffff",
+            borderRadius: 18,
+            padding: 20,
+            alignItems: "center",
+          }}
+        >
+          <Text
+            style={{
+              textAlign: "center",
+              fontSize: 18,
+              fontStyle: "italic",
+              color: "#333",
+              fontWeight: "500",
+            }}
+          >
             {kivalasztottMondat} 🚗💨
           </Text>
         </View>
@@ -205,21 +222,21 @@ const TanuloKinyitottDatumok = ({
         />
         {/*------------------------------ NAPTÁR KI BE NYITÓS GOMB !!! --------------------------*/}
         <TouchableOpacity onPress={naptarToggle}>
-            {naptarLenyitas ? (
-              <View style={Styles.naptarNyitogatoGombView2}>
-                <Text style={{ color: "black", fontSize: 16 }}>
-                  Naptár becsukása
-                </Text>
-                <Ionicons name="chevron-up-outline" size={30} color="black" />
-              </View>
-            ) : (
-              <View style={Styles.naptarNyitogatoGombView2}>
-                <Text style={{ color: "black", fontSize: 16 }}>
-                  Naptár kinyitása
-                </Text>
-                <Ionicons name="chevron-down-outline" size={30} color="black" />
-              </View>
-            )}
+          {naptarLenyitas ? (
+            <View style={Styles.naptarNyitogatoGombView2}>
+              <Text style={{ color: "black", fontSize: 16 }}>
+                Naptár becsukása
+              </Text>
+              <Ionicons name="chevron-up-outline" size={30} color="black" />
+            </View>
+          ) : (
+            <View style={Styles.naptarNyitogatoGombView2}>
+              <Text style={{ color: "black", fontSize: 16 }}>
+                Naptár kinyitása
+              </Text>
+              <Ionicons name="chevron-down-outline" size={30} color="black" />
+            </View>
+          )}
         </TouchableOpacity>
       </View>
       {/*----------------------------------- KIVÁLASZTOTT DÁTUM RÉSZ -------------------------------- */}
@@ -228,33 +245,44 @@ const TanuloKinyitottDatumok = ({
           Órák a kiválasztott napon:
         </Text>
         {kivalasztottNapOrai.length > 0 ? (
-          kivalasztottNapOrai.map((ora, index) => {
-              // A kiválasztott dátum óráinak megjelenítése
-              const date = new Date(ora.ora_datuma);
-              // A hónap rövid neve (pl. "FEB") és a nap (pl. "03")
-              const honap = date
-                .toLocaleDateString("hu-HU", { month: "short" })
-                .toUpperCase(); // Rövid hónapnév
-              const nap = date.toLocaleDateString("hu-HU", { day: "2-digit" });
-                const oraPerc = date.toLocaleTimeString("hu-HU", {
-                  hour: "2-digit",
-                  minute: "2-digit",
-                  hour12: false,
-                });
-                const oraTipusSzoveg =
-                ora.ora_tipusID === 1 ? `Tanóra` : `Vizsga!`;
+          kivalasztottNapOrai.map((ora) => {
+            // A kiválasztott dátum óráinak megjelenítése
+            const date = new Date(ora.ora_datuma);
+            // A hónap rövid neve (pl. "FEB") és a nap (pl. "03")
+            const honap = date
+              .toLocaleDateString("hu-HU", { month: "short" })
+              .toUpperCase(); // Rövid hónapnév
+            const nap = date.toLocaleDateString("hu-HU", { day: "2-digit" });
+            const oraPerc = date.toLocaleTimeString("hu-HU", {
+              hour: "2-digit",
+              minute: "2-digit",
+              hour12: false,
+            });
+            const oraTipusSzoveg = ora.ora_tipusID === 1 ? `Tanóra` : `Vizsga!`;
             return (
-              <View>
-                 <View key={index} style={ Styles.kivalasztottDatumOraViewBelsoResze }>
-                    <Ionicons name="time-outline" size={24} color="#6A5AE0" style={{
-                         marginRight: 10,
-                    }} />
-                    <View>
-                      <Text style={Styles.kivalasztottDatumOraHonapNap}>{`${honap} ${nap}`}</Text>
-                      <Text style={Styles.kivalasztottDatumOraTipus}>{`${oraTipusSzoveg}`}</Text>
-                    </View>
-                    <Text style={Styles.kivalasztottDatumOraPerc}>{`${oraPerc}`}</Text>
+              <View
+                key={ora.ora_id}
+                style={Styles.kivalasztottDatumOraViewBelsoResze}
+              >
+                <Ionicons
+                  name="time-outline"
+                  size={24}
+                  color="#6A5AE0"
+                  style={{
+                    marginRight: 10,
+                  }}
+                />
+                <View>
+                  <Text
+                    style={Styles.kivalasztottDatumOraHonapNap}
+                  >{`${honap} ${nap}`}</Text>
+                  <Text
+                    style={Styles.kivalasztottDatumOraTipus}
+                  >{`${oraTipusSzoveg}`}</Text>
                 </View>
+                <Text
+                  style={Styles.kivalasztottDatumOraPerc}
+                >{`${oraPerc}`}</Text>
               </View>
             );
           })
@@ -267,7 +295,7 @@ const TanuloKinyitottDatumok = ({
           </View>
         )}
       </View>
-      {/*----------------------------------- ELKÖVETKEZENDŐ ÓRÁK -------------------------------- */}
+      {/*----------------------------------- ELKÖVETKEZENDŐ ÓRÁK LENYÍTÓJA -------------------------------- */}
       <TouchableOpacity
         onPress={() => setElkovetkezendoCollapsed(!elkovetkezendoCollapsed)}
         style={Styles.lenyiloHeader}
@@ -283,6 +311,7 @@ const TanuloKinyitottDatumok = ({
           color="#6A5AE0"
         />
       </TouchableOpacity>
+      {/*----------------------------------- ELKÖVETKEZENDŐ ÓRÁK FELSOROLÁSA -------------------------------- */}
       <Collapsible collapsed={elkovetkezendoCollapsed}>
         {elkovetkezendoOra.length === 0 ? (
           <View style={Styles.nincsOraView}>
@@ -293,7 +322,7 @@ const TanuloKinyitottDatumok = ({
             </Text>
           </View>
         ) : (
-          elkovetkezendoOra.map((item, index) => {
+          elkovetkezendoOra.map((item) => {
             const date = new Date(item.ora_datuma);
             const honapNap = date
               .toLocaleDateString("hu-HU", {
@@ -308,10 +337,53 @@ const TanuloKinyitottDatumok = ({
               hour12: false,
             });
             return (
-              <View key={item.ora_id} style={Styles.oraElem}>
-                <Text style={Styles.oraDatuma}>{honapNap}</Text>
-                <Text style={Styles.oraIdeje}>{oraPerc}</Text>
-              </View>
+              
+                <View
+                  key={item.ora_id}
+                  style={{
+                    flexDirection: "row",
+                    alignItems: "center",
+                    paddingVertical: 10,
+                    borderBottomWidth: 1,
+                    borderBottomColor: "#ddd",
+                    backgroundColor: "#fff",
+                    padding: 20,
+                    borderRadius: 15,
+                    marginRight: 10,
+                    marginLeft: 10,
+                    marginBottom: 20,
+                  }}
+                >
+                  <Ionicons
+                    name="time-outline"
+                    size={24}
+                    color="#6A5AE0"
+                    style={{
+                      marginRight: 10,
+                    }}
+                  />
+                  <View>
+                    <Text
+                      style={{
+                        fontSize: 16,
+                        fontWeight: "bold",
+                      }}
+                    >{`${honapNap}`}</Text>
+                    <Text
+                      style={{
+                        fontSize: 14,
+                        color: "#555",
+                      }}
+                    >{`wasd`}</Text>
+                  </View>
+                  <Text
+                    style={{
+                      marginLeft: "auto",
+                      fontSize: 16,
+                      fontWeight: "bold",
+                    }}
+                  >{`${oraPerc}`}</Text>
+                </View>
             );
           })
         )}
@@ -324,9 +396,7 @@ const TanuloKinyitottDatumok = ({
         <Text style={Styles.lenyiloHeaderText}>Teljesített órák</Text>
         <Ionicons
           name={
-            teljesitettCollapsed
-              ? "chevron-down-outline"
-              : "chevron-up-outline"
+            teljesitettCollapsed ? "chevron-down-outline" : "chevron-up-outline"
           }
           size={24}
           color="#6A5AE0"

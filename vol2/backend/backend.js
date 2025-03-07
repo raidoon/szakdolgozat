@@ -714,7 +714,7 @@ const autoCompleteLessons = () => {
   const query = `UPDATE ora_adatok SET ora_teljesitve = 1 
                  WHERE ora_datuma < NOW() AND ora_teljesitve = 0
                  AND (SELECT COUNT(*) FROM orak_modositas WHERE orak_modositas.ora_id = ora_adatok.ora_id) = 0`;
-  db.query(query, (err, result) => {
+  connection.query(query, (err, result) => {
       if (err) {
           console.error("Error updating lessons: ", err);
       } else {
@@ -728,7 +728,7 @@ app.post("/oraMegerosit", (req, res) => {
   const { ora_id } = req.body;
   const query = `UPDATE orak SET ora_teljesitve = 1 
                  WHERE ora_id = ? AND ora_teljesitve = 3 AND TIMESTAMPDIFF(DAY, ora_datuma, NOW()) <= 3`;
-  db.query(query, [ora_id], (err, result) => {
+  connection.query(query, [ora_id], (err, result) => {
       if (err) {
           res.status(500).json({ message: "Hiba történt az óra megerősítése közben." });
       } else if (result.affectedRows === 0) {
@@ -744,7 +744,7 @@ app.post("/oraElutasit", (req, res) => {
   const { ora_id } = req.body;
   const query = `UPDATE orak SET ora_teljesitve = 2 
                  WHERE ora_id = ? AND ora_teljesitve = 3 AND TIMESTAMPDIFF(DAY, ora_datuma, NOW()) <= 3`;
-  db.query(query, [ora_id], (err, result) => {
+  connection.query(query, [ora_id], (err, result) => {
       if (err) {
           res.status(500).json({ message: "Hiba történt az óra elutasítása közben." });
       } else if (result.affectedRows === 0) {

@@ -105,7 +105,11 @@ const RoundedBoxSchedule = ({ date, type, time }) => (
     }}>{`${oraPerc}`}</Text>
   </View>
 );
-
+/** --------------------------------------------------------> ELKÖVETKEZENDŐ ÓRA OG VIEW
+ * <View key={item.ora_id} style={Styles.oraElem}>
+                <Text style={Styles.oraDatuma}>{honapNap}</Text>
+                <Text style={Styles.oraIdeje}>{oraPerc}</Text>
+              </View> */
 const OraListaJS = ({ orakLista }) => {
   return (
     <FlatList
