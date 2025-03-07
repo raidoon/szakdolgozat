@@ -33,7 +33,6 @@ const TanuloKinyitottDatumok = ({
     "A kressz már megvan, úgyhogy jöhet a vezetés!",
     "A legjobb sofőr mindig tudja, hogy mikor kell lassítani.",
     "A jó vezető nem hajt, hanem uralja az utat.",
-    "Ne siess, inkább haladj stílusosan!",
     "Vezetni menő, de biztonságban maradni még menőbb.",
     "A legjobb vezetők nem a gyorsulásban, hanem az irányításban jeleskednek.",
     "A volán mögött minden döntés számít – válaszd meg okosan!",
@@ -100,12 +99,10 @@ const TanuloKinyitottDatumok = ({
 
     return megjelolve;
   };
-
   const datumMegnyomas = (day) => {
     const ujDatum = new Date(day.dateString);
     setKivalasztottDatum(ujDatum);
   };
-
   const orakKulonvalasztasa = () => {
     const elkovetkezendoOra = [];
     const teljesitettOra = [];
@@ -120,9 +117,7 @@ const TanuloKinyitottDatumok = ({
     });
     return { elkovetkezendoOra, teljesitettOra };
   };
-
   const { elkovetkezendoOra, teljesitettOra } = orakKulonvalasztasa();
-
   const vanEoraAkivalasztottNapon = () => {
     const kivalasztottDatumFormazva = kivalasztottDatum
       .toISOString()
@@ -133,7 +128,6 @@ const TanuloKinyitottDatumok = ({
     });
   };
   const kivalasztottNapOrai = vanEoraAkivalasztottNapon();
-
   return (
     <ScrollView
       style={styles.container}
@@ -258,7 +252,7 @@ const TanuloKinyitottDatumok = ({
               minute: "2-digit",
               hour12: false,
             });
-            const oraTipusSzoveg = ora.ora_tipusID === 1 ? `Tanóra` : `Vizsga!`;
+            const oraTipusSzoveg = ora.ora_tipusID === 1 ? `Gyakorlati óra` : `Vizsga!`;
             return (
               <View
                 key={ora.ora_id}
@@ -317,78 +311,88 @@ const TanuloKinyitottDatumok = ({
           <View style={Styles.nincsOraView}>
             <Text style={Styles.nincsOraText}>
               Itt fognak megjelenni azok az órák, amik még nincsenek teljesítve.
-              Ezek olyan időpontok, amiket még le kell vezetned, legyen az sima
-              tanóra, vagy vizsga.
+              Ezek olyan időpontok, amiket még le kell vezetned, legyen az gyakorlati óra, vagy vizsga.
             </Text>
           </View>
         ) : (
-          elkovetkezendoOra.map((item) => {
-            const date = new Date(item.ora_datuma);
-            const honapNap = date
-              .toLocaleDateString("hu-HU", {
-                year: "numeric",
-                month: "2-digit",
-                day: "2-digit",
-              })
-              .replace(/\//g, ".");
-            const oraPerc = date.toLocaleTimeString("hu-HU", {
-              hour: "2-digit",
-              minute: "2-digit",
-              hour12: false,
-            });
-            return (
-              
-                <View
-                  key={item.ora_id}
+          elkovetkezendoOra
+            .sort(
+              (a, b) => new Date(a.ora_datuma) - new Date(b.ora_datuma) //növekvő sorrend
+            )
+            .map((item) => {
+              const date = new Date(item.ora_datuma);
+              const honapNap = date
+                .toLocaleDateString("hu-HU", {
+                  year: "numeric",
+                  month: "2-digit",
+                  day: "2-digit",
+                })
+                .replace(/\//g, ".");
+              const oraPerc = date.toLocaleTimeString("hu-HU", {
+                hour: "2-digit",
+                minute: "2-digit",
+                hour12: false,
+              });
+              return (
+                <LinearGradient
+                  colors={["#6A5AE0", "#2EC0F9"]}
+                  start={{ x: 0, y: 0 }}
+                  end={{ x: 1, y: 1 }}
                   style={{
-                    flexDirection: "row",
-                    alignItems: "center",
-                    paddingVertical: 10,
-                    borderBottomWidth: 1,
-                    borderBottomColor: "#ddd",
-                    backgroundColor: "#fff",
-                    padding: 20,
                     borderRadius: 15,
-                    marginRight: 10,
-                    marginLeft: 10,
-                    marginBottom: 20,
+                    padding: 2,
+                    marginHorizontal: 20,
+                    marginBottom: 10,
+                    shadowColor: "#000",
+                    shadowOffset: { width: 0, height: 4 },
+                    shadowOpacity: 0.3,
+                    shadowRadius: 8,
+                    elevation: 5,
                   }}
+                  key={item.ora_id}
                 >
-                  <Ionicons
-                    name="time-outline"
-                    size={24}
-                    color="#6A5AE0"
+                  <View
                     style={{
-                      marginRight: 10,
+                      flexDirection: "row",
+                      justifyContent: "space-between",
+                      alignItems: "center",
+                      backgroundColor: "#ffffff",
+                      borderRadius: 13,
+                      padding: 12,
                     }}
-                  />
-                  <View>
+                  >
+                    <View
+                      style={{ flexDirection: "row", alignItems: "center" }}
+                    >
+                      <Ionicons
+                        name="time-outline"
+                        size={25}
+                        color="#6A5AE0"
+                        style={{ marginRight: 10 }}
+                      />
+                      <View>
+                        <Text style={Styles.oraDatuma}>{honapNap}</Text>
+                        <Text style={Styles.oraIdeje}>
+                          {item.ora_tipusID === 1 ? "Gyakorlati óra" : "Vizsga"}
+                        </Text>
+                      </View>
+                    </View>
                     <Text
                       style={{
                         fontSize: 16,
-                        fontWeight: "bold",
+                        fontWeight: "600",
+                        color: "#6A5AE0",
                       }}
-                    >{`${honapNap}`}</Text>
-                    <Text
-                      style={{
-                        fontSize: 14,
-                        color: "#555",
-                      }}
-                    >{`wasd`}</Text>
+                    >
+                      {oraPerc}
+                    </Text>
                   </View>
-                  <Text
-                    style={{
-                      marginLeft: "auto",
-                      fontSize: 16,
-                      fontWeight: "bold",
-                    }}
-                  >{`${oraPerc}`}</Text>
-                </View>
-            );
-          })
+                </LinearGradient>
+              );
+            })
         )}
       </Collapsible>
-      {/*----------------------------------- TELJESÍTETT ÓRÁK -------------------------------- */}
+      {/*----------------------------------- TELJESÍTETT ÓRÁK LENYÍLÓJA -------------------------------- */}
       <TouchableOpacity
         onPress={() => setTeljesitettCollapsed(!teljesitettCollapsed)}
         style={Styles.lenyiloHeader}
@@ -402,6 +406,7 @@ const TanuloKinyitottDatumok = ({
           color="#6A5AE0"
         />
       </TouchableOpacity>
+      {/*----------------------------------- TELJESÍTETT ÓRÁK FELSOROLÁSA -------------------------------- */}
       <Collapsible collapsed={teljesitettCollapsed}>
         {teljesitettOra.length === 0 ? (
           <View style={Styles.nincsOraView}>
@@ -411,33 +416,86 @@ const TanuloKinyitottDatumok = ({
             </Text>
           </View>
         ) : (
-          teljesitettOra.map((item, index) => {
-            const datum = new Date(item.ora_datuma);
-            const honapNap = datum
-              .toLocaleDateString("hu-HU", {
-                year: "numeric",
-                month: "2-digit",
-                day: "2-digit",
-              })
-              .replace(/\//g, ".");
-            const oraPerc = datum.toLocaleTimeString("hu-HU", {
-              hour: "2-digit",
-              minute: "2-digit",
-              hour12: false,
-            });
-            return (
-              <View key={item.ora_id} style={Styles.oraElem}>
-                <Text style={Styles.oraDatuma}>{honapNap}</Text>
-                <Text style={Styles.oraIdeje}>{oraPerc}</Text>
-              </View>
-            );
-          })
+          teljesitettOra
+            .sort(
+              (a, b) => new Date(b.ora_datuma) - new Date(a.ora_datuma) //csökkenő
+            )
+            .map((item) => {
+              const datum = new Date(item.ora_datuma);
+              const honapNap = datum
+                .toLocaleDateString("hu-HU", {
+                  year: "numeric",
+                  month: "2-digit",
+                  day: "2-digit",
+                })
+                .replace(/\//g, ".");
+              const oraPerc = datum.toLocaleTimeString("hu-HU", {
+                hour: "2-digit",
+                minute: "2-digit",
+                hour12: false,
+              });
+              return (
+            <View key={item.ora_id} style={{
+                      flexDirection: "row",
+                justifyContent: "space-between",
+                alignItems: "center",
+                backgroundColor: "#f8f8f8",
+                borderRadius: 10,
+                padding: 12,
+                marginHorizontal: 20,
+                marginBottom: 8, 
+                borderLeftWidth: 4, 
+                borderLeftColor: "#6A5AE0",
+                shadowColor: "#000",
+                shadowOffset: { width: 0, height: 2 },
+                shadowOpacity: 0.1,
+                shadowRadius: 4,
+                elevation: 3,
+                    }}>
+                <View style={{ flexDirection: "row", alignItems: "center" }}>
+                  <Ionicons
+                    name="checkmark-circle-outline"
+                    size={20}
+                    color="#6A5AE0"
+                    style={{ marginRight: 8 }}
+                  />
+                  <View>
+                    <Text
+                      style={{
+                        fontSize: 14,
+                        fontWeight: "bold",
+                        color: "#555",
+                      }}
+                    >
+                      {honapNap}
+                    </Text>
+                    <Text
+                      style={{
+                        fontSize: 12,
+                        color: "#777", 
+                      }}
+                    >
+                      {item.ora_tipusID === 1 ? "Gyakorlati óra" : "Vizsga"}
+                    </Text>
+                  </View>
+                </View>
+                <Text
+                  style={{
+                    fontSize: 14,
+                    fontWeight: "500",
+                    color: "#6A5AE0", 
+                  }}
+                >
+                  {oraPerc}
+                </Text>
+            </View>
+              );
+            })
         )}
       </Collapsible>
     </ScrollView>
   );
 };
-
 const styles = StyleSheet.create({
   container: {
     flex: 1,

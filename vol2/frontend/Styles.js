@@ -8,13 +8,15 @@ const Styles = StyleSheet.create({
     textAlign: "center",
     marginTop: 10,
   },
-  alcim: { //rovid alcimhez
+  alcim: {
+    //rovid alcimhez
     fontSize: 20,
     color: "grey",
     textAlign: "center",
     marginBottom: 20,
   },
-  alcim2:{ //hosszabb alcimhez
+  alcim2: {
+    //hosszabb alcimhez
     fontSize: 16,
     color: "grey",
     textAlign: "center",
@@ -104,22 +106,22 @@ const Styles = StyleSheet.create({
   },
   //------------------------------------ REGISZTRACIO.JS
   //------------------------------------ TANULO_ORAI
-  naptarNyitogatoGombView:{
-    flexDirection: 'row', 
-    alignItems:'center',
-    justifyContent: 'center',
-    backgroundColor: '#ccccff',
+  naptarNyitogatoGombView: {
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "center",
+    backgroundColor: "#ccccff",
     elevation: 3,
     marginBottom: 20,
-    minHeight:60
+    minHeight: 60,
   },
-  naptarNyitogatoGombView2:{
-    flexDirection: 'row', 
-    alignItems:'center',
-    justifyContent: 'center',
-    backgroundColor: '#ccccff',
+  naptarNyitogatoGombView2: {
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "center",
+    backgroundColor: "#ccccff",
     elevation: 3,
-    minHeight:60
+    minHeight: 60,
   },
   //------------------------------------ TANULO_PROFIL
   profil_gombDiv: {
@@ -132,21 +134,20 @@ const Styles = StyleSheet.create({
     marginTop: 7,
     paddingVertical: 10,
   },
-  profilView:{
+  profilView: {
     alignItems: "center",
     marginBottom: 30,
   },
-  profilNev:{
+  profilNev: {
     fontSize: 24,
     fontWeight: "bold",
     color: "#333",
     marginBottom: 5,
   },
-  profilEmail:{
+  profilEmail: {
     fontSize: 16,
     color: "#888",
   },
-  //------------------------------------ PROFILSCREENS
   //--------------------- kapcsolat
   kapcsolatNagyDiv: {
     flex: 1,
@@ -163,7 +164,7 @@ const Styles = StyleSheet.create({
     width: 250,
     padding: 15,
     minHeight: 100,
-    maxHeight: 'auto',
+    maxHeight: "auto",
   },
   //-------------------------- TANULÓ KINYITOTT DÁTUMOK SCREEN
   kivalasztottDatumOraView: {
@@ -187,47 +188,47 @@ const Styles = StyleSheet.create({
     borderRadius: 10,
     padding: 15,
   },
-  kivalasztottDatumOraCim:{
+  kivalasztottDatumOraCim: {
     fontSize: 20,
     fontWeight: "bold",
     color: "#6A5AE0",
     marginBottom: 15,
   },
-  kivalasztottDatumOraTipus:{
-  fontSize: 14,
-  color: "#666",
-  marginTop: 5,
-},
-  kivalasztottDatumOraHonapNap:{
+  kivalasztottDatumOraTipus: {
+    fontSize: 14,
+    color: "#666",
+    marginTop: 5,
+  },
+  kivalasztottDatumOraHonapNap: {
     fontSize: 18,
     fontWeight: "600",
     color: "#2d4150",
-},
-  kivalasztottDatumOraPerc:{
+  },
+  kivalasztottDatumOraPerc: {
     marginLeft: "auto",
     fontSize: 16,
     fontWeight: "bold",
   },
-  nincsOraView:{
+  nincsOraView: {
     alignItems: "center",
     padding: 20,
   },
-  nincsOraText:{
+  nincsOraText: {
     fontSize: 16,
     color: "#888",
     textAlign: "center",
     marginTop: 10,
   },
-  oraDatuma:{
+  oraDatuma: {
     fontSize: 16,
     fontWeight: "bold",
     color: "#2d4150",
   },
-  oraIdeje:{
+  oraIdeje: {
     fontSize: 14,
     color: "#666",
   },
-  oraElem:{
+  oraElem: {
     backgroundColor: "#fff",
     borderRadius: 10,
     padding: 16,
@@ -238,7 +239,7 @@ const Styles = StyleSheet.create({
     shadowRadius: 6,
     elevation: 3,
   },
-  naptarView:{
+  naptarView: {
     backgroundColor: "#fff",
     borderRadius: 10,
     marginBottom: 20,
@@ -248,7 +249,7 @@ const Styles = StyleSheet.create({
     shadowRadius: 6,
     elevation: 3,
   },
-  naptar:{
+  naptar: {
     marginBottom: 10,
   },
   lenyiloHeader: {
@@ -259,6 +260,7 @@ const Styles = StyleSheet.create({
     borderRadius: 10,
     padding: 16,
     marginBottom: 20,
+    marginTop: 10,
     shadowColor: "#000",
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.1,

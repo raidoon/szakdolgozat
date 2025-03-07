@@ -265,10 +265,10 @@ app.post("/tanuloBefizetesFelvitel", (req, res) => {
     befizetesek_tipusID,
     befizetesek_osszeg,
     befizetesek_ideje,
-    befizetesek_kinek
+    befizetesek_kinek,
   } = req.body;
-    // Ensure you log the request body to check if it's properly received
-    console.log("Request Body:", req.body);
+  // Ensure you log the request body to check if it's properly received
+  console.log("Request Body:", req.body);
 
   kapcsolat();
   connection.query(
@@ -280,7 +280,7 @@ app.post("/tanuloBefizetesFelvitel", (req, res) => {
       befizetesek_tipusID,
       befizetesek_osszeg,
       befizetesek_ideje,
-      befizetesek_kinek
+      befizetesek_kinek,
     ],
     (err, rows) => {
       if (err) {
@@ -359,8 +359,6 @@ app.post("/egyOktatoAdatai", (req, res) => {
   );
   connection.end();
 });
-
-
 //------------------------adott oktatóhoz tartozó tanulók neveinek megjelenítése post bevitel1
 app.post("/egyOktatoDiakjai", (req, res) => {
   console.log("hello");
@@ -384,9 +382,7 @@ app.post("/egyOktatoDiakjai", (req, res) => {
   );
   connection.end();
 });
-
 //----------------------
-
 app.post("/egyTanuloOrai", (req, res) => {
   console.log("egy tanulo orai");
   kapcsolat();
@@ -410,7 +406,6 @@ app.post("/egyTanuloOrai", (req, res) => {
   );
   connection.end();
 });
-
 //--------------------------OraFelvitel
 app.post("/oraFelvitel", (req, res) => {
   kapcsolat();
@@ -435,7 +430,6 @@ app.post("/oraFelvitel", (req, res) => {
   );
   connection.end();
 });
-
 //--------------------------------
 app.get("/valasztTipus", (req, res) => {
   kapcsolat();
@@ -474,10 +468,7 @@ WHERE tanulo.tanulo_levizsgazott = 0 AND tanulo_felhasznaloID = ?`,
   );
   connection.end();
 });
-
-
 //-------------------------------
-
 app.post("/levizsgazottTanuloReszletei", (req, res) => {
   kapcsolat();
   connection.query(
@@ -547,7 +538,6 @@ app.post("/tanuloOsszesOra", (req, res) => {
   );
   connection.end();
 });
-
 
 //----------------------
 app.post("/aktualisDiakok", (req, res) => {
@@ -706,22 +696,8 @@ app.post("/egyDiakNemKeszOrai", (req, res) => {
   connection.end();
 });
 
-
-
 //---------------------------
-// Automatikus óra teljesítés ellenőrzése
-const autoCompleteLessons = () => {
-  const query = `UPDATE ora_adatok SET ora_teljesitve = 1 
-                 WHERE ora_datuma < NOW() AND ora_teljesitve = 0
-                 AND (SELECT COUNT(*) FROM orak_modositas WHERE orak_modositas.ora_id = ora_adatok.ora_id) = 0`;
-  connection.query(query, (err, result) => {
-      if (err) {
-          console.error("Error updating lessons: ", err);
-      } else {
-          console.log(`Updated ${result.affectedRows} lessons to completed.`);
-      }
-  });
-};
+
 
 // Az oktató 3 napig módosíthatja az óra állapotát (megerősíthetés)
 app.post("/oraMegerosit", (req, res) => {
@@ -729,13 +705,15 @@ app.post("/oraMegerosit", (req, res) => {
   const query = `UPDATE orak SET ora_teljesitve = 1 
                  WHERE ora_id = ? AND ora_teljesitve = 3 AND TIMESTAMPDIFF(DAY, ora_datuma, NOW()) <= 3`;
   connection.query(query, [ora_id], (err, result) => {
-      if (err) {
-          res.status(500).json({ message: "Hiba történt az óra megerősítése közben." });
-      } else if (result.affectedRows === 0) {
-          res.status(400).json({ message: "Az órát már nem lehet módosítani." });
-      } else {
-          res.json({ message: "Az óra sikeresen megerősítve." });
-      }
+    if (err) {
+      res
+        .status(500)
+        .json({ message: "Hiba történt az óra megerősítése közben." });
+    } else if (result.affectedRows === 0) {
+      res.status(400).json({ message: "Az órát már nem lehet módosítani." });
+    } else {
+      res.json({ message: "Az óra sikeresen megerősítve." });
+    }
   });
 });
 
@@ -745,20 +723,17 @@ app.post("/oraElutasit", (req, res) => {
   const query = `UPDATE orak SET ora_teljesitve = 2 
                  WHERE ora_id = ? AND ora_teljesitve = 3 AND TIMESTAMPDIFF(DAY, ora_datuma, NOW()) <= 3`;
   connection.query(query, [ora_id], (err, result) => {
-      if (err) {
-          res.status(500).json({ message: "Hiba történt az óra elutasítása közben." });
-      } else if (result.affectedRows === 0) {
-          res.status(400).json({ message: "Az órát már nem lehet elutasítani." });
-      } else {
-          res.json({ message: "Az óra sikeresen elutasítva." });
-      }
+    if (err) {
+      res
+        .status(500)
+        .json({ message: "Hiba történt az óra elutasítása közben." });
+    } else if (result.affectedRows === 0) {
+      res.status(400).json({ message: "Az órát már nem lehet elutasítani." });
+    } else {
+      res.json({ message: "Az óra sikeresen elutasítva." });
+    }
   });
 });
-
-// Automatikus frissítés 10 percenként
-setInterval(autoCompleteLessons, 600000);
-
-
 //---------------------------
 app.post("/diakokBefizetesei", (req, res) => {
   console.log("hello");
@@ -810,7 +785,6 @@ app.post("/nemkeszBefizetesek", (req, res) => {
   );
   connection.end();
 });
-
 
 //-------------------------------
 app.post("/egyDiakNemKeszBefizetesei", (req, res) => {
@@ -864,36 +838,43 @@ app.post("/befizetesFelvitel", (req, res) => {
   connection.end();
 });
 
-
 //---------------------------
 
-app.post('/fizetesMegerosit', (req, res) => {
+app.post("/fizetesMegerosit", (req, res) => {
   kapcsolat();
-  connection.query(`
+  connection.query(
+    `
     UPDATE befizetesek SET befizetesek_jovahagyva=1 WHERE befizetesek_id = ?; 
-  `, [req.body.befizetesek_id], (err, rows) => {
-    if (err) {
-      console.error("Hiba:", err);
-      return res.status(500).json({ message: "Hiba történt!" });
+  `,
+    [req.body.befizetesek_id],
+    (err, rows) => {
+      if (err) {
+        console.error("Hiba:", err);
+        return res.status(500).json({ message: "Hiba történt!" });
+      }
+      res.json({ message: "Óra megerősítve!" });
     }
-    res.json({ message: "Óra megerősítve!" });
-  });
+  );
   connection.end();
 });
 
 //---------------------------------------------
 
-app.post('/fizetesElutasit', (req, res) => {
+app.post("/fizetesElutasit", (req, res) => {
   kapcsolat();
-  connection.query(`
+  connection.query(
+    `
     UPDATE befizetesek SET befizetesek_jovahagyva=2 WHERE befizetesek_id = ?; 
-  `, [req.body.befizetesek_id], (err, rows) => {
-    if (err) {
-      console.error("Hiba:", err);
-      return res.status(500).json({ message: "Hiba történt!" });
+  `,
+    [req.body.befizetesek_id],
+    (err, rows) => {
+      if (err) {
+        console.error("Hiba:", err);
+        return res.status(500).json({ message: "Hiba történt!" });
+      }
+      res.json({ message: "Óra elutasítva!" });
     }
-    res.json({ message: "Óra elutasítva!" });
-  });
+  );
   connection.end();
 });
 
@@ -927,8 +908,6 @@ app.post("/egyNapOraja", (req, res) => {
 
   connection.end();
 });
-
-
 
 app.listen(port, () => {
   console.log(`Example app listening on port ${port}`);
