@@ -6,7 +6,8 @@ const SajatAlert = ({ visible, title, description, onClose }) => {
     <Modal transparent={true} visible={visible} animationType="fade">
       <View style={styles.overlay}>
         <View style={styles.alertContainer}>
-          <Image source={require('./success.png')} style={styles.kepStilus} />
+          {/*<Image source={require('./success.png')} style={styles.kepStilus} />*/}
+          
           <Text style={styles.cim}>{title}</Text>
           <Text style={styles.leiras}>{description}</Text>
           <TouchableOpacity style={styles.gomb} onPress={onClose}>

@@ -1,18 +1,10 @@
 import React, { useState, useEffect } from "react";
-import {
-  View,
-  Text,
-  TextInput,
-  Alert,
-  TouchableOpacity,
-  StyleSheet,
-} from "react-native";
+import {View,Text,TextInput,Alert,TouchableOpacity,StyleSheet,} from "react-native";
 import Ripple from "react-native-material-ripple";
 import { Octicons, Ionicons } from "@expo/vector-icons";
 import Styles from "../../Styles";
 import Ipcim from "../../Ipcim";
 import DropDownPicker from "react-native-dropdown-picker";
-
 function CustomCheckbox({ label, isChecked, onPress }) {
   return (
     <TouchableOpacity style={styles.checkboxContainer} onPress={onPress}>
@@ -21,7 +13,6 @@ function CustomCheckbox({ label, isChecked, onPress }) {
     </TouchableOpacity>
   );
 }
-
 export default function Regisztracio({ navigation }) {
   const [email, setEmail] = useState("");
   const [nev, setNev] = useState("");
@@ -87,12 +78,14 @@ export default function Regisztracio({ navigation }) {
     } else {
       setJelszoHiba("");
     }
-    if (!handleTelefonszamChange(telefonszam)) {
-      setTelefonszamHiba("Hibás telefonszám!");
-      valid = false;
-    } else {
-      setTelefonszamHiba("");
-    }
+     // Telefonszám ellenőrzése
+  const szamResz = telefonszam.slice(3).replace(/\D/g, ""); // Csak számjegyeket enged
+  if (szamResz.length !== 9) {
+    setTelefonszamHiba("Hibás telefonszám! Kérjük adjon meg 9 számjegyet a +36 után.");
+    valid = false;
+  } else {
+    setTelefonszamHiba("");
+  }
     const tipus = tanulo ? 2 : oktato ? 1 : null;
     if (!autosiskola || !email || !jelszo || !telefonszam || !tipus || !nev) {
       Alert.alert("Kérlek, töltsd ki az összes mezőt!");
@@ -125,7 +118,6 @@ export default function Regisztracio({ navigation }) {
             nev,
           }),
         });
-
         if (response.ok) {
           Alert.alert("Sikeres regisztráció!");
           navigation.replace("Bejelentkezes");
@@ -164,12 +156,10 @@ export default function Regisztracio({ navigation }) {
     };
     fetchData();
   }, []);
-
   return (
     <View style={Styles.bejelentkezes_Container}>
       <Text style={Styles.focim}>Regisztráció</Text>
       <Text style={Styles.alcim}>Először add meg az adataidat</Text>
-
       <DropDownPicker
         min={1}
         max={1}
@@ -196,7 +186,6 @@ export default function Regisztracio({ navigation }) {
         }}
         placeholder="Válassz autósiskolát"
       />
-
       <View style={styles.inputWrapper}>
         <Octicons name="mail" size={20} color="#FF6C00" />
         <TextInput
@@ -216,7 +205,6 @@ export default function Regisztracio({ navigation }) {
           onChangeText={setNev}
         />
       </View>
-
       <View style={styles.container}>
         <View
           style={[
@@ -253,7 +241,6 @@ export default function Regisztracio({ navigation }) {
           </Text>
         )}
       </View>
-
       <View style={[styles.inputWrapper, jelszoHiba && { borderColor: "red" }]}>
         <Octicons name="lock" size={20} color="#FF6C00" />
         <TextInput
@@ -274,7 +261,6 @@ export default function Regisztracio({ navigation }) {
       </View>
       {/* Hibaüzenet, ha a jelszó hibás */}
       {jelszoHiba && <Text style={styles.hibasTelefonszam}>{jelszoHiba}</Text>}
-
       <View style={styles.inputWrapper}>
         <Octicons name="lock" size={20} color="#FF6C00" />
         <TextInput
@@ -295,7 +281,6 @@ export default function Regisztracio({ navigation }) {
           />
         </TouchableOpacity>
       </View>
-
       <View>
         <CustomCheckbox
           label="Tanuló vagyok"
@@ -314,7 +299,6 @@ export default function Regisztracio({ navigation }) {
           }}
         />
       </View>
-
       <Ripple
         rippleColor="white"
         rippleOpacity={0.2}
@@ -336,7 +320,6 @@ export default function Regisztracio({ navigation }) {
     </View>
   );
 }
-
 const styles = StyleSheet.create({
   hibasTelefonszam: {
     color: "red",
