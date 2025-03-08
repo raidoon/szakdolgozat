@@ -253,6 +253,7 @@ const TanuloKinyitottDatumok = ({
               hour12: false,
             });
             const oraTipusSzoveg = ora.ora_tipusID === 1 ? `Gyakorlati óra` : `Vizsga!`;
+            const hetvege = date.getDay() === 0 || date.getDay() === 6;
             return (
               <View
                 key={ora.ora_id}
@@ -266,16 +267,27 @@ const TanuloKinyitottDatumok = ({
                     marginRight: 10,
                   }}
                 />
-                <View>
-                  <Text
-                    style={Styles.kivalasztottDatumOraHonapNap}
-                  >{`${honap} ${nap}`}</Text>
-                  <Text
-                    style={Styles.kivalasztottDatumOraTipus}
-                  >{`${oraTipusSzoveg}`}</Text>
-                </View>
+                {hetvege ? (
+                   <View>
+                   <Text
+                     style={Styles.kivalasztottDatumOraHonapNapHetvege}
+                   >{`${honap} ${nap}`}</Text>
+                   <Text
+                     style={Styles.kivalasztottDatumOraTipus}
+                   >{`${oraTipusSzoveg}`}</Text>
+                 </View>
+                ):(
+                   <View>
+                   <Text
+                     style={Styles.kivalasztottDatumOraHonapNap}
+                   >{`${honap} ${nap}`}</Text>
+                   <Text
+                     style={Styles.kivalasztottDatumOraTipus}
+                   >{`${oraTipusSzoveg}`}</Text>
+                 </View>
+                )}
                 <Text
-                  style={Styles.kivalasztottDatumOraPerc}
+                  style={[Styles.kivalasztottDatumOraPerc,{color: "#6A5AE0", fontWeight: "bold"}]}
                 >{`${oraPerc}`}</Text>
               </View>
             );

@@ -124,16 +124,6 @@ const Styles = StyleSheet.create({
     minHeight: 60,
   },
   //------------------------------------ TANULO_PROFIL
-  profil_gombDiv: {
-    flexDirection: "row",
-    marginBottom: 0,
-    marginTop: 0,
-  },
-  profileGombok: {
-    width: "100%",
-    marginTop: 7,
-    paddingVertical: 10,
-  },
   profilView: {
     alignItems: "center",
     marginBottom: 30,
@@ -147,6 +137,89 @@ const Styles = StyleSheet.create({
   profilEmail: {
     fontSize: 16,
     color: "#888",
+  },
+  profilGombokView: {
+    backgroundColor: "#FFF",
+    borderRadius: 15,
+    paddingHorizontal: 15,
+  },
+  gombRipple:{
+    flexDirection: "row",
+    alignItems: "center",
+    paddingVertical: 15,
+    borderBottomWidth: 1,
+    borderBottomColor: "#EEE",
+  },
+  gombText:{
+    flex: 1,
+    fontSize: 18,
+    color: "#333",
+    marginLeft: 15,
+  },
+  kijelentkezesGomb:{
+    backgroundColor: "#FF4444",
+    borderRadius: 25,
+    padding: 15,
+    alignItems: "center",
+    marginTop: 30,
+  },
+  kijelentkezesGombText:{
+    fontSize: 18,
+    fontWeight: "bold",
+    color: "#FFF",
+  },
+  //------------------------------------ KIJELENTKEZES MODAL 
+  modalNagyView: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: 'rgba(0, 0, 0, 0.5)',
+  },
+  modalKisView: {
+    width: '80%',
+    backgroundColor: '#fff',
+    borderRadius: 10,
+    padding: 20,
+    alignItems: 'left',
+  },
+  modalCim: {
+    fontSize: 20,
+    fontWeight: '600',
+    marginBottom: 20,
+  },
+  modalLeiras: {
+    fontSize: 16,
+    textAlign: 'left',
+    marginBottom: 30,
+  },
+  modalGombView: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    width: '100%',
+  },
+  modalMegseGomb: {
+    backgroundColor: '#fff',
+    paddingVertical: 10,
+    paddingHorizontal: 20,
+    borderRadius: 5,
+    borderWidth: 1,
+    borderColor: '#ccc',
+  },
+  modalMegseGombText: {
+    color: '#000',
+    fontSize: 16,
+    fontWeight: 'bold',
+  },
+  modalKijelentkezesGomb: {
+    backgroundColor: '#FF4444',
+    paddingVertical: 10,
+    paddingHorizontal: 20,
+    borderRadius: 5,
+  },
+  modalKijelentkezesGombText: {
+    color: '#fff',
+    fontSize: 16,
+    fontWeight: 'bold',
   },
   //--------------------- kapcsolat
   kapcsolatNagyDiv: {
@@ -182,8 +255,6 @@ const Styles = StyleSheet.create({
     flexDirection: "row",
     alignItems: "center",
     paddingVertical: 10,
-    //borderBottomWidth: 1,
-    //borderBottomColor: "#ddd",
     backgroundColor: "#f8f9ff",
     borderRadius: 10,
     padding: 15,
@@ -203,6 +274,11 @@ const Styles = StyleSheet.create({
     fontSize: 18,
     fontWeight: "600",
     color: "#2d4150",
+  },
+  kivalasztottDatumOraHonapNapHetvege: {
+    fontSize: 18,
+    fontWeight: "600",
+    color: "#ED4337",
   },
   kivalasztottDatumOraPerc: {
     marginLeft: "auto",
