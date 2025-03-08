@@ -58,15 +58,15 @@ export default function Oktato_Kezdolap({ atkuld }) {
 
   const renderItem = ({ item }) => (
     <View style={styles.itemContainer}>
-      <Text style={styles.itemText}>{item.nev}</Text>
-      <Text style={styles.itemText}>{item.email}</Text>
+      <Text style={styles.itemName}>{item.nev}</Text>
+      <Text style={styles.itemEmail}>{item.email}</Text>
     </View>
   );
 
   return (
     <View style={styles.container}>
       <Text style={styles.title}>Kezdőlap</Text>
-      <Text style={styles.welcomeText}>{atkuld ? `Üdvözlünk: ${atkuld.oktato_neve}!` : "Nincs adat"}</Text>
+      <Text style={styles.welcomeText}>{atkuld ? `Üdvözlünk, ${atkuld.oktato_neve}!` : "Nincs adat"}</Text>
 
       <FlatList
         data={adatok}
@@ -74,12 +74,12 @@ export default function Oktato_Kezdolap({ atkuld }) {
         keyExtractor={(item) => item.id.toString()}
         style={styles.list}
         refreshControl={
-          <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
+          <RefreshControl refreshing={refreshing} onRefresh={onRefresh} colors={["#4CAF50"]} />
         }
       />
 
       <TouchableOpacity
-        style={styles.button}
+        style={styles.primaryButton}
         onPress={() => navigation.navigate("Oktato_KovetkezoOra", { atkuld })}
       >
         <Text style={styles.buttonText}>
@@ -88,17 +88,17 @@ export default function Oktato_Kezdolap({ atkuld }) {
       </TouchableOpacity>
 
       <TouchableOpacity
-        style={styles.button}
+        style={styles.secondaryButton}
         onPress={() => navigation.navigate("Oktato_MegerositesrevaroOrak", { atkuld })}
       >
-        <Text style={styles.buttonText}>Még módosítható órák</Text>
+        <Text style={styles.secondaryButtonText}>Még módosítható órák</Text>
       </TouchableOpacity>
 
       <TouchableOpacity
-        style={styles.button}
+        style={styles.tertiaryButton}
         onPress={() => navigation.navigate("Oktato_MegerositesrevaroFizetes", { atkuld })}
       >
-        <Text style={styles.buttonText}>Jóváhagyásra váró befizetések</Text>
+        <Text style={styles.tertiaryButtonText}>Jóváhagyásra váró befizetések</Text>
       </TouchableOpacity>
     </View>
   );
@@ -107,50 +107,88 @@ export default function Oktato_Kezdolap({ atkuld }) {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    padding: 20,
-    backgroundColor: "#f5f5f5",
+    padding: 24,
+    backgroundColor: "#FFFFFF",
   },
   title: {
-    fontSize: 24,
-    fontWeight: "bold",
-    marginBottom: 20,
+    fontSize: 28,
+    fontFamily: "Inter-Bold",
+    marginBottom: 16,
     textAlign: "center",
-    color: "#333",
+    color: "#2C3E50",
   },
   welcomeText: {
     fontSize: 18,
-    marginBottom: 20,
+    fontFamily: "Inter-Medium",
+    marginBottom: 24,
     textAlign: "center",
-    color: "#555",
+    color: "#4CAF50", // Green color for welcome text
   },
   list: {
-    marginBottom: 20,
+    marginBottom: 24,
   },
   itemContainer: {
-    backgroundColor: "#fff",
-    padding: 15,
-    marginBottom: 10,
-    borderRadius: 10,
-    shadowColor: "#000",
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.1,
-    shadowRadius: 5,
-    elevation: 3,
+    backgroundColor: "#F8F9FA",
+    padding: 16,
+    marginBottom: 12,
+    borderRadius: 12,
+    borderWidth: 1,
+    borderColor: "#E9ECEF",
   },
-  itemText: {
+  itemName: {
     fontSize: 16,
-    color: "#333",
+    fontFamily: "Inter-SemiBold",
+    color: "#2C3E50",
   },
-  button: {
-    backgroundColor: "#007bff",
-    padding: 15,
-    borderRadius: 10,
-    marginBottom: 10,
+  itemEmail: {
+    fontSize: 14,
+    fontFamily: "Inter-Regular",
+    color: "#7F8C8D",
+    marginTop: 4,
+  },
+  primaryButton: {
+    backgroundColor: "#4CAF50", // Green color for primary button
+    padding: 30,
+    borderRadius: 12,
+    marginBottom: 12,
     alignItems: "center",
+    shadowColor: "#4CAF50", // Green shadow
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.2,
+    shadowRadius: 6,
+    elevation: 5,
+  },
+  secondaryButton: {
+    backgroundColor: "transparent",
+    padding: 16,
+    borderRadius: 12,
+    marginBottom: 12,
+    alignItems: "center",
+    borderWidth: 2,
+    borderColor: "#4CAF50", // Green border for secondary button
+  },
+  tertiaryButton: {
+    backgroundColor: "#FFFFFF",
+    padding: 16,
+    borderRadius: 12,
+    marginBottom: 12,
+    alignItems: "center",
+    borderWidth: 2,
+    borderColor: "#E9ECEF",
   },
   buttonText: {
-    color: "#fff",
+    color: "#FFFFFF",
     fontSize: 16,
-    fontWeight: "bold",
+    fontFamily: "Inter-SemiBold",
+  },
+  secondaryButtonText: {
+    color: "#4CAF50", // Green text for secondary button
+    fontSize: 16,
+    fontFamily: "Inter-SemiBold",
+  },
+  tertiaryButtonText: {
+    color: "#2C3E50",
+    fontSize: 16,
+    fontFamily: "Inter-SemiBold",
   },
 });

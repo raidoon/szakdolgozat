@@ -1,14 +1,6 @@
 import { StyleSheet } from "react-native";
 
 const Oktato_Styles = StyleSheet.create({
-     //--------------------------Oktato_Diakok.js
-  diakok_container:{
-    flex: 1,
-    padding: 20,
-    backgroundColor: "#fff",
-    alignItems: "center",
-    justifyContent: "center",
-  },
   //-----------------------Oktato_TanuloReszletei.js
   reszletek_container: {
     flex: 1,
@@ -18,68 +10,68 @@ const Oktato_Styles = StyleSheet.create({
     justifyContent: "center",
   },
   //-----------------------Oktato_Datumok.js
+  diakok_container: {
+    flex: 1,
+    padding: 24,
+    backgroundColor: "#FFFFFF",
+  },
+  title: {
+    fontSize: 28,
+    fontFamily: "Inter-Bold",
+    marginBottom: 16,
+    textAlign: "center",
+    color: "#2C3E50",
+  },
+  itemContainer: {
+    backgroundColor: "#F8F9FA",
+    padding: 16,
+    marginBottom: 12,
+    borderRadius: 12,
+    borderWidth: 1,
+    borderColor: "#E9ECEF",
+  },
+  itemName: {
+    fontSize: 16,
+    fontFamily: "Inter-SemiBold",
+    color: "#2C3E50",
+  },
+  itemEmail: {
+    fontSize: 14,
+    fontFamily: "Inter-Regular",
+    color: "#7F8C8D",
+    marginTop: 4,
+  },
   navigateButton: {
-    padding:20,
-    backgroundColor: "#4CAF50", // Zöld gomb
-    paddingVertical: 15, // Nagyobb magasság
-    paddingHorizontal: 30, // Kényelmes szélesség
-    borderRadius: 25, // Lekerekített gomb
-    shadowColor: "#000", // Árnyék a modern hatásért
-    shadowOffset: { width: 0, height: 4 },
-    shadowOpacity: 0.3,
-    shadowRadius: 4,
-    elevation: 5, // Android árnyék
+    backgroundColor: "#4CAF50", // Green color for primary button
+    padding: 20,
+    borderRadius: 12,
+    marginBottom: 12,
     alignItems: "center",
-    justifyContent: "center",
-    marginTop: 20, // Távolság a többi elemtől
-    
+    shadowColor: "#4CAF50", // Green shadow
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.2,
+    shadowRadius: 6,
+    elevation: 5,
+  },
+  navigateButtonSecondary: {
+    backgroundColor: "transparent",
+    padding: 20,
+    borderRadius: 12,
+    marginBottom: 12,
+    alignItems: "center",
+    borderWidth: 2,
+    borderColor: "#4CAF50", // Green border for secondary button
   },
   navigateButtonText: {
-    color: "#FFF",
-    fontSize: 18,
-    fontWeight: "bold",
-    textTransform: "uppercase",
-    letterSpacing: 1.5, // Szebb kinézet
-  },
-  focim: {
-    fontSize: 24,
-    fontWeight: "bold",
-    marginBottom: 15,
-},
-nincsOra: {
-    fontSize: 18,
-    color: "gray",
-    marginTop: 20,
-},
-oraKartya: {
-    backgroundColor: "#fff",
-    padding: 15,
-    marginVertical: 8,
-    borderRadius: 10,
-    shadowColor: "#000",
-    shadowOpacity: 0.1,
-    shadowRadius: 4,
-    elevation: 3,
-    width: "90%",
-    alignItems: "center",
-},
-nev: {
-    fontSize: 20,
-    fontWeight: "bold",
-    marginBottom: 10,
-},
-gomb: {
-    backgroundColor: "#007bff",
-    paddingVertical: 10,
-    paddingHorizontal: 20,
-    borderRadius: 5,
-    marginTop: 10,
-},
-gombSzoveg: {
-    color: "#fff",
+    color: "#FFFFFF",
     fontSize: 16,
-    fontWeight: "bold",
-},
+    fontFamily: "Inter-SemiBold",
+  },
+  navigateButtonSecondaryText: {
+    color: "#4CAF50", // Green text for secondary button
+    fontSize: 16,
+    fontFamily: "Inter-SemiBold",
+  },
 })
 
 export default Oktato_Styles;
