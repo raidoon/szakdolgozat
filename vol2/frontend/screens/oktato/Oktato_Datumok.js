@@ -12,7 +12,7 @@ export default function Oktato_Datumok({atkuld}){
 
   const letoltes=async ()=>{
       //alert("hello")
-     alert(atkuld.oktato_id)
+     //alert(atkuld.oktato_id)
       var adat={
           "oktatoid":atkuld.oktato_id
       }

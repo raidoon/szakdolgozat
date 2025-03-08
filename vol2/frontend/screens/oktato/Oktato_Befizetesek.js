@@ -11,7 +11,7 @@ export default function Oktato_Befizetesek({atkuld}) {
 
   const letoltes=async ()=>{
       
-     alert(atkuld.oktato_id)
+     
       var adat={
           "oktatoid":atkuld.oktato_id
       }
