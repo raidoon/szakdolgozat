@@ -1,31 +1,37 @@
 import { useEffect, useState } from "react";
-import {
-  View,
-  Text,
-  TextInput,
-  Button,
-  TouchableOpacity,
-  StyleSheet,
-} from "react-native";
+import { View, Text, Button, StyleSheet, ScrollView, TouchableOpacity } from "react-native";
+import MapView, { Marker } from "react-native-maps";
 import { Dropdown } from "react-native-element-dropdown";
 import Ipcim from "../../Ipcim";
 import DateTimePicker from "@react-native-community/datetimepicker";
-import Checkbox from "expo-checkbox";
 
 export default function Oktato_OraRogzites({ route }) {
   const { atkuld } = route.params;
-
   const [adatTomb, setAdatTomb] = useState([]);
   const [diakTomb, setDiakTomb] = useState([]);
-  const [selectedValue, setSelectedValue] = useState(1);
+  const [selectedValue, setSelectedValue] = useState(null);
   const [selectedDiak, setSelectedDiak] = useState(null);
-  const [date, setDate] = useState(new Date());
-  const [showDatePicker, setShowDatePicker] = useState(false);
-  const [showTimePicker, setShowTimePicker] = useState(false);
   const [datum, setDatum] = useState("");
   const [ido, setIdo] = useState("");
-  const [szoveg, setSzoveg] = useState("");
-  const [isChecked, setChecked] = useState(false);
+  const [selectedLocation, setSelectedLocation] = useState(null);
+  const [placeName, setPlaceName] = useState("");
+  const [showDatePicker, setShowDatePicker] = useState(false);
+  const [showTimePicker, setShowTimePicker] = useState(false);
+
+  // Oktató adatok
+  const oktatoNev = atkuld ? atkuld.oktato_neve : "Oktato";
+  const oktatoEmail = atkuld ? atkuld.oktato_email : "oktato@example.com";
+
+  // Dinamikus User-Agent generálása
+  const userAgent = `${oktatoNev}/1.0 (${oktatoEmail})`;
+
+  // Hungary's coordinates and region
+  const hungaryRegion = {
+    latitude: 47.1625,
+    longitude: 19.5033,
+    latitudeDelta: 5.0,
+    longitudeDelta: 5.0,
+  };
 
   useEffect(() => {
     const fetchAdatok = async () => {
@@ -34,7 +40,7 @@ export default function Oktato_OraRogzites({ route }) {
         const data = await response.json();
         setAdatTomb(data.map((item) => ({ label: item.oratipus_neve, value: item.oratipus_id })));
       } catch (error) {
-        console.error("Hiba a valasztTipus adatok betöltésekor:", error);
+        console.error("Hiba a típusok betöltésekor:", error);
       }
     };
     fetchAdatok();
@@ -44,38 +50,81 @@ export default function Oktato_OraRogzites({ route }) {
     const fetchDiakok = async () => {
       if (!atkuld || !atkuld.oktato_id) return;
       try {
-        var adat = { "oktato_id": atkuld.oktato_id };
         const response = await fetch(`${Ipcim.Ipcim}/aktualisDiakok`, {
           method: "POST",
-          body: JSON.stringify(adat),
-          headers: { "Content-type": "application/json; charset=UTF-8" },
+          body: JSON.stringify({ oktato_id: atkuld.oktato_id }),
+          headers: {
+            "Content-type": "application/json; charset=UTF-8",
+            'User-Agent': userAgent,
+          },
         });
         const data = await response.json();
         setDiakTomb(data.map((item) => ({ label: item.tanulo_neve, value: item.tanulo_id })));
       } catch (error) {
-        console.error("Hiba az aktualisDiakok adatok betöltésekor:", error);
+        console.error("Hiba a diákok betöltésekor:", error);
       }
     };
     fetchDiakok();
-  }, [atkuld]);
+  }, [atkuld, userAgent]);
+
+  const valtozikDatum = (event, selectedDatum) => {
+    if (selectedDatum) {
+      setDatum(`${selectedDatum.getFullYear()}-${selectedDatum.getMonth() + 1}-${selectedDatum.getDate()}`);
+      setShowDatePicker(false);
+    }
+  };
+
+  const valtozikIdo = (event, selectedIdo) => {
+    if (selectedIdo) {
+      setIdo(`${selectedIdo.getHours()}:${selectedIdo.getMinutes()}`);
+      setShowTimePicker(false);
+    }
+  };
+
+  const handleMapPress = async (e) => {
+    const { latitude, longitude } = e.nativeEvent.coordinate;
+    setSelectedLocation({ latitude, longitude });
+
+    try {
+      const response = await fetch(
+        `https://nominatim.openstreetmap.org/reverse?format=json&lat=${latitude}&lon=${longitude}`,
+        {
+          headers: {
+            'User-Agent': userAgent,
+          },
+        }
+      );
+      const data = await response.json();
+      const address = data.address;
+      const formattedAddress = `${address.road || ''} ${address.house_number || ''}, ${address.city || address.town || ''}`;
+      setPlaceName(formattedAddress || "Ismeretlen hely");
+    } catch (error) {
+      console.error("Hiba a helynév lekérésekor:", error);
+    }
+  };
 
   const felvitel = async () => {
-    if (!datum || !ido || !selectedValue || !selectedDiak) {
-      alert("A kötelező mezőket töltsd ki!");
+    if (!datum || !ido || !selectedValue || !selectedDiak || !placeName) {
+      alert("Minden mezőt ki kell tölteni!");
       return;
     }
+
     const adatok = {
       bevitel1: selectedValue,
       bevitel2: atkuld.oktato_id,
       bevitel3: selectedDiak,
       bevitel4: `${datum} ${ido}`,
+      bevitel5: placeName,
     };
 
     try {
       const response = await fetch(Ipcim.Ipcim + "/oraFelvitel", {
         method: "POST",
         body: JSON.stringify(adatok),
-        headers: { "Content-type": "application/json; charset=UTF-8" },
+        headers: {
+          "Content-type": "application/json; charset=UTF-8",
+          'User-Agent': userAgent,
+        },
       });
       const text = await response.text();
       alert("Óra sikeresen rögzítve: " + text);
@@ -84,37 +133,23 @@ export default function Oktato_OraRogzites({ route }) {
     }
   };
 
-  const valtozikDatum = (event, selectedDatum) => {
-    if (selectedDatum) {
-      setShowDatePicker(false);
-      setDatum(
-        `${selectedDatum.getFullYear()}-${selectedDatum.getMonth() + 1}-${selectedDatum.getDate()}`
-      );
-    }
-  };
-
-  const valtozikIdo = (event, selectedIdo) => {
-    if (selectedIdo) {
-      setShowTimePicker(false);
-      setIdo(`${selectedIdo.getHours()}:${selectedIdo.getMinutes()}`);
-    }
-  };
-
   return (
-    <View style={styles.container}>
-      <Text style={styles.title}>Új óra rögzítése:</Text>
-      <Text>{atkuld ? `Felhasználó ID: ${atkuld.oktato_id}` : "Nincs adat"}</Text>
+    <ScrollView
+      style={styles.container}
+      contentContainerStyle={styles.scrollContent}
+    >
+      <Text style={styles.title}>Új óra rögzítése</Text>
 
       <Text style={styles.label}>Válassz típust:</Text>
       <Dropdown
         style={styles.dropdown}
-        placeholderStyle={styles.placeholderStyle}
-        selectedTextStyle={styles.selectedTextStyle}
         data={adatTomb}
         maxHeight={300}
         labelField="label"
         valueField="value"
-        placeholder="-- Válassz --"
+        placeholder="-- Válassz típust --"
+        placeholderStyle={styles.placeholderStyle}
+        selectedTextStyle={styles.selectedTextStyle}
         value={selectedValue}
         onChange={(item) => setSelectedValue(item.value)}
       />
@@ -122,86 +157,123 @@ export default function Oktato_OraRogzites({ route }) {
       <Text style={styles.label}>Válassz diákot:</Text>
       <Dropdown
         style={styles.dropdown}
-        placeholderStyle={styles.placeholderStyle}
-        selectedTextStyle={styles.selectedTextStyle}
         data={diakTomb}
         maxHeight={300}
         labelField="label"
         valueField="value"
         placeholder="-- Válassz diákot --"
+        placeholderStyle={styles.placeholderStyle}
+        selectedTextStyle={styles.selectedTextStyle}
         value={selectedDiak}
         onChange={(item) => setSelectedDiak(item.value)}
       />
 
-      <Button title="Dátum kiválasztása" onPress={() => setShowDatePicker(true)} />
-      {datum ? <Text style={styles.date}>{datum}</Text> : null}
-      <Button title="Idő kiválasztása" onPress={() => setShowTimePicker(true)} />
-      {ido ? <Text style={styles.date}>{ido}</Text> : null}
+      <Text style={styles.label}>Válassz helyszínt:</Text>
+      <View style={styles.mapContainer}>
+        <MapView
+          style={styles.map}
+          initialRegion={hungaryRegion}
+          onPress={handleMapPress}
+        >
+          {selectedLocation && <Marker coordinate={selectedLocation} title={placeName} />}
+        </MapView>
+      </View>
+      <Text style={styles.placeName}>Kiválasztott helyszín: {placeName || "Nincs kiválasztva"}</Text>
 
-      <Button title="Új óra felvitele" onPress={felvitel} />
-      {showDatePicker && (
-        <DateTimePicker value={date} mode="date" is24Hour onChange={valtozikDatum} />
-      )}
-      {showTimePicker && (
-        <DateTimePicker value={date} mode="time" is24Hour onChange={valtozikIdo} />
-      )}
-    </View>
+      <TouchableOpacity style={styles.dateButton} onPress={() => setShowDatePicker(true)}>
+        <Text style={styles.buttonText}>Dátum kiválasztása</Text>
+      </TouchableOpacity>
+      {datum ? <Text style={styles.selectedDate}>{datum}</Text> : null}
+
+      <TouchableOpacity style={styles.dateButton} onPress={() => setShowTimePicker(true)}>
+        <Text style={styles.buttonText}>Idő kiválasztása</Text>
+      </TouchableOpacity>
+      {ido ? <Text style={styles.selectedDate}>{ido}</Text> : null}
+
+      <TouchableOpacity style={styles.submitButton} onPress={felvitel}>
+        <Text style={styles.buttonText}>Új óra felvitele</Text>
+      </TouchableOpacity>
+
+      {showDatePicker && <DateTimePicker value={new Date()} mode="date" is24Hour onChange={valtozikDatum} />}
+      {showTimePicker && <DateTimePicker value={new Date()} mode="time" is24Hour onChange={valtozikIdo} />}
+    </ScrollView>
   );
 }
-
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    alignItems: "center",
-    justifyContent: "center",
     padding: 20,
+    backgroundColor: "#f5f5f5",
+  },
+  scrollContent: {
+    flexGrow: 1,
   },
   title: {
-    fontSize: 20,
+    fontSize: 24,
+    fontWeight: "bold",
+    color: "#333",
     marginBottom: 20,
+    textAlign: "center",
   },
   label: {
     fontSize: 16,
-    marginTop: 10,
+    fontWeight: "600",
+    color: "#555",
+    marginVertical: 10,
   },
   dropdown: {
     height: 50,
-    width: "100%",
     borderWidth: 1,
+    borderColor: "#ccc",
     borderRadius: 8,
-    marginVertical: 10,
     paddingHorizontal: 8,
+    backgroundColor: "#fff",
+    marginBottom: 15,
   },
   placeholderStyle: {
-    fontSize: 16,
-    color: "gray",
+    color: "#999",
   },
   selectedTextStyle: {
-    fontSize: 16,
-    color: "black",
+    color: "#333",
   },
-  inputContainer: {
-    flexDirection: "row",
-    alignItems: "center",
-    marginBottom: 10,
+  mapContainer: {
+    height: 250,
+    borderRadius: 12,
+    overflow: "hidden",
+    marginVertical: 10,
   },
-  input: {
+  map: {
     flex: 1,
-    borderWidth: 1,
-    padding: 10,
-    marginRight: 10,
   },
-  clearButton: {
-    backgroundColor: "brown",
-    padding: 10,
+  placeName: {
+    fontSize: 14,
+    color: "#666",
+    marginVertical: 10,
+    textAlign: "center",
   },
-  clearText: {
-    color: "white",
+  dateButton: {
+    backgroundColor: "#6200ee",
+    padding: 15,
+    borderRadius: 8,
+    alignItems: "center",
+    marginVertical: 10,
   },
-  date: {
-    backgroundColor: "yellow",
-    padding: 5,
+  submitButton: {
+    backgroundColor: "#03dac6",
+    padding: 15,
+    borderRadius: 8,
+    alignItems: "center",
+    marginVertical: 20,
+  },
+  buttonText: {
+    color: "#fff",
+    fontSize: 16,
+    fontWeight: "600",
+  },
+  selectedDate: {
+    fontSize: 16,
+    color: "#333",
     textAlign: "center",
     marginVertical: 10,
   },

@@ -410,12 +410,13 @@ app.post("/egyTanuloOrai", (req, res) => {
 app.post("/oraFelvitel", (req, res) => {
   kapcsolat();
   connection.query(
-    `INSERT INTO ora_adatok VALUES (NULL, ?, ?, ?, ?, 0 )`,
+    `INSERT INTO ora_adatok VALUES (NULL, ?, ?, ?, ?, ?, 0 )`,
     [
       req.body.bevitel1,
       req.body.bevitel2,
       req.body.bevitel3,
       req.body.bevitel4,
+      req.body.bevitel5
     ],
     (err, rows, fields) => {
       if (err) {
