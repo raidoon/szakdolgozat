@@ -4,7 +4,6 @@ import { useNavigation } from "@react-navigation/native";
 import React, { useState, useEffect, useCallback } from "react";
 import Styles from "../../Styles";
 import Ipcim from "../../Ipcim";
-import Penz from "../../assets/bitcoin-cash-money.svg";
 import { ActivityIndicator } from "react-native";
 import { LinearGradient } from "expo-linear-gradient";
 const Tanulo_Kezdolap = ({ atkuld }) => {
@@ -55,7 +54,6 @@ const Tanulo_Kezdolap = ({ atkuld }) => {
         const osszegResponse = await osszeg.json();
         const befizetesekResponse = await befizetesek.json();
         const tartozasResponse = await tartozas.json();
-
         setSumBefizetes(osszegResponse);
         setBefizetLista(befizetesekResponse);
         setSumTartozas(tartozasResponse);
@@ -65,8 +63,7 @@ const Tanulo_Kezdolap = ({ atkuld }) => {
     } finally {
       setBetolt(false);
     }
-  };
-    //-------------------------------------------------------------  OLDAL FRISSÍTÉSE
+  };//-------------------------------------------------------------  OLDAL FRISSÍTÉSE
     const frissitesKozben = useCallback(() => {
       setFrissites(true);
       setBetolt(true);
@@ -78,8 +75,7 @@ const Tanulo_Kezdolap = ({ atkuld }) => {
     }, []);
   useEffect(() => {
     adatokBetoltese();
-  }, []);
-  //------------------------------------------------------- MONDAT TÖMB ------------------------
+  }, []);//------------------------------------------------------- MONDAT TÖMB ------------------------
   const vezetoMondatok = [
     "Nem a gyorsaság, hanem a stílus a lényeg!",
     "A gyorsulás csak akkor menő, ha a kanyar is jól sikerül.",
@@ -201,46 +197,10 @@ const Tanulo_Kezdolap = ({ atkuld }) => {
           <Ionicons name="chevron-forward-outline" size={30} color="#0096FF" />
         </View>
       </TouchableOpacity>
-      {/* --------------------------------------LEGUTÓBBI TRANZAKCIÓ---------------------------------------- 
-      <View style={styles.tranzakcioContainer}>
-        <Text style={styles.tranzakcioTitle}>Legutóbbi Tranzakciók</Text>
-        {befizetLista.length === 0 ? (
-          <View style={{ alignItems: "center" }}>
-            <Penz width={100} height={100} />
-
-            <Text style={styles.nincsOra}>
-              Itt fognak megjelenni a legutóbbi tranzakciók, amint befizetés
-              történik!
-            </Text>
-          </View>
-        ) : (
-          befizetLista
-            .sort(
-              (a, b) =>
-                new Date(b.befizetesek_ideje) - new Date(a.befizetesek_ideje)
-            )
-            .slice(0, 3)
-            .map((item) => (
-              <View
-                style={styles.legutobbiTranzakciok}
-                key={item.befizetesek_id}
-              >
-                <Text style={styles.tranzakciosText}>
-                  {item.befizetesek_tipusID == 1 ? "Tanóra díj" : "Vizsga díj"}
-                </Text>
-                <Text style={styles.tranzakciosOsszeg}>
-                  - {item.befizetesek_osszeg} Ft
-                </Text>
-              </View>
-            ))
-        )}
-      </View>*/}
-
        {/*----------------------------------- NAPONTA VÁLTOZÓ MONDATOK RÉSZE -------------------------------- */}
        <View style={styles.tranzakcioContainer}>
        <Text style={styles.tranzakcioTitle}>Napi jótanács:</Text>
        </View>
-     
        <LinearGradient
         colors={["#6A5AE0", "#2EC0F9"]}
         start={{ x: 0, y: 0 }} // színátmenet iránya

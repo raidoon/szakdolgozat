@@ -1,27 +1,19 @@
 import React, { useState, useEffect } from "react";
-import {
-  View,
-  Text,
-  TextInput,
-  Alert,
-  TouchableOpacity,
-  StyleSheet,
-  BackHandler
-} from "react-native";
+import {View,Text,TextInput,TouchableOpacity,BackHandler,StyleSheet,} from "react-native";
 import Styles from "../../Styles";
 import { Octicons, Ionicons } from "@expo/vector-icons";
 import Ripple from "react-native-material-ripple";
 import Ipcim from "../../Ipcim";
-
 import AsyncStorage from '@react-native-async-storage/async-storage';
-
+import HibaModal from "../../extra/HibaModal";
+import SikerModal from "../../extra/SikerModal";
 const LoginScreen = ({ navigation }) => {
-  
+  const [sikerModalLathato, setSikerModalLathato] = useState(false);
+  const [hibaModalLathato, setHibaModalLathato] = useState(false);
   const [felhasznalo_email, setFelhasznaloEmail] = useState('');
   const [felhasznalo_jelszo, setFelhasznaloJelszo] = useState('');
-
   const [jelszoMutatasa, setJelszoMutatasa] = useState(false);
-
+  const [kitUdvozlunk,setKitudvozlunk] = useState('');
   useEffect(() => {
     //ide jöhetne adatok betöltése cuccli !!!
     const bejelentkezesEllenorzes = async () => {
@@ -45,7 +37,6 @@ const LoginScreen = ({ navigation }) => {
     );
     return () => backHandler.remove(); // Eltávolítás, ha a komponens elhagyja a képernyőt
   }, []);
-
   const bejelentkeztetes = async () => {
     const adatok = {
       felhasznalo_email,
@@ -59,24 +50,26 @@ const LoginScreen = ({ navigation }) => {
       });
       const adat = await response.json();
       if (adat.error) {
-        Alert.alert(adat.error);
+        setHibaModalLathato(true);
       } else {
         if (adat.felhasznalo_id !== 0) {
           await AsyncStorage.setItem('bejelentkezve', JSON.stringify(adat));
+          await AsyncStorage.setItem('showSuccessModal', 'true'); // Siker modalt jelző tárolás
           if (adat.felhasznalo_tipus === 1) {
-            Alert.alert('Üdvözöllek kedves oktató!');
+            setKitudvozlunk('oktató');    
+            setSikerModalLathato(true);        
             navigation.replace('Oktato_BejelentkezesUtan2');
           } else {
-            Alert.alert('Üdvözöllek kedves tanuló!');
+            setKitudvozlunk('tanuló');
+            setSikerModalLathato(true);
             navigation.replace('Tanulo_BejelentkezesUtan');
           }
         } else {
-          Alert.alert('Hibás email cím vagy jelszó!');
+          setHibaModalLathato(true);
         }
       }
     } catch (error) {
-      console.error('Bejelentkezési hiba:', error);
-      Alert.alert('Hiba történt a bejelentkezés során!');
+      setHibaModalLathato(true);
     }
   };
 
@@ -139,7 +132,75 @@ const LoginScreen = ({ navigation }) => {
           <Text style={Styles.bejelentkezes_regiGombSzoveg}>Regisztálj!</Text>
         </Ripple>
       </View>
+      <HibaModal
+            visible={hibaModalLathato}
+            onClose={()=> setHibaModalLathato(false)}
+            title={'Hiba a bejelentkezés során!'}
+            body={"Hibás email cím vagy jelszó! Kérjük ellenőrizze, hogy biztosan jól írta-e be az adatait!"}
+            buttonText={"Bezárás"}
+      />
+      <SikerModal
+        visible={sikerModalLathato}
+        onClose={()=>setSikerModalLathato(false)}
+        title={'Sikeres bejelentkezés!'}
+        body={`Üdvözöljük kedves ${kitUdvozlunk}`}
+        buttonText={"Szuper"}
+      />
     </View>
   );
-}
+};
+const styles = StyleSheet.create({
+  modalNagyView: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: 'rgba(0, 0, 0, 0.5)',
+  },
+  modalKisView: {
+    width: '80%',
+    backgroundColor: '#fff',
+    borderRadius: 10,
+    padding: 20,
+    alignItems: 'left',
+  },
+  modalCim: {
+    fontSize: 20,
+    fontWeight: '600',
+    marginBottom: 20,
+  },
+  modalLeiras: {
+    fontSize: 16,
+    textAlign: 'left',
+    marginBottom: 30,
+  },
+  modalGombView: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    width: '100%',
+  },
+  modalMegseGomb: {
+    backgroundColor: '#fff',
+    paddingVertical: 10,
+    paddingHorizontal: 20,
+    borderRadius: 5,
+    borderWidth: 1,
+    borderColor: '#ccc',
+  },
+  modalMegseGombText: {
+    color: '#000',
+    fontSize: 16,
+    fontWeight: 'bold',
+  },
+  modalKijelentkezesGomb: {
+    backgroundColor: '#FF4444',
+    paddingVertical: 10,
+    paddingHorizontal: 20,
+    borderRadius: 5,
+  },
+  modalKijelentkezesGombText: {
+    color: '#fff',
+    fontSize: 16,
+    fontWeight: 'bold',
+  },
+});
 export default LoginScreen;

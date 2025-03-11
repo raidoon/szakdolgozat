@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { View, Text, StyleSheet, Alert, Modal, TouchableOpacity } from "react-native";
+import { View, Text, StyleSheet, Modal, TouchableOpacity } from "react-native";
 import Ripple from "react-native-material-ripple";
 import Styles from "../../Styles";
 import Ionicons from "react-native-vector-icons/Ionicons";
