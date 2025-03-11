@@ -9,6 +9,7 @@ import HibaModal from "../../extra/HibaModal";
 import SikerModal from "../../extra/SikerModal";
 const LoginScreen = ({ navigation }) => {
   const [sikerModalLathato, setSikerModalLathato] = useState(false);
+  const [sikerultRegisztralniModal,setSikerultRegisztralniModal] = useState(false);
   const [hibaModalLathato, setHibaModalLathato] = useState(false);
   const [felhasznalo_email, setFelhasznaloEmail] = useState('');
   const [felhasznalo_jelszo, setFelhasznaloJelszo] = useState('');
@@ -30,6 +31,14 @@ const LoginScreen = ({ navigation }) => {
       }
     };
     bejelentkezesEllenorzes();
+    const sikeresRegisztracioEllenorzes = async () => {
+      const modalLathatoe = await AsyncStorage.getItem('sikeresRegisztraciosModal');
+      if (modalLathatoe === 'true') {
+        setSikerultRegisztralniModal(true);
+        await AsyncStorage.removeItem('sikeresRegisztraciosModal'); // Törlés, hogy csak egyszer jelenjen meg, csak regisztráció után
+      }
+    };
+    sikeresRegisztracioEllenorzes();
     const backAction = () => true; // Megakadályozza a visszalépést
     const backHandler = BackHandler.addEventListener(
       'hardwareBackPress',
@@ -144,7 +153,14 @@ const LoginScreen = ({ navigation }) => {
         onClose={()=>setSikerModalLathato(false)}
         title={'Sikeres bejelentkezés!'}
         body={`Üdvözöljük kedves ${kitUdvozlunk}`}
-        buttonText={"Szuper"}
+        buttonText={"Oké"}
+      />
+      <SikerModal
+        visible={sikerultRegisztralniModal}
+        onClose={()=>setSikerultRegisztralniModal(false)}
+        title={'Sikeres regisztráció!'}
+        body={`Most már bejelentkezhet az előzőleg megadott adataival. Kérjük, mihamarabb erősítse meg email címét!`}
+        buttonText={"Rendben"}
       />
     </View>
   );

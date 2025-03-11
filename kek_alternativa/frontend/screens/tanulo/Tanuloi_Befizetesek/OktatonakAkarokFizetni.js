@@ -1,15 +1,23 @@
 import React, { useState } from "react";
-import {View,Text,TouchableOpacity,StyleSheet,ScrollView,Alert,} from "react-native";
+import {View,Text,TouchableOpacity,StyleSheet,ScrollView} from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import { LinearGradient } from "expo-linear-gradient";
 import Ipcim from "../../../Ipcim";
+import HibaModal from "../../../extra/HibaModal";
+import SikerModal from "../../../extra/SikerModal";
 const OktatonakAkarokFizetni = ({ route }) => {
   const {atkuld} = route.params;
   const [osszeg, setOsszeg] = useState("");
   const [szamologepLathatoe, setSzamologepLathatoe] = useState(false);
   const [tanora, setTanora] = useState(true);
   const [vizsga, setVizsga] = useState(false);
+  //------------------------------------------------------------- MODÁLOK
   const [hibaModal, setHibaModal] = useState(false);
+  const [hibaModalCim, setHibaModalCim] = useState('');
+  const [hibaModalSzoveg, setHibaModalSzoveg] = useState('');
+  const [sikerModal,setSikerModal] = useState(false);
+  const [sikerModalCim, setSikerModalCim] = useState('');
+  const [sikerModalSzoveg, setSikerModalSzoveg] = useState('');
   //------------------------------------------------------------- CHECKBOX
   function SajatCheckbox({ label, isChecked, onPress }) {
     return (
@@ -22,17 +30,15 @@ const OktatonakAkarokFizetni = ({ route }) => {
   /* -------------------------------------- ÖSSZEG FELVITELE AZ ADATBÁZISBA ---------------------------------------- */
   const osszegFelvitele = async () => {
     if (osszeg === "" || parseFloat(osszeg) === 0) {
-      Alert.alert("Hiba!", "A befizetni kívánt összeg nem lehet 0!", [
-        { text: "Értem" },
-      ]);
+      setHibaModalCim("Hoppá!");
+      setHibaModalSzoveg("Véletlenül 0 Ft-ot írt az összeg helyére!");
+      setHibaModal(true);
       return;
     }
     else if (osszeg.startsWith("0") && osszeg !== "0") {
-      Alert.alert("Hiba!", "Az összeg nem kezdődhet 0-val!", [
-        {
-          text: "RENDBEN",
-        },
-      ]);
+      setHibaModalCim("Hoppá!");
+      setHibaModalSzoveg("Véletlenül 0-al kezdte a beírt összeget!");
+      setHibaModal(true);
       return;
     }
     else{
@@ -66,15 +72,19 @@ const OktatonakAkarokFizetni = ({ route }) => {
             "Content-Type": "application/json; charset=UTF-8",
           },
         });
-        const valaszText = await valasz.text();
         if (valasz.ok) {
-          Alert.alert("Siker", valaszText);
+          setSikerModalCim("Sikeres befizetés!");
+          setSikerModalSzoveg("A tranzakció sikeresen rögzítésre került az alkalmazásban! Amennyiben nem jelenik meg azonnal fizetési előzmények között, próbáljon meg ráfrissíteni!");
+          setSikerModal(true);
         } else {
-          Alert.alert("Hiba", valaszText || "A befizetés felvitele nem sikerült.");
+          setHibaModalCim("Hoppá!");
+          setHibaModalSzoveg(`A befizetés nem sikerült! Kérjük próbálja meg újra!`);
+          setHibaModal(true);
         }
       } catch (error) {
-        console.error("Fetch Error:", error);
-        Alert.alert("Hiba", `Hiba történt: ${error.message}`);
+        setHibaModalCim("Hiba!");
+        setHibaModalSzoveg(`Kérjük küldje el ezt a hibaüzenetet a fejlesztőknek: ${error.message}`);
+        setHibaModal(true);
       }
       setOsszeg(""); // Törlöm a beírt összeget a felvitel után!!!
       adatokBetoltese();
@@ -207,6 +217,20 @@ const OktatonakAkarokFizetni = ({ route }) => {
           </TouchableOpacity>
         </ScrollView>
       )}
+      <HibaModal
+            visible={hibaModal}
+            onClose={()=> setHibaModal(false)}
+            title={hibaModalCim}
+            body={hibaModalSzoveg}
+            buttonText={"Rendben"}
+      />
+      <SikerModal
+        visible={sikerModal}
+        onClose={()=>setSikerModal(false)}
+        title={sikerModalCim}
+        body={sikerModalSzoveg}
+        buttonText={"Rendben"}
+      />
     </LinearGradient>
   );
 };

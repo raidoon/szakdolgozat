@@ -17,6 +17,7 @@ const Tanulo_BejelentkezesUtan = ({ navigation, route }) => {
   const [betolt, setBetolt] = useState(true);
   const [hiba, setHiba] = useState(null);
   const [sikerModalLathato, setSikerModalLathato] = useState(false);
+  //--------------------------------------------- ADATOK BETÖLTÉSE ----------------------
   const sajatAdatokBetoltese = async () => {
     try {
       const adatok = await AsyncStorage.getItem("bejelentkezve");
@@ -145,12 +146,12 @@ const Tanulo_BejelentkezesUtan = ({ navigation, route }) => {
       />
     </Tab.Navigator>
     <SikerModal
-    visible={sikerModalLathato}
-    onClose={()=>setSikerModalLathato(false)}
-    title={'Sikeres bejelentkezés!'}
-    body={`Üdvözöljük kedves ${adatok.tanulo_neve}!`}
-    buttonText={"Szuper"}
-  />
+      visible={sikerModalLathato}
+      onClose={()=>setSikerModalLathato(false)}
+      title={'Sikeres bejelentkezés!'}
+      body={`Üdvözöljük kedves tanuló!`}
+      buttonText={"Oké"}
+    />
     </>
   );
 };

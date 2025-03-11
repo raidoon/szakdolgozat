@@ -1,10 +1,13 @@
 import React, { useState, useEffect } from "react";
-import {View,Text,TextInput,Alert,TouchableOpacity,StyleSheet,} from "react-native";
+import {View,Text,TextInput,TouchableOpacity} from "react-native";
 import Ripple from "react-native-material-ripple";
 import { Octicons, Ionicons } from "@expo/vector-icons";
 import Styles from "../../Styles";
 import Ipcim from "../../Ipcim";
 import DropDownPicker from "react-native-dropdown-picker";
+import HibaModal from "../../extra/HibaModal";
+import SikerModal from "../../extra/SikerModal";
+import AsyncStorage from '@react-native-async-storage/async-storage';
 function SajatCheckbox({ felirat, bepipalt, onPress }) {
   return (
     <TouchableOpacity style={Styles.checkboxView} onPress={onPress}>
@@ -18,6 +21,11 @@ export default function Regisztracio({ navigation }) {
   const [nev, setNev] = useState("");
   const [tanulo, setTanulo] = useState(false);
   const [oktato, setOktato] = useState(false);
+  //---------------------------------------------------- MODÁLOK
+  const [hibaModalLathato, setHibaModalLathato] = useState(false);
+  const [hibaCim, setHibaCim] = useState('');
+  const [hibaSzoveg, setHibaSzoveg] = useState('');
+  const [sikerultRegisztralniModal,setSikerultRegisztralniModal] = useState(false);
   //---------------------------------------------------- JELSZAVAK
   const [jelszo, setJelszo] = useState("");
   const [joaJelszo, setJoaJelszo] = useState("");
@@ -27,6 +35,7 @@ export default function Regisztracio({ navigation }) {
   //---------------------------------------------------- TELEFONSZÁMOK
   const [telefonszam, setTelefonszam] = useState("");
   const [telefonszamHiba, setTelefonszamHiba] = useState(false); // Hibajelzés
+  const [telefonbaKattintas,setTelefonbaKattintas] = useState(false);
   //------------------------------- DROPDOWN
   const [kinyitDropdown, setKinyitDropdown] = useState(false);
   const [ertekek, setErtekek] = useState([]);
@@ -61,17 +70,23 @@ export default function Regisztracio({ navigation }) {
     if (!jelszoEllenorzes(jelszo)) {
       if (jelszo.length < 8) {
         setJelszoHiba("A jelszónak legalább 8 karakter hosszúnak kell lennie!");
+        setHibaSzoveg("A jelszónak legalább 8 karakter hosszúnak kell lennie!");
         valid = false;
       } else if (jelszo.length > 20) {
         setJelszoHiba("A jelszó maximum 20 karakter hosszú lehet!");
+        setHibaSzoveg("A jelszó maximum 20 karakter hosszú lehet!");
         valid = false;
       } else {
+        setHibaSzoveg(
+          "A jelszónak tartalmaznia kell legalább egy darab nagybetűt és egy darab számot."
+        );
         setJelszoHiba(
           "A jelszónak tartalmaznia kell legalább egy darab nagybetűt és egy darab számot."
         );
         valid = false;
       }
     } else if (jelszo !== joaJelszo) {
+      setHibaSzoveg("A jelszavak nem egyeznek meg.");
       setJelszoHiba("A jelszavak nem egyeznek meg.");
       valid = false;
     } else {
@@ -81,23 +96,30 @@ export default function Regisztracio({ navigation }) {
   const szamResz = telefonszam.slice(3).replace(/\D/g, ""); // Csak számjegyeket enged
   if (szamResz.length !== 9) {
     setTelefonszamHiba("Hibás telefonszám! Kérjük adjon meg 9 számjegyet a +36 után.");
+    setHibaSzoveg("Hibás telefonszám! Kérjük adjon meg 9 számjegyet a +36 után.");
     valid = false;
   } else {
     setTelefonszamHiba("");
   }
     const tipus = tanulo ? 2 : oktato ? 1 : null;
     if (!autosiskola || !email || !jelszo || !telefonszam || !tipus || !nev) {
-      Alert.alert("Kérlek, töltsd ki az összes mezőt!");
+      setHibaCim("Hiba!");
+      setHibaSzoveg("Kérjük töltse ki az összes mezőt!");
+      setHibaModalLathato(true);
       valid = false;
       return;
     }
     if (jelszo !== joaJelszo) {
-      Alert.alert("A jelszavak nem egyeznek meg!");
+      setHibaCim('Jelszó hiba!');
+      setHibaSzoveg("Figyelem, a megadott jelszavak nem egyeznek meg!");
+      setHibaModalLathato(true);
       valid = false;
       return;
     }
     if (!tanulo && !oktato) {
-      Alert.alert("Kérlek, válaszd ki, hogy tanuló vagy vagy oktató!");
+      setHibaCim("Hiba!");
+      setHibaSzoveg("Kérjük válassza ki, hogy oktatóként vagy tanulóként kíván-e regisztrálni!");
+      setHibaModalLathato(true);
       valid = false;
       return;
     }
@@ -118,15 +140,20 @@ export default function Regisztracio({ navigation }) {
           }),
         });
         if (response.ok) {
-          Alert.alert("Sikeres regisztráció!");
+          //------------------------------------------- HA MINDEN JÓL MENT
+          await AsyncStorage.setItem('sikeresRegisztraciosModal', 'true'); // Siker modalt jelző tárolás
+          setSikerultRegisztralniModal(true);
           navigation.replace("Bejelentkezes");
-        } else {
+        } else { //------------------------------------------- HA HIBÁT KAPTUNK
           const errorMessage = await response.text();
-          Alert.alert("Hiba", errorMessage);
+          setHibaCim("Hiba!");
+          setHibaSzoveg(errorMessage);
+          setHibaModalLathato(true);
         }
       } catch (error) {
-        console.error(error);
-        Alert.alert("Hálózati hiba", "Kérjük, próbálkozz újra.");
+        setHibaCim("Hálózati hiba!");
+        setHibaSzoveg(`Probléma a hálózattal, kérjük próbálkozzon újra! Ha a probléma továbbra is fennáll vegye fel a kapcsolatot a fejlesztőkkel, és küldje el nekik az alábbi szöveget: ${error}`);
+        setHibaModalLathato(true);
       }
     }
   };
@@ -145,12 +172,14 @@ export default function Regisztracio({ navigation }) {
           }));
           setErtekek(dropdownData);
         } else {
-          console.log("API válasz nem volt sikeres:", response.status);
-          Alert.alert("Hiba", "Hiba történt az adatok betöltésekor.");
+          setHibaCim("Hiba!");
+          setHibaSzoveg("Hiba történt az adatok betöltésekor. Kérjük próbálkozzon újra!");
+          setHibaModalLathato(true);
         }
       } catch (error) {
-        console.error("Hiba történt az API híváskor:", error);
-        Alert.alert("Hálózati hiba", "Kérjük, próbálkozz újra.");
+        setHibaCim("Hálózati hiba!");
+        setHibaSzoveg("A hálózat jelenleg nem elérhető. Kérjük próbálkozzon újra!");
+        setHibaModalLathato(true);
       }
     };
     fetchData();
@@ -204,7 +233,7 @@ export default function Regisztracio({ navigation }) {
           onChangeText={setNev}
         />
       </View>
-      <View style={styles.container}>
+      <View>
         <View
           style={[
             Styles.bejelentkezes_FormInputWrapper,
@@ -316,10 +345,21 @@ export default function Regisztracio({ navigation }) {
           Már van fiókod? <Text style={Styles.marVanFiokomText}>Jelentkezz be</Text>
         </Text>
       </TouchableOpacity>
+      {/*--------------------------------------------- MODÁLOK ------------------------------------------- */}
+      <HibaModal
+            visible={hibaModalLathato}
+            onClose={()=> setHibaModalLathato(false)}
+            title={`${hibaCim}`}
+            body={`${hibaSzoveg}`}
+            buttonText={"Értem"}
+      />
+      <SikerModal
+        visible={sikerultRegisztralniModal}
+        onClose={()=>setSikerultRegisztralniModal(false)}
+        title={'Sikeres regisztráció!'}
+        body={`Most már bejelentkezhet az előzőleg megadott adataival. Kérjük, mihamarabb erősítse meg email címét!`}
+        buttonText={"Rendben"}
+      />
     </View>
   );
 }
-const styles = StyleSheet.create({
-  
-  
-});
