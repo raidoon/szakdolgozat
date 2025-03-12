@@ -1,0 +1,141 @@
+body {
+    margin: 0;
+    font-family: Arial, sans-serif;
+    background: linear-gradient(135deg, #6db5d6, #0d254e);
+    height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+.bejelentkezesNagyDiv {
+    display: flex;
+    justify-content: center;
+    align-items: stretch; /* mindkét div legyen egyforma magas */
+    height: auto; /* magasság igazodjon a belső contenthez*/
+    min-width: 800px; /* minimum szélesség */
+    width: 80%;
+    max-width: 1200px;
+    margin-left: 50px;
+    margin-right: 50px;
+}
+.udvozloPanel {
+    background: rgba(255, 255, 255, 0.9);
+    padding: 2rem;
+    border-radius: 8px 0 0 8px; /* csak a baloldali fülek legyenek lekerekitve */
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    width: 40%;
+    min-width: 300px;
+    text-align: center;
+    color: #333;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+}
+.udvozloPanel h1 {
+    margin-bottom: 1.5rem;
+    color: #333; 
+    font-size: 2rem; 
+}
+.udvozloPanel p {
+    color: #555; 
+    line-height: 1.6;
+    font-size: 1rem;
+}
+.kisDiv {
+    background: white;
+    padding: 2rem;
+    border-radius: 0 8px 8px 0; /* csak a jobb oldali fülek legyenek lekeritva */
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    width: 40%;
+    min-width: 300px;
+    text-align: center;
+    margin-left: 0; /* ne legyen hely a két div között */
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+}
+.kisDiv h1 {
+    margin-bottom: 1.5rem;
+    color: #007bff;
+}
+.textbox {
+    position: relative;
+    margin-bottom: 1rem;
+    margin-right: 54px;
+    text-align: left;
+}
+.icon {
+    position: absolute;
+    left: 12px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: #007bff;
+    font-size: larger;
+}
+.textbox input {
+    width: 100%;
+    padding: 0.75rem 0.75rem 0.75rem 40px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    font-size: 1rem;
+}
+.eye-icon {
+    position: absolute;
+    right: -40px;
+    top: 60%;
+    transform: translateY(-50%);
+    cursor: pointer;
+    color: #007bff;
+    font-size: 24px;
+}
+.hibaUzenet {
+    color: red;
+    margin-bottom: 2rem;
+    font-size: larger;
+    line-height: 1.6;
+}
+.bejelentkezoGomb {
+    width: 100%;
+    padding: 0.75rem;
+    background-color: #007bff;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    font-size: 1rem;
+    cursor: pointer;
+}
+.bejelentkezoGomb:hover {
+    background-color: #0056b3;
+}
+.elfelejtettJelszo {
+    display: block;
+    margin-top: 1rem;
+    color: #007bff;
+    cursor: pointer;
+    float: left;
+}
+.elfelejtettJelszo:hover {
+    text-decoration: underline;
+}
+/* alkalmazkodjon a képernyőmérethez */
+@media (max-width: 768px) {
+    .bejelentkezesNagyDiv {
+        flex-direction: column; /* függőlegesen legyenek egymás alatt a divek */
+        align-items: center;
+        min-width: 300px;
+    }
+    .udvozloPanel {
+        width: 100%;
+        border-radius: 8px 8px 0 0; /* kisképernyőn a felső fülek legyenek lekerekitve*/
+        margin-bottom: 0; /* kis képernyőn se legyen hely kimaradva a két div között */
+        margin-top: 1rem; 
+    }
+    .kisDiv {
+        width: 100%;
+        border-radius: 0 0 8px 8px; /*kisképernyőn az alsó fülek legyenek lekerekitve */
+        margin-top: 0; /* kis képernyőn se legyen hely kimaradva a két div között */
+        margin-bottom: 1rem;
+        margin-left: 1rem;
+        margin-right: 1rem;
+    }
+}

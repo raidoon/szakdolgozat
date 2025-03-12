@@ -2,13 +2,14 @@ const express = require("express");
 const mysql = require("mysql");
 const bcrypt = require("bcryptjs");
 var cors = require("cors");
-
+const jwt = require('jsonwebtoken');
 const app = express();
 const port = 3000;
-
+const bodyParser = require('body-parser');
 app.use(express.json());
 app.use(cors());
-
+app.use(bodyParser.json());
+const SECRET_KEY = 'your_secret_key';
 var connection;
 function kapcsolat() {
   connection = mysql.createConnection({
@@ -127,12 +128,12 @@ app.post("/regisztracio", (req, res) => {
     }
   );
 });
-//------------------------------------------------ BEJELENTKEZÉS
+//------------------------------------------------ BEJELENTKEZÉS OKTATÓNAK ÉS TANULÓNAK
 app.post("/beleptetes", (req, res) => {
   const { felhasznalo_email, felhasznalo_jelszo } = req.body;
   kapcsolat();
   connection.query(
-    "SELECT felhasznalo_id, felhasznalo_email, felhasznalo_jelszo, felhasznalo_tipus FROM felhasznaloi_adatok WHERE felhasznalo_email = ?",
+    "SELECT felhasznalo_id, felhasznalo_email, felhasznalo_jelszo, felhasznalo_tipus FROM felhasznaloi_adatok WHERE felhasznalo_email = ? AND felhasznaloi_adatok.felhasznalo_tipus!=3 ",
     [felhasznalo_email],
     (err, rows) => {
       if (err) {
@@ -150,7 +151,7 @@ app.post("/beleptetes", (req, res) => {
           (compareErr, isMatch) => {
             if (compareErr) {
               console.error(compareErr);
-              res.status(500).send("Hiba a jelszó ellenőrzése során!");
+              res.status(500).send("Szerverhiba!");
             } else if (isMatch) {
               res.status(200).send(rows[0]);
             } else {
@@ -161,6 +162,42 @@ app.post("/beleptetes", (req, res) => {
       }
     }
   );
+  connection.end();
+});
+//------------------------------------------------ BEJELENTKEZÉS ADMINNAK 
+app.post('/web/login', (req, res) => {
+  const { email, password } = req.body;
+  kapcsolat()
+  const query = 'SELECT felhasznalo_email, felhasznalo_jelszo, felhasznalo_tipus FROM felhasznaloi_adatok WHERE felhasznalo_email = ? AND felhasznalo_tipus = 3';
+  connection.query(query, [email], (err, rows) => {
+    if (err) {
+      console.error('Adatbázis hiba:', err);
+      res.status(500).json({ message: 'Szerverhiba' });
+    } else if (rows.length === 0) {
+      res.status(404).json({ message: 'Ez az email cím nem található' });
+    } else {
+      const hashedPassword = rows[0].felhasznalo_jelszo;
+      // Jelszó ellenőrzése bcrypt-tel
+      bcrypt.compare(password, hashedPassword, (err, isMatch) => {
+        if (err) {
+          console.error('Hiba a jelszó ellenőrzésekor:', err);
+          res.status(500).json({ message: 'Szerverhiba' });
+        } else if (isMatch) {
+          if(rows[0].felhasznalo_tipus === 3){
+            const token = jwt.sign({ felhasznalo_email: rows[0].felhasznalo_email }, SECRET_KEY, {
+              expiresIn: '1h',
+            });
+            res.json({ token });
+          }
+          else{
+            res.status.json({message: 'Nincs jogosultságod a belépéshez!'});
+          }
+        } else {
+          res.status(401).json({ message: 'Hibás jelszó' });
+        }
+      });
+    }
+  });
   connection.end();
 });
 //------------------------------------------------ TANULÓ ADATAINAK LEKÉRDEZÉSE

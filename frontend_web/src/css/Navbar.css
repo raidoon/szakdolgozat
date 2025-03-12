@@ -1,0 +1,66 @@
+/* Navbar alapstílusok */
+.navbar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px 20px;
+    background-color: #282c34;
+    color: white;
+    position: relative;
+  }
+  
+  .hamburger {
+    font-size: 24px;
+    background-color: transparent;
+    color: white;
+    border: none;
+    cursor: pointer;
+    display: none; /* Csak kis képernyőn látható */
+  }
+  
+  .menu {
+    display: flex;
+    gap: 20px;
+    align-items: center;
+  }
+  
+  .link {
+    color: white;
+    text-decoration: none;
+    font-size: 16px;
+  }
+  
+  .logoutButton {
+    padding: 5px 15px;
+    font-size: 14px;
+    background-color: #1e88e5;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+  }
+  
+  /* Reszponzív stílusok */
+  @media (max-width: 768px) {
+    .hamburger {
+      display: block; /* Kis képernyőn jelenjen meg */
+    }
+  
+    .menu {
+      display: none; /* Alapértelmezetten rejtve van */
+      flex-direction: column;
+      gap: 10px;
+      position: absolute;
+      top: 50px;
+      left: 0;
+      background-color: #282c34;
+      width: 100%;
+      padding: 10px;
+      z-index: 1;
+    }
+  
+    .menu.open {
+      display: flex; /* Ha megnyitották, jelenjen meg */
+    }
+  }
+  
