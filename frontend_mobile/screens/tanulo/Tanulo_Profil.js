@@ -8,7 +8,8 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 
 const Tanulo_Profil = ({ atkuld }) => {
   const navigation = useNavigation();
-  const [kijelentkeztetesAlertLathato, setKijelentkeztetesAlertLathato] = useState(false);
+  const [kijelentkeztetesAlertLathato, setKijelentkeztetesAlertLathato] =
+    useState(false);
   const modalCsukas = () => {
     setKijelentkeztetesAlertLathato(false);
   };
@@ -26,7 +27,12 @@ const Tanulo_Profil = ({ atkuld }) => {
       <View style={Styles.profilGombokView}>
         <Ripple
           style={Styles.gombRipple}
-          onPress={() => navigation.navigate("Tanuló Profil", { screen: "SzemelyesAdatok" })}
+          onPress={() =>
+            navigation.navigate("Tanuló Profil", {
+              screen: "SzemelyesAdatok",
+              params: { atkuld: atkuld },
+            })
+          }
         >
           <Ionicons name="person-outline" size={24} color="#4CAF50" />
           <Text style={Styles.gombText}>Személyes adatok</Text>
@@ -35,7 +41,12 @@ const Tanulo_Profil = ({ atkuld }) => {
 
         <Ripple
           style={Styles.gombRipple}
-          onPress={() => navigation.navigate("Tanuló Profil", { screen: "JelszoMegvaltoztatasa" })}
+          onPress={() =>
+            navigation.navigate("Tanuló Profil", {
+              screen: "JelszoMegvaltoztatasa",
+              params: { atkuld: atkuld },
+            })
+          }
         >
           <Ionicons name="shield-half-outline" size={24} color="#2196F3" />
           <Text style={Styles.gombText}>Jelszó megváltoztatása</Text>
@@ -44,7 +55,9 @@ const Tanulo_Profil = ({ atkuld }) => {
 
         <Ripple
           style={Styles.gombRipple}
-          onPress={() => navigation.navigate("Tanuló Profil", { screen: "Kapcsolat" })}
+          onPress={() =>
+            navigation.navigate("Tanuló Profil", { screen: "Kapcsolat" })
+          }
         >
           <Ionicons name="information-circle-outline" size={24} color="#333" />
           <Text style={Styles.gombText}>Kapcsolat</Text>
@@ -59,15 +72,17 @@ const Tanulo_Profil = ({ atkuld }) => {
         <Text style={Styles.kijelentkezesGombText}>Kijelentkezés</Text>
       </Ripple>
 
-      <Modal 
-        transparent={true} 
-        visible={kijelentkeztetesAlertLathato} 
+      <Modal
+        transparent={true}
+        visible={kijelentkeztetesAlertLathato}
         onRequestClose={modalCsukas}
       >
         <View style={Styles.modalNagyView}>
           <View style={Styles.modalKisView}>
             <Text style={Styles.modalCim}>Figyelem!</Text>
-            <Text style={Styles.modalLeiras}>Biztosan ki szeretne jelentkezni?</Text>
+            <Text style={Styles.modalLeiras}>
+              Biztosan ki szeretne jelentkezni?
+            </Text>
 
             <View style={Styles.modalGombView}>
               <TouchableOpacity
@@ -81,7 +96,9 @@ const Tanulo_Profil = ({ atkuld }) => {
                 style={Styles.modalKijelentkezesGomb}
                 onPress={kijelentkeztetes}
               >
-                <Text style={Styles.modalKijelentkezesGombText}>Kijelentkezés</Text>
+                <Text style={Styles.modalKijelentkezesGombText}>
+                  Kijelentkezés
+                </Text>
               </TouchableOpacity>
             </View>
           </View>

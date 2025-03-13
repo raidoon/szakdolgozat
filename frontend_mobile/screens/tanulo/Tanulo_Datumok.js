@@ -390,7 +390,7 @@ const Tanulo_Datumok = ({ atkuld }) => {
                 hour12: false,
               });
               return (
-                <TouchableOpacity onPress={()=> setModalLathatoe(true)}>
+                //<TouchableOpacity onPress={()=> setModalLathatoe(true)}>
                   <LinearGradient
                     colors={["#4169E1", "#2EC0F9"]}
                     start={{ x: 0, y: 0 }}
@@ -448,7 +448,7 @@ const Tanulo_Datumok = ({ atkuld }) => {
                       </Text>
                     </View>
                   </LinearGradient>
-                </TouchableOpacity>
+                //</TouchableOpacity>
               );
             })
         )}
