@@ -45,6 +45,8 @@ import Oktato_KovetkezoOra from "./screens/oktato/Oktato_KovetkezoOra";
 import Oktato_AKTUALIS from "./screens/oktato/Oktato_AKTUALIS";
 import Oktato_LEVIZSGAZOTT from "./screens/oktato/Oktato_LEVIZSGAZOTT";
 import Oktato_LevizsgazottTanuloReszletei from "./screens/oktato/Oktato_LevizsgazottTanuloReszletei";
+import Oktato_ElkovetkezendoOrak from "./screens/oktato/Oktato_ElkovetkezendoOrak";
+import Oktato_OraSzerkesztes from "./screens/oktato/Oktato_OraSzerkesztes";
 
 
 
@@ -133,6 +135,8 @@ export default function App() {
         <Stack.Screen name="Oktato_AKTUALIS" component={Oktato_AKTUALIS} />
         <Stack.Screen name="Oktato_LEVIZSGAZOTT" component={Oktato_LEVIZSGAZOTT} />
         <Stack.Screen name="Oktato_LevizsgazottTanuloReszletei" component={Oktato_LevizsgazottTanuloReszletei} />
+        <Stack.Screen name="Oktato_ElkovetkezendoOrak" component={Oktato_ElkovetkezendoOrak} />
+        <Stack.Screen name="Oktato_OraSzerkesztes" component={Oktato_OraSzerkesztes} />
       </Stack.Navigator>
     </NavigationContainer>
   );

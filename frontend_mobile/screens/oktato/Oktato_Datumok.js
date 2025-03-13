@@ -16,7 +16,7 @@ export default function Oktato_Datumok({atkuld}){
       var adat={
           "oktatoid":atkuld.oktato_id
       }
-      const x=await fetch(Ipcim.Ipcim +"/oraFelvitel/aktualisDiakok/nemkeszOrak",{
+      const x=await fetch(Ipcim.Ipcim +"/oraFelvitel/aktualisDiakok/nemkeszOrak/elkoviOrak",{
           method: "POST",
           body: JSON.stringify(adat),
           headers: {"Content-type": "application/json; charset=UTF-8"}
@@ -46,7 +46,12 @@ export default function Oktato_Datumok({atkuld}){
     navigation.navigate("Oktato_AktualisTanulok", { tanulo });
 };
   
-  
+const kattkoviorak = (tanulo) => {
+      
+  navigation.navigate("Oktato_ElkovetkezendoOrak", { tanulo });
+};
+
+
 const kattvaro = (tanulo) => {
       
   navigation.navigate("Oktato_MegerositesrevaroOrak", { tanulo });
@@ -65,6 +70,14 @@ const kattvaro = (tanulo) => {
       >
         <Text style={Oktato_Styles.navigateButtonText}>Új óra hozzáadása</Text>
       </TouchableOpacity>
+
+      <TouchableOpacity
+        style={Oktato_Styles.navigateButton}
+        onPress={() => navigation.navigate("Oktato_ElkovetkezendoOrak", { atkuld })}
+      >
+        <Text style={Oktato_Styles.navigateButtonText}>Elkövetkező órák</Text>
+      </TouchableOpacity>
+
 
       <TouchableOpacity
         style={Oktato_Styles.navigateButton}

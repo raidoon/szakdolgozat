@@ -25,7 +25,8 @@ export default function Oktato_TanuloAOrak({ route }) {
             }
 
             const data = await response.json();
-            setAdatok(data);
+            const rendezettAdatok = data.sort((a, b) => new Date(b.ora_datuma) - new Date(a.ora_datuma));
+            setAdatok(rendezettAdatok);
         } catch (error) {
             console.error("Hiba az API-hívás során:", error);
             alert("Nem sikerült az adatok letöltése.");

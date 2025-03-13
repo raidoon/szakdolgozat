@@ -454,6 +454,7 @@ app.post("/oraFelvitel", (req, res) => {
       req.body.bevitel3,
       req.body.bevitel4,
       req.body.bevitel5
+      
     ],
     (err, rows, fields) => {
       if (err) {
@@ -652,6 +653,33 @@ app.post("/diakokOrai", (req, res) => {
   );
   connection.end();
 });
+
+
+app.post("/diakokVisszaOrai", (req, res) => {
+  console.log("hello");
+  kapcsolat();
+  connection.query(
+    `SELECT *
+    FROM felhasznaloi_adatok AS felhasznalo
+    INNER JOIN tanulo_adatok AS tanulo
+    ON felhasznalo.felhasznalo_id=tanulo.tanulo_felhasznaloID
+    INNER JOIN ora_adatok AS ora
+    ON tanulo.tanulo_id= ora.ora_diakja 
+    WHERE ora.ora_allapot=0 OR ora.ora_allapot=2 AND tanulo_felhasznaloID = ?`,
+    [req.body.tanulo_felhasznaloID],
+    (err, rows, fields) => {
+      if (err) {
+        console.log(err);
+        res.status(500).send("Hiba");
+      } else {
+        console.log(rows);
+        res.status(200).send(rows);
+      }
+    }
+  );
+  connection.end();
+});
+
 
 //-------------------
 app.post("/koviOra", (req, res) => {
@@ -913,8 +941,62 @@ app.put('/oraTeljesitett', (req, res) => {
   connection.end();
 });
 
+//---------------------------------------------
+app.post("/elkoviOrak", (req, res) => {
+  kapcsolat();
+  connection.query(
+    `SELECT *
+    FROM ora_adatok AS ora
+    INNER JOIN oktato_adatok AS oktato
+    ON ora.ora_oktatoja = oktato.oktato_id
+    LEFT JOIN tanulo_adatok AS tanulo
+    ON ora.ora_diakja = tanulo.tanulo_id
+    WHERE ora.ora_allapot=0 AND oktato.oktato_id=?`,
+    [req.body.oktato_id],
+    (err, rows, fields) => {
+      if (err) {
+        console.log(err);
+        res.status(500).send("Hiba");
+      } else {
+        console.log(rows);
+        res.status(200).send(rows);
+      }
+    }
+  );
+  connection.end();
+});
+
+//----------------------------------
+// Óra szerkesztése
+app.post("/oraSzerkesztes", (req, res) => {
+  kapcsolat();
+  connection.query(
+    `UPDATE ora_adatok SET ora_diakja = ?, ora_datuma = ?, ora_kezdeshelye = ? WHERE ora_adatok.ora_id = ? `,
+    [
+      req.body.bevitel1,
+      req.body.bevitel2,
+      req.body.bevitel3,
+      req.body.bevitel4
+     
+      
+    ],
+    (err, rows, fields) => {
+      if (err) {
+        console.log("Hiba");
+        console.log(err);
+        res.status(500).send("Hiba");
+      } else {
+        console.log("Sikeres felvitel!");
+        res.status(200).send("Sikeres felvitel!");
+      }
+    }
+  );
+  connection.end();
+});
+
 
 
 app.listen(port, () => {
   console.log(`Example app listening on port ${port}`);
 });
+

@@ -5,120 +5,114 @@ import {
   TextInput,
   TouchableOpacity,
   StyleSheet,
+  Alert,
 } from "react-native";
 import { Dropdown } from "react-native-element-dropdown";
 import Ipcim from "../../Ipcim";
 import DateTimePicker from "@react-native-community/datetimepicker";
 
-export default function Oktato_OraRogzites({ route }) {
-  const { atkuld } = route.params;
-
-  const [adatTomb, setAdatTomb] = useState([]);
+export default function Oktato_OraSzerkesztes({ route, navigation }) {
+  const { ora } = route.params; // Az átadott óra adatai
   const [diakTomb, setDiakTomb] = useState([]);
-  const [selectedValue, setSelectedValue] = useState(1);
-  const [selectedDiak, setSelectedDiak] = useState(null);
-  const [date, setDate] = useState(new Date());
+  const [selectedDiak, setSelectedDiak] = useState(ora.tanulo_id);
+  const [date, setDate] = useState(new Date(ora.ora_datuma));
   const [showDatePicker, setShowDatePicker] = useState(false);
   const [showTimePicker, setShowTimePicker] = useState(false);
   const [datum, setDatum] = useState("");
   const [ido, setIdo] = useState("");
-  const [cim, setCim] = useState(""); // Opcionális cím mező
+  const [cim, setCim] = useState(ora.ora_kezdeshelye);
+  const [isLoading, setIsLoading] = useState(false);
 
+  // Dátum és idő formázása a meglévő adatokból
   useEffect(() => {
-    const fetchAdatok = async () => {
-      try {
-        const response = await fetch(Ipcim.Ipcim + "/valasztTipus");
-        const data = await response.json();
-        setAdatTomb(data.map((item) => ({ label: item.oratipus_neve, value: item.oratipus_id })));
-      } catch (error) {
-        console.error("Hiba a valasztTipus adatok betöltésekor:", error);
-      }
-    };
-    fetchAdatok();
+    const originalDate = new Date(ora.ora_datuma);
+    setDatum(
+      `${originalDate.getFullYear()}-${String(originalDate.getMonth() + 1).padStart(2, "0")}-${String(originalDate.getDate()).padStart(2, "0")}`
+    );
+    setIdo(
+      `${String(originalDate.getHours()).padStart(2, "0")}:${String(originalDate.getMinutes()).padStart(2, "0")}`
+    );
   }, []);
 
+  // Diákok betöltése
   useEffect(() => {
     const fetchDiakok = async () => {
-      if (!atkuld || !atkuld.oktato_id) return;
       try {
-        var adat = { "oktato_id": atkuld.oktato_id };
         const response = await fetch(`${Ipcim.Ipcim}/aktualisDiakok`, {
           method: "POST",
-          body: JSON.stringify(adat),
+          body: JSON.stringify({ oktato_id: ora.oktato_id }),
           headers: { "Content-type": "application/json; charset=UTF-8" },
         });
+        if (!response.ok) throw new Error("Hiba a diákok betöltésekor");
         const data = await response.json();
         setDiakTomb(data.map((item) => ({ label: item.tanulo_neve, value: item.tanulo_id })));
       } catch (error) {
-        console.error("Hiba az aktualisDiakok adatok betöltésekor:", error);
+        console.error("Hiba:", error);
+        Alert.alert("Hiba", "Nem sikerült betölteni a diákokat.");
       }
     };
     fetchDiakok();
-  }, [atkuld]);
+  }, []);
 
-  const felvitel = async () => {
-    if (!datum || !ido || !selectedValue || !selectedDiak) {
-      alert("Minden kötelező mezőt ki kell tölteni!");
+  // Óra frissítése
+  const frissites = async () => {
+    if (isLoading) return;
+
+    if (!datum || !ido || !selectedDiak) {
+      Alert.alert("Hiányzó adatok", "Minden kötelező mezőt ki kell tölteni!");
       return;
     }
 
-    const adatok = {
-      bevitel1: selectedValue,
-      bevitel2: atkuld.oktato_id,
-      bevitel3: selectedDiak,
-      bevitel4: `${datum} ${ido}`,
-      bevitel5: cim || "Nincs megadva", // Ha nincs cím, egy default szöveg kerül be
+    const frissitettAdatok = {
+      bevitel1: selectedDiak, // ora_diakja
+      bevitel2: `${datum} ${ido}`, // ora_datuma
+      bevitel3: cim || "Nincs megadva", // ora_kezdeshelye
+      bevitel4: ora.ora_id, // ora_id
     };
 
+    setIsLoading(true);
     try {
-      const response = await fetch(Ipcim.Ipcim + "/oraFelvitel", {
+      const response = await fetch(`${Ipcim.Ipcim}/oraSzerkesztes`, {
         method: "POST",
-        body: JSON.stringify(adatok),
+        body: JSON.stringify(frissitettAdatok),
         headers: { "Content-type": "application/json; charset=UTF-8" },
       });
-      const text = await response.text();
-      alert("Óra sikeresen rögzítve!");
+
+      if (!response.ok) throw new Error("Hiba a frissítés során");
+
+      Alert.alert("Siker", "Óra sikeresen frissítve!");
+      navigation.goBack(); // Visszalép az előző oldalra
     } catch (error) {
-      console.error("Hiba az óra rögzítésében:", error);
+      console.error("Hiba:", error);
+      Alert.alert("Hiba", "Nem sikerült frissíteni az órát.");
+    } finally {
+      setIsLoading(false);
     }
   };
 
+  // Dátum választás
   const valtozikDatum = (event, selectedDatum) => {
     if (selectedDatum) {
       setShowDatePicker(false);
-      const year = selectedDatum.getFullYear();
-      const month = String(selectedDatum.getMonth() + 1).padStart(2, "0"); // 2 számjegyű hónap
-      const day = String(selectedDatum.getDate()).padStart(2, "0"); // 2 számjegyű nap
-      setDatum(`${year}-${month}-${day}`);
+      setDatum(
+        `${selectedDatum.getFullYear()}-${String(selectedDatum.getMonth() + 1).padStart(2, "0")}-${String(selectedDatum.getDate()).padStart(2, "0")}`
+      );
     }
   };
 
+  // Idő választás
   const valtozikIdo = (event, selectedIdo) => {
     if (selectedIdo) {
       setShowTimePicker(false);
-      const hours = String(selectedIdo.getHours()).padStart(2, "0"); // 2 számjegyű óra
-      const minutes = String(selectedIdo.getMinutes()).padStart(2, "0"); // 2 számjegyű perc
-      setIdo(`${hours}:${minutes}`);
+      setIdo(
+        `${String(selectedIdo.getHours()).padStart(2, "0")}:${String(selectedIdo.getMinutes()).padStart(2, "0")}`
+      );
     }
   };
 
   return (
     <View style={styles.container}>
-      <Text style={styles.title}>Új óra rögzítése</Text>
-
-      <Text style={styles.label}>Válassz típust:</Text>
-      <Dropdown
-        style={styles.dropdown}
-        placeholderStyle={styles.placeholderStyle}
-        selectedTextStyle={styles.selectedTextStyle}
-        data={adatTomb}
-        maxHeight={300}
-        labelField="label"
-        valueField="value"
-        placeholder="-- Válassz --"
-        value={selectedValue}
-        onChange={(item) => setSelectedValue(item.value)}
-      />
+      <Text style={styles.title}>Óra szerkesztése</Text>
 
       <Text style={styles.label}>Válassz diákot:</Text>
       <Dropdown
@@ -134,26 +128,26 @@ export default function Oktato_OraRogzites({ route }) {
         onChange={(item) => setSelectedDiak(item.value)}
       />
 
-      <Text style={styles.label}>Óra helyszíne (opcionális):</Text>
-      <TextInput
-        style={styles.input}
-        placeholder="Írd be a címet (nem kötelező)"
-        value={cim}
-        onChangeText={setCim}
-      />
-
       <TouchableOpacity style={styles.button} onPress={() => setShowDatePicker(true)}>
         <Text style={styles.buttonText}>Dátum kiválasztása</Text>
       </TouchableOpacity>
-      {datum ? <Text style={styles.date}>{datum}</Text> : null}
+      {datum && <Text style={styles.date}>{datum}</Text>}
 
       <TouchableOpacity style={styles.button} onPress={() => setShowTimePicker(true)}>
         <Text style={styles.buttonText}>Idő kiválasztása</Text>
       </TouchableOpacity>
-      {ido ? <Text style={styles.date}>{ido}</Text> : null}
+      {ido && <Text style={styles.date}>{ido}</Text>}
 
-      <TouchableOpacity style={styles.saveButton} onPress={felvitel}>
-        <Text style={styles.buttonText}>Óra rögzítése</Text>
+      <Text style={styles.label}>Óra helyszíne:</Text>
+      <TextInput
+        style={styles.input}
+        placeholder="Írd be a címet"
+        value={cim}
+        onChangeText={setCim}
+      />
+
+      <TouchableOpacity style={styles.saveButton} onPress={frissites} disabled={isLoading}>
+        <Text style={styles.buttonText}>{isLoading ? "Feldolgozás..." : "Mentés"}</Text>
       </TouchableOpacity>
 
       {showDatePicker && (
