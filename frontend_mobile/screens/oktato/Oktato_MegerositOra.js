@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { View, Text, StyleSheet, FlatList, TouchableOpacity, Modal, Alert } from "react-native";
+import { View, Text, StyleSheet, FlatList, TouchableOpacity, Modal } from "react-native";
 import Ipcim from "../../Ipcim";
 
 export default function Oktato_MegerositOra({ route }) {
@@ -27,86 +27,107 @@ export default function Oktato_MegerositOra({ route }) {
 
     useEffect(() => {
         letoltes();
-        frissitOraAllapot();
     }, []);
 
-    // Automatikus frissítés
-    const frissitOraAllapot = async () => {
-        const most = new Date();
-        adatok.forEach(async (ora) => {
-            const oraDatum = new Date(ora.ora_datuma);
-            const kulonbsegNapokban = (most - oraDatum) / (1000 * 60 * 60 * 24);
-            
-            if (ora.ora_allapot === 0 && kulonbsegNapokban > 0) {
-                await modosulOra(ora.ora_id);
-            } else if (ora.ora_allapot === 2 && kulonbsegNapokban > 3) {
-                await teljesitettOra(ora.ora_id);
-            }
-        });
+    // Óra törlés megerősítése
+    const confirmTorles = (ora_id) => {
+        setSelectedOraId(ora_id);
+        setModalVisible(true);  // Megjeleníti a modális ablakot
     };
 
-    // Óra elutasítása
-    const elutasitOra = async (ora_id) => {
-        Alert.alert(
-            "Óra elutasítása",
-            "Biztosan elutasítod ezt az órát?",
-            [
-                { text: "Mégse", style: "cancel" },
-                { text: "Igen", onPress: async () => {
-                        try {
-                            await fetch(Ipcim.Ipcim + "/oraTorles", {
-                                method: "DELETE",
-                                body: JSON.stringify({ ora_id }),
-                                headers: { "Content-type": "application/json; charset=UTF-8" }
-                            });
-                            letoltes();
-                        } catch (error) {
-                            console.error("Hiba:", error);
-                        }
-                    }
-                }
-            ]
-        );
+    // Óra törlés
+    const torolOra = async () => {
+        const ora_id = selectedOraId;
+        try {
+            const response = await fetch(Ipcim.Ipcim + "/oraTorles", {
+                method: "DELETE",
+                body: JSON.stringify({ ora_id }),
+                headers: { "Content-type": "application/json; charset=UTF-8" }
+            });
+            const data = await response.json();
+            if (response.ok) {
+                alert(data.message);
+                letoltes();
+            } else {
+                alert(`Hiba: ${data.message}`);
+            }
+            setModalVisible(false);  // Bezárja a modális ablakot
+        } catch (error) {
+            console.error("Hiba:", error);
+            alert("Nem sikerült törölni az órát.");
+            setModalVisible(false);  // Bezárja a modális ablakot
+        }
     };
 
     return (
         <View style={styles.container}>
             <Text style={styles.header}>Részletek</Text>
             <Text style={styles.studentName}>{tanulo.tanulo_neve}</Text>
-            <FlatList
-                data={adatok}
-                keyExtractor={item => item.ora_id.toString()}
-                renderItem={({ item }) => (
-                    <View style={styles.card}>
-                        <View style={styles.cardItem}>
-                            <Text style={styles.cardItemTitle}>Dátum:</Text>
-                            <Text>{item.ora_datuma.split("T")[0]}</Text>
-                        </View>
-                        <View style={styles.cardItem}>
-                            <Text style={styles.cardItemTitle}>Időpont:</Text>
-                            <Text>{item.ora_datuma.split("T")[1].split(".")[0]}</Text>
-                        </View>
-                        <View style={styles.cardItem}>
-                            <Text style={styles.cardItemTitle}>Állapot:</Text>
-                            <Text>
-                                {item.ora_allapot === 0
-                                    ? "Függőben"
-                                    : item.ora_allapot === 1
-                                    ? "Teljesített"
-                                    : "Módosítható"}
-                            </Text>
-                        </View>
-                        {(item.ora_allapot === 0 || item.ora_allapot === 2) && (
-                            <TouchableOpacity
-                                style={styles.button}
-                                onPress={() => elutasitOra(item.ora_id)}
-                            >
-                                <Text style={styles.buttonText}>Elutasítás</Text>
-                            </TouchableOpacity>
-                        )}
-                    </View>
+            <View style={{ flex: 1, width: "100%" }}>
+    <FlatList
+        data={adatok}
+        keyExtractor={(item) => item.ora_id.toString()}
+        renderItem={({ item }) => (
+            <View style={styles.card}>
+                <View style={styles.cardItem}>
+                    <Text style={styles.cardItemTitle}>Dátum:</Text>
+                    <Text>{item.ora_datuma.split("T")[0]}</Text>
+                </View>
+                <View style={styles.cardItem}>
+                    <Text style={styles.cardItemTitle}>Időpont:</Text>
+                    {/*<Text>{item.ora_datuma.split("T")[1].split(".")[0]}</Text>*/}
+                </View>
+                <View style={styles.cardItem}>
+                    <Text style={styles.cardItemTitle}>Állapot:</Text>
+                    <Text>
+                        {item.ora_teljesitve === 0
+                            ? "Függőben"
+                            : item.ora_teljesitve === 1
+                            ? "Teljesített"
+                            : "Módosítható"}
+                    </Text>
+                </View>
+                {(item.ora_teljesitve === 0 || item.ora_teljesitve === 2) && (
+                    <TouchableOpacity
+                        style={styles.button}
+                        onPress={() => confirmTorles(item.ora_id)}
+                    >
+                        <Text style={styles.buttonText}>Elutasítás</Text>
+                    </TouchableOpacity>
                 )}
-            />
+            </View>
+        )}
+    />
+</View>
+
+
+            {/* Custom Modal */}
+            <Modal
+                transparent={true}
+                visible={isModalVisible}
+                animationType="fade"
+                onRequestClose={() => setModalVisible(false)}
+            >
+                <View style={styles.modalOverlay}>
+                    <View style={styles.modalContent}>
+                        <Text style={styles.modalText}>Biztosan törölni szeretnéd az órát?</Text>
+                        <View style={styles.modalButtonsContainer}>
+                            <TouchableOpacity
+                                style={[styles.modalButton, styles.cancelButton]}
+                                onPress={() => setModalVisible(false)}
+                            >
+                                <Text style={styles.buttonText}>Mégsem</Text>
+                            </TouchableOpacity>
+                            <TouchableOpacity
+                                style={[styles.modalButton, styles.deleteButton]}
+                                onPress={torolOra}
+                            >
+                                <Text style={styles.buttonText}>Törlés</Text>
+                            </TouchableOpacity>
+                        </View>
+                    </View>
+                </View>
+            </Modal>
         </View>
     );
 }
@@ -153,7 +174,7 @@ const styles = StyleSheet.create({
         fontWeight: "bold",
         color: "#333",
         fontSize: 16,
-        width: "40%"
+        width: "35%"
     },
     button: {
         backgroundColor: "#ff5c5c",
@@ -167,5 +188,49 @@ const styles = StyleSheet.create({
         color: "#fff",
         fontWeight: "bold",
         fontSize: 16
+    },
+    
+    // Modal styles
+    modalOverlay: {
+        flex: 1,
+        justifyContent: "center",
+        alignItems: "center",
+        backgroundColor: "rgba(0, 0, 0, 0.7)"
+    },
+    modalContent: {
+        backgroundColor: "#fff",
+        padding: 25,
+        borderRadius: 20,
+        alignItems: "center",
+        width: "80%",
+        shadowColor: "#000",
+        shadowOpacity: 0.3,
+        shadowRadius: 10,
+        elevation: 10
+    },
+    modalText: {
+        fontSize: 18,
+        marginBottom: 20,
+        textAlign: "center",
+        color: "#333",
+        fontFamily: "Arial"
+    },
+    modalButtonsContainer: {
+        flexDirection: "row",
+        justifyContent: "space-between",
+        width: "100%",
+        marginTop: 10
+    },
+    modalButton: {
+        paddingVertical: 12,
+        paddingHorizontal: 25,
+        borderRadius: 8,
+        width: "48%"
+    },
+    cancelButton: {
+        backgroundColor: "#ccc"
+    },
+    deleteButton: {
+        backgroundColor: "#ff5c5c"
     }
 });

@@ -25,8 +25,7 @@ export default function Oktato_TanuloAOrak({ route }) {
             }
 
             const data = await response.json();
-            const rendezettAdatok = data.sort((a, b) => new Date(b.ora_datuma) - new Date(a.ora_datuma));
-            setAdatok(rendezettAdatok);
+            setAdatok(data);
         } catch (error) {
             console.error("Hiba az API-hívás során:", error);
             alert("Nem sikerült az adatok letöltése.");
@@ -48,7 +47,7 @@ export default function Oktato_TanuloAOrak({ route }) {
                 <Text>Betöltés...</Text>
             ) : (
                 <FlatList
-                    data={adatok.filter(item => item.ora_allapot)}
+                    data={adatok.filter(item => item.ora_teljesitve)}
                     renderItem={({ item }) => (
                         <View style={stilus.oraKartya}>
                             <Text style={stilus.datum}>{item.ora_datuma.split("T")[0]}</Text>
