@@ -951,7 +951,7 @@ app.post("/elkoviOrak", (req, res) => {
     ON ora.ora_oktatoja = oktato.oktato_id
     LEFT JOIN tanulo_adatok AS tanulo
     ON ora.ora_diakja = tanulo.tanulo_id
-    WHERE ora.ora_allapot=0 AND oktato.oktato_id=?`,
+    WHERE ora.ora_teljesitve=0 AND oktato.oktato_id=?`,
     [req.body.oktato_id],
     (err, rows, fields) => {
       if (err) {
