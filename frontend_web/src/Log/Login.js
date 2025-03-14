@@ -1,9 +1,9 @@
 import React, { useState } from 'react';
-import './css/Login.css';
+import '../css/Login.css';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faEnvelope, faLock } from '@fortawesome/free-solid-svg-icons';
 import { FaEye, FaEyeSlash } from "react-icons/fa";
-import Ipcim from './Ipcim';
+import Ipcim from '../Ipcim';
 
 const Login = () => {
   const [email, setEamil] = useState('');
@@ -34,11 +34,12 @@ const Login = () => {
   };
 
   return (
+    <div className='LoginBody'>
     <div className="bejelentkezesNagyDiv">
       <div className="udvozloPanel">
         <h1>Üdvözöljük a <span style={{color: '#007bff', fontWeight: 600,fontSize:50}}>Jogsi+</span>  weboldalán!</h1>
         <p>Amennyiben Ön már rendelkezik adminisztrátori jogosultsággal, kérjük, jelentkezzen be a rendszerbe. </p>
-        <p>Ha Ön egy autósiskola képviseletében szeretné igénybe venni szolgáltatásainkat, kérjük, lépjen velünk kapcsolatba az alábbi <a href='Login' style={{color: '#007bff',fontWeight: 'bold',textDecoration:'none'}}>linken</a>, ahol szívesen válaszolunk minden kérdésére, és segítünk a regisztrációban!</p>
+        <p>Ha Ön egy autósiskola képviseletében szeretné igénybe venni szolgáltatásainkat, kérjük, lépjen velünk kapcsolatba az alábbi <a href='/kapcsolat' style={{color: '#007bff',fontWeight: 'bold',textDecoration:'none'}}>linken</a>, ahol szívesen válaszolunk minden kérdésére, és segítünk a regisztrációban!</p>
       </div>
       <div className="kisDiv">
         <h1 style={{color: '#007bff', fontWeight: 600,fontSize:40}}>Bejelentkezés</h1>
@@ -69,10 +70,12 @@ const Login = () => {
           </div>
           {error && <p className="hibaUzenet">{error}</p>}
           <button type="submit" className="bejelentkezoGomb">Bejelentkezés</button>
-          <label className='elfelejtettJelszo'>Elfelejtett jelszó?</label>
+          <a href='/elfelejtettjelszo' className='elfelejtettJelszo'>Elfelejtett jelszó?</a>
         </form>
       </div>
     </div>
+    </div>
+    
   );
 };
 

@@ -3,9 +3,10 @@ import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-d
 import Open from './Open';
 import Users from './Users';
 import Oktatok from './Oktatok';
-import Login from './Login';
+import Login from './Log/Login';
 import Tanulok from './Tanulok';
-
+import Kapcsolat from './Log/Kapcsolat';
+import ElfelejtettJelszo from './Log/ElfelejtettJelszo';
 
 const ProtectedRoute = ({ children }) => {
   const token = localStorage.getItem('token');
@@ -47,6 +48,18 @@ const App = () => {
             <ProtectedRoute>
               <Tanulok />
             </ProtectedRoute>
+          } 
+          />
+          <Route 
+          path="/kapcsolat" 
+          element={
+            <Kapcsolat/>
+          } 
+          />
+          <Route 
+          path="/elfelejtettjelszo" 
+          element={
+            <ElfelejtettJelszo/>
           } 
           />
         <Route path="*" element={<Navigate to="/login" />} />

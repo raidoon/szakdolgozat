@@ -22,7 +22,7 @@ const Navbar = () => {
       </button>
       <div className={`menu ${menuOpen ? 'open' : ''}`}>
         <Link to="/open" className="link" onClick={() => setMenuOpen(false)}>
-          Nyitólap
+          Kezdőlap
         </Link>
         <Link to="/users" className="link" onClick={() => setMenuOpen(false)}>
           Felhasználók

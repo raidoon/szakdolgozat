@@ -1,6 +1,7 @@
 import React, { useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import Navbar from './Navbar';
+import "./css/Kezdolap.css"
 
 const Open = () => {
   const navigate = useNavigate();
@@ -13,20 +14,13 @@ const Open = () => {
   }, [navigate]);
 
   return (
-    <div>
+    <div className='openBody'>
       <Navbar />
-      <div style={styles.content}>
-        <h1>Üdvözlünk a védett oldalon!</h1>
-      </div>
+      <h1>Üdvözlünk a védett oldalon!</h1>
+
     </div>
   );
 };
 
-const styles = {
-  content: {
-    padding: '20px',
-    textAlign: 'center',
-  },
-};
 
 export default Open;

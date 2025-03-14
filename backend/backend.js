@@ -216,6 +216,35 @@ app.post('/web/login', (req, res) => {
   });
   connection.end();
 });
+//------------------------------------------------ ADMIN EMAIL ELLENŐRZÉS
+app.post('/adminEmailEllenorzes', (req, res) => {
+  const { email } = req.body;
+  kapcsolat();
+  const query = 'SELECT felhasznalo_email, felhasznalo_tipus FROM felhasznaloi_adatok WHERE felhasznalo_email = ?';
+  connection.query(query, [email], (err, rows) => {
+    if (err) {
+      console.error('Adatbázis hiba:', err);
+      res.status(500).json({ message: 'Szerverhiba' });
+      return;
+    }
+    // Ha nincs ilyen email cím
+    if (rows.length === 0) {
+      res.status(404).json({ message: 'Ez az email cím nem található' });
+      return;
+    }
+    // Ha az email cím létezik, de a felhasznalo_tipus nem 3
+    if (rows[0].felhasznalo_tipus !== 3) {
+      res.status(403).json({ message: 'Nincs jogosultságod a belépéshez!' });
+      return;
+    }
+    // Ha minden rendben, az email cím és a jogosultság is megfelelő
+    res.status(200).json({
+      message: 'Sikeres admin email ellenőrzés!',
+      user: rows[0], 
+    });
+  });
+  connection.end();
+});
 //------------------------------------------------ TANULÓ ADATAINAK LEKÉRDEZÉSE
 app.post("/sajatAdatokT", (req, res) => {
   kapcsolat();
