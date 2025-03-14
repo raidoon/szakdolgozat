@@ -3,7 +3,7 @@ import { View, Text, } from "react-native";
 import Styles from "../../../Styles";
 import Ionicons from "react-native-vector-icons/Ionicons";
 
-export default function Kapcsolat() {
+export default function OktatoKapcsolat() {
   return (
     <View style={Styles.kapcsolatNagyDiv}>
 

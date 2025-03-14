@@ -14,9 +14,9 @@ const Tanulo_KinekAkarszBefizetni = ({atkuld}) => {
   return (
     <LinearGradient colors={["#ffffff", "#f0f4ff"]} style={styles.container}>
       <ScrollView contentContainerStyle={styles.scrollContainer}>
-        <Text style={styles.title}>Hol fizettél?</Text>
+        <Text style={styles.title}>Válassza ki, hogy kinél fizette be a felvenni kívánt összeget!</Text>
         <Text style={styles.subtitle}>
-          Válaszd ki, hogy hol fizetted be a gyakorlati óra/vizsga díját!
+        Az itt rögzített tranzakciók kizárólag szemléltető jellegűek, és nem vonódnak le a bankkártyájáról!
         </Text>
         {/* FIZETÉS AZ OKTATÓNAK */}
         <TouchableOpacity
@@ -33,7 +33,7 @@ const Tanulo_KinekAkarszBefizetni = ({atkuld}) => {
             style={styles.gradient}
           >
             <Ionicons name="person" size={30} color="#fff" />
-            <Text style={styles.buttonText}>Oktatónál fizettem</Text>
+            <Text style={styles.buttonText}>Az oktatónál fizetett</Text>
           </LinearGradient>
         </TouchableOpacity>
         {/*  FIZETÉS AZ AUTÓSISKOLÁNAK */}
@@ -51,7 +51,7 @@ const Tanulo_KinekAkarszBefizetni = ({atkuld}) => {
             style={styles.gradient}
           >
             <Ionicons name="school" size={30} color="#fff" />
-            <Text style={styles.buttonText}>Autósiskolánál fizettem</Text>
+            <Text style={styles.buttonText}>Az autósiskolánál fizetett</Text>
           </LinearGradient>
         </TouchableOpacity>
         {/* FIZETÉSI ELŐZMÉNYEK AZ ÖSSZES BEFIZETÉSHEZ !!! */}

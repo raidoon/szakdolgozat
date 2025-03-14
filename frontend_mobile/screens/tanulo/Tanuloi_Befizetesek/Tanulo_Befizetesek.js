@@ -119,7 +119,7 @@ const Tanulo_Befizetesek = ({ route }) => {
         >
           <Penz width={100} height={100} marginTop={50} />
           <Text style={styles.nincsOra}>
-            Itt megnézheted az összes korábbi és aktuális tranzakciódat, és azok
+            Itt megnézheti az összes korábbi és aktuális tranzakciót, és azok
             részleteit.
           </Text>
           <Text style={styles.vanOra}>
@@ -130,10 +130,10 @@ const Tanulo_Befizetesek = ({ route }) => {
       ) : (
         <ScrollView contentContainerStyle={styles.tranzakcioContainer}>
           <Text style={styles.nincsOra}>
-            Itt láthatod az összes korábbi és folyamatban lévő tranzakciót.
+            Itt láthatja az összes korábbi és folyamatban lévő tranzakciót.
           </Text>
           <Text style={styles.vanOra}>
-            A részletek megtekintéséhez kattints a tranzakcióra!
+            A részletek megtekintéséhez kattintson a tranzakcióra!
           </Text>
           {befizetLista
             .sort(

@@ -18,6 +18,10 @@ import OktatonakAkarokFizetni from "./screens/tanulo/Tanuloi_Befizetesek/Oktaton
 import SzemelyesAdatok from "./screens/tanulo/ProfilScreens/SzemelyesAdatok";
 import JelszoMegvaltoztatasa from "./screens/tanulo/ProfilScreens/JelszoMegvaltoztatasa";
 import Kapcsolat from "./screens/tanulo/ProfilScreens/Kapcsolat";
+//-------------------------oktató profilon belüli menük
+import OktatoSzemelyesAdatok from "./screens/oktato/OktatoProfilScrens/OktatoSzemelyesAdatok";
+import OktatoJelszo from "./screens/oktato/OktatoProfilScrens/OktatoJelszo";
+import OktatoKapcsolat from "./screens/oktato/OktatoProfilScrens/OktatoKapcsolat";
 //------------------------------------------------------------------------- OKTATÓK
 //oktato profilok
 import Oktato_BejelentkezesUtan2 from "./screens/oktato/Oktato_BejelentkezesUtan2";
@@ -47,14 +51,8 @@ import Oktato_LEVIZSGAZOTT from "./screens/oktato/Oktato_LEVIZSGAZOTT";
 import Oktato_LevizsgazottTanuloReszletei from "./screens/oktato/Oktato_LevizsgazottTanuloReszletei";
 import Oktato_ElkovetkezendoOrak from "./screens/oktato/Oktato_ElkovetkezendoOrak";
 import Oktato_OraSzerkesztes from "./screens/oktato/Oktato_OraSzerkesztes";
-
-
-
-
 //oktató profilok vége
 const Stack = createStackNavigator();
-
-
 function OktatoMenuStack(){
   return (
     <NavigationContainer>
@@ -82,23 +80,44 @@ function TanuloMenusStack(){
     </Stack.Navigator>
   );
 }
-
 function TanuloPenzugyStack(){
   return(
     <Stack.Navigator screenOptions={{ headerShown: true }}>
-      <Stack.Screen name="AutosiskolanakAkarokFizetni" options={{title:"Befizetés az autósiskola számára"}} component={AutosiskolanakAkarokFizetni}/>
-      <Stack.Screen name="OktatonakAkarokFizetni" options={{title:"Befizetés az oktató számára"}} component={OktatonakAkarokFizetni}/>
+      <Stack.Screen name="AutosiskolanakAkarokFizetni" 
+      options={{
+        title:"Befizetés az autósiskolánál",
+        headerStyle:{
+          backgroundColor: '#feb47b'
+        }
+        }} component={AutosiskolanakAkarokFizetni}/>
+      <Stack.Screen name="OktatonakAkarokFizetni" 
+      options={{
+        title:"Befizetés az oktatónál",
+        headerStyle:{
+          backgroundColor: '#87CEFA'
+        }
+        }} 
+        component={OktatonakAkarokFizetni}/>
       <Stack.Screen name="Tanulo_Befizetesek" options={{title:"Fizetési előzmények"}} component={Tanulo_Befizetesek}/>
     </Stack.Navigator>
   );
 }
-
 function TanuloProfilStack() {
   return (
     <Stack.Navigator screenOptions={{ headerShown: true }}>
       <Stack.Screen name="SzemelyesAdatok" options={{title:"Személyes adatok módosítása"}} component={SzemelyesAdatok} />
       <Stack.Screen name="JelszoMegvaltoztatasa" options={{title:"Jelszó megváltoztatása"}} component={JelszoMegvaltoztatasa} />
       <Stack.Screen name="Kapcsolat" options={{title:"Kapcsolat felvétele"}} component={Kapcsolat} />
+    </Stack.Navigator>
+  );
+}
+
+function OktatoProfilStack(){
+  return(
+    <Stack.Navigator screenOptions={{ headerShown: true }}>
+      <Stack.Screen name="OktatoSzemelyesAdatok" options={{title:"Személyes adatok módosítása"}} component={OktatoSzemelyesAdatok}/>
+      <Stack.Screen name="OktatoJelszo" options={{title: "Jelszó megváltoztatása"}} component={OktatoJelszo}/>
+      <Stack.Screen name="OktatoKapcsolat" options={{title:"Kapcsolat felvétele"}} component={OktatoKapcsolat}/>
     </Stack.Navigator>
   );
 }
@@ -113,6 +132,7 @@ export default function App() {
         <Stack.Screen name="Oktato_BejelentkezesUtan2" component={Oktato_BejelentkezesUtan2}/>
         <Stack.Screen name="Tanuló menük" component={TanuloMenusStack}/>
         <Stack.Screen name="Tanuló Profil" component={TanuloProfilStack}/>
+        <Stack.Screen name="Oktató Profil" component={OktatoProfilStack}/>
         <Stack.Screen name="Tanuló Pénzügyek" component={TanuloPenzugyStack}/>
         <Stack.Screen name="Oktató menük" component={OktatoMenuStack}/>
         <Stack.Screen name="Oktato_TanuloReszletei" component={Oktato_TanuloReszletei}/>

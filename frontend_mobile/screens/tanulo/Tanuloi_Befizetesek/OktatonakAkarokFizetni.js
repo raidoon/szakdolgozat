@@ -1,12 +1,12 @@
 import React, { useState } from "react";
-import {View,Text,TouchableOpacity,StyleSheet,ScrollView} from "react-native";
+import { View, Text, TouchableOpacity, StyleSheet, ScrollView } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import { LinearGradient } from "expo-linear-gradient";
 import Ipcim from "../../../Ipcim";
 import HibaModal from "../../../extra/HibaModal";
 import SikerModal from "../../../extra/SikerModal";
 const OktatonakAkarokFizetni = ({ route }) => {
-  const {atkuld} = route.params;
+  const { atkuld } = route.params;
   const [osszeg, setOsszeg] = useState("");
   const [szamologepLathatoe, setSzamologepLathatoe] = useState(false);
   const [tanora, setTanora] = useState(true);
@@ -15,15 +15,15 @@ const OktatonakAkarokFizetni = ({ route }) => {
   const [hibaModal, setHibaModal] = useState(false);
   const [hibaModalCim, setHibaModalCim] = useState('');
   const [hibaModalSzoveg, setHibaModalSzoveg] = useState('');
-  const [sikerModal,setSikerModal] = useState(false);
+  const [sikerModal, setSikerModal] = useState(false);
   const [sikerModalCim, setSikerModalCim] = useState('');
   const [sikerModalSzoveg, setSikerModalSzoveg] = useState('');
   //------------------------------------------------------------- CHECKBOX
-  function SajatCheckbox({ label, isChecked, onPress }) {
+  function SajatCheckbox({ szoveg, bepipalva, haRakattintanak }) {
     return (
-      <TouchableOpacity style={styles.checkboxContainer} onPress={onPress}>
-        <View style={[styles.checkbox, isChecked && styles.checkedCheckbox]} />
-        <Text style={{ fontSize: 17 }}>{label}</Text>
+      <TouchableOpacity style={styles.checkboxContainer} onPress={haRakattintanak}>
+        <View style={[styles.checkbox, bepipalva && styles.bepipaltCheckbox]} />
+        <Text style={{ fontSize: 17 }}>{szoveg}</Text>
       </TouchableOpacity>
     );
   }
@@ -31,17 +31,17 @@ const OktatonakAkarokFizetni = ({ route }) => {
   const osszegFelvitele = async () => {
     if (osszeg === "" || parseFloat(osszeg) === 0) {
       setHibaModalCim("Hoppá!");
-      setHibaModalSzoveg("Véletlenül 0 Ft-ot írt az összeg helyére!");
+      setHibaModalSzoveg("Úgy tűnik, hogy elfelejtette beírni az összeget!");
       setHibaModal(true);
       return;
     }
     else if (osszeg.startsWith("0") && osszeg !== "0") {
       setHibaModalCim("Hoppá!");
-      setHibaModalSzoveg("Véletlenül 0-al kezdte a beírt összeget!");
+      setHibaModalSzoveg("A felvenni kívánt összeg nem kezdődhet nullával!");
       setHibaModal(true);
       return;
     }
-    else{
+    else {
       const tipusID = tanora ? 1 : vizsga ? 2 : null;
       const datum = new Date();
       const formazottDatum =
@@ -148,25 +148,28 @@ const OktatonakAkarokFizetni = ({ route }) => {
         <ScrollView contentContainerStyle={{ alignContent: "center" }}>
           <View style={styles.container2}>
             {/*-------------------------------------- SZÁMOLÓGÉP LÁTHATÓ -----------------------*/}
-            <Text style={styles.title}>FIGYELEM!</Text>
-            <Text style={styles.subtitle}>
-              Az alkalmazásban rögzített tranzakciók kizárólag szemléltető
-              jellegűek, és nem vonódnak le a bankkártyádról!
+            <Text style={styles.nagybetusSzoveg}>FONTOS!</Text>
+
+            <Text style={styles.kisbetusSzoveg}>
+              Adja meg, hogy a befizetett összeg milyen típusú.
+            </Text>
+            <Text style={styles.kisbetusSzoveg}>
+              Válasszon az alábbi lehetőségek közül:
             </Text>
             {/*---------------------------------- CHECKBOX --------------------------------*/}
             <View style={styles.checkboxView}>
               <SajatCheckbox
-                label="Tanóra"
-                isChecked={tanora}
-                onPress={() => {
+                szoveg="Gyakorlati óra"
+                bepipalva={tanora}
+                haRakattintanak={() => {
                   setTanora(true);
                   setVizsga(false);
                 }}
               />
               <SajatCheckbox
-                label="Vizsga"
-                isChecked={vizsga}
-                onPress={() => {
+                szoveg="Vizsga"
+                bepipalva={vizsga}
+                haRakattintanak={() => {
                   setVizsga(true);
                   setTanora(false);
                 }}
@@ -179,7 +182,7 @@ const OktatonakAkarokFizetni = ({ route }) => {
             </TouchableOpacity>
             {/*----------------------------------- FIZETÉS ELKÜLDÉSE GOMB ----------------- */}
             <TouchableOpacity
-              style={styles.payButton}
+              style={styles.fizetesGomb}
               onPress={osszegFelvitele}
             >
               <LinearGradient
@@ -187,7 +190,7 @@ const OktatonakAkarokFizetni = ({ route }) => {
                 style={styles.gradient}
               >
                 <Ionicons name="card" size={24} color="#fff" />
-                <Text style={styles.payButtonText}>Fizetés elküldése</Text>
+                <Text style={styles.fizetesGombSzoveg}>Tranzakció felvétele</Text>
               </LinearGradient>
             </TouchableOpacity>
             {szamologepBetoltes()}
@@ -195,38 +198,41 @@ const OktatonakAkarokFizetni = ({ route }) => {
         </ScrollView>
       ) : (
         <ScrollView contentContainerStyle={styles.scrollContainer}>
-          <Text style={styles.title}>Fizetés az oktatónál</Text>
-          <Text style={styles.subtitle}>
-            A felvenni kívánt összeget az oktatód fogja jóváhagyni, amennyiben
-            tényleg kifizetted neki!
+          <Text style={styles.nagybetusSzoveg}>FIGYELEM!</Text>
+          <Text style={styles.kisbetusSzoveg}>
+            Ez az oldal az oktatónál történő befizetéseket kezeli.
           </Text>
+          <Text style={styles.kisbetusSzoveg}>
+            Az itt felvenni kívánt összeget az oktatója fogja jóváhagyni a saját alkalmazásában, amennyiben annak befizetése valóban megtörtént.
+          </Text>
+
           <TouchableOpacity onPress={osszegMegnyomas} style={styles.input}>
             <Text style={styles.osszegBeiras}>
               {osszeg ? `${osszeg} Ft` : "Összeg (Ft)"}
             </Text>
           </TouchableOpacity>
           {/*----------------------------------- FIZETÉS ELKÜLDÉSE GOMB ----------------- */}
-          <TouchableOpacity style={styles.payButton} onPress={osszegFelvitele}>
+          <TouchableOpacity style={styles.fizetesGomb} onPress={osszegFelvitele}>
             <LinearGradient
-             colors={["#2EC0F9", "#0057FF"]}
+              colors={["#2EC0F9", "#0057FF"]}
               style={styles.gradient}
             >
               <Ionicons name="card" size={24} color="#fff" />
-              <Text style={styles.payButtonText}>Fizetés elküldése</Text>
+              <Text style={styles.fizetesGombSzoveg}>Tranzakció felvétele</Text>
             </LinearGradient>
           </TouchableOpacity>
         </ScrollView>
       )}
       <HibaModal
-            visible={hibaModal}
-            onClose={()=> setHibaModal(false)}
-            title={hibaModalCim}
-            body={hibaModalSzoveg}
-            buttonText={"Rendben"}
+        visible={hibaModal}
+        onClose={() => setHibaModal(false)}
+        title={hibaModalCim}
+        body={hibaModalSzoveg}
+        buttonText={"Rendben"}
       />
       <SikerModal
         visible={sikerModal}
-        onClose={()=>setSikerModal(false)}
+        onClose={() => setSikerModal(false)}
         title={sikerModalCim}
         body={sikerModalSzoveg}
         buttonText={"Rendben"}
@@ -249,23 +255,17 @@ const styles = StyleSheet.create({
     alignItems: "center",
     padding: 20,
   },
-  osszegBeiras: {
-    fontSize: 40,
-    fontWeight: "bold",
-    color: "#6B6054", //earthy vibes
-    textAlign: "center",
-    marginBottom: 10,
-  },
-  title: {
+  nagybetusSzoveg: {
     fontSize: 24,
     fontWeight: "bold",
     color: "#333",
     marginBottom: 10,
   },
-  subtitle: {
+  kisbetusSzoveg: {
     fontSize: 16,
     color: "#666",
     textAlign: "center",
+    marginBottom: 10
   },
   input: {
     width: "100%",
@@ -275,6 +275,7 @@ const styles = StyleSheet.create({
     borderRadius: 10,
     paddingHorizontal: 15,
     marginBottom: 20,
+    marginTop: 20,
     elevation: 3,
     shadowColor: "#000",
     shadowOffset: { width: 0, height: 2 },
@@ -285,7 +286,7 @@ const styles = StyleSheet.create({
     color: "gray",
     fontSize: 18,
   },
-  payButton: {
+  fizetesGomb: {
     width: "100%",
     height: 60,
     borderRadius: 15,
@@ -303,42 +304,11 @@ const styles = StyleSheet.create({
     alignItems: "center",
     flexDirection: "row",
   },
-  payButtonText: {
+  fizetesGombSzoveg: {
     fontSize: 18,
     fontWeight: "bold",
     color: "#fff",
     marginLeft: 10,
-  },
-  nincsOra: {
-    textAlign: "center",
-    color: "#888",
-    fontStyle: "italic",
-    marginTop: 20,
-  },
-  cim: {
-    fontSize: 24,
-    fontWeight: "bold",
-    color: "#6B6054",
-    marginBottom: 20,
-  },
-  figyelmeztetes: {
-    fontSize: 16,
-    color: "#8e8e93",
-    marginBottom: 5,
-    textAlign: "center",
-  },
-  felvetelGomb: {
-    backgroundColor: "#4DA167", //zöld
-    paddingVertical: 15,
-    paddingHorizontal: 40,
-    borderRadius: 10,
-    marginBottom: 20,
-    elevation: 10,
-  },
-  felvetelGombSzoveg: {
-    color: "white",
-    fontSize: 18,
-    fontWeight: "bold",
   },
   szamologepView: {
     flexDirection: "row",
@@ -359,7 +329,7 @@ const styles = StyleSheet.create({
   },
   szamologepSzoveg: {
     fontSize: 24,
-    color: "#000080", 
+    color: "#000080",
     fontWeight: "bold",
   },
   szamologepSzovegC: {
@@ -371,18 +341,6 @@ const styles = StyleSheet.create({
     fontSize: 24,
     color: "red",
     fontWeight: "bold",
-  },
-  inputWrapper: {
-    flexDirection: "row",
-    alignItems: "center",
-    backgroundColor: "#f7f7f7",
-    borderWidth: 1,
-    borderColor: "#ccc",
-    borderRadius: 8,
-    paddingHorizontal: 10,
-    width: "100%",
-    height: 50,
-    marginBottom: 15,
   },
   checkboxContainer: {
     flexDirection: "row",
@@ -397,7 +355,7 @@ const styles = StyleSheet.create({
     marginRight: 8,
     borderRadius: 30,
   },
-  checkedCheckbox: {
+  bepipaltCheckbox: {
     backgroundColor: "#87CEFA",
   },
   checkboxView: {

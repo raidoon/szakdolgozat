@@ -273,6 +273,26 @@ app.post("/tanuloSUMbefizetes", (req, res) => {
   );
   connection.end();
 });
+//------------------------------------------------ TANULÓ LEGUTÓBBI BEFIZETÉSÉNEK IDŐPONTJA -- de csak azok közül amik nem lettek elutasitva!!!
+app.post("/tanuloLegutobbiBefizetese", (req, res) => {
+  kapcsolat();
+  connection.query(
+    `SELECT COALESCE(MAX(befizetesek.befizetesek_ideje), 'Még nem történt befizetés') AS utolso_befizetes
+        FROM befizetesek 
+        WHERE befizetesek.befizetesek_tanuloID = ? AND befizetesek.befizetesek_jovahagyva !=2`,
+    [req.body.befizetesek_tanuloID],
+    (err, rows, fields) => {
+      if (err) {
+        console.log(err);
+        res.status(500).send("Hiba");
+      } else {
+        console.log(rows);
+        res.status(200).send(rows);
+      }
+    }
+  );
+  connection.end();
+});
 //------------------------------------------------ TANULÓ TARTOZÁSAINAK TELJES ÖSSZEGE
 app.post("/tanuloSUMtartozas", (req, res) => {
   kapcsolat();

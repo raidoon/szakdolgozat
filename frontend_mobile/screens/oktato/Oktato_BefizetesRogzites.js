@@ -63,7 +63,7 @@ export default function Oktato_BefizetesRogzites({ route }) {
     if (!datum || !oraPerc || !selectedValue || !selectedDiak || !osszeg) {
       //alert("A kötelező mezőket töltsd ki!");
       setHibaModalLathato(true);
-      setHibaModalSzoveg('A kötelező mezőket töltsd ki!');
+      setHibaModalSzoveg('Minden mező kitöltése kötelező!');
       return;
     }
 

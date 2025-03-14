@@ -35,7 +35,6 @@ export default function Regisztracio({ navigation }) {
   //---------------------------------------------------- TELEFONSZÁMOK
   const [telefonszam, setTelefonszam] = useState("");
   const [telefonszamHiba, setTelefonszamHiba] = useState(false); // Hibajelzés
-  const [telefonbaKattintas,setTelefonbaKattintas] = useState(false);
   //------------------------------- DROPDOWN
   const [kinyitDropdown, setKinyitDropdown] = useState(false);
   const [ertekek, setErtekek] = useState([]);
@@ -186,7 +185,7 @@ export default function Regisztracio({ navigation }) {
   }, []);
   return (
     <View style={Styles.bejelentkezes_Container}>
-      <Text style={Styles.focim}>Regisztráció</Text>
+      <Text style={[Styles.focim, { color: '#0096FF' }]}>Regisztráció</Text>
       <Text style={Styles.alcim}>Először add meg az adataidat</Text>
       <DropDownPicker
         min={1}
@@ -233,7 +232,7 @@ export default function Regisztracio({ navigation }) {
           onChangeText={setNev}
         />
       </View>
-      <View>
+
         <View
           style={[
             Styles.bejelentkezes_FormInputWrapper,
@@ -249,13 +248,11 @@ export default function Regisztracio({ navigation }) {
             placeholder="Telefonszám"
             maxLength={12} // +36 (3 karakter) + 9 számjegy
             onFocus={() => {
-              setTelefonbaKattintas(true);
               if (telefonszam === "") {
                 setTelefonszam("+36");
               }
             }}
             onBlur={() => {
-              setTelefonbaKattintas(false);
               if (telefonszam === "+36") {
                 setTelefonszam("");
               }
@@ -268,7 +265,7 @@ export default function Regisztracio({ navigation }) {
             Hibás telefonszám! Kérjük adjon meg 9 számjegyet a +36 után.
           </Text>
         )}
-      </View>
+
       <View style={[Styles.bejelentkezes_FormInputWrapper, jelszoHiba && { borderColor: "red" }]}>
         <Octicons name="lock" size={20} color="#0096FF" />
         <TextInput

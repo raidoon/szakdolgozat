@@ -134,7 +134,6 @@ const Styles = StyleSheet.create({
   },
   regisztraciosGomb:{
     backgroundColor:"#0096FF",
-    //backgroundColor: "#0047AB",
     paddingVertical: 12,
     paddingHorizontal: 30,
     borderRadius: 8,

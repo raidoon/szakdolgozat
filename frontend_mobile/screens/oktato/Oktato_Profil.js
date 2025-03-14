@@ -1,184 +1,120 @@
-import React from "react";
-import {
-  View,
-  Text,
-  StyleSheet,
-} from "react-native";
+import React, { useState } from "react";
+import { View, Text, StyleSheet, Modal, TouchableOpacity } from "react-native";
 import Ripple from "react-native-material-ripple";
 import Styles from "../../Styles";
 import Ionicons from "react-native-vector-icons/Ionicons";
 import { useNavigation } from "@react-navigation/native";
-import AsyncStorage from '@react-native-async-storage/async-storage';
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
-const Oktato_Profil = ({atkuld}) => {
-  console.log(atkuld)
+const Oktato_Profil = ({ atkuld }) => {
   const navigation = useNavigation();
-
-  const kijelentkeztetes = async () => {
-    await AsyncStorage.removeItem('bejelentkezve');
-    navigation.navigate('Bejelentkezes');
+  const [kijelentkeztetesAlertLathato, setKijelentkeztetesAlertLathato] =
+    useState(false);
+  const modalCsukas = () => {
+    setKijelentkeztetesAlertLathato(false);
   };
-
+  const kijelentkeztetes = async () => {
+    await AsyncStorage.removeItem("bejelentkezve");
+    navigation.navigate("Bejelentkezes");
+  };
   return (
-    <View style={styles.default}>
-      <View>
-        <Text styles={{ textAlign: "center" }}>felhasználó profilkép?</Text>
+    <View style={styles.container}>
+      <View style={Styles.profilView}>
+        <Text style={Styles.profilNev}>{atkuld.oktato_neve}</Text>
+        <Text style={Styles.profilEmail}>{atkuld.felhasznalo_email}</Text>
       </View>
 
-      <View>
-        <Text style={Styles.focim}>{atkuld.oktato_neve}</Text>
-        <Text style={Styles.alcim}>{atkuld.felhasznalo_email}</Text>
-      </View>
-
-      <View style={Styles.profil_gombDiv}>
+      <View style={Styles.profilGombokView}>
         <Ripple
-          rippleColor="rgb(0,0,0)"
-          rippleOpacity={0.05}
-          rippleDuration={300}
-          rippleCentered={true}
-          rippleFades={false}
-          rippleContainerBorderRadius={20}
-          style={[Styles.profileGombok, Styles.profil_gombDiv]}
+          style={Styles.gombRipple}
           onPress={() =>
-            navigation.navigate("Oktatói Profil", {
-              screen: "SzemelyesAdatok",
+            navigation.navigate("Oktató Profil", {
+              screen: "OktatoSzemelyesAdatok",
+              params: { atkuld: atkuld },
             })
           }
         >
-          <View style={styles.elsoFlex}>
-            <Ionicons name="person-outline" size={25} color="green" />
-          </View>
-          <View styles={styles.masodikFlex}>
-            <Text style={{ fontSize: 20 }}>Személyes adatok </Text>
-          </View>
-          <View style={styles.harmadikFlex}>
-            <Ionicons name="chevron-forward-outline" size={25} color="gray" />
-          </View>
+          <Ionicons name="person-outline" size={24} color="#4CAF50" />
+          <Text style={Styles.gombText}>Személyes adatok</Text>
+          <Ionicons name="chevron-forward-outline" size={24} color="#888" />
         </Ripple>
-      </View>
 
-      <View style={Styles.profil_gombDiv}>
         <Ripple
-          rippleColor="rgb(0,0,0)"
-          rippleOpacity={0.05}
-          rippleDuration={300}
-          rippleCentered={true}
-          rippleFades={false}
-          rippleContainerBorderRadius={20}
-          style={[Styles.profileGombok, Styles.profil_gombDiv]}
+          style={Styles.gombRipple}
           onPress={() =>
-            navigation.navigate("Tanuló Profil", {
-              screen: "JelszoMegvaltoztatasa",
+            navigation.navigate("Oktató Profil", {
+              screen: "OktatoJelszo",
+              params: { atkuld: atkuld },
             })
           }
         >
-          <View style={styles.elsoFlex}>
-            <Ionicons name="shield-half-outline" size={25} color="blue" />
-          </View>
-          <View styles={styles.masodikFlex}>
-            <Text style={{ fontSize: 20 }}>Jelszó megváltoztatása</Text>
-          </View>
-          <View style={styles.harmadikFlex}>
-            <Ionicons name="chevron-forward-outline" size={25} color="gray" />
-          </View>
+          <Ionicons name="shield-half-outline" size={24} color="#2196F3" />
+          <Text style={Styles.gombText}>Jelszó megváltoztatása</Text>
+          <Ionicons name="chevron-forward-outline" size={24} color="#888" />
         </Ripple>
-      </View>
-      <View style={Styles.profil_gombDiv}>
+
         <Ripple
-          rippleColor="rgb(0,0,0)"
-          rippleOpacity={0.05}
-          rippleDuration={300}
-          rippleCentered={true}
-          rippleFades={false}
-          rippleContainerBorderRadius={20}
-          style={[Styles.profileGombok, Styles.profil_gombDiv]}
+          style={Styles.gombRipple}
           onPress={() =>
-            navigation.navigate("Tanuló Profil", {
-              screen: "Beallitasok",
-            })
+            navigation.navigate("Oktató Profil", { screen: "OktatoKapcsolat" })
           }
         >
-          <View style={styles.elsoFlex}>
-            <Ionicons name="settings-outline" size={25} color="purple" />
-          </View>
-          <View styles={styles.masodikFlex}>
-            <Text style={{ fontSize: 20 }}>Beállítások</Text>
-          </View>
-          <View style={styles.harmadikFlex}>
-            <Ionicons name="chevron-forward-outline" size={25} color="gray" />
-          </View>
+          <Ionicons name="information-circle-outline" size={24} color="#333" />
+          <Text style={Styles.gombText}>Kapcsolat</Text>
+          <Ionicons name="chevron-forward-outline" size={24} color="#888" />
         </Ripple>
       </View>
-      <View style={Styles.profil_gombDiv}>
-        <Ripple
-          rippleColor="rgb(0,0,0)"
-          rippleOpacity={0.05}
-          rippleDuration={300}
-          rippleCentered={true}
-          rippleFades={false}
-          rippleContainerBorderRadius={20}
-          style={[Styles.profileGombok, Styles.profil_gombDiv]}
-          onPress={() =>
-            navigation.navigate("Tanuló Profil", {
-              screen: "Kapcsolat",
-            })
-          }
-        >
-          <View style={[styles.elsoFlex]}>
-            <Ionicons
-              name="information-circle-outline"
-              size={25}
-              color="black"
-            />
-          </View>
-          <View styles={styles.masodikFlex}>
-            <Text style={{ fontSize: 20 }}>Kapcsolat</Text>
-          </View>
-          <View style={styles.harmadikFlex}>
-            <Ionicons name="chevron-forward-outline" size={25} color="gray" />
-          </View>
-        </Ripple>
-      </View>
-      <View style={Styles.profil_gombDiv}>
-        <Ripple
-          rippleColor="rgb(0,0,0)"
-          rippleOpacity={0.05}
-          rippleDuration={300}
-          rippleCentered={true}
-          rippleFades={false}
-          rippleContainerBorderRadius={20}
-          style={[Styles.profileGombok, Styles.profil_gombDiv]}
-          onPress={kijelentkeztetes}
-        >
-          <View style={styles.elsoFlex}>
-            <Ionicons name="log-out-outline" size={25} color="red" />
-          </View>
 
-          <Text style={{ fontSize: 20 }}>Kijelentkezés</Text>
+      <Ripple
+        style={Styles.kijelentkezesGomb}
+        onPress={() => setKijelentkeztetesAlertLathato(true)}
+      >
+        <Text style={Styles.kijelentkezesGombText}>Kijelentkezés</Text>
+      </Ripple>
 
-          <View style={[styles.harmadikFlex]}>
-            <Ionicons name="chevron-forward-outline" size={25} color="gray" />
+      <Modal
+        transparent={true}
+        visible={kijelentkeztetesAlertLathato}
+        onRequestClose={modalCsukas}
+      >
+        <View style={Styles.modalNagyView}>
+          <View style={Styles.modalKisView}>
+            <Text style={Styles.modalCim}>Figyelem!</Text>
+            <Text style={Styles.modalLeiras}>
+              Biztosan ki szeretne jelentkezni?
+            </Text>
+
+            <View style={Styles.modalGombView}>
+              <TouchableOpacity
+                style={Styles.modalMegseGomb}
+                onPress={modalCsukas}
+              >
+                <Text style={Styles.modalMegseGombText}>Mégse</Text>
+              </TouchableOpacity>
+
+              <TouchableOpacity
+                style={Styles.modalKijelentkezesGomb}
+                onPress={kijelentkeztetes}
+              >
+                <Text style={Styles.modalKijelentkezesGombText}>
+                  Kijelentkezés
+                </Text>
+              </TouchableOpacity>
+            </View>
           </View>
-        </Ripple>
-      </View>
+        </View>
+      </Modal>
     </View>
   );
-}
+};
 
 const styles = StyleSheet.create({
-  default: {
+  container: {
     flex: 1,
-    flexDirection: "column",
-    backgroundColor: "#fff",
-  },
-  elsoFlex: {
-    flex: 0,
-    marginLeft: 30,
-    marginRight: 10,
-  },
-  harmadikFlex: {
-    flex: 0,
-    marginRight: 0,
+    backgroundColor: "#F5F5F5",
+    padding: 20,
+    justifyContent: "center",
   },
 });
+
 export default Oktato_Profil;
