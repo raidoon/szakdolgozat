@@ -10,10 +10,12 @@ import {
 import { Dropdown } from "react-native-element-dropdown";
 import Ipcim from "../../Ipcim";
 import DateTimePicker from "@react-native-community/datetimepicker";
+import HibaModal from "../../extra/HibaModal";
 
 export default function Oktato_BefizetesRogzites({ route }) {
   const { atkuld } = route.params;
-
+  const [hibaModalLathato, setHibaModalLathato] = useState(false);
+  const [hibaModalSzoveg, setHibaModalSzoveg] = useState("");
   const [adatTomb, setAdatTomb] = useState([]);
   const [diakTomb, setDiakTomb] = useState([]);
   const [selectedValue, setSelectedValue] = useState(1);
@@ -59,7 +61,9 @@ export default function Oktato_BefizetesRogzites({ route }) {
 
   const felvitel = async () => {
     if (!datum || !oraPerc || !selectedValue || !selectedDiak || !osszeg) {
-      alert("A kötelező mezőket töltsd ki!");
+      //alert("A kötelező mezőket töltsd ki!");
+      setHibaModalLathato(true);
+      setHibaModalSzoveg('A kötelező mezőket töltsd ki!');
       return;
     }
 
@@ -161,6 +165,13 @@ export default function Oktato_BefizetesRogzites({ route }) {
           }}
         />
       )}
+      <HibaModal
+        visible={hibaModalLathato}
+        onClose={() => setHibaModalLathato(false)}
+        title={'Hiba!'}
+        body={hibaModalSzoveg}
+        buttonText={"Oké"}
+      />
     </ScrollView>
   );
 }

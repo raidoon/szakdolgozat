@@ -28,7 +28,6 @@
 "2575fc" //másik világos kék
 
 "6495ED" // cornflower blue
-// naptár kinyitáshoz
 
 "#87CEFA" //sky blue
 "A7C7E7" //halvány kék

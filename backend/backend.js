@@ -21,6 +21,22 @@ function kapcsolat() {
   });
   connection.connect();
 }
+app.get("/teszt", (req, res) => {
+  kapcsolat();
+  connection.query(
+    `select * from tanulo_adatok where tanulo_levizsgazott=0`,
+    (err, rows, fields) => {
+      if (err) {
+        console.log(err);
+        res.status(500).send("Hiba");
+      } else {
+        console.log(rows);
+        res.status(200).send(rows);
+      }
+    }
+  );
+  connection.end();
+});
 //------------------------------------------------ autósiskolák lekérdezése
 app.get("/autosiskolalista", (req, res) => {
   kapcsolat();
