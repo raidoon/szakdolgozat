@@ -6,6 +6,7 @@ import Ipcim from "../../Ipcim";
 export default function Oktato_ElkovetkezendoOrak({ route }) {
     const { atkuld } = route.params;
     const [adatok, setAdatok] = useState([]);
+    const [tipus, setTipus] = useState("");
     const navigation = useNavigation();
 
     useEffect(() => {
@@ -19,11 +20,21 @@ export default function Oktato_ElkovetkezendoOrak({ route }) {
                 body: JSON.stringify({ oktato_id: atkuld.oktato_id }),
                 headers: { "Content-type": "application/json; charset=UTF-8" }
             });
+
+            if (!response.ok) {
+                throw new Error(`Hiba történt: ${response.status}`);
+            }
+
             const data = await response.json();
             const rendezettAdatok = data.sort((a, b) => new Date(a.ora_datuma) - new Date(b.ora_datuma));
             setAdatok(rendezettAdatok);
+
+            if (data.length > 0) {
+                setTipus(data[0].oratipus_neve); // Set the type for the first item (if needed)
+            }
         } catch (error) {
             console.error("Hiba az adatok letöltésekor:", error);
+            alert("Nem sikerült az adatok letöltése.");
         }
     };
 
@@ -41,7 +52,7 @@ export default function Oktato_ElkovetkezendoOrak({ route }) {
     return (
         <View style={styles.container}>
             <Text style={styles.title}>Elkövetkező órák</Text>
-            
+
             <FlatList
                 data={adatok}
                 keyExtractor={(item) => item.ora_id.toString()}
@@ -50,10 +61,11 @@ export default function Oktato_ElkovetkezendoOrak({ route }) {
                         <Text style={styles.lessonDate}>📅 {formatDateTime(item.ora_datuma)}</Text>
                         <Text style={styles.lessonText}>👤 Diák: <Text style={styles.bold}>{item.tanulo_neve}</Text></Text>
                         <Text style={styles.lessonText}>📍 Helyszín: <Text style={styles.bold}>{item.ora_kezdeshelye}</Text></Text>
+                        <Text style={styles.lessonText}> Típus: <Text style={styles.bold}>{item.oratipus_neve}</Text></Text>
 
                         <TouchableOpacity
                             style={styles.button}
-                            onPress={() => navigation.navigate("Oktato_OraSzerkesztes", { ora:item })}
+                            onPress={() => navigation.navigate("Oktato_OraSzerkesztes", { ora: item })}
                         >
                             <Text style={styles.buttonText}>Szerkesztés</Text>
                         </TouchableOpacity>

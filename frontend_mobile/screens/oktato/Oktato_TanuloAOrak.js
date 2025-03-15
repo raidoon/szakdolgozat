@@ -13,7 +13,7 @@ export default function Oktato_TanuloAOrak({ route }) {
 
             console.log("Elküldött adat:", JSON.stringify(adat));
 
-            const response = await fetch(Ipcim.Ipcim + "/diakokOrai", {
+            const response = await fetch(Ipcim.Ipcim + "/diakokTeljesitettOrai", {
                 method: "POST",
                 body: JSON.stringify(adat),
                 headers: { "Content-type": "application/json; charset=UTF-8" }
@@ -38,6 +38,11 @@ export default function Oktato_TanuloAOrak({ route }) {
         letoltes();
     }, []);
 
+    // Sort the data by date in descending order
+    const sortedAdatok = adatok
+        .filter(item => item.ora_teljesitve)
+        .sort((a, b) => new Date(b.ora_datuma) - new Date(a.ora_datuma));
+
     return (
         <View style={stilus.elso}>
             <Text style={stilus.szoveg}>Részletek</Text>
@@ -47,7 +52,7 @@ export default function Oktato_TanuloAOrak({ route }) {
                 <Text>Betöltés...</Text>
             ) : (
                 <FlatList
-                    data={adatok.filter(item => item.ora_teljesitve)}
+                    data={sortedAdatok}
                     renderItem={({ item }) => (
                         <View style={stilus.oraKartya}>
                             <Text style={stilus.datum}>{item.ora_datuma.split("T")[0]}</Text>
