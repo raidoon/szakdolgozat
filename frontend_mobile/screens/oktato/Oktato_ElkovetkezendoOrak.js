@@ -79,7 +79,7 @@ export default function Oktato_ElkovetkezendoOrak({ route }) {
 const styles = StyleSheet.create({
     container: {
         flex: 1,
-        backgroundColor: "#f0f8ff",
+        backgroundColor: "#fffde7", // Light pleasant yellow background
         padding: 20,
     },
     title: {
@@ -87,10 +87,10 @@ const styles = StyleSheet.create({
         fontWeight: "bold",
         textAlign: "center",
         marginBottom: 20,
-        color: "#4B0082",
+        color: "#ff8f00", // Orange for contrast
     },
     card: {
-        backgroundColor: "#fff",
+        backgroundColor: "#fff3e0", // Light orange card background
         padding: 15,
         marginVertical: 10,
         borderRadius: 10,
@@ -103,7 +103,7 @@ const styles = StyleSheet.create({
     lessonDate: {
         fontSize: 18,
         fontWeight: "bold",
-        color: "#007AFF",
+        color: "#ff8f00", // Orange for emphasis
         marginBottom: 5,
     },
     lessonText: {
@@ -116,7 +116,7 @@ const styles = StyleSheet.create({
     },
     button: {
         marginTop: 10,
-        backgroundColor: "#007AFF",
+        backgroundColor: "#ff8f00", // Orange button
         padding: 10,
         borderRadius: 8,
         alignItems: "center",

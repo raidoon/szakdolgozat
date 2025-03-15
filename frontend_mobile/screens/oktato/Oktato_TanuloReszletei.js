@@ -99,29 +99,44 @@ export default function Oktato_TanuloReszletei({ route }) {
     }, []);
 
     return (
-        <View style={stilus.container}>
-            <View style={stilus.card}>
-                <Text style={stilus.header}>Részletek</Text>
-                <Text style={stilus.info}>Név: {tanulo.tanulo_neve}</Text>
-                <Text style={stilus.info}>Email: {email}</Text>
-                <Text style={stilus.info}>Telefonszám: {telefonszam}</Text>
-                <Text style={stilus.info}>Összes megerősített befizetés: {osszesBefizetett} Ft</Text>
-                <Text style={stilus.info}>Összes teljesített óra: {osszesOra}</Text>
+        <View style={styles.container}>
+            <View style={styles.card}>
+                <Text style={styles.header}>Részletek</Text>
+                <View style={styles.infoContainer}>
+                    <Text style={styles.infoLabel}>Név:</Text>
+                    <Text style={styles.infoValue}>{tanulo.tanulo_neve}</Text>
+                </View>
+                <View style={styles.infoContainer}>
+                    <Text style={styles.infoLabel}>Email:</Text>
+                    <Text style={styles.infoValue}>{email}</Text>
+                </View>
+                <View style={styles.infoContainer}>
+                    <Text style={styles.infoLabel}>Telefonszám:</Text>
+                    <Text style={styles.infoValue}>{telefonszam}</Text>
+                </View>
+                <View style={styles.infoContainer}>
+                    <Text style={styles.infoLabel}>Összes befizetés:</Text>
+                    <Text style={styles.infoValue}>{osszesBefizetett} Ft</Text>
+                </View>
+                <View style={styles.infoContainer}>
+                    <Text style={styles.infoLabel}>Összes óra:</Text>
+                    <Text style={styles.infoValue}>{osszesOra}</Text>
+                </View>
             </View>
         </View>
     );
 }
 
-const stilus = StyleSheet.create({
+const styles = StyleSheet.create({
     container: {
         flex: 1,
-        backgroundColor: '#f0f8ff', // világoskék háttér
+        backgroundColor: "#fffde7", // Light pleasant yellow background
         alignItems: "center",
         justifyContent: "center",
         padding: 20,
     },
     card: {
-        backgroundColor: "#ffffff",
+        backgroundColor: "#fff3e0", // Light orange card background
         padding: 25,
         borderRadius: 12,
         shadowColor: "#000",
@@ -129,20 +144,27 @@ const stilus = StyleSheet.create({
         shadowOpacity: 0.1,
         shadowRadius: 6,
         width: "90%",
-        alignItems: "flex-start", // Kicsit balra igazítva
     },
     header: {
-        fontSize: 40,
+        fontSize: 28,
         fontWeight: "bold",
-        color: "#4B0082", // Sötétlila szín
-        marginBottom: 15,
-        textAlign: "center", // Középre igazítva
+        color: "#ff8f00", // Orange for emphasis
+        marginBottom: 20,
+        textAlign: "center",
     },
-    info: {
-        fontSize: 20,
+    infoContainer: {
+        flexDirection: "row",
+        justifyContent: "space-between",
+        marginBottom: 15,
+    },
+    infoLabel: {
+        fontSize: 18,
         color: "#333",
         fontWeight: "500",
-        marginBottom: 10,
-        lineHeight: 25,
-    }
+    },
+    infoValue: {
+        fontSize: 18,
+        color: "#000",
+        fontWeight: "bold",
+    },
 });

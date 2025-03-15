@@ -27,6 +27,7 @@ export default function Oktato_MegerositOra({ route }) {
             setIsLoading(false);
         }
     };
+
     const frissitOraAllapot = async () => {
         try {
             // Update lessons to "Módosítható" (2) if the date has passed
@@ -52,12 +53,9 @@ export default function Oktato_MegerositOra({ route }) {
     };
 
     useEffect(() => {
-        letoltes()
-        // Automatically update ora_teljesitve when the screen is opened
+        letoltes();
         frissitOraAllapot();
     }, []);
-
-   
 
     const confirmTorles = (ora_id) => {
         setSelectedOraId(ora_id);
@@ -120,7 +118,7 @@ export default function Oktato_MegerositOra({ route }) {
     if (isLoading) {
         return (
             <View style={styles.loadingContainer}>
-                <ActivityIndicator size="large" color="#0000ff" />
+                <ActivityIndicator size="large" color="#ff8f00" />
             </View>
         );
     }
@@ -147,16 +145,16 @@ export default function Oktato_MegerositOra({ route }) {
                         <Text style={styles.studentName}>{tanulo.tanulo_neve}</Text>
                     </>
                 )}
-                contentContainerStyle={{ paddingBottom: 200 }}
+                contentContainerStyle={{ paddingBottom: 20 }}
                 renderItem={({ item }) => (
                     <View style={styles.card}>
                         <View style={styles.cardItem}>
                             <Text style={styles.cardItemTitle}>Dátum:</Text>
-                            <Text>{formatDateTime(item.ora_datuma)}</Text>
+                            <Text style={styles.cardItemText}>{formatDateTime(item.ora_datuma)}</Text>
                         </View>
                         <View style={styles.cardItem}>
                             <Text style={styles.cardItemTitle}>Állapot:</Text>
-                            <Text>
+                            <Text style={styles.cardItemText}>
                                 {item.ora_teljesitve === 0
                                     ? "Függőben"
                                     : item.ora_teljesitve === 1
@@ -166,7 +164,7 @@ export default function Oktato_MegerositOra({ route }) {
                         </View>
                         {item.ora_teljesitve === 0 && (
                             <TouchableOpacity
-                                style={styles.button}
+                                style={[styles.button, styles.deleteButton]}
                                 onPress={() => confirmTorles(item.ora_id)}
                             >
                                 <Text style={styles.buttonText}>Törlés</Text>
@@ -218,8 +216,6 @@ export default function Oktato_MegerositOra({ route }) {
                     </View>
                 </View>
             </Modal>
-
-        
         </View>
     );
 }
@@ -227,109 +223,104 @@ export default function Oktato_MegerositOra({ route }) {
 const styles = StyleSheet.create({
     container: {
         flex: 1,
-        backgroundColor: "#f1f1f1",
-        alignItems: "center",
-        justifyContent: "center",
-        padding: 20
+        backgroundColor: "#fffde7", // Light pleasant yellow background
+        padding: 20,
     },
     loadingContainer: {
         flex: 1,
         justifyContent: "center",
-        alignItems: "center"
+        alignItems: "center",
     },
     header: {
-        fontSize: 32,
+        fontSize: 28,
         fontWeight: "bold",
-        marginBottom: 15,
-        color: "#333",
-        textAlign: "center"
+        color: "#ff8f00", // Orange for emphasis
+        marginBottom: 10,
+        textAlign: "center",
     },
     studentName: {
         fontSize: 22,
         fontWeight: "500",
+        color: "#333",
         marginBottom: 20,
-        color: "#555",
-        textAlign: "center"
+        textAlign: "center",
     },
     card: {
-        backgroundColor: "#fff",
-        padding: 15,
-        marginVertical: 10,
+        backgroundColor: "#fff3e0", // Light orange card background
+        padding: 20,
         borderRadius: 15,
+        marginVertical: 10,
         shadowColor: "#000",
-        shadowOpacity: 0.2,
-        shadowRadius: 5,
-        elevation: 5,
-        width: "90%"
+        shadowOffset: { width: 0, height: 2 },
+        shadowOpacity: 0.1,
+        shadowRadius: 4,
+        elevation: 3,
     },
     cardItem: {
         flexDirection: "row",
         justifyContent: "space-between",
-        marginVertical: 5
+        marginBottom: 10,
     },
     cardItemTitle: {
         fontWeight: "bold",
         color: "#333",
         fontSize: 16,
-        width: "35%"
+    },
+    cardItemText: {
+        color: "#555",
+        fontSize: 16,
     },
     button: {
-        backgroundColor: "#ff5c5c",
-        padding: 10,
+        padding: 12,
         borderRadius: 8,
         alignItems: "center",
-        marginTop: 10
+        marginTop: 10,
+    },
+    deleteButton: {
+        backgroundColor: "#ff5c5c", // Red for delete
     },
     updateButton: {
-        backgroundColor: "#4CAF50",
-        marginTop: 10
+        backgroundColor: "#4CAF50", // Green for update
     },
     rejectButton: {
-        backgroundColor: "#ff5c5c",
-        marginTop: 10
+        backgroundColor: "#ff8f00", // Orange for reject
     },
     buttonText: {
         color: "#fff",
-        fontSize: 16
-    },
-    modalButtonsContainer: {
-        flexDirection: "row",
-        justifyContent: "space-around",
-        width: "100%",
-        marginTop: 20
-    },
-    modalButton: {
-        padding: 12,
-        borderRadius: 8,
-        width: "45%",
-        alignItems: "center"
-    },
-    cancelButton: {
-        backgroundColor: "#ccc"
-    },
-    deleteButton: {
-        backgroundColor: "#ff5c5c"
+        fontSize: 16,
+        fontWeight: "bold",
     },
     modalOverlay: {
         flex: 1,
         justifyContent: "center",
         alignItems: "center",
-        backgroundColor: "rgba(0, 0, 0, 0.7)"
+        backgroundColor: "rgba(0, 0, 0, 0.5)",
     },
     modalContent: {
         backgroundColor: "#fff",
         padding: 25,
-        borderRadius: 20,
-        alignItems: "center",
+        borderRadius: 15,
         width: "80%",
-        shadowColor: "#000",
-        shadowOpacity: 0.3,
-        shadowRadius: 10,
-        elevation: 10
+        alignItems: "center",
     },
     modalText: {
         fontSize: 18,
+        color: "#333",
         textAlign: "center",
-        color: "#333"
-    }
+        marginBottom: 20,
+    },
+    modalButtonsContainer: {
+        flexDirection: "row",
+        justifyContent: "space-between",
+        width: "100%",
+    },
+    modalButton: {
+        padding: 12,
+        borderRadius: 8,
+        width: "45%",
+        alignItems: "center",
+    },
+    cancelButton: {
+        backgroundColor: "#ccc", // Gray for cancel
+    },
 });

@@ -5,10 +5,12 @@ import {
   TextInput,
   TouchableOpacity,
   StyleSheet,
+  ScrollView,
 } from "react-native";
 import { Dropdown } from "react-native-element-dropdown";
 import Ipcim from "../../Ipcim";
 import DateTimePicker from "@react-native-community/datetimepicker";
+import { LinearGradient } from "expo-linear-gradient";
 
 export default function Oktato_OraRogzites({ route }) {
   const { atkuld } = route.params;
@@ -103,129 +105,139 @@ export default function Oktato_OraRogzites({ route }) {
   };
 
   return (
-    <View style={styles.container}>
-      <Text style={styles.title}>Új óra rögzítése</Text>
+    <LinearGradient colors={['#ff7e5f', '#feb47b']} style={styles.container}>
+      <ScrollView contentContainerStyle={styles.content}>
+        <Text style={styles.title}>Új óra rögzítése</Text>
 
-      <Text style={styles.label}>Válassz típust:</Text>
-      <Dropdown
-        style={styles.dropdown}
-        placeholderStyle={styles.placeholderStyle}
-        selectedTextStyle={styles.selectedTextStyle}
-        data={adatTomb}
-        maxHeight={300}
-        labelField="label"
-        valueField="value"
-        placeholder="-- Válassz --"
-        value={selectedValue}
-        onChange={(item) => setSelectedValue(item.value)}
-      />
+        <Text style={styles.label}>Válassz típust:</Text>
+        <Dropdown
+          style={styles.dropdown}
+          placeholderStyle={styles.placeholderStyle}
+          selectedTextStyle={styles.selectedTextStyle}
+          data={adatTomb}
+          maxHeight={300}
+          labelField="label"
+          valueField="value"
+          placeholder="-- Válassz --"
+          value={selectedValue}
+          onChange={(item) => setSelectedValue(item.value)}
+        />
 
-      <Text style={styles.label}>Válassz diákot:</Text>
-      <Dropdown
-        style={styles.dropdown}
-        placeholderStyle={styles.placeholderStyle}
-        selectedTextStyle={styles.selectedTextStyle}
-        data={diakTomb}
-        maxHeight={300}
-        labelField="label"
-        valueField="value"
-        placeholder="-- Válassz diákot --"
-        value={selectedDiak}
-        onChange={(item) => setSelectedDiak(item.value)}
-      />
+        <Text style={styles.label}>Válassz diákot:</Text>
+        <Dropdown
+          style={styles.dropdown}
+          placeholderStyle={styles.placeholderStyle}
+          selectedTextStyle={styles.selectedTextStyle}
+          data={diakTomb}
+          maxHeight={300}
+          labelField="label"
+          valueField="value"
+          placeholder="-- Válassz diákot --"
+          value={selectedDiak}
+          onChange={(item) => setSelectedDiak(item.value)}
+        />
 
-      <Text style={styles.label}>Óra helyszíne (opcionális):</Text>
-      <TextInput
-        style={styles.input}
-        placeholder="Írd be a címet (nem kötelező)"
-        value={cim}
-        onChangeText={setCim}
-      />
+        <Text style={styles.label}>Óra helyszíne (opcionális):</Text>
+        <TextInput
+          style={styles.input}
+          placeholder="Írd be a címet (nem kötelező)"
+          placeholderTextColor="#999"
+          value={cim}
+          onChangeText={setCim}
+        />
 
-      <TouchableOpacity style={styles.button} onPress={() => setShowDatePicker(true)}>
-        <Text style={styles.buttonText}>Dátum kiválasztása</Text>
-      </TouchableOpacity>
-      {datum ? <Text style={styles.date}>{datum}</Text> : null}
+        <TouchableOpacity style={styles.button} onPress={() => setShowDatePicker(true)}>
+          <Text style={styles.buttonText}>Dátum kiválasztása</Text>
+        </TouchableOpacity>
+        {datum ? <Text style={styles.date}>{datum}</Text> : null}
 
-      <TouchableOpacity style={styles.button} onPress={() => setShowTimePicker(true)}>
-        <Text style={styles.buttonText}>Idő kiválasztása</Text>
-      </TouchableOpacity>
-      {ido ? <Text style={styles.date}>{ido}</Text> : null}
+        <TouchableOpacity style={styles.button} onPress={() => setShowTimePicker(true)}>
+          <Text style={styles.buttonText}>Idő kiválasztása</Text>
+        </TouchableOpacity>
+        {ido ? <Text style={styles.date}>{ido}</Text> : null}
 
-      <TouchableOpacity style={styles.saveButton} onPress={felvitel}>
-        <Text style={styles.buttonText}>Óra rögzítése</Text>
-      </TouchableOpacity>
+        <TouchableOpacity style={styles.saveButton} onPress={felvitel}>
+          <Text style={styles.buttonText}>Óra rögzítése</Text>
+        </TouchableOpacity>
 
-      {showDatePicker && (
-        <DateTimePicker value={date} mode="date" is24Hour onChange={valtozikDatum} />
-      )}
-      {showTimePicker && (
-        <DateTimePicker value={date} mode="time" is24Hour onChange={valtozikIdo} />
-      )}
-    </View>
+        {showDatePicker && (
+          <DateTimePicker value={date} mode="date" is24Hour onChange={valtozikDatum} />
+        )}
+        {showTimePicker && (
+          <DateTimePicker value={date} mode="time" is24Hour onChange={valtozikIdo} />
+        )}
+      </ScrollView>
+    </LinearGradient>
   );
 }
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    alignItems: "center",
-    justifyContent: "center",
+  },
+  content: {
     padding: 20,
-    backgroundColor: "#f4f4f4",
+    flexGrow: 1,
   },
   title: {
-    fontSize: 22,
+    fontSize: 24,
     fontWeight: "bold",
+    color: "#fff",
     marginBottom: 20,
-    color: "#333",
+    textAlign: "center",
   },
   label: {
     fontSize: 16,
     marginTop: 10,
-    color: "#555",
+    color: "#fff",
+    fontWeight: "bold",
   },
   dropdown: {
     height: 50,
-    width: "100%",
-    borderWidth: 1,
-    borderRadius: 8,
-    backgroundColor: "#fff",
-    paddingHorizontal: 8,
-    marginBottom: 10,
+    backgroundColor: "rgba(255, 255, 255, 0.9)",
+    borderRadius: 10,
+    paddingHorizontal: 10,
+    marginVertical: 10,
   },
   input: {
-    width: "100%",
-    borderWidth: 1,
-    padding: 12,
-    borderRadius: 8,
-    backgroundColor: "#fff",
-    marginBottom: 10,
+    height: 50,
+    backgroundColor: "rgba(255, 255, 255, 0.9)",
+    borderRadius: 10,
+    paddingHorizontal: 10,
+    marginVertical: 10,
+    color: "#333",
   },
   button: {
-    backgroundColor: "#007bff",
+    backgroundColor: "#ff6f61",
     padding: 12,
-    borderRadius: 8,
+    borderRadius: 10,
+    alignItems: "center",
     marginTop: 10,
-    width: "100%",
   },
   saveButton: {
     backgroundColor: "#28a745",
-    padding: 12,
-    borderRadius: 8,
+    padding: 15,
+    borderRadius: 10,
+    alignItems: "center",
     marginTop: 20,
-    width: "100%",
   },
   buttonText: {
     color: "#fff",
-    textAlign: "center",
     fontSize: 16,
+    fontWeight: "bold",
   },
   date: {
-    backgroundColor: "#ffc107",
+    backgroundColor: "rgba(255, 255, 255, 0.9)",
     padding: 8,
     textAlign: "center",
     borderRadius: 8,
     marginVertical: 5,
+    color: "#333",
+  },
+  placeholderStyle: {
+    color: "#999",
+  },
+  selectedTextStyle: {
+    color: "#333",
   },
 });
