@@ -39,8 +39,10 @@ export default function Oktato_Kezdolap({ atkuld }) {
     }
   };
 
+
   const onRefresh = async () => {
     setRefreshing(true);
+    
     await letoltes();
     await kovetkezoOraLetoltes();
     setRefreshing(false);

@@ -8,34 +8,23 @@ export default function Oktato_LevizsgazottTanuloReszletei({ route }) {
     const [email, setEmail] = useState("");
     const [telefonszam, setTelefonszam] = useState("");
     const [osszesBefizetett, setOsszesBefizetett] = useState(0); 
-    const [osszesOra,setOsszesOra]=useState(0);
+    const [osszesOra, setOsszesOra] = useState(0);
 
     const letoltes = async () => {
         try {
-            const adat = {
-                tanulo_felhasznaloID: tanulo.tanulo_felhasznaloID,
-            };
-            
-            console.log("API hívás indítása...");
-            console.log("Elküldött adat:", JSON.stringify(adat));
-
-            // Fő adatok lekérése
+            const adat = { tanulo_felhasznaloID: tanulo.tanulo_felhasznaloID };
             const response = await fetch(Ipcim.Ipcim + "/levizsgazottTanuloReszletei", { 
                 method: "POST",
                 body: JSON.stringify(adat),
                 headers: { "Content-type": "application/json; charset=UTF-8" }
             });
 
-            if (!response.ok) {
-                throw new Error(`Hiba történt: ${response.statusText}`);
-            }
+            if (!response.ok) throw new Error(`Hiba történt: ${response.statusText}`);
 
             const data = await response.json();
-            console.log("Betöltött adatok:", data);
             setAdatok(data);
             setEmail(data[0].felhasznalo_email);
             setTelefonszam(data[0].felhasznalo_telefonszam);
-
         } catch (error) {
             console.error("Hiba az API-hívás során:", error);
             alert("Nem sikerült az adatok letöltése.");
@@ -44,68 +33,39 @@ export default function Oktato_LevizsgazottTanuloReszletei({ route }) {
 
     const befizetesLekerdezes = async () => {
         try {
-            const adat = {
-                tanulo_felhasznaloID: tanulo.tanulo_felhasznaloID,
-            };
-
-            console.log("Befizetés API hívás...");
+            const adat = { tanulo_felhasznaloID: tanulo.tanulo_felhasznaloID };
             const response = await fetch(Ipcim.Ipcim + "/tanuloOsszesFizu", { 
                 method: "POST",
                 body: JSON.stringify(adat),
                 headers: { "Content-type": "application/json; charset=UTF-8" }
             });
 
-            if (!response.ok) {
-                throw new Error(`Hiba történt: ${response.statusText}`);
-            }
-
+            if (!response.ok) throw new Error(`Hiba történt: ${response.statusText}`);
             const data = await response.json();
-            console.log("Befizetés adatok:", data);
-            
-            // Ellenőrizzük, hogy a visszatérő adat tartalmaz-e értéket
-            if (data.length > 0 && data[0].osszesBefizetett !== null) {
-                setOsszesBefizetett(data[0].osszesBefizetett);
-            } else {
-                setOsszesBefizetett(0); // Ha nincs befizetés, akkor 0
-            }
-
+            setOsszesBefizetett(data.length > 0 && data[0].osszesBefizetett !== null ? data[0].osszesBefizetett : 0);
         } catch (error) {
             console.error("Hiba a befizetés lekérdezése során:", error);
             alert("Nem sikerült a befizetés adatok letöltése.");
         }
     };
+
     const orakLekerdezes = async () => {
-                try {
-                    const adat = {
-                        tanulo_felhasznaloID: tanulo.tanulo_felhasznaloID,
-                    };
-        
-                    console.log("Befizetés API hívás...");
-                    const response = await fetch(Ipcim.Ipcim + "/tanuloOsszesOra", { 
-                        method: "POST",
-                        body: JSON.stringify(adat),
-                        headers: { "Content-type": "application/json; charset=UTF-8" }
-                    });
-        
-                    if (!response.ok) {
-                        throw new Error(`Hiba történt: ${response.statusText}`);
-                    }
-        
-                    const data = await response.json();
-                    console.log("Befizetés adatok:", data);
-                    
-                    // Ellenőrizzük, hogy a visszatérő adat tartalmaz-e értéket
-                    if (data.length > 0 && data[0].osszesOra !== null) {
-                        setOsszesOra(data[0].osszesOra);
-                    } else {
-                        setOsszesOra(0); 
-                    }
-        
-                } catch (error) {
-                    console.error("Hiba a befizetés lekérdezése során:", error);
-                    alert("Nem sikerült a befizetés adatok letöltése.");
-                }
-            };
+        try {
+            const adat = { tanulo_felhasznaloID: tanulo.tanulo_felhasznaloID };
+            const response = await fetch(Ipcim.Ipcim + "/tanuloOsszesOra", { 
+                method: "POST",
+                body: JSON.stringify(adat),
+                headers: { "Content-type": "application/json; charset=UTF-8" }
+            });
+
+            if (!response.ok) throw new Error(`Hiba történt: ${response.statusText}`);
+            const data = await response.json();
+            setOsszesOra(data.length > 0 && data[0].osszesOra !== null ? data[0].osszesOra : 0);
+        } catch (error) {
+            console.error("Hiba az órák lekérdezése során:", error);
+            alert("Nem sikerült az órák adatok letöltése.");
+        }
+    };
 
     useEffect(() => {
         letoltes();
@@ -114,48 +74,46 @@ export default function Oktato_LevizsgazottTanuloReszletei({ route }) {
     }, []);
 
     return (
-        <View style={stilus.elso}>
-            <View>
-                <Text style={stilus.szoveg}>Részletek</Text>
-                <Text style={stilus.masodik}>Név: {tanulo.tanulo_neve}</Text>
-                <Text style={stilus.masodik}>Email: {email}</Text>
-                <Text style={stilus.masodik}>Telefonszám: {telefonszam}</Text>
-                <Text style={stilus.masodik}>Összes megerősített befizetés: {osszesBefizetett} Ft</Text> 
-                <Text style={stilus.masodik}> Összes teljesített óra: {osszesOra}</Text>
+        <View style={stilus.kontener}>
+            <View style={stilus.kartya}>
+                <Text style={stilus.cim}>{tanulo.tanulo_neve}Részletei</Text>
+                <Text style={stilus.adat}>Email: {email}</Text>
+                <Text style={stilus.adat}>Telefonszám: {telefonszam}</Text>
+                <Text style={stilus.adat}>Összes befizetés: {osszesBefizetett} Ft</Text>
+                <Text style={stilus.adat}>Összes teljesített óra: {osszesOra}</Text>
             </View>
         </View>
     );
 }
 
 const stilus = StyleSheet.create({
-    elso: {
+    kontener: {
         flex: 1,
-        backgroundColor: 'lightgreen',
+        backgroundColor: '#f0f4f8',
         alignItems: "center",
         justifyContent: "center",
         padding: 20,
     },
-    szoveg: {
-        fontSize: 50,
-        fontStyle: "italic",
-        fontWeight: "bold",
-        marginBottom: 20,
-    },
-    masodik: {
-        fontSize: 25,
-        color: "#333",
-        fontWeight: "500",
-        marginVertical: 5,
-    },
     kartya: {
         backgroundColor: "#fff",
         padding: 20,
-        borderRadius: 10,
+        borderRadius: 15,
         shadowColor: "#000",
-        shadowOffset: { width: 0, height: 2 },
+        shadowOffset: { width: 0, height: 4 },
         shadowOpacity: 0.2,
-        shadowRadius: 5,
-        width: "80%",
+        shadowRadius: 6,
+        width: "90%",
         alignItems: "center",
     },
+    cim: {
+        fontSize: 28,
+        fontWeight: "bold",
+        color: "#333",
+        marginBottom: 15,
+    },
+    adat: {
+        fontSize: 18,
+        color: "#555",
+        marginVertical: 4,
+    }
 });

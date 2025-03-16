@@ -4,6 +4,7 @@ import Ipcim from "../../Ipcim";
 
 export default function Oktato_MegerositOra({ route }) {
     const { tanulo } = route.params;
+    const [tipus, setTipus] = useState("");
     const [adatok, setAdatok] = useState([]);
     const [isModalVisible, setModalVisible] = useState(false);
     const [selectedOraId, setSelectedOraId] = useState(null);
@@ -20,6 +21,7 @@ export default function Oktato_MegerositOra({ route }) {
             if (!response.ok) throw new Error(`Hiba: ${response.statusText}`);
             const data = await response.json();
             setAdatok(data);
+            setTipus(data[0].oratipus_neve)
         } catch (error) {
             console.error("Hiba:", error);
             Alert.alert("Hiba", "Nem sikerült az adatok letöltése.");
@@ -151,6 +153,10 @@ export default function Oktato_MegerositOra({ route }) {
                         <View style={styles.cardItem}>
                             <Text style={styles.cardItemTitle}>Dátum:</Text>
                             <Text style={styles.cardItemText}>{formatDateTime(item.ora_datuma)}</Text>
+                        </View>
+                        <View style={styles.cardItem}>
+                            <Text style={styles.cardItemTitle}>Típus:</Text>
+                            <Text style={styles.cardItemText}>{item.oratipus_neve}</Text>
                         </View>
                         <View style={styles.cardItem}>
                             <Text style={styles.cardItemTitle}>Állapot:</Text>

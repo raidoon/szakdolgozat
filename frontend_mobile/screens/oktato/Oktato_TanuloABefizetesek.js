@@ -91,26 +91,27 @@ export default function Oktato_TanuloABefizetesek({ route }) {
                 <Text>Betöltés...</Text>
             ) : (
                 <FlatList
-                    data={adatok}
-                    renderItem={({ item }) => (
-                        <View style={stilus.oraKartya}>
-                            <Text style={stilus.datum}>{item.befizetesek_ideje.split("T")[0]}</Text>
-                            <Text>{item.befizetesek_ideje.split("T")[1].split(".")[0]}</Text>
-                            <Text style={{ color: item.befizetesek_jovahagyva ? "green" : "red" }}>
-                                {item.befizetesek_jovahagyva ? "Teljesítve" : "Nincs teljesítve"}
-                            </Text>
-                            {!item.befizetesek_jovahagyva && (
-                                <TouchableOpacity 
-                                    style={stilus.gomb} 
-                                    onPress={() => megerositVagyVissza(item.befizetesek_id)}
-                                >
-                                    <Text style={stilus.gombSzoveg}>Megerősítés</Text>
-                                </TouchableOpacity>
-                            )}
-                        </View>
-                    )}
-                    keyExtractor={item => item.befizetesek_id.toString()} 
-                />
+                data={adatok}
+                renderItem={({ item }) => (
+                    <View style={stilus.oraKartya}>
+                        <Text style={stilus.datum}>Dátum: {item.befizetesek_ideje.split("T")[0]}</Text>
+                        <Text>Pontos idő: {item.befizetesek_ideje.split("T")[1].split(":").slice(0, 2).join(":")}</Text>
+                        <Text>Összeg: {item.befizetesek_osszeg} Ft</Text>
+                        <Text style={{ color: item.befizetesek_jovahagyva ? "green" : "red" }}>
+                            {item.befizetesek_jovahagyva ? "Megerősítve" : "Megerősítésre vár"}
+                        </Text>
+                        {!item.befizetesek_jovahagyva && item.befizetesek_kinek === 1 && (
+                            <TouchableOpacity 
+                                style={stilus.gomb} 
+                                onPress={() => megerositVagyVissza(item.befizetesek_id)}
+                            >
+                                <Text style={stilus.gombSzoveg}>Megerősítés</Text>
+                            </TouchableOpacity>
+                        )}
+                    </View>
+                )}
+                keyExtractor={item => item.befizetesek_id.toString()} 
+            />
             )}
         </View>
     );

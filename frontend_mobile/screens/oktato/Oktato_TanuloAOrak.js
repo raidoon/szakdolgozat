@@ -4,6 +4,7 @@ import Ipcim from "../../Ipcim";
 
 export default function Oktato_TanuloAOrak({ route }) {
     const { tanulo } = route.params;
+    const [tipus, setTipus] = useState("");
     const [adatok, setAdatok] = useState([]);
     const [loading, setLoading] = useState(true);
 
@@ -26,6 +27,7 @@ export default function Oktato_TanuloAOrak({ route }) {
 
             const data = await response.json();
             setAdatok(data);
+            setTipus(data[0].oratipus_neve)
         } catch (error) {
             console.error("Hiba az API-hívás során:", error);
             alert("Nem sikerült az adatok letöltése.");
@@ -53,13 +55,21 @@ export default function Oktato_TanuloAOrak({ route }) {
             ) : (
                 <FlatList
                     data={sortedAdatok}
-                    renderItem={({ item }) => (
-                        <View style={stilus.oraKartya}>
-                            <Text style={stilus.datum}>{item.ora_datuma.split("T")[0]}</Text>
-                            <Text>{item.ora_datuma.split("T")[1].split(".")[0]}</Text>
-                            <Text style={{ color: "green" }}>Teljesítve</Text>
-                        </View>
-                    )}
+                    renderItem={({ item }) => {
+                        const date = new Date(item.ora_datuma);
+                        const hours = date.getHours();
+                        const minutes = date.getMinutes();
+                        const formattedTime = `${hours}:${minutes < 10 ? '0' : ''}${minutes}`;
+
+                        return (
+                            <View style={stilus.oraKartya}>
+                                <Text style={stilus.datum}>Dátum: {item.ora_datuma.split("T")[0]}</Text>
+                                <Text>Pontos idő: {formattedTime}</Text>
+                                <Text>Típus: {tipus}</Text>
+                                <Text style={{ color: "green" }}>Teljesítve</Text>
+                            </View>
+                        );
+                    }}
                     keyExtractor={item => item.ora_id.toString()} 
                 />
             )}

@@ -10,6 +10,7 @@ export default function Oktato_ElkovetkezendoOrak({ route }) {
     const navigation = useNavigation();
 
     useEffect(() => {
+        frissitOraAllapot();
         letoltes();
     }, []);
 
@@ -37,6 +38,29 @@ export default function Oktato_ElkovetkezendoOrak({ route }) {
             alert("Nem sikerült az adatok letöltése.");
         }
     };
+     const frissitOraAllapot = async () => {
+            try {
+                // Update lessons to "Módosítható" (2) if the date has passed
+                const responseModosithato = await fetch(`${Ipcim.Ipcim}/oraFrissul`, {
+                    method: "PUT",
+                    headers: { "Content-type": "application/json; charset=UTF-8" }
+                });
+                if (!responseModosithato.ok) throw new Error(`Hiba: ${responseModosithato.statusText}`);
+    
+                // Update lessons to "Teljesített" (1) if 3 days have passed since the lesson date
+                const responseTeljesitett = await fetch(`${Ipcim.Ipcim}/oraTeljesul`, {
+                    method: "PUT",
+                    headers: { "Content-type": "application/json; charset=UTF-8" }
+                });
+                if (!responseTeljesitett.ok) throw new Error(`Hiba: ${responseTeljesitett.statusText}`);
+    
+                // Refresh the data after updating
+                letoltes();
+            } catch (error) {
+                console.error("Hiba az óra állapot frissítésében:", error);
+                Alert.alert("Hiba", "Nem sikerült frissíteni az óra állapotát.");
+            }
+        };
 
     const formatDateTime = (dateTimeString) => {
         const date = new Date(dateTimeString);

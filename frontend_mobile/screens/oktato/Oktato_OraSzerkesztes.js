@@ -6,10 +6,12 @@ import {
   TouchableOpacity,
   StyleSheet,
   Alert,
+  ScrollView,
 } from "react-native";
 import { Dropdown } from "react-native-element-dropdown";
 import Ipcim from "../../Ipcim";
 import DateTimePicker from "@react-native-community/datetimepicker";
+import { LinearGradient } from "expo-linear-gradient";
 
 export default function Oktato_OraSzerkesztes({ route, navigation }) {
   const { ora } = route.params; // Az átadott óra adatai
@@ -111,115 +113,131 @@ export default function Oktato_OraSzerkesztes({ route, navigation }) {
   };
 
   return (
-    <View style={styles.container}>
-      <Text style={styles.title}>Óra szerkesztése</Text>
+    <LinearGradient colors={['#6495ED', '#ffff']} style={styles.container}>
+      <ScrollView contentContainerStyle={styles.content}>
+        <Text style={styles.title}>Óra szerkesztése</Text>
 
-      <Text style={styles.label}>Válassz diákot:</Text>
-      <Dropdown
-        style={styles.dropdown}
-        placeholderStyle={styles.placeholderStyle}
-        selectedTextStyle={styles.selectedTextStyle}
-        data={diakTomb}
-        maxHeight={300}
-        labelField="label"
-        valueField="value"
-        placeholder="-- Válassz diákot --"
-        value={selectedDiak}
-        onChange={(item) => setSelectedDiak(item.value)}
-      />
+        <Text style={styles.label}>Válassz diákot:</Text>
+        <Dropdown
+          style={styles.dropdown}
+          placeholderStyle={styles.placeholderStyle}
+          selectedTextStyle={styles.selectedTextStyle}
+          data={diakTomb}
+          maxHeight={300}
+          labelField="label"
+          valueField="value"
+          placeholder="-- Válassz diákot --"
+          value={selectedDiak}
+          onChange={(item) => setSelectedDiak(item.value)}
+        />
 
-      <TouchableOpacity style={styles.button} onPress={() => setShowDatePicker(true)}>
-        <Text style={styles.buttonText}>Dátum kiválasztása</Text>
-      </TouchableOpacity>
-      {datum && <Text style={styles.date}>{datum}</Text>}
+        <TouchableOpacity style={styles.button} onPress={() => setShowDatePicker(true)}>
+          <Text style={styles.buttonText}>Dátum kiválasztása</Text>
+        </TouchableOpacity>
+        {datum && <Text style={styles.date}>{datum}</Text>}
 
-      <TouchableOpacity style={styles.button} onPress={() => setShowTimePicker(true)}>
-        <Text style={styles.buttonText}>Idő kiválasztása</Text>
-      </TouchableOpacity>
-      {ido && <Text style={styles.date}>{ido}</Text>}
+        <TouchableOpacity style={styles.button} onPress={() => setShowTimePicker(true)}>
+          <Text style={styles.buttonText}>Idő kiválasztása</Text>
+        </TouchableOpacity>
+        {ido && <Text style={styles.date}>{ido}</Text>}
 
-      <Text style={styles.label}>Óra helyszíne:</Text>
-      <TextInput
-        style={styles.input}
-        placeholder="Írd be a címet"
-        value={cim}
-        onChangeText={setCim}
-      />
+        <Text style={styles.label}>Óra helyszíne:</Text>
+        <TextInput
+          style={styles.input}
+          placeholder="Írd be a címet"
+          placeholderTextColor="#999"
+          value={cim}
+          onChangeText={setCim}
+        />
 
-      <TouchableOpacity style={styles.saveButton} onPress={frissites} disabled={isLoading}>
-        <Text style={styles.buttonText}>{isLoading ? "Feldolgozás..." : "Mentés"}</Text>
-      </TouchableOpacity>
+        <TouchableOpacity style={styles.saveButton} onPress={frissites} disabled={isLoading}>
+          <Text style={styles.buttonText}>{isLoading ? "Feldolgozás..." : "Mentés"}</Text>
+        </TouchableOpacity>
 
-      {showDatePicker && (
-        <DateTimePicker value={date} mode="date" is24Hour onChange={valtozikDatum} />
-      )}
-      {showTimePicker && (
-        <DateTimePicker value={date} mode="time" is24Hour onChange={valtozikIdo} />
-      )}
-    </View>
+        {showDatePicker && (
+          <DateTimePicker value={date} mode="date" is24Hour onChange={valtozikDatum} />
+        )}
+        {showTimePicker && (
+          <DateTimePicker value={date} mode="time" is24Hour onChange={valtozikIdo} />
+        )}
+      </ScrollView>
+    </LinearGradient>
   );
 }
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    alignItems: "center",
-    justifyContent: "center",
+  },
+  content: {
     padding: 20,
-    backgroundColor: "#f4f4f4",
+    flexGrow: 1,
   },
   title: {
-    fontSize: 22,
+    fontSize: 24,
     fontWeight: "bold",
+    color: "#fff",
     marginBottom: 20,
-    color: "#333",
+    textAlign: "center",
   },
   label: {
     fontSize: 16,
     marginTop: 10,
-    color: "#555",
+    color: "#fff",
+    fontWeight: "600",
   },
   dropdown: {
     height: 50,
-    width: "100%",
-    borderWidth: 1,
-    borderRadius: 8,
     backgroundColor: "#fff",
-    paddingHorizontal: 8,
-    marginBottom: 10,
+    borderRadius: 8,
+    paddingHorizontal: 10,
+    marginVertical: 10,
+    borderWidth: 1,
+    borderColor: "#ddd",
   },
   input: {
-    width: "100%",
-    borderWidth: 1,
-    padding: 12,
-    borderRadius: 8,
+    height: 50,
     backgroundColor: "#fff",
-    marginBottom: 10,
+    borderRadius: 8,
+    paddingHorizontal: 10,
+    marginVertical: 10,
+    color: "#333",
+    borderWidth: 1,
+    borderColor: "#ddd",
   },
   button: {
-    backgroundColor: "#007bff",
+    backgroundColor: "#0057FF", // Slightly lighter green for buttons
     padding: 12,
     borderRadius: 8,
+    alignItems: "center",
     marginTop: 10,
-    width: "100%",
   },
   saveButton: {
-    backgroundColor: "#28a745",
-    padding: 12,
+    backgroundColor: "#2e7d32", // Same green as regular button
+    padding: 15,
     borderRadius: 8,
+    alignItems: "center",
     marginTop: 20,
-    width: "100%",
   },
   buttonText: {
     color: "#fff",
-    textAlign: "center",
     fontSize: 16,
+    fontWeight: "bold",
   },
   date: {
-    backgroundColor: "#ffc107",
-    padding: 8,
+    backgroundColor: "#fff",
+    padding: 10,
     textAlign: "center",
     borderRadius: 8,
     marginVertical: 5,
+    color: "#333",
+    borderWidth: 1,
+    borderColor: "#ddd",
+  },
+  placeholderStyle: {
+    color: "#999",
+  },
+  selectedTextStyle: {
+    color: "#333",
   },
 });

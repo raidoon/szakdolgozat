@@ -105,7 +105,7 @@ export default function Oktato_OraRogzites({ route }) {
   };
 
   return (
-    <LinearGradient colors={['#ff7e5f', '#feb47b']} style={styles.container}>
+    <LinearGradient colors={['#1e3c72', '#2a5298']} style={styles.container}>
       <ScrollView contentContainerStyle={styles.content}>
         <Text style={styles.title}>Új óra rögzítése</Text>
 
@@ -190,34 +190,38 @@ const styles = StyleSheet.create({
     fontSize: 16,
     marginTop: 10,
     color: "#fff",
-    fontWeight: "bold",
+    fontWeight: "600",
   },
   dropdown: {
     height: 50,
-    backgroundColor: "rgba(255, 255, 255, 0.9)",
-    borderRadius: 10,
+    backgroundColor: "#fff",
+    borderRadius: 8,
     paddingHorizontal: 10,
     marginVertical: 10,
+    borderWidth: 1,
+    borderColor: "#ddd",
   },
   input: {
     height: 50,
-    backgroundColor: "rgba(255, 255, 255, 0.9)",
-    borderRadius: 10,
+    backgroundColor: "#fff",
+    borderRadius: 8,
     paddingHorizontal: 10,
     marginVertical: 10,
     color: "#333",
+    borderWidth: 1,
+    borderColor: "#ddd",
   },
   button: {
-    backgroundColor: "#ff6f61",
+    backgroundColor: "#2980b9",
     padding: 12,
-    borderRadius: 10,
+    borderRadius: 8,
     alignItems: "center",
     marginTop: 10,
   },
   saveButton: {
-    backgroundColor: "#28a745",
+    backgroundColor: "#27ae60",
     padding: 15,
-    borderRadius: 10,
+    borderRadius: 8,
     alignItems: "center",
     marginTop: 20,
   },
@@ -227,12 +231,14 @@ const styles = StyleSheet.create({
     fontWeight: "bold",
   },
   date: {
-    backgroundColor: "rgba(255, 255, 255, 0.9)",
-    padding: 8,
+    backgroundColor: "#fff",
+    padding: 10,
     textAlign: "center",
     borderRadius: 8,
     marginVertical: 5,
     color: "#333",
+    borderWidth: 1,
+    borderColor: "#ddd",
   },
   placeholderStyle: {
     color: "#999",

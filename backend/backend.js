@@ -14,7 +14,7 @@ const SECRET_KEY = 'your_secret_key';
 var connection;
 function kapcsolat() {
   connection = mysql.createConnection({
-    connectionLimit: 10,
+    connectionLimit: 20,
     host: "localhost",
     user: "root",
     password: "",
@@ -705,6 +705,7 @@ app.post("/diakokOrai", (req, res) => {
     ON felhasznalo.felhasznalo_id=tanulo.tanulo_felhasznaloID
     INNER JOIN ora_adatok AS ora
     ON tanulo.tanulo_id= ora.ora_diakja 
+    LEFT JOIN ora_tipusa ON ora_tipusa.oratipus_id = ora.ora_tipusID
     WHERE tanulo_felhasznaloID = ?`,
     [req.body.tanulo_felhasznaloID],
     (err, rows, fields) => {
@@ -730,6 +731,7 @@ app.post("/diakokTeljesitettOrai", (req, res) => {
     ON felhasznalo.felhasznalo_id=tanulo.tanulo_felhasznaloID
     INNER JOIN ora_adatok AS ora
     ON tanulo.tanulo_id= ora.ora_diakja 
+    LEFT JOIN ora_tipusa ON ora_tipusa.oratipus_id = ora.ora_tipusID
     WHERE ora_teljesitve=1 AND tanulo_felhasznaloID = ?`,
     [req.body.tanulo_felhasznaloID],
     (err, rows, fields) => {
@@ -887,7 +889,7 @@ app.post("/egyDiakNemKeszBefizetesei", (req, res) => {
     ON felhasznalo.felhasznalo_id=tanulo.tanulo_felhasznaloID
     INNER JOIN befizetesek
     ON tanulo.tanulo_id= befizetesek.befizetesek_tanuloID
-    WHERE befizetesek.befizetesek_jovahagyva=0 AND tanulo_felhasznaloID = ?`,
+    WHERE befizetesek.befizetesek_jovahagyva=0 AND befizetesek.befizetesek_kinek=1 AND tanulo_felhasznaloID = ?`,
     [req.body.tanulo_felhasznaloID],
     (err, rows, fields) => {
       if (err) {

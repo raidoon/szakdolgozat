@@ -1,7 +1,6 @@
 import { useState, useEffect } from "react";
 import { View, Text, FlatList, TouchableOpacity, StyleSheet } from "react-native";
 import { useNavigation } from '@react-navigation/native';
-import Oktato_Styles from "../../Oktato_Styles";
 import Ipcim from "../../Ipcim";
 
 export default function Oktato_AKTUALIS({ route }) {
@@ -64,6 +63,7 @@ export default function Oktato_AKTUALIS({ route }) {
                     </View>
                 )}
                 keyExtractor={item => item.tanulo_id.toString()} 
+                contentContainerStyle={styles.flatListContent} // Added for spacing
             />
         </View>
     );
@@ -72,41 +72,51 @@ export default function Oktato_AKTUALIS({ route }) {
 const styles = StyleSheet.create({
     container: {
         flex: 1,
-        padding: 20,
-        backgroundColor: '#f5f5f5',
+        margin:20
     },
     header: {
-        fontSize: 24,
+        fontSize: 28,
         fontWeight: 'bold',
         textAlign: 'center',
         marginBottom: 20,
-        color: '#333',
+        color: '#2c3e50',
     },
     itemContainer: {
         flexDirection: 'row',
         justifyContent: 'space-between',
         alignItems: 'center',
-        padding: 15,
-        marginBottom: 10,
-        backgroundColor: '#fff',
-        borderRadius: 10,
+        padding: 20,
+        marginBottom: 15,
+        backgroundColor: '#ffffff',
+        
         shadowColor: '#000',
-        shadowOffset: { width: 0, height: 2 },
+        shadowOffset: { width: 0, height: 4 },
         shadowOpacity: 0.1,
-        shadowRadius: 5,
-        elevation: 3,
+        shadowRadius: 6,
+        elevation: 5,
     },
     itemText: {
         fontSize: 18,
-        color: '#333',
+        fontWeight: '600',
+        color: '#34495e',
     },
     button: {
-        backgroundColor: '#007bff',
-        padding: 10,
-        borderRadius: 5,
+        backgroundColor: '#3498db',
+        paddingVertical: 10,
+        paddingHorizontal: 20,
+        borderRadius: 25,
+        shadowColor: '#3498db',
+        shadowOffset: { width: 0, height: 2 },
+        shadowOpacity: 0.3,
+        shadowRadius: 3,
+        elevation: 3,
     },
     buttonText: {
         color: '#fff',
         fontSize: 16,
+        fontWeight: '600',
+    },
+    flatListContent: {
+        paddingBottom: 20, // Added bottom padding to avoid cutting off the last item
     },
 });
