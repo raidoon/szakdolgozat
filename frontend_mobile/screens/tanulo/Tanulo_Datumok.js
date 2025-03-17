@@ -6,8 +6,9 @@ import {
   StyleSheet,
   RefreshControl,
   ActivityIndicator,
-  Modal
+  Modal,
 } from "react-native";
+import { GestureHandlerRootView } from "react-native-gesture-handler";
 import { Calendar } from "react-native-calendars";
 import { ScrollView } from "react-native-gesture-handler";
 import Ionicons from "react-native-vector-icons/Ionicons";
@@ -26,7 +27,7 @@ const Tanulo_Datumok = ({ atkuld }) => {
   const [betolt, setBetolt] = useState(true);
   const [hiba, setHiba] = useState(null);
   const [frissites, setFrissites] = useState(false);
-  const [modalLathatoe,setModalLathatoe] = useState(false);
+  const [modalLathatoe, setModalLathatoe] = useState(false);
   const adatokBetoltese = async () => {
     try {
       const adat = {
@@ -69,13 +70,16 @@ const Tanulo_Datumok = ({ atkuld }) => {
     adatokBetoltese();
   }, []);
 
+  //-------------------------------------------------------------  OLDAL FRISSÍTÉSE
   const frissitesKozben = useCallback(() => {
     setFrissites(true);
     setBetolt(true);
-    adatokBetoltese().finally(() => {
-      setFrissites(false);
-      setBetolt(false);
-    });
+    setTimeout(() => {
+      adatokBetoltese().finally(() => {
+        setFrissites(false);
+        setBetolt(false);
+      });
+    }, 2000); // 2 seconds delay
   }, []);
   //---------------------------------- DÁTUM FORMÁZÁSA AZ ÓRÁHOZ
   const koviOraFormazasa = (adatBresponseJSON) => {
@@ -391,63 +395,60 @@ const Tanulo_Datumok = ({ atkuld }) => {
               });
               return (
                 //<TouchableOpacity onPress={()=> setModalLathatoe(true)}>
-                  <LinearGradient
-                    colors={["#4169E1", "#2EC0F9"]}
-                    start={{ x: 0, y: 0 }}
-                    end={{ x: 1, y: 1 }}
+                <LinearGradient
+                  colors={["#4169E1", "#2EC0F9"]}
+                  start={{ x: 0, y: 0 }}
+                  end={{ x: 1, y: 1 }}
+                  style={{
+                    borderRadius: 15,
+                    padding: 2,
+                    marginHorizontal: 20,
+                    marginBottom: 10,
+                    shadowColor: "#000",
+                    shadowOffset: { width: 0, height: 4 },
+                    shadowOpacity: 0.3,
+                    shadowRadius: 8,
+                    elevation: 5,
+                  }}
+                  key={item.ora_id}
+                >
+                  <View
                     style={{
-                      borderRadius: 15,
-                      padding: 2,
-                      marginHorizontal: 20,
-                      marginBottom: 10,
-                      shadowColor: "#000",
-                      shadowOffset: { width: 0, height: 4 },
-                      shadowOpacity: 0.3,
-                      shadowRadius: 8,
-                      elevation: 5,
+                      flexDirection: "row",
+                      justifyContent: "space-between",
+                      alignItems: "center",
+                      backgroundColor: "#ffffff",
+                      borderRadius: 13,
+                      padding: 12,
                     }}
-                    key={item.ora_id}
-                    
                   >
                     <View
+                      style={{ flexDirection: "row", alignItems: "center" }}
+                    >
+                      <Ionicons
+                        name="time-outline"
+                        size={25}
+                        color="#4169E1"
+                        style={{ marginRight: 10 }}
+                      />
+                      <View>
+                        <Text style={Styles.oraDatuma}>{honapNap}</Text>
+                        <Text style={Styles.oraIdeje}>
+                          {item.ora_tipusID === 1 ? "Gyakorlati óra" : "Vizsga"}
+                        </Text>
+                      </View>
+                    </View>
+                    <Text
                       style={{
-                        flexDirection: "row",
-                        justifyContent: "space-between",
-                        alignItems: "center",
-                        backgroundColor: "#ffffff",
-                        borderRadius: 13,
-                        padding: 12,
+                        fontSize: 16,
+                        fontWeight: "600",
+                        color: "#2EC0F9",
                       }}
                     >
-                      <View
-                        style={{ flexDirection: "row", alignItems: "center" }}
-                      >
-                        <Ionicons
-                          name="time-outline"
-                          size={25}
-                          color="#4169E1"
-                          style={{ marginRight: 10 }}
-                        />
-                        <View>
-                          <Text style={Styles.oraDatuma}>{honapNap}</Text>
-                          <Text style={Styles.oraIdeje}>
-                            {item.ora_tipusID === 1
-                              ? "Gyakorlati óra"
-                              : "Vizsga"}
-                          </Text>
-                        </View>
-                      </View>
-                      <Text
-                        style={{
-                          fontSize: 16,
-                          fontWeight: "600",
-                          color: "#2EC0F9",
-                        }}
-                      >
-                        {oraPerc}
-                      </Text>
-                    </View>
-                  </LinearGradient>
+                      {oraPerc}
+                    </Text>
+                  </View>
+                </LinearGradient>
                 //</TouchableOpacity>
               );
             })
@@ -561,7 +562,7 @@ const Tanulo_Datumok = ({ atkuld }) => {
       <Modal
         transparent={true}
         visible={modalLathatoe}
-        onRequestClose={()=> setModalLathatoe(false)}
+        onRequestClose={() => setModalLathatoe(false)}
       >
         <View style={styles.modalOverlay}>
           <View style={styles.modalContent}>
@@ -569,26 +570,22 @@ const Tanulo_Datumok = ({ atkuld }) => {
 
             <View style={{ flexDirection: "row" }}>
               <Text style={styles.modalKiemeltText}>Típus: </Text>
-              
             </View>
 
             <View style={{ flexDirection: "row" }}>
               <Text style={styles.modalKiemeltText}>Összeg: </Text>
-              
             </View>
 
             <View style={{ flexDirection: "row" }}>
-            <Text style={styles.modalKiemeltText}>Összeg: </Text>
+              <Text style={styles.modalKiemeltText}>Összeg: </Text>
             </View>
 
             <View style={{ flexDirection: "row" }}>
               <Text style={styles.modalKiemeltText}>Összeget megkapta: </Text>
-              
             </View>
 
-            
             <TouchableOpacity
-              onPress={()=>setModalLathatoe(false)}
+              onPress={() => setModalLathatoe(false)}
               style={styles.modalCloseBtn}
             >
               <Text style={styles.modalCloseText}>Bezárás</Text>
@@ -604,6 +601,8 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: "#f5f5f5",
     paddingHorizontal: 16,
+    height: "100%",
+    paddingTop: 0,
   },
   oraContainer: {
     marginHorizontal: 20,
