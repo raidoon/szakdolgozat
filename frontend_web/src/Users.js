@@ -1,11 +1,12 @@
 import { useState,useEffect } from "react"
 import Navbar from './Navbar';
+import Ipcim from "./Ipcim";
 
 const Users=()=>{
     const [adatok,setAdatok] =useState([])
 
     const letoltes=async ()=>{
-        let x=await fetch("http://localhost:5000/felhasznalok")
+        let x=await fetch(Ipcim.Ipcim +'/felhasznalok')
         let y=await x.json()
         setAdatok(y)            
     }
