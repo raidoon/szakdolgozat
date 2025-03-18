@@ -25,7 +25,7 @@ const Navbar = () => {
           Kezdőlap
         </Link>
         <Link to="/users" className="link" onClick={() => setMenuOpen(false)}>
-          Felhasználók
+          Pénzügyek
         </Link>
         <Link to="/oktatok" className="link" onClick={() => setMenuOpen(false)}>
           Oktatók

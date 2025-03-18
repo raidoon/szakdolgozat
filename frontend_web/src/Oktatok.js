@@ -6,13 +6,11 @@ import './css/Oktatok.css';
 const Oktatok = () => {
   const [oktatoLista, setOktatoLista] = useState([]);
 
-  // Memoize felhasznaloAdatok
   const felhasznaloAdatok = useMemo(() => {
     return JSON.parse(localStorage.getItem("felhasznaloAdatok"));
-  }, []); // Empty dependency array means this only runs once
+  }, []); //[] - csak egyszer hívjuk meg
 
   const letoltes = useCallback(async () => {
-    console.log("sajt"); // This will log only when letoltes is called
     try {
       const adat = {
         felhasznalo_autosiskola:
@@ -33,20 +31,19 @@ const Oktatok = () => {
     } catch (err) {
       console.log(err.message);
     }
-  }, [felhasznaloAdatok]); // Add felhasznaloAdatok as a dependency
+  }, [felhasznaloAdatok]);
 
   useEffect(() => {
     letoltes();
-  }, [letoltes]); // Add letoltes to the dependency array
-
+  }, [letoltes]); 
   return (
-    <div >
+    <div>
       <Navbar />
       <div className="oktatokBody">
         {oktatoLista.map((item, key) => (
           <div key={key} className="oktatoKartya">
             <h1>{item.oktato_neve}</h1>
-            <p className="dolt">Email: {item.felhasznalo_email}</p>
+            <p>Email: {item.felhasznalo_email}</p>
             <p>Telefonszám: {item.felhasznalo_telefonszam}</p>
           </div>
         ))}
