@@ -8,9 +8,9 @@ import {
   ScrollView,
 } from "react-native";
 import { Dropdown } from "react-native-element-dropdown";
-import Ipcim from "../../Ipcim";
+import Ipcim from "../../../Ipcim";
 import DateTimePicker from "@react-native-community/datetimepicker";
-import HibaModal from "../../extra/HibaModal";
+import HibaModal from "../../../extra/HibaModal";
 import { LinearGradient } from "expo-linear-gradient";
 
 export default function Oktato_BefizetesRogzites({ route }) {

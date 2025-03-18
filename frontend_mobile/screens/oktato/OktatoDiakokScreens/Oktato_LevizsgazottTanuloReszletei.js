@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { View, Text, StyleSheet } from "react-native";
-import Ipcim from "../../Ipcim";
+import Ipcim from "../../../Ipcim";
 
 export default function Oktato_LevizsgazottTanuloReszletei({ route }) {
     const { tanulo } = route.params;
@@ -13,7 +13,7 @@ export default function Oktato_LevizsgazottTanuloReszletei({ route }) {
     const letoltes = async () => {
         try {
             const adat = { tanulo_felhasznaloID: tanulo.tanulo_felhasznaloID };
-            const response = await fetch(Ipcim.Ipcim + "/levizsgazottTanuloReszletei", { 
+            const response = await fetch(Ipcim.Ipcim + "/tanuloReszletei", { 
                 method: "POST",
                 body: JSON.stringify(adat),
                 headers: { "Content-type": "application/json; charset=UTF-8" }

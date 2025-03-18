@@ -471,9 +471,7 @@ app.post("/tanuloOsszesOraja", (req, res) => {
   connection.end();
 });
 //------------------------------------------------ TANULÓI LEKÉRDEZÉSEK VÉGE
-
 //------------------------------------------------ OKTATÓI LEKÉRDEZÉSEK
-//---------------------------Oktató adatai
 app.post("/egyOktatoAdatai", (req, res) => {
   console.log("hello");
   kapcsolat();
@@ -494,54 +492,7 @@ app.post("/egyOktatoAdatai", (req, res) => {
   );
   connection.end();
 });
-//------------------------adott oktatóhoz tartozó tanulók neveinek megjelenítése post bevitel1
-app.post("/egyOktatoDiakjai", (req, res) => {
-  console.log("hello");
-  kapcsolat();
-  connection.query(
-    `SELECT *
-    FROM tanulo_adatok AS tanulo
-    INNER JOIN oktato_adatok AS oktato
-    ON tanulo.tanulo_oktatoja = oktato.oktato_id
-    WHERE oktato.oktato_id=?`,
-    [req.body.oktato_id],
-    (err, rows, fields) => {
-      if (err) {
-        console.log(err);
-        res.status(500).send("Hiba");
-      } else {
-        console.log(rows);
-        res.status(200).send(rows);
-      }
-    }
-  );
-  connection.end();
-});
-//----------------------
-app.post("/egyTanuloOrai", (req, res) => {
-  console.log("egy tanulo orai");
-  kapcsolat();
-  connection.query(
-    `SELECT * 
-    FROM tanulo_adatok 
-    AS tanulo 
-    INNER JOIN ora_adatok 
-    AS ora ON tanulo.tanulo_id = ora.ora_diakja 
-    WHERE tanulo.tanulo_id=?`,
-    [req.body.tanulo_id],
-    (err, rows, fields) => {
-      if (err) {
-        console.log(err);
-        res.status(500).send("Hiba");
-      } else {
-        console.log(rows);
-        res.status(200).send(rows);
-      }
-    }
-  );
-  connection.end();
-});
-//--------------------------OraFelvitel
+//--------------------------
 app.post("/oraFelvitel", (req, res) => {
   kapcsolat();
   connection.query(
@@ -581,7 +532,7 @@ app.get("/valasztTipus", (req, res) => {
   });
   connection.end();
 });
-//--------------------------TanuloReszletei.js
+//--------------------------
 app.post("/tanuloReszletei", (req, res) => {
   kapcsolat();
   connection.query(
@@ -591,7 +542,7 @@ INNER JOIN tanulo_adatok AS tanulo ON felhasznaloi_adatok.felhasznalo_id = tanul
 LEFT JOIN oktato_adatok AS oktato ON tanulo.tanulo_oktatoja = oktato.oktato_id
 LEFT JOIN ora_adatok AS ora ON tanulo.tanulo_id = ora.ora_diakja
 LEFT JOIN befizetesek ON tanulo.tanulo_id = befizetesek.befizetesek_tanuloID
-WHERE tanulo.tanulo_levizsgazott = 0 AND tanulo_felhasznaloID = ?`,
+WHERE tanulo_felhasznaloID = ?`,
     [req.body.tanulo_felhasznaloID],
     (err, rows, fields) => {
       if (err) {
@@ -606,32 +557,6 @@ WHERE tanulo.tanulo_levizsgazott = 0 AND tanulo_felhasznaloID = ?`,
   connection.end();
 });
 //-------------------------------
-app.post("/levizsgazottTanuloReszletei", (req, res) => {
-  kapcsolat();
-  connection.query(
-    `SELECT *
-FROM felhasznaloi_adatok 
-INNER JOIN tanulo_adatok AS tanulo ON felhasznaloi_adatok.felhasznalo_id = tanulo.tanulo_felhasznaloID  
-LEFT JOIN oktato_adatok AS oktato ON tanulo.tanulo_oktatoja = oktato.oktato_id
-LEFT JOIN ora_adatok AS ora ON tanulo.tanulo_id = ora.ora_diakja
-LEFT JOIN befizetesek ON tanulo.tanulo_id = befizetesek.befizetesek_tanuloID
-WHERE tanulo.tanulo_levizsgazott = 1 AND tanulo_felhasznaloID = ?
-
-`,
-    [req.body.tanulo_felhasznaloID],
-    (err, rows, fields) => {
-      if (err) {
-        console.log(err);
-        res.status(500).send("Hiba");
-      } else {
-        console.log(rows);
-        res.status(200).send(rows);
-      }
-    }
-  );
-  connection.end();
-});
-//---------------------------
 app.post("/tanuloOsszesFizu", (req, res) => {
   kapcsolat();
   connection.query(
@@ -675,7 +600,6 @@ app.post("/tanuloOsszesOra", (req, res) => {
   );
   connection.end();
 });
-
 //----------------------
 app.post("/aktualisDiakok", (req, res) => {
   console.log("hello");
@@ -699,9 +623,7 @@ app.post("/aktualisDiakok", (req, res) => {
   );
   connection.end();
 });
-
 //------------------
-
 app.post("/levizsgazottDiakok", (req, res) => {
   console.log("hello");
   kapcsolat();
@@ -724,9 +646,7 @@ app.post("/levizsgazottDiakok", (req, res) => {
   );
   connection.end();
 });
-
 //----------------
-
 app.post("/diakokOrai", (req, res) => {
   console.log("hello");
   kapcsolat();
@@ -752,7 +672,7 @@ app.post("/diakokOrai", (req, res) => {
   );
   connection.end();
 });
-
+//---------------
 app.post("/diakokTeljesitettOrai", (req, res) => {
   console.log("hello");
   kapcsolat();
@@ -778,8 +698,7 @@ app.post("/diakokTeljesitettOrai", (req, res) => {
   );
   connection.end();
 });
-
-
+//-----------
 app.post("/diakokVisszaOrai", (req, res) => {
   console.log("hello");
   kapcsolat();
@@ -804,8 +723,6 @@ app.post("/diakokVisszaOrai", (req, res) => {
   );
   connection.end();
 });
-
-
 //-------------------
 app.post("/koviOra", (req, res) => {
   console.log("hello");
@@ -834,10 +751,7 @@ app.post("/koviOra", (req, res) => {
   );
   connection.end();
 });
-
-
 //---------------------------
-
 app.delete('/oraTorles', (req, res) => {
   kapcsolat(); // Establish the database connection
 
@@ -894,7 +808,7 @@ app.post("/nemkeszBefizetesek", (req, res) => {
     ON tanulo.tanulo_oktatoja = oktato.oktato_id
     INNER JOIN befizetesek
     ON tanulo.tanulo_id = befizetesek.befizetesek_tanuloID
-    WHERE befizetesek.befizetesek_jovahagyva=0 AND oktato.oktato_id=?
+    WHERE befizetesek.befizetesek_jovahagyva=0 AND befizetesek.befizetesek_kinek=1 AND oktato.oktato_id=?
     GROUP BY tanulo.tanulo_neve;`,
     [req.body.oktato_id],
     (err, rows, fields) => {
@@ -909,7 +823,6 @@ app.post("/nemkeszBefizetesek", (req, res) => {
   );
   connection.end();
 });
-
 //-------------------------------
 app.post("/egyDiakNemKeszBefizetesei", (req, res) => {
   console.log("hello");
@@ -935,8 +848,7 @@ app.post("/egyDiakNemKeszBefizetesei", (req, res) => {
   );
   connection.end();
 });
-
-//--------------------------BefizetesFelvitel
+//--------------------------
 app.post("/befizetesFelvitel", (req, res) => {
   kapcsolat();
   connection.query(
@@ -961,9 +873,7 @@ app.post("/befizetesFelvitel", (req, res) => {
   );
   connection.end();
 });
-
 //---------------------------
-
 app.post("/fizetesMegerosit", (req, res) => {
   kapcsolat();
   connection.query(
@@ -976,14 +886,12 @@ app.post("/fizetesMegerosit", (req, res) => {
         console.error("Hiba:", err);
         return res.status(500).json({ message: "Hiba történt!" });
       }
-      res.json({ message: "Óra megerősítve!" });
+      res.json({ message: "Fizetés megerősítve!" });
     }
   );
   connection.end();
 });
-
 //---------------------------------------------
-
 app.post("/fizetesElutasit", (req, res) => {
   kapcsolat();
   connection.query(
@@ -996,12 +904,11 @@ app.post("/fizetesElutasit", (req, res) => {
         console.error("Hiba:", err);
         return res.status(500).json({ message: "Hiba történt!" });
       }
-      res.json({ message: "Óra elutasítva!" });
+      res.json({ message: "Fizetés elutasítva!" });
     }
   );
   connection.end();
 });
-
 //-------------------------------------
 app.post("/egyNapOraja", (req, res) => {
   console.log("Lekérdezés egy adott napra...");
@@ -1054,7 +961,7 @@ app.put('/oraFrissul', (req, res) => {
     
   });
 });
-
+//---------------------
 app.put('/oraTeljesul', (req, res) => {
   kapcsolat(); // Establish the database connection
 
@@ -1076,7 +983,7 @@ app.put('/oraTeljesul', (req, res) => {
    
   });
 });
-
+//--------------------------
 app.put('/oraFrissit', (req, res) => {
   kapcsolat(); // Establish the database connection
 
@@ -1094,12 +1001,12 @@ app.put('/oraFrissit', (req, res) => {
       res.status(500).json({ message: "Hiba az óra frissítésében" });
     } else {
       console.log("Órák módosíthatóságának frissítése kész. Affected rows:", result.affectedRows);
-      res.status(200).json({ message: "Óra frissítésre került!" });
+      res.status(200).json({ message: "Az óra elutasításra került!" });
     }
     connection.end();
   });
 });
-
+//---------------
 app.put('/oraTeljesit', (req, res) => {
   kapcsolat(); // Establish the database connection
 
@@ -1147,9 +1054,7 @@ WHERE ora.ora_teljesitve = 0 AND oktato.oktato_id = ?`,
   );
   connection.end();
 });
-
 //----------------------------------
-// Óra szerkesztése
 app.post("/oraSzerkesztes", (req, res) => {
   kapcsolat();
   connection.query(
@@ -1168,16 +1073,14 @@ app.post("/oraSzerkesztes", (req, res) => {
         console.log(err);
         res.status(500).send("Hiba");
       } else {
-        console.log("Sikeres felvitel!");
-        res.status(200).send("Sikeres felvitel!");
+        console.log("Sikeres szerkesztés!");
+        res.status(200).send("Sikeres szerkesztés!");
       }
     }
   );
   connection.end();
 });
-
-
-
+//--------------------------------
 app.listen(port, () => {
   console.log(`Example app listening on port ${port}`);
 });

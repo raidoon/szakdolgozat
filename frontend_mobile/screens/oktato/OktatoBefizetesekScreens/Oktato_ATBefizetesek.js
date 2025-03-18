@@ -1,25 +1,29 @@
 import { useState, useEffect } from "react";
 import { View, Text, FlatList, TouchableOpacity, StyleSheet } from "react-native";
 import { useNavigation } from '@react-navigation/native';
-import Oktato_Styles from "../../Oktato_Styles";
-import Ipcim from "../../Ipcim";
+import Ipcim from "../../../Ipcim";
 import { LinearGradient } from "expo-linear-gradient";
 
-export default function Oktato_MegerositesrevaroFizetes({ route }) {
+export default function Oktato_ATBefizetesek({ route }) {
     const { atkuld } = route.params;
     const [adatok, setAdatok] = useState([]);
     const navigation = useNavigation();
+    console.log(atkuld);
 
     const letoltes = async () => {
         try {
-            const adat = { oktato_id: atkuld.oktato_id };
-            console.log("Elküldött adat:", JSON.stringify(adat));
+            const adat = {
+                oktato_id: atkuld.oktato_id,
+            };
+            console.log("Elküldött adat:", JSON.stringify({ "oktato_id": atkuld.oktato_id }));
 
-            const response = await fetch(Ipcim.Ipcim + "/nemkeszBefizetesek", {
+            const response = await fetch(Ipcim.Ipcim + "/aktualisDiakok", {
                 method: "POST",
                 body: JSON.stringify(adat),
                 headers: { "Content-type": "application/json; charset=UTF-8" }
             });
+
+            console.log("API válasz:", response);
 
             if (!response.ok) {
                 throw new Error(`Hiba történt: ${response.statusText}`);
@@ -38,33 +42,30 @@ export default function Oktato_MegerositesrevaroFizetes({ route }) {
     }, []);
 
     const katt = (tanulo) => {
-        navigation.navigate("Oktato_MegerositBefizetes", { tanulo });
+        
+        navigation.navigate("Oktato_TanuloABefizetesek", { tanulo });
     };
 
     return (
         <LinearGradient colors={['#6a11cb', '#2575fc']} style={styles.container}>
             <View style={styles.content}>
-                <Text style={styles.header}>Megerősítésre váró fizetések</Text>
+                <Text style={styles.header}>Diákok</Text>
 
-                {adatok.length === 0 ? (
-                    <Text style={styles.noPaymentsText}>Nincs megerősítésre váró befizetés.</Text>
-                ) : (
-                    <FlatList
-                        data={adatok}
-                        renderItem={({ item }) => (
-                            <View style={styles.card}>
-                                <Text style={styles.studentName}>{item.tanulo_neve}</Text>
-                                <TouchableOpacity
-                                    style={styles.detailsButton}
-                                    onPress={() => katt(item)}
-                                >
-                                    <Text style={styles.buttonText}>Továbbiak</Text>
-                                </TouchableOpacity>
-                            </View>
-                        )}
-                        keyExtractor={(item) => item.tanulo_id.toString()}
-                    />
-                )}
+                <FlatList
+                    data={adatok}
+                    renderItem={({ item }) => (
+                        <View style={styles.listItem}>
+                            <Text style={styles.studentName}>{item.tanulo_neve}</Text>
+                            <TouchableOpacity
+                                style={styles.detailsButton}
+                                onPress={() => katt(item)}
+                            >
+                                <Text style={styles.buttonText}>Továbbiak</Text>
+                            </TouchableOpacity>
+                        </View>
+                    )}
+                    keyExtractor={item => item.tanulo_id.toString()}
+                />
             </View>
         </LinearGradient>
     );
@@ -85,13 +86,7 @@ const styles = StyleSheet.create({
         marginBottom: 20,
         textAlign: "center",
     },
-    noPaymentsText: {
-        fontSize: 18,
-        color: "#fff",
-        textAlign: "center",
-        marginTop: 20,
-    },
-    card: {
+    listItem: {
         backgroundColor: "rgba(255, 255, 255, 0.2)",
         borderRadius: 10,
         padding: 15,

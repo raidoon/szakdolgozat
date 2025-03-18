@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import { View, Text, FlatList, TouchableOpacity, StyleSheet, Animated } from "react-native";
 import { useNavigation } from "@react-navigation/native";
-import Ipcim from "../../Ipcim";
+import Ipcim from "../../../Ipcim";
 
 export default function Oktato_MegerositesrevaroOrak({ route }) {
     const { atkuld } = route.params;
@@ -69,6 +69,7 @@ export default function Oktato_MegerositesrevaroOrak({ route }) {
     );
 }
 
+
 // 📌 STÍLUSOK
 const styles = StyleSheet.create({
     container: {
@@ -125,3 +126,4 @@ const styles = StyleSheet.create({
         fontWeight: "700",
     },
 });
+

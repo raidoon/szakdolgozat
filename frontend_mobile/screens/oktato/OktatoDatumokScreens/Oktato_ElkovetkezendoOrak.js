@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { View, Text, StyleSheet, FlatList, TouchableOpacity } from "react-native";
 import { useNavigation } from "@react-navigation/native";
-import Ipcim from "../../Ipcim";
+import Ipcim from "../../../Ipcim";
 
 export default function Oktato_ElkovetkezendoOrak({ route }) {
     const { atkuld } = route.params;

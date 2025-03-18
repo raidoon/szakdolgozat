@@ -1,8 +1,8 @@
 import { useState, useEffect } from "react";
 import { View, Text, FlatList, TouchableOpacity, StyleSheet } from "react-native";
 import { useNavigation } from '@react-navigation/native';
-import Oktato_Styles from "../../Oktato_Styles";
-import Ipcim from "../../Ipcim";
+
+import Ipcim from "../../../Ipcim";
 
 export default function Oktato_LEVIZSGAZOTT({ route }) {
     const { atkuld } = route.params;
@@ -48,7 +48,7 @@ export default function Oktato_LEVIZSGAZOTT({ route }) {
     }, []); 
 
     const katt = (tanulo) => {
-        alert(tanulo.tanulo_felhasznaloID)
+       
         navigation.navigate("Oktato_LevizsgazottTanuloReszletei", { tanulo });
     };
 

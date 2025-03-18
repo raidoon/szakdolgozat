@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { View, Text, StyleSheet, FlatList, TouchableOpacity } from "react-native";
-import Ipcim from "../../Ipcim";
+import Ipcim from "../../../Ipcim";
 
 export default function Oktato_MegerositBefizetes({ route }) {
     const { tanulo } = route.params;

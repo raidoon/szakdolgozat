@@ -30,27 +30,23 @@ import Oktato_Datumok from "./screens/oktato/Oktato_Datumok";
 import Oktato_Befizetesek from "./screens/oktato/Oktato_Befizetesek";
 import Oktato_Profil from "./screens/oktato/Oktato_Profil";
 import Oktato_Diakok from "./screens/oktato/Oktato_Diakok";
-import Oktato_TanuloReszletei from "./screens/oktato/Oktato_TanuloReszletei";
-import Oktato_OraRogzites from "./screens/oktato/Oktato_OraRogzites";
-import Oktato_AktualisTanulok from "./screens/oktato/Oktato_AktualisTanulok";
-import Oktato_LevizsgazottTanulok from "./screens/oktato/Oktato_LevizsgazottTanulok";
-import Oktato_TanuloAOrak from "./screens/oktato/Oktato_TanuloAOrak";
-import Oktato_TanuloLOrak from "./screens/oktato/Oktato_TanuloLOrak";
-import Oktato_MegerositesrevaroOrak from "./screens/oktato/Oktato_MegerositesrevaroOrak";
-import Oktato_MegerositOra from "./screens/oktato/Oktato_MegerositOra";
-import Oktato_BefizetesRogzites from "./screens/oktato/Oktato_BefizetesRogzites";
-import Oktato_ATBefizetesek from "./screens/oktato/Oktato_ATBefizetesek";
-import Oktato_LTBefizetesek from "./screens/oktato/Oktato_LTBefizetesek";
-import Oktato_MegerositesrevaroFizetes from "./screens/oktato/Oktato_MegerositesrevaroFizetes";
-import Oktato_MegerositBefizetes from "./screens/oktato/Oktato_MegerositBefizetes";
-import Oktato_TanuloABefizetesek from "./screens/oktato/Oktato_TanuloABefizetesek";
-import Oktato_TanuloLBefizetesek from "./screens/oktato/Oktato_TanuloLBefizetesek";
+import Oktato_TanuloReszletei from "./screens/oktato/OktatoDiakokScreens/Oktato_TanuloReszletei";
+import Oktato_OraRogzites from "./screens/oktato/OktatoDatumokScreens/Oktato_OraRogzites"
+import Oktato_AktualisTanulok from "./screens/oktato/OktatoDatumokScreens/Oktato_AktualisTanulok"
+import Oktato_TanuloAOrak from "./screens/oktato/OktatoDatumokScreens/Oktato_TanuloAOrak"
+import Oktato_MegerositesrevaroOrak from "./screens/oktato/OktatoDatumokScreens/Oktato_MegerositesrevaroOrak";
+import Oktato_MegerositOra from "./screens/oktato/OktatoDatumokScreens/Oktato_MegerositOra"
+import Oktato_BefizetesRogzites from "./screens/oktato/OktatoBefizetesekScreens/Oktato_BefizetesRogzites";
+import Oktato_ATBefizetesek from "./screens/oktato/OktatoBefizetesekScreens/Oktato_ATBefizetesek";
+import Oktato_MegerositesrevaroFizetes from "./screens/oktato/OktatoBefizetesekScreens/Oktato_MegerositesrevaroFizetes"
+import Oktato_MegerositBefizetes from "./screens/oktato/OktatoBefizetesekScreens/Oktato_MegerositBefizetes";
+import Oktato_TanuloABefizetesek from "./screens/oktato/OktatoBefizetesekScreens/Oktato_TanuloABefizetesek";
 import Oktato_KovetkezoOra from "./screens/oktato/Oktato_KovetkezoOra";
-import Oktato_AKTUALIS from "./screens/oktato/Oktato_AKTUALIS";
-import Oktato_LEVIZSGAZOTT from "./screens/oktato/Oktato_LEVIZSGAZOTT";
-import Oktato_LevizsgazottTanuloReszletei from "./screens/oktato/Oktato_LevizsgazottTanuloReszletei";
-import Oktato_ElkovetkezendoOrak from "./screens/oktato/Oktato_ElkovetkezendoOrak";
-import Oktato_OraSzerkesztes from "./screens/oktato/Oktato_OraSzerkesztes";
+import Oktato_AKTUALIS from "./screens/oktato/OktatoDiakokScreens/Oktato_AKTUALIS"
+import Oktato_LEVIZSGAZOTT from "./screens/oktato/OktatoDiakokScreens/Oktato_LEVIZSGAZOTT";
+import Oktato_LevizsgazottTanuloReszletei from "./screens/oktato/OktatoDiakokScreens/Oktato_LevizsgazottTanuloReszletei";
+import Oktato_ElkovetkezendoOrak from "./screens/oktato/OktatoDatumokScreens/Oktato_ElkovetkezendoOrak";
+import Oktato_OraSzerkesztes from "./screens/oktato/OktatoDatumokScreens/Oktato_OraSzerkesztes";
 //oktató profilok vége
 const Stack = createStackNavigator();
 function OktatoMenuStack(){
@@ -60,6 +56,8 @@ function OktatoMenuStack(){
         screenOptions={{
           headerShown: false,
         }}>
+
+      
       
       <Stack.Screen name={"Oktato_Datumok"} component={Oktato_Datumok}/>
       <Stack.Screen name={"Oktato_Befizetesek"} component={Oktato_Befizetesek}/>
@@ -122,6 +120,50 @@ function OktatoProfilStack(){
   );
 }
 
+/*function OktatoDatumStack() {
+  return (
+    <NavigationContainer>
+      <Stack.Navigator screenOptions={{headerShown: false,}}>
+
+        <Stack.Screen name="Oktato_AktualisTanulok" component={Oktato_AktualisTanulok} />
+        <Stack.Screen name="Oktato_TanuloAOrak" component={Oktato_TanuloAOrak} />
+        <Stack.Screen name="Oktato_MegerositesrevaroOrak" component={Oktato_MegerositesrevaroOrak} />
+        <Stack.Screen name="Oktato_MegerositOra" component={Oktato_MegerositOra} />
+        <Stack.Screen name="Oktato_ElkovetkezendoOrak" component={Oktato_ElkovetkezendoOrak} />
+        <Stack.Screen name="Oktato_OraSzerkesztes" component={Oktato_OraSzerkesztes} />
+        <Stack.Screen name="Oktato_OraRogzites" component={Oktato_OraRogzites} />
+      </Stack.Navigator>
+    </NavigationContainer>
+  );
+}
+
+function OktatoPenzStack() {
+  return (
+    <NavigationContainer>
+      <Stack.Navigator screenOptions={{headerShown: false,}}>
+      <Stack.Screen name="Oktato_BefizetesRogzites" component={Oktato_BefizetesRogzites} />
+        <Stack.Screen name="Oktato_ATBefizetesek" component={Oktato_ATBefizetesek} />
+        <Stack.Screen name="Oktato_MegerositBefizetes" component={Oktato_MegerositBefizetes} />
+        <Stack.Screen name="Oktato_MegerositesrevaroFizetes" component={Oktato_MegerositesrevaroFizetes} />
+        <Stack.Screen name="Oktato_TanuloABefizetesek" component={Oktato_TanuloABefizetesek} />
+      </Stack.Navigator>
+    </NavigationContainer>
+  );
+}
+
+function OktatoDiakokStack() {
+  return (
+    <NavigationContainer>
+      <Stack.Navigator screenOptions={{headerShown: false,}}>
+        <Stack.Screen name="Oktato_TanuloReszletei" component={Oktato_TanuloReszletei}/>
+        <Stack.Screen name="Oktato_AKTUALIS" component={Oktato_AKTUALIS} />
+        <Stack.Screen name="Oktato_LEVIZSGAZOTT" component={Oktato_LEVIZSGAZOTT} />
+        <Stack.Screen name="Oktato_LevizsgazottTanuloReszletei" component={Oktato_LevizsgazottTanuloReszletei} />
+      </Stack.Navigator>
+    </NavigationContainer>
+  );
+}
+*/
 export default function App() {
   return (
     <NavigationContainer>
@@ -139,24 +181,21 @@ export default function App() {
         <Stack.Screen name="Oktato_OraRogzites" component={Oktato_OraRogzites} />
         <Stack.Screen name="Oktato_Kezdolap" component={Oktato_Kezdolap} />
         <Stack.Screen name="Oktato_AktualisTanulok" component={Oktato_AktualisTanulok} />
-        <Stack.Screen name="Oktato_LevizsgazottTanulok" component={Oktato_LevizsgazottTanulok} />
         <Stack.Screen name="Oktato_TanuloAOrak" component={Oktato_TanuloAOrak} />
-        <Stack.Screen name="Oktato_TanuloLOrak" component={Oktato_TanuloLOrak} />
         <Stack.Screen name="Oktato_MegerositesrevaroOrak" component={Oktato_MegerositesrevaroOrak} />
         <Stack.Screen name="Oktato_MegerositOra" component={Oktato_MegerositOra} />
         <Stack.Screen name="Oktato_BefizetesRogzites" component={Oktato_BefizetesRogzites} />
         <Stack.Screen name="Oktato_ATBefizetesek" component={Oktato_ATBefizetesek} />
-        <Stack.Screen name="Oktato_LTBefizetesek" component={Oktato_LTBefizetesek} />
         <Stack.Screen name="Oktato_MegerositBefizetes" component={Oktato_MegerositBefizetes} />
         <Stack.Screen name="Oktato_MegerositesrevaroFizetes" component={Oktato_MegerositesrevaroFizetes} />
         <Stack.Screen name="Oktato_TanuloABefizetesek" component={Oktato_TanuloABefizetesek} />
-        <Stack.Screen name="Oktato_TanuloLBefizetesek" component={Oktato_TanuloLBefizetesek} />
         <Stack.Screen name="Oktato_KovetkezoOra" component={Oktato_KovetkezoOra} />
         <Stack.Screen name="Oktato_AKTUALIS" component={Oktato_AKTUALIS} />
         <Stack.Screen name="Oktato_LEVIZSGAZOTT" component={Oktato_LEVIZSGAZOTT} />
         <Stack.Screen name="Oktato_LevizsgazottTanuloReszletei" component={Oktato_LevizsgazottTanuloReszletei} />
         <Stack.Screen name="Oktato_ElkovetkezendoOrak" component={Oktato_ElkovetkezendoOrak} />
         <Stack.Screen name="Oktato_OraSzerkesztes" component={Oktato_OraSzerkesztes} />
+        
       </Stack.Navigator>
     </NavigationContainer>
   );

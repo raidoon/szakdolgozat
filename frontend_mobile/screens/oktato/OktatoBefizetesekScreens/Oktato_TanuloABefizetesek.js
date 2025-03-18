@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { View, Text, StyleSheet, FlatList, TouchableOpacity, Alert } from "react-native";
-import Ipcim from "../../Ipcim";
+import Ipcim from "../../../Ipcim";
 
 export default function Oktato_TanuloABefizetesek({ route }) {
     const { tanulo } = route.params;

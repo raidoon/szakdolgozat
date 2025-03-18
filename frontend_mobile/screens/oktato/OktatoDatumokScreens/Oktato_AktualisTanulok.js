@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { View, Text, FlatList, TouchableOpacity, StyleSheet, Dimensions } from "react-native";
 import { useNavigation } from '@react-navigation/native';
-import Ipcim from "../../Ipcim";
+import Ipcim from "../../../Ipcim";
 import Animated, { FadeInDown, FadeInUp, SlideInLeft } from "react-native-reanimated";
 import { LinearGradient } from "expo-linear-gradient";
 

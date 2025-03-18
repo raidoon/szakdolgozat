@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { View, Text, StyleSheet, FlatList } from "react-native";
-import Ipcim from "../../Ipcim";
+import Ipcim from "../../../Ipcim";
 
 export default function Oktato_TanuloAOrak({ route }) {
     const { tanulo } = route.params;
@@ -39,7 +39,7 @@ export default function Oktato_TanuloAOrak({ route }) {
     useEffect(() => {
         letoltes();
     }, []);
-    tanulo_felhasznaloID: tanulo.tanulo_felhasznaloID
+ 
     // Sort the data by date in descending order
     const sortedAdatok = adatok
         .filter(item => item.ora_teljesitve)
