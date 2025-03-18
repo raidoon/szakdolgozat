@@ -69,7 +69,7 @@ export default function Oktato_OraRogzites({ route }) {
       bevitel2: atkuld.oktato_id,
       bevitel3: selectedDiak,
       bevitel4: `${datum} ${ido}`,
-      bevitel5: cim || "Nincs megadva", // Ha nincs cím, egy default szöveg kerül be
+      bevitel5: cim || " ", // Ha nincs cím, egy default szöveg kerül be
     };
 
     try {

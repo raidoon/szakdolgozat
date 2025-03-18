@@ -95,7 +95,7 @@ export default function Oktato_TanuloABefizetesek({ route }) {
                 renderItem={({ item }) => (
                     <View style={stilus.oraKartya}>
                         <Text style={stilus.datum}>Dátum: {item.befizetesek_ideje.split("T")[0]}</Text>
-                        <Text>Pontos idő: {item.befizetesek_ideje.split("T")[1].split(":").slice(0, 2).join(":")}</Text>
+                        <Text>Pontos idő: {`${parseInt(item.befizetesek_ideje.split("T")[1].split(":")[0]) + 1}:${item.befizetesek_ideje.split("T")[1].split(":")[1]}`}</Text>
                         <Text>Összeg: {item.befizetesek_osszeg} Ft</Text>
                         <Text style={{ color: item.befizetesek_jovahagyva ? "green" : "red" }}>
                             {item.befizetesek_jovahagyva ? "Megerősítve" : "Megerősítésre vár"}

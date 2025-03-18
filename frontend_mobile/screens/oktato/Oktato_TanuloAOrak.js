@@ -10,36 +10,36 @@ export default function Oktato_TanuloAOrak({ route }) {
 
     const letoltes = async () => {
         try {
-            const adat = { tanulo_felhasznaloID: tanulo.tanulo_felhasznaloID };
-
-            console.log("Elküldött adat:", JSON.stringify(adat));
-
             const response = await fetch(Ipcim.Ipcim + "/diakokTeljesitettOrai", {
                 method: "POST",
-                body: JSON.stringify(adat),
+                body: JSON.stringify({ tanulo_felhasznaloID: tanulo.tanulo_felhasznaloID }),
                 headers: { "Content-type": "application/json; charset=UTF-8" }
             });
 
             if (!response.ok) {
-                const errorMessage = await response.text();
-                throw new Error(`Hiba történt: ${response.status} - ${errorMessage}`);
+                throw new Error(`Hiba történt: ${response.status}`);
             }
 
             const data = await response.json();
-            setAdatok(data);
-            setTipus(data[0].oratipus_neve)
+            const sortedAdatok = data.sort((a, b) => new Date(a.ora_datuma) - new Date(b.ora_datuma));
+            setAdatok(sortedAdatok);
+
+            if (data.length > 0) {
+                setTipus(data[0].oratipus_neve); // Set the type for the first item (if needed)
+            }
         } catch (error) {
-            console.error("Hiba az API-hívás során:", error);
+            console.error("Hiba az adatok letöltésekor:", error);
             alert("Nem sikerült az adatok letöltése.");
         } finally {
             setLoading(false);
-        }
+	}
     };
+
 
     useEffect(() => {
         letoltes();
     }, []);
-
+    tanulo_felhasznaloID: tanulo.tanulo_felhasznaloID
     // Sort the data by date in descending order
     const sortedAdatok = adatok
         .filter(item => item.ora_teljesitve)
@@ -65,7 +65,7 @@ export default function Oktato_TanuloAOrak({ route }) {
                             <View style={stilus.oraKartya}>
                                 <Text style={stilus.datum}>Dátum: {item.ora_datuma.split("T")[0]}</Text>
                                 <Text>Pontos idő: {formattedTime}</Text>
-                                <Text>Típus: {tipus}</Text>
+                                <Text>Típus: {item.oratipus_neve}</Text>
                                 <Text style={{ color: "green" }}>Teljesítve</Text>
                             </View>
                         );

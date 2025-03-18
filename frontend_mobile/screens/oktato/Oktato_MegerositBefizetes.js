@@ -77,8 +77,8 @@ export default function Oktato_MegerositBefizetes({ route }) {
                 data={adatok}
                 renderItem={({ item }) => (
                     <View style={stilus.fizuKartya}>
-                        <Text>{item.befizetesek_ideje.split("T")[0]}</Text>
-                        <Text>{item.befizetesek_ideje.split("T")[1].split(".")[0]}</Text>
+                        <Text>Dátum: {item.befizetesek_ideje.split("T")[0]}</Text>
+                        <Text>Pontos idő: {`${parseInt(item.befizetesek_ideje.split("T")[1].split(":")[0]) + 1}:${item.befizetesek_ideje.split("T")[1].split(":")[1]}`}</Text>
                         <Text>Állapot: {item.befizetesek_jovahagyva === 0 ? "Függőben" : item.befizetesek_jovahagyva === 1 ? "Megerősítve" : "Elutasítva"}</Text>
                         
                         {item.befizetesek_jovahagyva === 0 && (
