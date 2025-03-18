@@ -21,7 +21,10 @@ export default function Oktato_MegerositOra({ route }) {
             if (!response.ok) throw new Error(`Hiba: ${response.statusText}`);
             const data = await response.json();
             setAdatok(data);
-            setTipus(data[0].oratipus_neve)
+            if (data.length > 0) {
+                setTipus(data[0].oratipus_neve); // Set the type for the first item (if needed)
+            }
+            
         } catch (error) {
             console.error("Hiba:", error);
             Alert.alert("Hiba", "Nem sikerült az adatok letöltése.");

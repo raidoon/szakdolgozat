@@ -43,7 +43,7 @@ export default function Oktato_ATBefizetesek({ route }) {
     }, []);
 
     const katt = (tanulo) => {
-        alert(tanulo.tanulo_felhasznaloID);
+        
         navigation.navigate("Oktato_TanuloABefizetesek", { tanulo });
     };
 

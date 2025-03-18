@@ -42,7 +42,7 @@ export default function Oktato_AKTUALIS({ route }) {
     }, []);
 
     const katt = (tanulo) => {
-        alert(tanulo.tanulo_felhasznaloID)
+        
         navigation.navigate("Oktato_TanuloReszletei", { tanulo });
     };
 
