@@ -7,11 +7,12 @@ import Ipcim from '../Ipcim';
 const ElfelejtettJelszo = () => {
   const navigate = useNavigate();
   const [email, setEmail] = useState('');
-
+  const [error, setError] = useState('');
+  const [okUzenet, setOkUzenet] = useState('');
   const jelszoVisszaallitas = async (e) => {
     e.preventDefault();
     if (email === '') {
-      alert('Kérjük, adja meg az email címét!');
+      setError('Kérjük adja meg az email címét!');
       return;
     }
     try {
@@ -27,17 +28,18 @@ const ElfelejtettJelszo = () => {
       const data = await response.json();
 
       if (response.status === 404) {
-        alert(data.message); // "404 = Ez az email cím nem található"
+        setError(data.message); // "404 = Ez az email cím nem található"
       } else if (response.status === 403) {
-        alert(data.message); // "403 = Nincs jogosultságod a belépéshez!"
+        setError(data.message); // "403 = Nincs jogosultságod a belépéshez!"
       } else if (response.status === 200) {
         // 200 = Minden jó. Sikeres admin email ellenőrzés, van email cím is és a jogosultság is jó!
         // További logika, pl. jelszó visszaállítási link küldése
-        alert("A jelszó visszaállítási linket elküldtük az email címére!")
+        setError('');
+        setOkUzenet("A jelszó visszaállítási linket elküldtük az email címére!");
       }
     } catch (error) {
       console.error('Hiba történt:', error);
-      alert('Szerverhiba történt!');
+      setError('A szerver jelenleg nem elérhető, kérjük próbálkozzon később!');
     }
   };
 
@@ -46,7 +48,7 @@ const ElfelejtettJelszo = () => {
       <div className="elfelejtettJelszoNagyDiv">
         <div className="udvozloPanel">
           <h1>Elfelejtett jelszó</h1>
-          <p>Ha elfelejtette a jelszavát, kérjük, adja meg az email címét, és mi elküldjük Önnek a jelszó visszaállítási linket.</p>
+          <p>Ha elfelejtette a jelszavát, kérjük, adja meg az email címét, és elküldjük Önnek a jelszó visszaállítási linket.</p>
           <button
             onClick={() => navigate('/')} // Vissza a bejelentkezéshez
             style={{
@@ -77,6 +79,8 @@ const ElfelejtettJelszo = () => {
                 onChange={(e) => setEmail(e.target.value)}
               />
             </div>
+            {error && <p className="hibaUzenet">{error}</p>}
+            {okUzenet && <p className="okUzenet">{okUzenet}</p>}
             <button type="submit" className="bejelentkezoGomb">Link küldése</button>
           </form>
         </div>

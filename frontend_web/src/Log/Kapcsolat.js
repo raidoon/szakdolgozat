@@ -9,16 +9,31 @@ const Kapcsolat = () => {
   const [nev, setNev] = useState('');
   const [email2, setEamil2] = useState('');
   const [uzenet, setUzenet] = useState('');
+  const [error, setError] = useState('');
+  const [okUzenet, setOkUzenet] = useState('');
+
+  //EMAIL CÍM VALIDÁLÁS REGEX-EL
+  const emailEllenorzes = (megadottEmail) => {
+    const regex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    return regex.test(megadottEmail);
+  }
+
   const uzenetkuldes = () => {
     if(nev ==='' || email2 ==='' || uzenet ===''  ){
-        alert("Kérjük töltse ki az összes mezőt!")
+        setUzenet('');
+        setError('Kérjük töltse ki az összes mezőt!');
+        return;
     }
-    else {
-        alert("Üzenetét megkaptuk! Hamarosan felvesszük Önnel a kapcsolatot.");
-        setNev('');
-        setEamil2('');
-        setUzenet('');  
+    if(!emailEllenorzes(email2)){
+      setOkUzenet('');
+      setError('Kérjük adjon meg egy érvényes email címet!');
+      return;
     }
+    setNev('');
+    setEamil2('');
+    setUzenet('');  
+    setError('');
+    setOkUzenet("Üzenetét megkaptuk! Hamarosan felvesszük Önnel a kapcsolatot.");
   };
   return (
     <div className='KapcsolatBody'>
@@ -78,7 +93,9 @@ const Kapcsolat = () => {
                 onChange={(e) => setUzenet(e.target.value)}
               />
             </div>
-            <button type="submit" className="bejelentkezoGomb" onClick={()=> uzenetkuldes()}>Üzenet elküldése</button>
+            {error && <p className="hibaUzenet">{error}</p>}
+            {okUzenet && <p className="okUzenet">{okUzenet}</p>}
+            <button type="submit" className="bejelentkezoGomb" onClick={(e) => { e.preventDefault(); uzenetkuldes(); }}>Üzenet elküldése</button>
           </form>
         </div>
       </div>

@@ -24,8 +24,9 @@ const Login = () => {
       if (!response.ok) {
         throw new Error('Nem található ilyen felhasználó!');
       }
-      const data = await response.json();
-      localStorage.setItem('token', data.token);
+      const adat = await response.json();
+      localStorage.setItem('token', adat.token);
+      localStorage.setItem('felhasznaloAdatok',JSON.stringify(adat));
       alert('Sikeres bejelentkezés!');
       window.location.href = '/open'; // Átirányítás a védett oldalra
     } catch (err) {

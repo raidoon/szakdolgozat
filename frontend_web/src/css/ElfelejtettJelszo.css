@@ -9,7 +9,18 @@
     align-items: center;
     width: 100%;
 }
-
+.hibaUzenet {
+    color: red;
+    margin-bottom: 2rem;
+    font-size: larger;
+    line-height: 1.6;
+}
+.okUzenet {
+    color: green;
+    margin-bottom: 2rem;
+    font-size: larger;
+    line-height: 1.6;
+}
 .elfelejtettJelszoNagyDiv {
     display: flex;
     justify-content: center;

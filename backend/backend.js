@@ -184,8 +184,12 @@ app.post("/beleptetes", (req, res) => {
 //------------------------------------------------ BEJELENTKEZÉS ADMINNAK 
 app.post('/web/login', (req, res) => {
   const { email, password } = req.body;
-  kapcsolat()
-  const query = 'SELECT felhasznalo_email, felhasznalo_jelszo, felhasznalo_tipus FROM felhasznaloi_adatok WHERE felhasznalo_email = ? AND felhasznalo_tipus = 3';
+  kapcsolat(); 
+  const query = `
+    SELECT felhasznalo_autosiskola, felhasznalo_email, felhasznalo_telefonszam, felhasznalo_tipus, felhasznalo_jelszo 
+    FROM felhasznaloi_adatok 
+    WHERE felhasznalo_email = ? AND felhasznalo_tipus = 3
+  `;
   connection.query(query, [email], (err, rows) => {
     if (err) {
       console.error('Adatbázis hiba:', err);
@@ -200,14 +204,21 @@ app.post('/web/login', (req, res) => {
           console.error('Hiba a jelszó ellenőrzésekor:', err);
           res.status(500).json({ message: 'Szerverhiba' });
         } else if (isMatch) {
-          if(rows[0].felhasznalo_tipus === 3){
+          if (rows[0].felhasznalo_tipus === 3) {
             const token = jwt.sign({ felhasznalo_email: rows[0].felhasznalo_email }, SECRET_KEY, {
               expiresIn: '1h',
             });
-            res.json({ token });
-          }
-          else{
-            res.status.json({message: 'Nincs jogosultságod a belépéshez!'});
+            // felhasználói adatok is kellenek!
+            const felhasznaloAdatok = {
+              felhasznalo_autosiskola: rows[0].felhasznalo_autosiskola,
+              felhasznalo_email: rows[0].felhasznalo_email,
+              felhasznalo_telefonszam: rows[0].felhasznalo_telefonszam,
+              felhasznalo_tipus: rows[0].felhasznalo_tipus,
+            };
+
+            res.json({ token, felhasznalo: felhasznaloAdatok }); // elküldjük a bejelentkezett token-t, ÉS az adatokat!
+          } else {
+            res.status(403).json({ message: 'Nincs jogosultságod a belépéshez!' });
           }
         } else {
           res.status(401).json({ message: 'Hibás jelszó' });
@@ -244,6 +255,27 @@ app.post('/adminEmailEllenorzes', (req, res) => {
       user: rows[0], 
     });
   });
+  connection.end();
+});
+//------------------------------------------------ ADMIN OKTATOK LEKERDEZESE
+app.post("/AutosiskolaOktatoi", (req, res) => {
+  kapcsolat();
+  connection.query(
+    `select oktato_id,oktato_felhasznaloID,oktato_neve,felhasznalo_email,felhasznalo_telefonszam,autosiskola_adatok.autosiskola_nev from oktato_adatok
+    inner join felhasznaloi_adatok on felhasznaloi_adatok.felhasznalo_id=oktato_adatok.oktato_felhasznaloID
+    inner join autosiskola_adatok on felhasznaloi_adatok.felhasznalo_autosiskola=autosiskola_adatok.autosiskola_id
+    where felhasznalo_autosiskola = ?`,
+    [req.body.felhasznalo_autosiskola],
+    (err, rows, fields) => {
+      if (err) {
+        console.log(err);
+        res.status(500).send("Hiba");
+      } else {
+        console.log(rows);
+        res.status(200).send(rows);
+      }
+    }
+  );
   connection.end();
 });
 //------------------------------------------------ TANULÓ ADATAINAK LEKÉRDEZÉSE

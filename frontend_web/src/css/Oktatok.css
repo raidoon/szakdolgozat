@@ -1,0 +1,19 @@
+.oktatokBody{
+    margin: 0;
+    font-family: Arial, sans-serif;
+    background: linear-gradient(135deg, #d6e8f1, #1b4ca2);
+    min-height: 100vh;
+    max-height: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+}
+
+.oktatoKartya{
+    border-radius: 30px;
+    background-color: white;
+    width: 400px;
+    margin: 20px;
+    text-align: center;
+}
