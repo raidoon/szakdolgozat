@@ -17,7 +17,6 @@ const Kapcsolat = () => {
     const regex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     return regex.test(megadottEmail);
   }
-
   const uzenetkuldes = () => {
     if(nev ==='' || email2 ==='' || uzenet ===''  ){
         setUzenet('');
@@ -42,7 +41,6 @@ const Kapcsolat = () => {
           <h1>Üzenetküldés a <span style={{ color: '#007bff', fontWeight: 600, fontSize: 50 }}>Jogsi+</span> csapatának</h1>
           <p>Ha bármilyen kérdése van, vagy szeretne több információt kapni szolgáltatásainkról, kérjük, töltse ki az alábbi űrlapot, és mi hamarosan válaszolunk!</p>
           <p>Kérjük az üzenetében azt is tüntesse fel, hogy melyik autósiskolát képviseli!</p>
-          
           <button
             onClick={() => navigate('/')} // vissza a bejelentkezéshez
             style={{
@@ -102,5 +100,4 @@ const Kapcsolat = () => {
     </div>
   );
 };
-
 export default Kapcsolat;

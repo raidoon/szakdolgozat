@@ -1,0 +1,44 @@
+.oktatokBody {
+    margin: 0;
+    font-family: Arial, sans-serif;
+    background: linear-gradient(135deg, #d6e8f1, #1b4ca2);
+    min-height: 100vh;
+    max-height: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+    padding: 20px;
+}
+.lenyiloKartya{
+    display: flex;
+    align-items: center; /* függőlegesen közép */
+    border-radius: 30px;
+    background-color: white;
+    width: 80%; /* szélesség igazodjon a képernyő nagyságához */
+    max-width: 850px; /* ez csak nagyobb kijelzőkhöz kell */
+    margin: 20px;
+    padding: 20px;
+    box-sizing: border-box;
+    text-align: center;
+    padding-left: 50px;
+}
+.diakKartya{
+    display: flex;
+    align-items: center; 
+    width: 80%; /* szélesség igazodjon a képernyő nagyságához */
+    max-width: 850px; /* ez csak nagyobb kijelzőkhöz kell */
+    padding: 20px;
+    box-sizing: border-box;
+    text-align: center;
+    justify-content: center;
+    padding-left: 50px;
+}
+.jobbraNyil {
+    margin-left: auto;
+    margin-right: 10px;
+}
+
+@media (max-width: 768px) {
+
+}

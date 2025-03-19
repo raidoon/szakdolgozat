@@ -21,18 +21,24 @@ function kapcsolat() {
     database: "szakdolgozat_vol2",
   });
   connection.connect();
-}
-app.get("/teszt", (req, res) => {
+}//------------------------------------------------ OKTATOK/OKTATOID
+app.get("/oktato/:oktatoId", (req, res) => {
   kapcsolat();
   connection.query(
-    `select * from tanulo_adatok where tanulo_levizsgazott=0`,
+    `SELECT *
+    FROM oktato_adatok AS oktato
+    WHERE oktato.oktato_id = ?`,
+    [req.params.oktatoId],
     (err, rows, fields) => {
       if (err) {
         console.log(err);
-        res.status(500).send("Hiba");
+        res.status(500).send("Hiba"); 
       } else {
-        console.log(rows);
-        res.status(200).send(rows);
+        if (rows.length > 0) {
+          res.status(200).json(rows[0]);
+        } else {
+          res.status(404).send("Oktató nem található!");
+        }
       }
     }
   );
@@ -335,14 +341,12 @@ app.post("/tanuloSUMbefizetes", (req, res) => {
   );
   connection.end();
 });
-//------------------------------------------------ TANULÓ LEGUTÓBBI BEFIZETÉSÉNEK IDŐPONTJA -- de csak azok közül amik nem lettek elutasitva!!!
-app.post("/tanuloLegutobbiBefizetese", (req, res) => {
+//------------------------------------------------ TANULÓ TARTOZÁSAINAK TELJES ÖSSZEGE
+app.post("/tanuloSUMtartozas", (req, res) => {
   kapcsolat();
   connection.query(
-    `SELECT COALESCE(MAX(befizetesek.befizetesek_ideje), 'Még nem történt befizetés') AS utolso_befizetes
-        FROM befizetesek 
-        WHERE befizetesek.befizetesek_tanuloID = ? AND befizetesek.befizetesek_jovahagyva !=2`,
-    [req.body.befizetesek_tanuloID],
+    `SELECT SUM(befizetesek.befizetesek_osszeg) as 'osszesTartozas' FROM befizetesek INNER JOIN tanulo_adatok ON befizetesek.befizetesek_tanuloID=tanulo_adatok.tanulo_id INNER JOIN felhasznaloi_adatok ON tanulo_adatok.tanulo_felhasznaloID=felhasznaloi_adatok.felhasznalo_id WHERE felhasznalo_id = ? AND befizetesek.befizetesek_jovahagyva != 1 AND befizetesek.befizetesek_jovahagyva !=2`,
+    [req.body.felhasznalo_id],
     (err, rows, fields) => {
       if (err) {
         console.log(err);
@@ -355,12 +359,14 @@ app.post("/tanuloLegutobbiBefizetese", (req, res) => {
   );
   connection.end();
 });
-//------------------------------------------------ TANULÓ TARTOZÁSAINAK TELJES ÖSSZEGE
-app.post("/tanuloSUMtartozas", (req, res) => {
+//------------------------------------------------ TANULÓ LEGUTÓBBI BEFIZETÉSÉNEK IDŐPONTJA -- de csak azok közül amik nem lettek elutasitva!!!
+app.post("/tanuloLegutobbiBefizetese", (req, res) => {
   kapcsolat();
   connection.query(
-    `SELECT SUM(befizetesek.befizetesek_osszeg) as 'osszesTartozas' FROM befizetesek INNER JOIN tanulo_adatok ON befizetesek.befizetesek_tanuloID=tanulo_adatok.tanulo_id INNER JOIN felhasznaloi_adatok ON tanulo_adatok.tanulo_felhasznaloID=felhasznaloi_adatok.felhasznalo_id WHERE felhasznalo_id = ? AND befizetesek.befizetesek_jovahagyva != 1 AND befizetesek.befizetesek_jovahagyva !=2`,
-    [req.body.felhasznalo_id],
+    `SELECT COALESCE(MAX(befizetesek.befizetesek_ideje), 'Még nem történt befizetés') AS utolso_befizetes
+        FROM befizetesek 
+        WHERE befizetesek.befizetesek_tanuloID = ? AND befizetesek.befizetesek_jovahagyva !=2`,
+    [req.body.befizetesek_tanuloID],
     (err, rows, fields) => {
       if (err) {
         console.log(err);
@@ -1087,6 +1093,7 @@ app.post("/suliTanuloi", (req, res) => {
     `SELECT * from tanulo_adatok
     INNER JOIN felhasznaloi_adatok ON felhasznaloi_adatok.felhasznalo_id=tanulo_adatok.tanulo_felhasznaloID
     INNER JOIN autosiskola_adatok ON felhasznaloi_adatok.felhasznalo_autosiskola=autosiskola_adatok.autosiskola_id
+	inner join oktato_adatok on tanulo_adatok.tanulo_oktatoja=oktato_adatok.oktato_id
     WHERE felhasznalo_autosiskola = ?`,
     [req.body.felhasznalo_autosiskola],
     (err, rows, fields) => {
@@ -1104,4 +1111,3 @@ app.post("/suliTanuloi", (req, res) => {
 app.listen(port, () => {
   console.log(`Example app listening on port ${port}`);
 });
-

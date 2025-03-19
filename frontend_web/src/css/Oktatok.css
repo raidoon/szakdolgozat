@@ -18,7 +18,7 @@
     border-radius: 30px;
     background-color: white;
     width: 80%; /* szélesség igazodjon a képernyő nagyságához */
-    max-width: 800px; /* ez csak nagyobb kijelzőkhöz kell */
+    max-width: 850px; /* ez csak nagyobb kijelzőkhöz kell */
     margin: 20px;
     padding: 20px;
     box-sizing: border-box;
@@ -32,12 +32,35 @@
     margin: 0; 
     font-style: italic; 
 }
+@keyframes fadeIn {
+    from {
+      opacity: 0;
+    }
+    to {
+      opacity: 1;
+    }
+  }
+  
+  .nincsIlyenNevuOktato {
+    animation: fadeIn 0.5s ease-in-out;
+  }
 
+  .jobbraNyil {
+    margin-left: auto;
+    margin-right: 10px;
+}
 /* kisebb kijelzőkhöz */
 @media (max-width: 768px) {
     .oktatoKartya {
         flex-direction: column; /* kisebb képernyőkön egymás alatt legyenek ne egy sorban az elemek */
         text-align: center;
         width: 90%;
+    }
+    .jobbraNyil {
+        margin-left: 0; 
+        margin-top: 10px; /* Hagyunk egy kis helyet fölötte */
+        display: flex;
+        justify-content: center;
+        width: 100%;
     }
 }

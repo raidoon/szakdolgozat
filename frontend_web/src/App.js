@@ -7,6 +7,7 @@ import Login from './Log/Login';
 import Tanulok from './Tanulok';
 import Kapcsolat from './Log/Kapcsolat';
 import ElfelejtettJelszo from './Log/ElfelejtettJelszo';
+import OktatoReszletek from './OktatoReszletek';
 
 const ProtectedRoute = ({ children }) => {
   const token = localStorage.getItem('token');
@@ -42,6 +43,7 @@ const App = () => {
             </ProtectedRoute>
           } 
           />
+          <Route path="/oktatok/:oktatoId" element={<OktatoReszletek />} />
           <Route 
           path="/tanulok" 
           element={
