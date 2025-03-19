@@ -1081,6 +1081,26 @@ app.post("/oraSzerkesztes", (req, res) => {
   connection.end();
 });
 //--------------------------------
+app.post("/suliTanuloi", (req, res) => {
+  kapcsolat();
+  connection.query(
+    `SELECT * from tanulo_adatok
+    INNER JOIN felhasznaloi_adatok ON felhasznaloi_adatok.felhasznalo_id=tanulo_adatok.tanulo_felhasznaloID
+    INNER JOIN autosiskola_adatok ON felhasznaloi_adatok.felhasznalo_autosiskola=autosiskola_adatok.autosiskola_id
+    WHERE felhasznalo_autosiskola = ?`,
+    [req.body.felhasznalo_autosiskola],
+    (err, rows, fields) => {
+      if (err) {
+        console.log(err);
+        res.status(500).send("Hiba");
+      } else {
+        console.log(rows);
+        res.status(200).send(rows);
+      }
+    }
+  );
+  connection.end();
+});
 app.listen(port, () => {
   console.log(`Example app listening on port ${port}`);
 });
