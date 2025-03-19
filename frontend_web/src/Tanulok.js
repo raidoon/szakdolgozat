@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect,useMemo } from "react";
 import Navbar from "./Navbar";
 import Ipcim from "./Ipcim";
 
@@ -8,8 +8,12 @@ const Tanulok = () => {
     const [loading, setLoading] = useState(true);
     const [hiba, setHiba] = useState(null);
 
-    //ezt még majd be kell állítani
-    const felhasznalo_autosiskola = 1;
+    //a felhasznaloAdatok magának a bejelentkezett ügyintézőnek az adatait jelenti. Innen azonban ki tudod venni az autosiskola id-t!! :)
+    const felhasznaloAdatok = useMemo(() => {
+        return JSON.parse(localStorage.getItem("felhasznaloAdatok"));
+      }, []); //[] - csak egyszer hívjuk meg
+
+    const felhasznalo_autosiskola = felhasznaloAdatok.felhasznalo.felhasznalo_autosiskola;
 
     const letoltes = () => {
         setLoading(true);

@@ -1,4 +1,4 @@
-.oktatokBody{
+.oktatokBody {
     margin: 0;
     font-family: Arial, sans-serif;
     background: linear-gradient(135deg, #d6e8f1, #1b4ca2);
@@ -8,12 +8,36 @@
     justify-content: center;
     align-items: center;
     flex-direction: column;
+    padding: 20px;
 }
 
-.oktatoKartya{
+.oktatoKartya {
+    display: flex;
+    align-items: center; /* függőlegesen közép */
+    gap: 30px; /* hely kihagyás az elemek között */
     border-radius: 30px;
     background-color: white;
-    width: 400px;
+    width: 80%; /* szélesség igazodjon a képernyő nagyságához */
+    max-width: 800px; /* ez csak nagyobb kijelzőkhöz kell */
     margin: 20px;
-    text-align: center;
+    padding: 20px;
+    box-sizing: border-box;
+}
+.oktatoKartya h1 {
+    margin: 0; 
+    margin-bottom: 8px; 
+}
+
+.oktatoKartya p {
+    margin: 0; 
+    font-style: italic; 
+}
+
+/* kisebb kijelzőkhöz */
+@media (max-width: 768px) {
+    .oktatoKartya {
+        flex-direction: column; /* kisebb képernyőkön egymás alatt legyenek ne egy sorban az elemek */
+        text-align: center;
+        width: 90%;
+    }
 }
