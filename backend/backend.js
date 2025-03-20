@@ -1108,6 +1108,61 @@ app.post("/suliTanuloi", (req, res) => {
   );
   connection.end();
 });
+
+//------------
+app.put('/oktatovaltas', (req, res) => {
+  kapcsolat(); // Establish the database connection
+
+  const { tanulo_id, oktato_id } = req.body;
+
+  if (!tanulo_id || !oktato_id) {
+    return res.status(400).json({ uzenet: "Hiányzó adatok!" });
+  }
+
+  const updateQuery = `UPDATE tanulo_adatok SET tanulo_oktatoja = ? WHERE tanulo_id = ?`;
+  
+  console.log("Running query:", updateQuery, "with tanulo_id, oktato_id:", tanulo_id, oktato_id); 
+
+  connection.query(updateQuery, [oktato_id, tanulo_id], (err, result) => {
+    if (err) {
+      console.error("Hiba az oktató cserélésében:", err);
+      res.status(500).json({ message: "Hiba az oktató cserélésében" });
+    } else {
+      console.log("Oktató cseréje megtörtént. Affected rows:", result.affectedRows);
+      res.status(200).json({ message: "Oktató leváltva" });
+    }
+    connection.end();
+  });
+});
+//-------------------
+app.get("/kezdolapadatok", (req, res) => {
+  kapcsolat(); // Kapcsolat megnyitása
+
+  const query = `
+    SELECT 
+      (SELECT COUNT(*) FROM tanulo_adatok) AS osszes_tanulo,
+      (SELECT COUNT(*) FROM tanulo_adatok WHERE tanulo_levizsgazott = 0) AS aktiv_diakok,
+      (SELECT COUNT(*) 
+       FROM ora_adatok 
+       WHERE ora_tipusID = 2 
+       AND YEARWEEK(ora_datuma, 1) = YEARWEEK(NOW(), 1)
+      ) AS heti_vizsgak
+  `;
+
+  connection.query(query, (err, results) => {
+    if (err) {
+      console.error(" Hiba a statisztikai adatok lekérdezésében:", err);
+      return res.status(500).json({ message: "Hiba történt a lekérdezés során" });
+    }
+
+    console.log(" Sikeres lekérdezés:", results);
+    res.status(200).json(results[0]); // Visszaküldjük az első sort
+  });
+});
+
+
+
+//-----------
 app.listen(port, () => {
   console.log(`Example app listening on port ${port}`);
 });

@@ -8,6 +8,10 @@ import Tanulok from './Tanulok';
 import Kapcsolat from './Log/Kapcsolat';
 import ElfelejtettJelszo from './Log/ElfelejtettJelszo';
 import OktatoReszletek from './OktatoReszletek';
+import AktualisDiakok from './AktualisDiakok';
+import LevizsgazottDiakok from './LevizsgazottDiakok';
+import UjDiak from './UjDiak';
+import OktatoValtas from './OktatoValtas';
 
 const ProtectedRoute = ({ children }) => {
   const token = localStorage.getItem('token');
@@ -42,28 +46,50 @@ const App = () => {
               <Oktatok />
             </ProtectedRoute>
           } 
-          />
-          <Route path="/oktatok/:oktatoId" element={<OktatoReszletek />} />
-          <Route 
+        />
+        <Route path="/oktatok/:oktatoId" element={<OktatoReszletek />} />
+        <Route 
           path="/tanulok" 
           element={
             <ProtectedRoute>
               <Tanulok />
             </ProtectedRoute>
           } 
-          />
-          <Route 
-          path="/kapcsolat" 
+        />
+        <Route 
+          path="/aktualisdiakok" 
           element={
-            <Kapcsolat/>
+            <ProtectedRoute>
+              <AktualisDiakok />
+            </ProtectedRoute>
           } 
-          />
-          <Route 
-          path="/elfelejtettjelszo" 
+        />
+        <Route 
+          path="/levizsgazottdiakok" 
           element={
-            <ElfelejtettJelszo/>
+            <ProtectedRoute>
+              <LevizsgazottDiakok />
+            </ProtectedRoute>
           } 
-          />
+        />
+        <Route 
+          path="/ujdiak" 
+          element={
+            <ProtectedRoute>
+              <UjDiak />
+            </ProtectedRoute>
+          } 
+        />
+        <Route 
+          path="/oktatovaltas" 
+          element={
+            <ProtectedRoute>
+              <OktatoValtas />
+            </ProtectedRoute>
+          } 
+        />
+        <Route path="/kapcsolat" element={<Kapcsolat />} />
+        <Route path="/elfelejtettjelszo" element={<ElfelejtettJelszo />} />
         <Route path="*" element={<Navigate to="/login" />} />
       </Routes>
     </Router>
