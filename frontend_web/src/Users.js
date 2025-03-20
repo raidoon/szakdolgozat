@@ -6,9 +6,9 @@ const Users=()=>{
     const [adatok,setAdatok] =useState([])
 
     const letoltes=async ()=>{
-        let x=await fetch(Ipcim.Ipcim +'/felhasznalok')
-        let y=await x.json()
-        setAdatok(y)            
+        //let x=await fetch(Ipcim.Ipcim +'/felhasznalok')
+        //let y=await x.json()
+        //setAdatok(y)            
     }
 
     

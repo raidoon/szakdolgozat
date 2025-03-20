@@ -14,10 +14,13 @@ const Open = () => {
   }, [navigate]);
 
   return (
-    <div className='openBody'>
+    <div>
+      <div className='openBody'>
       <Navbar />
       <h1>Üdvözlünk a védett oldalon!</h1>
+      <p>Lorem</p>
 
+    </div>
     </div>
   );
 };
