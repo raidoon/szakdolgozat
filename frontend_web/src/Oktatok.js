@@ -104,7 +104,7 @@ const Oktatok = () => {
                 <div className="jobbraNyil">
                   <Link
                     to={`/oktatok/${item.oktato_id}`}
-                    style={{ textDecoration: "none" }}
+                    style={{ textDecoration: "none" }}  
                   >
                     <IoIosArrowDroprightCircle size={55} color="#0f59d9" />
                   </Link>

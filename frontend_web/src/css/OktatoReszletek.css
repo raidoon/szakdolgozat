@@ -1,4 +1,4 @@
-.oktatokBody {
+.oktatoReszletekContainer .oktatokBody {
     margin: 0;
     font-family: Arial, sans-serif;
     background: linear-gradient(135deg, #d6e8f1, #1b4ca2);
@@ -6,39 +6,104 @@
     max-height: 100%;
     display: flex;
     justify-content: center;
-    align-items: center;
+    align-items: flex-start; 
+    padding: 20px;
+}
+
+.oktatoReszletekContainer .container {
+    display: flex;
+    width: 100%;
+    max-width: 1200px;
+    gap: 30px; 
+    margin-top: 50px;
+    align-items: flex-start; 
+    margin-left: 5rem;
+}
+
+.oktatoReszletekContainer .oktatoReszletekSection {
+    background-color: rgba(255, 255, 255, 0.9);
+    border-radius: 15px;
+    padding: 20px;
+    width: 300px;
+    min-height: 300px; 
+    max-height: 80vh;
+    overflow-y: auto; /* lehessen tekerni ha túlmegy a képernyőn */
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    text-align: center;
+    position: sticky; /* maradjon felül */
+    top: 20px; /* ne érjen hozzá teljesen a kép tetjéhez */
+    flex-shrink: 0; /* ne nyúljon meg magától */
+}
+
+.oktatoReszletekContainer .studentsSection {
+    flex: 1;
+    display: flex;
     flex-direction: column;
-    padding: 20px;
+    gap: 20px; 
 }
-.lenyiloKartya{
+
+.oktatoReszletekContainer .lenyiloKartya {
     display: flex;
-    align-items: center; /* függőlegesen közép */
-    border-radius: 30px;
-    background-color: white;
-    width: 80%; /* szélesség igazodjon a képernyő nagyságához */
-    max-width: 850px; /* ez csak nagyobb kijelzőkhöz kell */
-    margin: 20px;
-    padding: 20px;
-    box-sizing: border-box;
-    text-align: center;
-    padding-left: 50px;
+    align-items: center;
+    border-radius: 15px;
+    background-color: rgba(255, 255, 255, 0.9);
+    padding: 15px;
+    margin: 10px 0;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    cursor: pointer;
 }
-.diakKartya{
-    display: flex;
-    align-items: center; 
-    width: 80%; /* szélesség igazodjon a képernyő nagyságához */
-    max-width: 850px; /* ez csak nagyobb kijelzőkhöz kell */
-    padding: 20px;
-    box-sizing: border-box;
-    text-align: center;
-    justify-content: center;
-    padding-left: 50px;
+
+.oktatoReszletekContainer .diakLista {
+    margin-top: 10px;
 }
-.jobbraNyil {
+
+.oktatoReszletekContainer .diakKartya {
+    background: linear-gradient(135deg, #ffffff, #f0f4f8);
+    border-radius: 15px;
+    padding: 20px;
+    margin: 10px 0;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    text-align: left;
+    transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.oktatoReszletekContainer .diakKartya:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+}
+
+.oktatoReszletekContainer .jobbraNyil {
     margin-left: auto;
     margin-right: 10px;
 }
 
-@media (max-width: 768px) {
+.oktatoReszletekContainer .editButton, 
+.oktatoReszletekContainer .actionButton {
+    background-color: #0f59d9;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    padding: 10px 20px;
+    margin: 10px 0;
+    cursor: pointer;
+    font-size: 16px;
+    transition: background-color 0.2s;
+}
 
+.oktatoReszletekContainer .editButton:hover, 
+.oktatoReszletekContainer .actionButton:hover {
+    background-color: #0a3d8f;
+}
+
+@media (max-width: 768px) {
+    .oktatoReszletekContainer .container {
+        flex-direction: column;
+        align-items: center;
+        margin-left: 0;
+    }
+
+    .oktatoReszletekContainer .oktatoReszletekSection {
+        width: 80%;
+        position: static; /* telefonos képernyőn ne legyen sticky a tetején */
+    }
 }
