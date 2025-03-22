@@ -500,29 +500,56 @@ app.post("/egyOktatoAdatai", (req, res) => {
 });
 //--------------------------
 app.post("/oraFelvitel", (req, res) => {
-  kapcsolat();
-  connection.query(
-    `INSERT INTO ora_adatok VALUES (NULL, ?, ?, ?, ?, ?, 0 )`,
-    [
-      req.body.bevitel1,
-      req.body.bevitel2,
-      req.body.bevitel3,
-      req.body.bevitel4,
-      req.body.bevitel5
-      
-    ],
-    (err, rows, fields) => {
-      if (err) {
-        console.log("Hiba");
-        console.log(err);
-        res.status(500).send("Hiba");
-      } else {
-        console.log("Sikeres felvitel!");
-        res.status(200).send("Sikeres felvitel!");
-      }
+  kapcsolat(); 
+
+  const { bevitel1, bevitel2, bevitel3, bevitel4, bevitel5 } = req.body;
+
+  
+  const [datePart, timePart] = bevitel4.split(" "); 
+  const [hour] = timePart.split(":"); 
+  const dateHour = `${datePart} ${hour}:00`; // Format as "YYYY-MM-DD HH:00"
+
+  // First, check if a lesson already exists in the same hour
+  const checkQuery = `
+    SELECT COUNT(*) as count 
+    FROM ora_adatok 
+    WHERE DATE(ora_datuma) = ? 
+      AND HOUR(ora_datuma) = ?
+  `;
+  connection.query(checkQuery, [datePart, hour], (err, results) => {
+    if (err) {
+      console.error("Hiba az órák ellenőrzésekor:", err);
+      res.status(500).send("Hiba az órák ellenőrzésekor");
+      connection.end();
+      return;
     }
-  );
-  connection.end();
+
+    const lessonExists = results[0].count > 0;
+
+    if (lessonExists) {
+      console.log("Ezen az időponton már van rögzített óra!");
+      res.status(400).send("Ezen az időponton már van rögzített óra!");
+      connection.end();
+      return;
+    }
+
+    // If no lesson exists, proceed with the insertion
+    const insertQuery = `INSERT INTO ora_adatok VALUES (NULL, ?, ?, ?, ?, ?, 0)`;
+    connection.query(
+      insertQuery,
+      [bevitel1, bevitel2, bevitel3, bevitel4, bevitel5],
+      (err, rows, fields) => {
+        if (err) {
+          console.error("Hiba az óra rögzítésekor:", err);
+          res.status(500).send("Hiba az óra rögzítésekor");
+        } else {
+          console.log("Sikeres felvitel!");
+          res.status(200).send("Sikeres felvitel!");
+        }
+        connection.end();
+      }
+    );
+  });
 });
 //--------------------------------
 app.get("/valasztTipus", (req, res) => {
@@ -1160,9 +1187,9 @@ app.get("/kezdolapadatok", (req, res) => {
   });
 });
 
+//-------------------------------
 
 
-//-----------
 app.listen(port, () => {
   console.log(`Example app listening on port ${port}`);
 });

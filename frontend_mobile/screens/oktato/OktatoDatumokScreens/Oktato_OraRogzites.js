@@ -13,7 +13,6 @@ import DateTimePicker from "@react-native-community/datetimepicker";
 import { LinearGradient } from "expo-linear-gradient";
 import { useNavigation } from '@react-navigation/native';
 
-
 export default function Oktato_OraRogzites({ route }) {
   const { atkuld } = route.params;
   const navigation = useNavigation();
@@ -80,11 +79,23 @@ export default function Oktato_OraRogzites({ route }) {
         body: JSON.stringify(adatok),
         headers: { "Content-type": "application/json; charset=UTF-8" },
       });
+
       const text = await response.text();
-      alert("Óra sikeresen rögzítve!");
-      navigation.goBack(); // Visszalép az előző oldalra
+
+      if (response.status === 400) {
+        // If the backend returns a 400 status, show the error message
+        alert(text); // "Ezen a dátumon már van rögzített óra!"
+      } else if (response.ok) {
+        // If the response is successful, show a success message
+        alert("Óra sikeresen rögzítve!");
+        navigation.goBack(); // Visszalép az előző oldalra
+      } else {
+        // Handle other potential errors
+        alert("Hiba az óra rögzítésekor. Kérjük, próbálja újra.");
+      }
     } catch (error) {
       console.error("Hiba az óra rögzítésében:", error);
+      alert("Hiba az óra rögzítésében. Kérjük, próbálja újra.");
     }
   };
 
