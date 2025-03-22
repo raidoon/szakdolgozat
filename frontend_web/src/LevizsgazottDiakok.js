@@ -1,4 +1,5 @@
 import { useState, useEffect, useMemo } from "react";
+import { Link } from "react-router-dom"; // Import Link
 import Navbar from "./Navbar";
 import Ipcim from "./Ipcim";
 
@@ -69,6 +70,7 @@ const LevizsgazottDiakok = () => {
                             <tr>
                                 <th>Név</th>
                                 <th>Autósiskola</th>
+                                <th>Műveletek</th> {/* New column for the link */}
                             </tr>
                         </thead>
                         <tbody>
@@ -76,6 +78,11 @@ const LevizsgazottDiakok = () => {
                                 <tr key={index}>
                                     <td>{item.tanulo_neve}</td>
                                     <td>{item.autosiskola_nev}</td>
+                                    <td>
+                                        <Link to={`/tanuloreszletek/${item.tanulo_felhasznaloID}`}>
+                                            Részletek
+                                        </Link>
+                                    </td>
                                 </tr>
                             ))}
                         </tbody>

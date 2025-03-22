@@ -12,7 +12,7 @@ const Tanulok = () => {
                 <button style={styles.button} onClick={() => navigate("/aktualisdiakok")}>Aktuális Diákok</button>
                 <button style={styles.button} onClick={() => navigate("/levizsgazottdiakok")}>Levizsgázott Diákok</button>
                 <button style={styles.button} onClick={() => navigate("/ujdiak")}>Új Diák Felvétele</button>
-                <button style={styles.button} onClick={() => navigate("/oktatovaltas")}>Oktatóváltás</button>
+                
             </div>
         </div>
     );

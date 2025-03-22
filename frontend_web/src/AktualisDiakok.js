@@ -1,4 +1,5 @@
 import { useState, useEffect, useMemo } from "react";
+import { Link } from "react-router-dom"; // Import Link
 import Navbar from "./Navbar";
 import Ipcim from "./Ipcim";
 
@@ -15,7 +16,7 @@ const AktualisDiakok = () => {
     const felhasznalo_autosiskola = felhasznaloAdatok.felhasznalo.felhasznalo_autosiskola;
 
     useEffect(() => {
-        if (!felhasznalo_autosiskola) return; // Ha nincs adat, ne fusson le
+        if (!felhasznalo_autosiskola) return;
 
         setLoading(true);
         setHiba(null);
@@ -26,24 +27,22 @@ const AktualisDiakok = () => {
             body: JSON.stringify({ felhasznalo_autosiskola }),
         })
         .then((response) => {
-            console.log("🔍 Backend válasza:", response);
             if (!response.ok) {
                 throw new Error(`Hálózati hiba: ${response.status} - ${response.statusText}`);
             }
             return response.json();
         })
         .then((data) => {
-            console.log("📊 Lekért tanulók:", data);
             setAdatok(data.filter((item) => item.tanulo_levizsgazott === 0));
         })
         .catch((error) => {
-            console.error(" Hiba történt a lekérés során:", error);
+            console.error("Hiba történt a lekérés során:", error);
             setHiba(error.message);
         })
-        .finally(() => {  // ❌ ITT VOLT A HIBA! (A .catch() után volt egy extra `;`)
+        .finally(() => {
             setLoading(false);
         });
-    }, [felhasznalo_autosiskola]); // ✅ Dependency array-ben szerepel!
+    }, [felhasznalo_autosiskola]);
 
     const szurtAdatok = adatok.filter((item) =>
         item.tanulo_neve.toLowerCase().includes(kereses.toLowerCase())
@@ -72,6 +71,7 @@ const AktualisDiakok = () => {
                             <tr>
                                 <th>Név</th>
                                 <th>Autósiskola</th>
+                                <th>Műveletek</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -79,6 +79,11 @@ const AktualisDiakok = () => {
                                 <tr key={index}>
                                     <td>{item.tanulo_neve}</td>
                                     <td>{item.autosiskola_nev}</td>
+                                    <td>
+                                        <Link to={`/tanuloreszletek/${item.tanulo_felhasznaloID}`}>
+                                            Részletek
+                                        </Link>
+                                    </td>
                                 </tr>
                             ))}
                         </tbody>

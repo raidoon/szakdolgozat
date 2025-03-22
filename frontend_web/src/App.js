@@ -11,7 +11,7 @@ import OktatoReszletek from './OktatoReszletek';
 import AktualisDiakok from './AktualisDiakok';
 import LevizsgazottDiakok from './LevizsgazottDiakok';
 import UjDiak from './UjDiak';
-import OktatoValtas from './OktatoValtas';
+import TanuloReszletek from './TanuloReszletek'; // Import the TanuloReszletek component
 
 const ProtectedRoute = ({ children }) => {
   const token = localStorage.getItem('token');
@@ -80,16 +80,17 @@ const App = () => {
             </ProtectedRoute>
           } 
         />
+        {/* Removed OktatoValtas route */}
+        <Route path="/kapcsolat" element={<Kapcsolat />} />
+        <Route path="/elfelejtettjelszo" element={<ElfelejtettJelszo />} />
         <Route 
-          path="/oktatovaltas" 
+          path="/tanuloreszletek/:tanuloId" 
           element={
             <ProtectedRoute>
-              <OktatoValtas />
+              <TanuloReszletek />
             </ProtectedRoute>
           } 
         />
-        <Route path="/kapcsolat" element={<Kapcsolat />} />
-        <Route path="/elfelejtettjelszo" element={<ElfelejtettJelszo />} />
         <Route path="*" element={<Navigate to="/login" />} />
       </Routes>
     </Router>
