@@ -96,7 +96,7 @@ app.post("/regisztracio", (req, res) => {
         }
         //---------------------- ÚJ FELHASZNÁLÓ FELVÉTELE, HA MÉG NINCS ILYEN FELHASZNÁLÓNÉV VAGY EMAIL
         connection.query(
-          "INSERT INTO felhasznaloi_adatok VALUES (null, ?, ?, ?, ?, ?)",
+          "INSERT INTO felhasznaloi_adatok VALUES (null, ?, ?, ?, ?, ?,0)",
           [autosiskola, email, hashedPassword, telefonszam, tipus],
           (insertErr, result) => {
             if (insertErr) {

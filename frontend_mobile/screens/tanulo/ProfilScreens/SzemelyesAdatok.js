@@ -9,6 +9,8 @@ import {
 } from "react-native";
 import Styles from "../../../Styles";
 import Ionicons from "react-native-vector-icons/Ionicons";
+import HibaModal from "../../../extra/HibaModal";
+import SikerModal from "../../../extra/SikerModal";
 
 export default function SzemelyesAdatok({ route }) {
   const { atkuld } = route.params;
@@ -18,6 +20,14 @@ export default function SzemelyesAdatok({ route }) {
   const [email, setEmail] = useState(atkuld.felhasznalo_email);
   const [phone, setPhone] = useState(atkuld.felhasznalo_telefonszam);
 
+   //------------------------------------------------------------- MODÁLOK
+    const [hibaModal, setHibaModal] = useState(false);
+    const [hibaModalCim, setHibaModalCim] = useState('');
+    const [hibaModalSzoveg, setHibaModalSzoveg] = useState('');
+    const [sikerModal, setSikerModal] = useState(false);
+    const [sikerModalCim, setSikerModalCim] = useState('');
+    const [sikerModalSzoveg, setSikerModalSzoveg] = useState('');
+
   // Refs for focusing inputs
   const nameInputRef = useRef(null);
   const emailInputRef = useRef(null);
@@ -26,24 +36,32 @@ export default function SzemelyesAdatok({ route }) {
   // Function to handle saving changes
   const handleSave = () => {
     if (!name || !email || !phone) {
-      Alert.alert("Hiba", "Minden mező kitöltése kötelező!");
+      setHibaModalCim('Hiba!');
+      setHibaModalSzoveg('Minden mező kitöltése kötelező!');
+      setHibaModal(true);
       return;
     }
 
     // Basic email validation
     if (!email.includes("@") || !email.includes(".")) {
-      Alert.alert("Hiba", "Érvénytelen email cím!");
+      setHibaModalCim('Hiba!');
+      setHibaModalSzoveg('Érvénytelen email cím!');
+      setHibaModal(true);
       return;
     }
 
     // Basic phone number validation
     if (isNaN(phone) || phone.length < 6) {
-      Alert.alert("Hiba", "Érvénytelen telefonszám!");
+      setHibaModalCim('Hiba!');
+      setHibaModalSzoveg('Érvénytelen telefonszám!');
+      setHibaModal(true);
       return;
     }
 
     // TODO: Send updated data to the backend
-    Alert.alert("Siker", "Adatok sikeresen frissítve!");
+    setSikerModalCim('Siker!');
+    setSikerModalSzoveg('Adatok sikeresen frissítve!');
+    setSikerModal(true);
     console.log("Updated Data:", { name, email, phone });
   };
 
@@ -109,6 +127,22 @@ export default function SzemelyesAdatok({ route }) {
       <TouchableOpacity style={styles.saveButton} onPress={handleSave}>
         <Text style={styles.saveButtonText}>Változtatások mentése</Text>
       </TouchableOpacity>
+
+
+      <HibaModal
+        visible={hibaModal}
+        onClose={() => setHibaModal(false)}
+        title={hibaModalCim}
+        body={hibaModalSzoveg}
+        buttonText={"Rendben"}
+      />
+      <SikerModal
+        visible={sikerModal}
+        onClose={() => setSikerModal(false)}
+        title={sikerModalCim}
+        body={sikerModalSzoveg}
+        buttonText={"Rendben"}
+      />
     </View>
   );
 }
