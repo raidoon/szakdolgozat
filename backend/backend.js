@@ -1283,6 +1283,53 @@ app.post("/suliBefizetesFelvitel", (req, res) => {
   );
   connection.end();
 });
+//--------------------------------
+app.post("/vizsgaFelvitel", (req, res) => {
+  kapcsolat();
+  console.log(req.body); 
+
+  connection.query(
+    `INSERT INTO ora_adatok VALUES (NULL, ?, ?, ?, ?, ?, 0)`,
+    [
+      req.body.bevitel1, 
+      req.body.bevitel2, 
+      req.body.bevitel3, 
+      req.body.bevitel4, 
+      req.body.bevitel5, 
+    ],
+    (err) => {
+      if (err) {
+        console.error(" SQL Hiba:", err); 
+        res.status(500).send("Hiba");
+      } else {
+        res.status(200).send("Sikeres felvitel!");
+      }
+    }
+  );
+  connection.end();
+});
+
+//--------------------------------
+app.get('/vizsgak', (req, res) => {
+  kapcsolat();
+  connection.query(
+    `SELECT * FROM ora_adatok
+    INNER JOIN tanulo_adatok ON ora_adatok.ora_diakja=tanulo_adatok.tanulo_id
+    INNER JOIN oktato_adatok ON ora_adatok.ora_oktatoja=oktato_adatok.oktato_id
+    INNER JOIN ora_tipusa ON ora_adatok.ora_tipusID=ora_tipusa.oratipus_id
+    WHERE ora_tipusID=2`, 
+    (err, rows) => {
+      if (err) {
+        console.log("Hiba a vizsgák lekérdezésekor");
+        res.status(500).send("Hiba");
+      } else {
+        res.status(200).send(rows);
+      }
+    }
+  );
+  connection.end();
+});
+
 
 app.listen(port, () => {
   console.log(`Example app listening on port ${port}`);

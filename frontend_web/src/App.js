@@ -9,9 +9,9 @@ import ElfelejtettJelszo from './Log/ElfelejtettJelszo';
 import OktatoReszletek from './OktatoReszletek';
 import AktualisDiakok from './AktualisDiakok';
 import LevizsgazottDiakok from './LevizsgazottDiakok';
-import UjDiak from './UjDiak';
 import TanuloReszletek from './TanuloReszletek'; // Import the TanuloReszletek component
 import Penzugyek from './Penzugyek';
+import Vizsgak from './Vizsgak';
 
 const ProtectedRoute = ({ children }) => {
   const token = localStorage.getItem('token');
@@ -72,15 +72,16 @@ const App = () => {
             </ProtectedRoute>
           } 
         />
-        <Route 
-          path="/ujdiak" 
+    
+    <Route 
+          path="/vizsgak" 
           element={
             <ProtectedRoute>
-              <UjDiak />
+              <Vizsgak />
             </ProtectedRoute>
           } 
         />
-        {/* Removed OktatoValtas route */}
+        
         <Route path="/kapcsolat" element={<Kapcsolat />} />
         <Route path="/elfelejtettjelszo" element={<ElfelejtettJelszo />} />
         <Route 

@@ -11,7 +11,7 @@ const Tanulok = () => {
                 <h2>Tanulók kezelése</h2>
                 <button style={styles.button} onClick={() => navigate("/aktualisdiakok")}>Aktuális Diákok</button>
                 <button style={styles.button} onClick={() => navigate("/levizsgazottdiakok")}>Levizsgázott Diákok</button>
-                <button style={styles.button} onClick={() => navigate("/ujdiak")}>Új Diák Felvétele</button>
+                
                 
             </div>
         </div>

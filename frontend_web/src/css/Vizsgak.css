@@ -1,0 +1,67 @@
+.container {
+    max-width: 1200px; /* Kicsit növelve, ha szükséges */
+    width: 90%;
+    margin: auto;
+}
+
+  
+  h2 {
+    color: #2c3e50;
+    text-align: center;
+    font-size: 26px; /* Kicsit nagyobb cím */
+    margin-bottom: 25px;
+  }
+  
+  select,
+  input {
+    width: 60%; /* Szélesebb inputmezők */
+    max-width: 500px; /* Ne legyen túl széles sem */
+    padding: 12px;
+    border: 2px solid #dfe6e9;
+    border-radius: 5px;
+    font-size: 18px; /* Nagyobb betűméret */
+  }
+  
+  button {
+    width: 50%; /* Szélesebb gomb */
+    max-width: 350px;
+    font-size: 18px;
+    padding: 12px 0;
+    border-radius: 5px;
+    margin-top: 15px;
+  }
+  
+  .vizsga-kartya {
+    background: white;
+    padding: 20px;
+    margin-bottom: 15px;
+    border-radius: 10px;
+    box-shadow: 0px 3px 6px rgba(0, 0, 0, 0.15);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+  
+  @media (max-width: 768px) {
+    .container {
+      max-width: 90%;
+      padding: 30px;
+    }
+  
+    .content {
+      max-width: 100%;
+      padding: 30px;
+    }
+  
+    select,
+    input,
+    button {
+      width: 100%;
+      max-width: 100%;
+    }
+  }
+
+
+
+  
+  

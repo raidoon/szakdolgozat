@@ -33,6 +33,9 @@ const Navbar = () => {
         <Link to="/tanulok" className="link" onClick={() => setMenuOpen(false)}>
           Tanulók
         </Link>
+        <Link to="/vizsgak" className="link" onClick={() => setMenuOpen(false)}>
+          Vizsgák
+        </Link>
       </div>
       <button className="logoutButton" onClick={handleLogout}>
         Kijelentkezés
