@@ -234,6 +234,77 @@ app.post('/web/login', (req, res) => {
   });
   connection.end();
 });
+
+//--------------------------------------
+app.post("/regisztralas", (req, res) => {
+  const {autosiskola, email, jelszo, telefonszam, tipus, nev } = req.body;
+  
+
+  if (!autosiskola) {
+    return res.status(400).json({ message: "Hiba: Az autósiskola adata hiányzik!" });
+  }
+
+  if (!email || !jelszo || !telefonszam || !tipus || !nev) {
+    return res.status(400).json({ message: "Minden mezőt ki kell tölteni!" });
+  }
+
+  if (tipus !== 1 && tipus !== 2) {
+    return res.status(400).json({ message: "Érvénytelen típus!" });
+  }
+
+  kapcsolat(); 
+  connection.query(
+    "SELECT felhasznalo_email FROM felhasznaloi_adatok WHERE felhasznalo_email = ?",
+    [email],
+    (err, rows) => {
+      if (err) {
+        console.error(err);
+        return res.status(500).json({ message: "Hiba történt az email cím ellenőrzése közben!" });
+      }
+
+      if (rows.length !== 0) {
+        return res.status(400).json({ message: "Ez az email cím már regisztrálva van!" });
+      }
+
+      bcrypt.hash(jelszo, 10, (hashErr, hashedPassword) => {
+        if (hashErr) {
+          console.error(hashErr);
+          return res.status(500).json({ message: "Hiba történt a jelszó titkosítása közben!" });
+        }
+
+        connection.query(
+          "INSERT INTO felhasznaloi_adatok VALUES (null, ?, ?, ?, ?, ?)",
+          [autosiskola, email, hashedPassword, telefonszam, tipus],
+          (insertErr, result) => {
+            if (insertErr) {
+              console.error(insertErr);
+              return res.status(500).json({ message: "Hiba történt a felhasználó mentése során!" });
+            }
+
+            const table = tipus === 1 ? "oktato_adatok" : "tanulo_adatok";
+            const query =
+              tipus === 1
+                ? "INSERT INTO oktato_adatok VALUES (null, ?, ?)"
+                : "INSERT INTO tanulo_adatok VALUES (null, ?, 7, ?, 0)";
+            const values = tipus === 1 ? [result.insertId, nev] : [result.insertId, nev];
+
+            connection.query(query, values, (err2) => {
+              if (err2) {
+                console.error(err2);
+                return res.status(500).json({ message: `Hiba történt a ${table} mentésekor!` });
+              }
+
+              return res.status(201).json({
+                message: `Sikeres ${tipus === 1 ? "oktató" : "tanuló"} regisztráció!`,
+              });
+            });
+          }
+        );
+      });
+    }
+  );
+});
+
 //------------------------------------------------ ADMIN EMAIL ELLENŐRZÉS
 app.post('/adminEmailEllenorzes', (req, res) => {
   const { email } = req.body;
@@ -1188,7 +1259,30 @@ app.get("/kezdolapadatok", (req, res) => {
 });
 
 //-------------------------------
-
+app.post("/suliBefizetesFelvitel", (req, res) => {
+  kapcsolat();
+  connection.query(
+    `INSERT INTO befizetesek VALUES (NULL, ?, ?, ?, ?, ?, 1, 2)`,
+    [
+      req.body.bevitel1,
+      req.body.bevitel2,
+      req.body.bevitel3,
+      req.body.bevitel4,
+      req.body.bevitel5,
+    ],
+    (err, rows, fields) => {
+      if (err) {
+        console.log("Hiba");
+        console.log(err);
+        res.status(500).send("Hiba");
+      } else {
+        console.log("Sikeres felvitel!");
+        res.status(200).send("Sikeres felvitel!");
+      }
+    }
+  );
+  connection.end();
+});
 
 app.listen(port, () => {
   console.log(`Example app listening on port ${port}`);

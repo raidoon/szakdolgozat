@@ -24,7 +24,7 @@ const Navbar = () => {
         <Link to="/open" className="link" onClick={() => setMenuOpen(false)}>
           Kezdőlap
         </Link>
-        <Link to="/users" className="link" onClick={() => setMenuOpen(false)}>
+        <Link to="/penzugyek" className="link" onClick={() => setMenuOpen(false)}>
           Pénzügyek
         </Link>
         <Link to="/oktatok" className="link" onClick={() => setMenuOpen(false)}>

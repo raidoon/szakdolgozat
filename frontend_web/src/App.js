@@ -1,7 +1,6 @@
 import React from 'react';
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
 import Open from './Open';
-import Users from './Users';
 import Oktatok from './Oktatok';
 import Login from './Log/Login';
 import Tanulok from './Tanulok';
@@ -12,6 +11,7 @@ import AktualisDiakok from './AktualisDiakok';
 import LevizsgazottDiakok from './LevizsgazottDiakok';
 import UjDiak from './UjDiak';
 import TanuloReszletek from './TanuloReszletek'; // Import the TanuloReszletek component
+import Penzugyek from './Penzugyek';
 
 const ProtectedRoute = ({ children }) => {
   const token = localStorage.getItem('token');
@@ -32,10 +32,10 @@ const App = () => {
           } 
         />
         <Route 
-          path="/users" 
+          path="/penzugyek" 
           element={
             <ProtectedRoute>
-              <Users />
+              <Penzugyek />
             </ProtectedRoute>
           } 
         />
