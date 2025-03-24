@@ -1,5 +1,7 @@
 import React, { useState, useEffect, useMemo } from "react";
 import Ipcim from "./Ipcim"; // Adjust the import path as needed
+import "./css/Navbar.css";
+import Navbar from "./Navbar";
 
 const Penzugyek = () => {
   const [adatTomb, setAdatTomb] = useState([]);
@@ -122,6 +124,7 @@ const Penzugyek = () => {
 
   return (
     <div className="penzugyek-container">
+      <Navbar/>
       <h2>Új befizetés rögzítése</h2>
 
       <label>Válassz típust:</label>

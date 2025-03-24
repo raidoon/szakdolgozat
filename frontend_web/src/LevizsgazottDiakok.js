@@ -1,5 +1,5 @@
 import { useState, useEffect, useMemo } from "react";
-import { Link } from "react-router-dom"; // Import Link
+import { Link } from "react-router-dom";
 import Navbar from "./Navbar";
 import Ipcim from "./Ipcim";
 
@@ -16,7 +16,7 @@ const LevizsgazottDiakok = () => {
     const felhasznalo_autosiskola = felhasznaloAdatok.felhasznalo.felhasznalo_autosiskola;
 
     useEffect(() => {
-        if (!felhasznalo_autosiskola) return; // Ha nincs érték, ne csináljon semmit
+        if (!felhasznalo_autosiskola) return;
 
         setLoading(true);
         setHiba(null);
@@ -26,69 +26,174 @@ const LevizsgazottDiakok = () => {
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify({ felhasznalo_autosiskola }),
         })
-            .then((response) => {
-                if (!response.ok) {
-                    throw new Error("Hálózati hiba");
-                }
-                return response.json();
-            })
-            .then((data) => {
-                setAdatok(data.filter((item) => item.tanulo_levizsgazott === 1)); // Csak vizsgázottak
-            })
-            .catch((error) => {
-                setHiba(error.message);
-            })
-            .finally(() => {
-                setLoading(false);
-            });
-    }, [felhasznalo_autosiskola]); // ✅ Hozzáadva a dependency array-hez!
+        .then((response) => {
+            if (!response.ok) {
+                throw new Error(`Hálózati hiba: ${response.status} - ${response.statusText}`);
+            }
+            return response.json();
+        })
+        .then((data) => {
+            setAdatok(data.filter((item) => item.tanulo_levizsgazott === 1));
+        })
+        .catch((error) => {
+            console.error("Hiba történt a lekérés során:", error);
+            setHiba(error.message);
+        })
+        .finally(() => {
+            setLoading(false);
+        });
+    }, [felhasznalo_autosiskola]);
 
     const szurtAdatok = adatok.filter((item) =>
         item.tanulo_neve.toLowerCase().includes(kereses.toLowerCase())
     );
 
     return (
-        <div>
+        <div style={{ backgroundColor: "#f5f9ff", minHeight: "100vh" }}>
             <Navbar />
-            <div style={{ padding: "20px", textAlign: "center" }}>
-                <h2>Levizsgázott Diákok</h2>
+            <div style={{
+                maxWidth: "1000px",
+                margin: "0 auto",
+                padding: "30px",
+                backgroundColor: "white",
+                borderRadius: "10px",
+                boxShadow: "0 2px 10px rgba(0,0,0,0.05)",
+                marginTop: "20px"
+            }}>
+                <h2 style={{
+                    color: "#2c7be5",
+                    marginBottom: "25px",
+                    textAlign: "center",
+                    borderBottom: "2px solid #e1e7ec",
+                    paddingBottom: "15px"
+                }}>
+                    Levizsgázott Diákok
+                </h2>
 
-                <input
-                    type="text"
-                    placeholder="Keresés név szerint..."
-                    value={kereses}
-                    onChange={(e) => setKereses(e.target.value)}
-                    style={{ padding: "10px", width: "80%", maxWidth: "400px" }}
-                />
+                <div style={{ marginBottom: "25px", textAlign: "center" }}>
+                    <input
+                        type="text"
+                        placeholder="Keresés név szerint..."
+                        value={kereses}
+                        onChange={(e) => setKereses(e.target.value)}
+                        style={{
+                            padding: "12px 15px",
+                            width: "100%",
+                            maxWidth: "400px",
+                            borderRadius: "6px",
+                            border: "1px solid #e1e7ec",
+                            fontSize: "14px",
+                            outline: "none",
+                            transition: "all 0.2s",
+                            boxShadow: "inset 0 1px 3px rgba(0,0,0,0.05)"
+                        }}
+                    />
+                </div>
 
-                {loading && <p>Betöltés...</p>}
-                {hiba && <p style={{ color: "red" }}>{hiba}</p>}
+                {loading && (
+                    <div style={{ textAlign: "center", padding: "20px", color: "#4a6f8a" }}>
+                        Betöltés...
+                    </div>
+                )}
+
+                {hiba && (
+                    <div style={{
+                        padding: "15px",
+                        backgroundColor: "#fff0f0",
+                        color: "#d92525",
+                        borderRadius: "6px",
+                        marginBottom: "20px",
+                        border: "1px solid #ffd6d6"
+                    }}>
+                        {hiba}
+                    </div>
+                )}
 
                 {szurtAdatok.length > 0 ? (
-                    <table style={{ width: "100%", borderCollapse: "collapse" }}>
-                        <thead>
-                            <tr>
-                                <th>Név</th>
-                                <th>Autósiskola</th>
-                                <th>Műveletek</th> {/* New column for the link */}
-                            </tr>
-                        </thead>
-                        <tbody>
-                            {szurtAdatok.map((item, index) => (
-                                <tr key={index}>
-                                    <td>{item.tanulo_neve}</td>
-                                    <td>{item.autosiskola_nev}</td>
-                                    <td>
-                                        <Link to={`/tanuloreszletek/${item.tanulo_felhasznaloID}`}>
-                                            Részletek
-                                        </Link>
-                                    </td>
+                    <div style={{ overflowX: "auto" }}>
+                        <table style={{
+                            width: "100%",
+                            borderCollapse: "collapse",
+                            backgroundColor: "white",
+                            borderRadius: "8px",
+                            overflow: "hidden",
+                            boxShadow: "0 1px 3px rgba(0,0,0,0.05)"
+                        }}>
+                            <thead>
+                                <tr style={{ backgroundColor: "#f8fafd" }}>
+                                    <th style={{
+                                        padding: "15px",
+                                        textAlign: "left",
+                                        color: "#4a6f8a",
+                                        fontWeight: "600",
+                                        borderBottom: "1px solid #e1e7ec"
+                                    }}>Név</th>
+                                    <th style={{
+                                        padding: "15px",
+                                        textAlign: "left",
+                                        color: "#4a6f8a",
+                                        fontWeight: "600",
+                                        borderBottom: "1px solid #e1e7ec"
+                                    }}>Autósiskola</th>
+                                    <th style={{
+                                        padding: "15px",
+                                        textAlign: "left",
+                                        color: "#4a6f8a",
+                                        fontWeight: "600",
+                                        borderBottom: "1px solid #e1e7ec"
+                                    }}>Műveletek</th>
                                 </tr>
-                            ))}
-                        </tbody>
-                    </table>
+                            </thead>
+                            <tbody>
+                                {szurtAdatok.map((item, index) => (
+                                    <tr key={index} style={{
+                                        borderBottom: "1px solid #e1e7ec",
+                                        transition: "background-color 0.2s",
+                                        ":hover": {
+                                            backgroundColor: "#f8fafd"
+                                        }
+                                    }}>
+                                        <td style={{ padding: "15px", color: "#12263f" }}>{item.tanulo_neve}</td>
+                                        <td style={{ padding: "15px", color: "#4a6f8a" }}>{item.autosiskola_nev}</td>
+                                        <td style={{ padding: "15px" }}>
+                                            <Link 
+                                                to={`/tanuloreszletek/${item.tanulo_felhasznaloID}`}
+                                                style={{
+                                                    padding: "8px 15px",
+                                                    backgroundColor: "#00d97e",
+                                                    color: "white",
+                                                    borderRadius: "4px",
+                                                    textDecoration: "none",
+                                                    fontSize: "14px",
+                                                    display: "inline-block",
+                                                    transition: "all 0.2s",
+                                                    ":hover": {
+                                                        backgroundColor: "#00c771",
+                                                        transform: "translateY(-1px)"
+                                                    }
+                                                }}
+                                            >
+                                                Részletek
+                                            </Link>
+                                        </td>
+                                    </tr>
+                                ))}
+                            </tbody>
+                        </table>
+                    </div>
                 ) : (
-                    <p>Nincs találat.</p>
+                    !loading && (
+                        <div style={{
+                            padding: "20px",
+                            backgroundColor: "#f8fafd",
+                            borderRadius: "8px",
+                            textAlign: "center",
+                            color: "#6e84a3",
+                            border: "1px dashed #e1e7ec"
+                        }}>
+                            Nincs találat.
+                        </div>
+                    )
                 )}
             </div>
         </div>
@@ -96,5 +201,4 @@ const LevizsgazottDiakok = () => {
 };
 
 export default LevizsgazottDiakok;
-
 
