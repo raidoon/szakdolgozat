@@ -1330,6 +1330,23 @@ app.get('/vizsgak', (req, res) => {
   connection.end();
 });
 
+app.post("/tanuloLe", (req, res) => {
+  kapcsolat();
+  connection.query(
+    `
+    UPDATE tanulo_adatok SET tanulo_levizsgazott = 1 WHERE tanulo_adatok.tanulo_id = ?; 
+  `,
+    [req.body.tanulo_id],
+    (err, rows) => {
+      if (err) {
+        console.error("Hiba:", err);
+        return res.status(500).json({ message: "Hiba történt!" });
+      }
+      res.json({ message: "A tanuló levizsgázott!" });
+    }
+  );
+  connection.end();
+});
 
 app.listen(port, () => {
   console.log(`Example app listening on port ${port}`);

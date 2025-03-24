@@ -24,14 +24,14 @@ const Navbar = () => {
         <Link to="/open" className="link" onClick={() => setMenuOpen(false)}>
           Kezdőlap
         </Link>
-        <Link to="/penzugyek" className="link" onClick={() => setMenuOpen(false)}>
-          Pénzügyek
-        </Link>
         <Link to="/oktatok" className="link" onClick={() => setMenuOpen(false)}>
           Oktatók
         </Link>
         <Link to="/tanulok" className="link" onClick={() => setMenuOpen(false)}>
           Tanulók
+        </Link>
+        <Link to="/penzugyek" className="link" onClick={() => setMenuOpen(false)}>
+          Pénzügyek
         </Link>
         <Link to="/vizsgak" className="link" onClick={() => setMenuOpen(false)}>
           Vizsgák

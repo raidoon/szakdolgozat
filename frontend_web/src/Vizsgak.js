@@ -88,11 +88,11 @@ const Vizsgak = () => {
       const response = await fetch(Ipcim.Ipcim + "/vizsgaFelvitel", {
         method: "POST",
         body: JSON.stringify({
-            bevitel1: 2, // Vizsga típusa (2)
+            bevitel1: 2, 
             bevitel2: oktato_id,
             bevitel3: selectedDiak,
             bevitel4: `${datum} ${oraPerc}`,
-            bevitel5: "", // Kezdés helye (opcionális)
+            bevitel5: "", 
           }),          
         headers: { "Content-Type": "application/json" },
       });
@@ -141,50 +141,18 @@ const Vizsgak = () => {
   return (
     <div style={{ backgroundColor: "#f5f9ff", minHeight: "100vh" }}>
       <Navbar />
-      <div style={{
-        maxWidth: "800px",
-        margin: "0 auto",
-        padding: "30px",
-        backgroundColor: "white",
-        borderRadius: "10px",
-        boxShadow: "0 2px 10px rgba(0,0,0,0.05)",
-        marginTop: "20px"
-      }}>
-        <h2 style={{
-          color: "#2c7be5",
-          marginBottom: "25px",
-          textAlign: "center",
-          borderBottom: "2px solid #e1e7ec",
-          paddingBottom: "15px"
-        }}>
+      <div style={{maxWidth: "800px",margin: "0 auto",padding: "30px",backgroundColor: "white",borderRadius: "10px",boxShadow: "0 2px 10px rgba(0,0,0,0.05)",marginTop: "20px"}}>
+        <h2 style={{color: "#2c7be5",marginBottom: "25px",textAlign: "center",borderBottom: "2px solid #e1e7ec",paddingBottom: "15px"}}>
           Vizsgák kezelése
         </h2>
 
-        <div style={{ 
-          backgroundColor: "#f8fafd", 
-          padding: "20px", 
-          borderRadius: "8px", 
-          marginBottom: "25px",
-          borderLeft: "4px solid #2c7be5"
-        }}>
+        <div style={{backgroundColor: "#f8fafd", padding: "20px",borderRadius: "8px",marginBottom: "25px",borderLeft: "4px solid #2c7be5"}}>
           <div style={{ marginBottom: "15px" }}>
-            <label style={{
-              display: "block",
-              marginBottom: "8px",
-              color: "#4a6f8a",
-              fontWeight: "500"
-            }}>Válassz tanulót:</label>
+            <label style={{display: "block",marginBottom: "8px",color: "#4a6f8a",fontWeight: "500"}}>Válassz tanulót:</label>
             <select 
               value={selectedDiak || ""} 
               onChange={(e) => setSelectedDiak(e.target.value)}
-              style={{
-                padding: "10px 15px",
-                width: "100%",
-                borderRadius: "6px",
-                border: "1px solid #e1e7ec",
-                backgroundColor: "white",
-                color: "#12263f"
-              }}
+              style={{padding: "10px 15px",width: "100%",borderRadius: "6px",border: "1px solid #e1e7ec",backgroundColor: "white",color: "#12263f"}}
             >
               <option value="">-- Válassz tanulót --</option>
               {diakTomb.map((item) => (
@@ -195,71 +163,32 @@ const Vizsgak = () => {
             </select>
           </div>
 
-          <div style={{ 
-            display: "grid", 
-            gridTemplateColumns: "1fr 1fr", 
-            gap: "15px",
-            marginBottom: "15px"
-          }}>
+          <div style={{display: "grid",gridTemplateColumns: "1fr 1fr",gap: "15px",marginBottom: "15px"}}>
             <div>
-              <label style={{
-                display: "block",
-                marginBottom: "8px",
-                color: "#4a6f8a",
-                fontWeight: "500"
-              }}>Dátum:</label>
+              <label style={{ display: "block",marginBottom: "8px",color: "#4a6f8a",fontWeight: "500"}}>Dátum:</label>
               <input 
                 type="date" 
                 value={datum} 
                 onChange={(e) => setDatum(e.target.value)}
-                style={{
-                  padding: "10px 15px",
-                  width: "100%",
-                  borderRadius: "6px",
-                  border: "1px solid #e1e7ec",
-                  backgroundColor: "white",
-                  color: "#12263f"
-                }}
+                style={{padding: "10px 15px",width: "100%",borderRadius: "6px",border: "1px solid #e1e7ec",backgroundColor: "white",color: "#12263f"}}
               />
             </div>
             <div>
-              <label style={{
-                display: "block",
-                marginBottom: "8px",
-                color: "#4a6f8a",
-                fontWeight: "500"
-              }}>Időpont:</label>
+              <label style={{display: "block",marginBottom: "8px",color: "#4a6f8a",fontWeight: "500"}}>Időpont:</label>
               <input 
                 type="time" 
                 value={oraPerc} 
                 onChange={(e) => setOraPerc(e.target.value)}
-                style={{
-                  padding: "10px 15px",
-                  width: "100%",
-                  borderRadius: "6px",
-                  border: "1px solid #e1e7ec",
-                  backgroundColor: "white",
-                  color: "#12263f"
-                }}
+                style={{padding: "10px 15px",width: "100%",borderRadius: "6px",border: "1px solid #e1e7ec",backgroundColor: "white",color: "#12263f"}}
               />
             </div>
           </div>
 
           <button 
             onClick={ujVizsgaFelvitel}
-            style={{
-              padding: "12px 25px",
-              backgroundColor: "#00d97e",
-              color: "white",
-              border: "none",
-              borderRadius: "6px",
-              cursor: "pointer",
-              fontSize: "15px",
-              fontWeight: "500",
-              transition: "all 0.2s",
-              width: "100%",
-              boxShadow: "0 2px 5px rgba(0, 217, 126, 0.2)"
-            }}
+            style={{padding: "12px 25px",backgroundColor: "#00d97e",color: "white",border: "none",borderRadius: "6px",cursor: "pointer",fontSize: "15px",
+             fontWeight: "500",transition: "all 0.2s",width: "100%",boxShadow: "0 2px 5px rgba(0, 217, 126, 0.2)"}}
+
             onMouseEnter={(e) => e.currentTarget.style.transform = "translateY(-2px)"}
             onMouseLeave={(e) => e.currentTarget.style.transform = "none"}
           >
@@ -274,37 +203,19 @@ const Vizsgak = () => {
         )}
 
         {hiba && (
-          <div style={{
-            padding: "15px",
-            backgroundColor: "#fff0f0",
-            color: "#d92525",
-            borderRadius: "6px",
-            marginBottom: "20px",
-            border: "1px solid #ffd6d6"
-          }}>
+          <div style={{padding: "15px",backgroundColor: "#fff0f0",color: "#d92525",borderRadius: "6px",marginBottom: "20px",border: "1px solid #ffd6d6"}}>
             {hiba}
           </div>
         )}
 
-        <h3 style={{
-          color: "#2c7be5",
-          marginBottom: "15px",
-          borderBottom: "1px solid #e1e7ec",
-          paddingBottom: "10px"
-        }}>
+        <h3 style={{color: "#2c7be5",marginBottom: "15px",borderBottom: "1px solid #e1e7ec",paddingBottom: "10px"}}>
           Felvett vizsgák (havi bontásban)
         </h3>
 
         <div style={{ marginTop: "20px" }}>
           {Object.entries(vizsgakHaviBontasban).map(([honap, vizsgak]) => (
             <div key={honap} style={{ marginBottom: "30px" }}>
-              <h4 style={{
-                color: "#4a6f8a",
-                backgroundColor: "#f8fafd",
-                padding: "10px 15px",
-                borderRadius: "6px",
-                marginBottom: "15px"
-              }}>
+              <h4 style={{color: "#4a6f8a",backgroundColor: "#f8fafd",padding: "10px 15px",borderRadius: "6px",marginBottom: "15px"}}>
                 {honap}
               </h4>
               <div style={{ 
@@ -313,14 +224,8 @@ const Vizsgak = () => {
                 gap: "15px"
               }}>
                 {vizsgak.map((vizsga) => (
-                  <div key={vizsga.ora_id} style={{
-                    backgroundColor: "white",
-                    padding: "15px",
-                    borderRadius: "6px",
-                    boxShadow: "0 1px 3px rgba(0,0,0,0.05)",
-                    borderLeft: "3px solid #2c7be5",
-                    position: "relative"
-                  }}>
+                  <div key={vizsga.ora_id} style={{ backgroundColor: "white",padding: "15px", borderRadius: "6px",boxShadow: "0 1px 3px rgba(0,0,0,0.05)",
+                   borderLeft: "3px solid #2c7be5",position: "relative"}}>
                     <div style={{ marginBottom: "10px" }}>
                       <strong style={{ color: "#4a6f8a" }}>Tanuló:</strong> {vizsga.tanulo_neve}
                     </div>
@@ -329,18 +234,9 @@ const Vizsgak = () => {
                     </div>
                     <button 
                       onClick={() => torolVizsga(vizsga.ora_id)}
-                      style={{
-                        padding: "8px 15px",
-                        backgroundColor: "#ff5e5e",
-                        color: "white",
-                        border: "none",
-                        borderRadius: "4px",
-                        cursor: "pointer",
-                        fontSize: "14px",
-                        transition: "all 0.2s",
-                        position: "absolute",
-                        bottom: "15px",
-                        right: "15px"
+                      style={{ padding: "8px 15px",backgroundColor: "#ff5e5e", color: "white",border: "none",borderRadius: "4px",
+                        cursor: "pointer",fontSize: "14px",transition: "all 0.2s",
+                        position: "absolute",bottom: "15px", right: "15px"
                       }}
                       onMouseEnter={(e) => e.currentTarget.style.backgroundColor = "#e04545"}
                       onMouseLeave={(e) => e.currentTarget.style.backgroundColor = "#ff5e5e"}

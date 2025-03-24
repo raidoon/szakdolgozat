@@ -21,15 +21,17 @@ const TanuloReszletek = () => {
     const felhasznalo_autosiskola = felhasznaloAdatok.felhasznalo.felhasznalo_autosiskola;
 
     const formatDateTime = (dateTimeString) => {
+        if (!dateTimeString) return "Nincs dátum";
         const date = new Date(dateTimeString);
-        const year = date.getFullYear();
-        const month = String(date.getMonth() + 1).padStart(2, "0");
-        const day = String(date.getDate()).padStart(2, "0");
-        const hours = String(date.getHours()).padStart(2, "0");
-        const minutes = String(date.getMinutes()).padStart(2, "0");
-
-        return `${year}-${month}-${day} ${hours}:${minutes}`;
+        return date.toLocaleString('hu-HU', {
+            year: 'numeric',
+            month: '2-digit',
+            day: '2-digit',
+            hour: '2-digit',
+            minute: '2-digit'
+        });
     };
+
     useEffect(() => {
         setLoading(true);
         setHiba(null);
@@ -122,6 +124,37 @@ const TanuloReszletek = () => {
             .catch(() => setUzenet("Hiba történt az oktatóváltás során!"));
     };
 
+    const levizsgazottTanulo = (tanulo) => {
+        if (!tanulo) {
+            setUzenet("Hiba: A tanuló adatai nem elérhetők.");
+            return;
+        }
+    
+        const megerosites = window.confirm(`Biztosan levizsgázottá akarod tenni ${tanulo.tanulo_neve}-t?`);
+        if (!megerosites) {
+            return;
+        }
+    
+        fetch(Ipcim.Ipcim + "/tanuloLe", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ tanulo_id: tanulo.tanulo_id }),
+        })
+            .then((res) => res.json())
+            .then((data) => {
+                setUzenet(data.message || "Sikeresen levizsgázott a tanuló!");
+                fetch(Ipcim.Ipcim + "/tanuloReszletei", {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({ tanulo_felhasznaloID: tanulo.tanulo_id }),
+                })
+                    .then((res) => res.json())
+                    .then((data) => setTanulo(data[0]))
+                    .catch(() => setUzenet("Hiba történt a tanuló adatainak frissítésekor!"));
+            })
+            .catch(() => setUzenet("Hiba történt a tanuló levizsgáztatása során!"));
+    };
+
     if (loading) return <div style={{ textAlign: "center", padding: "20px" }}>Betöltés...</div>;
     if (hiba) return <div style={{ textAlign: "center", padding: "20px", color: "red" }}>{hiba}</div>;
     if (!tanulo) return <div style={{ textAlign: "center", padding: "20px" }}>Nincs ilyen tanuló.</div>;
@@ -138,15 +171,34 @@ const TanuloReszletek = () => {
                 boxShadow: "0 2px 10px rgba(0,0,0,0.05)",
                 marginTop: "20px"
             }}>
-                <h2 style={{ 
-                    color: "#2c7be5", 
-                    marginBottom: "25px", 
-                    textAlign: "center",
-                    borderBottom: "2px solid #e1e7ec",
-                    paddingBottom: "15px"
-                }}>
-                    Tanuló részletei
-                </h2>
+                <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "20px" }}>
+                    <h2 style={{ 
+                        color: "#2c7be5", 
+                        margin: 0,
+                        borderBottom: "2px solid #e1e7ec",
+                        paddingBottom: "10px"
+                    }}>
+                        Tanuló részletei
+                    </h2>
+                    {tanulo.tanulo_levizsgazott === 0 && (
+                        <button
+                            onClick={() => levizsgazottTanulo(tanulo)}
+                            style={{
+                                padding: "10px 20px",
+                                backgroundColor: "#00d97e",
+                                color: "white",
+                                border: "none",
+                                borderRadius: "6px",
+                                cursor: "pointer",
+                                fontSize: "14px",
+                                fontWeight: "500",
+                                transition: "all 0.2s"
+                            }}
+                        >
+                            Tanuló levizsgázottá tevése
+                        </button>
+                    )}
+                </div>
                 
                 <div style={{ 
                     backgroundColor: "#f8fafd", 
@@ -155,27 +207,42 @@ const TanuloReszletek = () => {
                     marginBottom: "25px",
                     borderLeft: "4px solid #2c7be5"
                 }}>
-                    <p style={{ margin: "10px 0", fontSize: "16px" }}>
-                        <strong style={{ color: "#4a6f8a", minWidth: "150px", display: "inline-block" }}>Név:</strong> 
-                        <span style={{ color: "#12263f" }}>{tanulo.tanulo_neve}</span>
-                    </p>
-                    <p style={{ margin: "10px 0", fontSize: "16px" }}>
-                        <strong style={{ color: "#4a6f8a", minWidth: "150px", display: "inline-block" }}>Jelenlegi oktató:</strong> 
-                        <span style={{ color: "#12263f" }}>{tanulo.oktato_neve || "Nincs oktató hozzárendelve"}</span>
-                    </p>
+                    <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "15px" }}>
+                        <div>
+                            <p style={{ margin: "10px 0", fontSize: "16px" }}>
+                                <strong style={{ color: "#4a6f8a" }}>Név:</strong> 
+                                <span style={{ color: "#12263f", display: "block" }}>{tanulo.tanulo_neve}</span>
+                            </p>
+                        </div>
+                        <div>
+                            <p style={{ margin: "10px 0", fontSize: "16px" }}>
+                                <strong style={{ color: "#4a6f8a" }}>Jelenlegi oktató:</strong> 
+                                <span style={{ color: "#12263f", display: "block" }}>{tanulo.oktato_neve || "Nincs oktató"}</span>
+                            </p>
+                            <p style={{ margin: "10px 0", fontSize: "16px" }}>
+                                <strong style={{ color: "#4a6f8a" }}>Státusz:</strong> 
+                                <span style={{ 
+                                    color: tanulo.tanulo_levizsgazott ? "#00a854" : "#2c7be5",
+                                    display: "block",
+                                    fontWeight: "500"
+                                }}>
+                                    {tanulo.tanulo_levizsgazott ? "Levizsgázott" : "Aktív tanuló"}
+                                </span>
+                            </p>
+                        </div>
+                    </div>
                 </div>
 
                 <div style={{ 
-                    display: "flex", 
+                    display: "grid", 
+                    gridTemplateColumns: "1fr 1fr", 
                     gap: "15px", 
-                    marginBottom: "25px",
-                    justifyContent: "center",
-                    flexWrap: "wrap"
+                    marginBottom: "25px"
                 }}>
                     <button 
                         onClick={() => setOrakLathato(!orakLathato)}
                         style={{
-                            padding: "10px 20px",
+                            padding: "12px",
                             backgroundColor: orakLathato ? "#e1e7ec" : "#2c7be5",
                             color: orakLathato ? "#4a6f8a" : "white",
                             border: "none",
@@ -183,7 +250,10 @@ const TanuloReszletek = () => {
                             cursor: "pointer",
                             fontSize: "14px",
                             fontWeight: "500",
-                            transition: "all 0.2s"
+                            transition: "all 0.2s",
+                            display: "flex",
+                            alignItems: "center",
+                            justifyContent: "center"
                         }}
                     >
                         {orakLathato ? "Órák elrejtése" : "Órák megtekintése"}
@@ -192,7 +262,7 @@ const TanuloReszletek = () => {
                     <button 
                         onClick={() => setBefizetesLathato(!befizetesLathato)}
                         style={{
-                            padding: "10px 20px",
+                            padding: "12px",
                             backgroundColor: befizetesLathato ? "#e1e7ec" : "#2c7be5",
                             color: befizetesLathato ? "#4a6f8a" : "white",
                             border: "none",
@@ -200,7 +270,10 @@ const TanuloReszletek = () => {
                             cursor: "pointer",
                             fontSize: "14px",
                             fontWeight: "500",
-                            transition: "all 0.2s"
+                            transition: "all 0.2s",
+                            display: "flex",
+                            alignItems: "center",
+                            justifyContent: "center"
                         }}
                     >
                         {befizetesLathato ? "Befizetések elrejtése" : "Befizetések megtekintése"}
@@ -215,25 +288,50 @@ const TanuloReszletek = () => {
                         marginBottom: "20px",
                         border: "1px solid #e1e7ec"
                     }}>
-                        <h3 style={{ color: "#2c7be5", marginTop: "0", marginBottom: "15px" }}>Órák</h3>
+                        <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "15px" }}>
+                            <h3 style={{ color: "#2c7be5", margin: 0 }}>Órák</h3>
+                            <span style={{ 
+                                backgroundColor: "#e1e7ec", 
+                                color: "#4a6f8a", 
+                                padding: "5px 10px", 
+                                borderRadius: "12px",
+                                fontSize: "14px"
+                            }}>
+                                {orak.length} óra
+                            </span>
+                        </div>
                         {orak.length === 0 ? (
                             <p style={{ color: "#6e84a3" }}>Nincs elérhető óra.</p>
                         ) : (
-                            <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(250px, 1fr))", gap: "15px" }}>
+                            <div style={{ 
+                                maxHeight: "300px", 
+                                overflowY: "auto",
+                                paddingRight: "10px"
+                            }}>
                                 {orak.map((ora, index) => (
                                     <div key={index} style={{ 
                                         backgroundColor: "white", 
                                         padding: "15px", 
                                         borderRadius: "6px", 
-                                        boxShadow: "0 1px 3px rgba(0,0,0,0.05)"
+                                        boxShadow: "0 1px 3px rgba(0,0,0,0.05)",
+                                        marginBottom: "10px",
+                                        display: "grid",
+                                        gridTemplateColumns: "1fr auto",
+                                        gap: "10px"
                                     }}>
-                                        <p style={{ margin: "5px 0", color: "#4a6f8a" }}>
-                                        <strong>Dátum:</strong> {ora.ora_datuma ? formatDateTime(ora.ora_datuma) : "Nincs dátum"}
-                                        </p>
-                                        
-                                        <p style={{ margin: "5px 0", color: "#4a6f8a" }}>
-                                            <strong>Típus:</strong> {ora.oratipus_neve || "Nincs megadva"}
-                                        </p>
+                                        <div>
+                                            <p style={{ margin: "5px 0", color: "#4a6f8a" }}>
+                                                <strong>Időpont:</strong> {formatDateTime(ora.ora_datuma)}
+                                            </p>
+                                            <p style={{ margin: "5px 0", color: "#4a6f8a" }}>
+                                                <strong>Típus:</strong> {ora.oratipus_neve || "Nincs megadva"}
+                                            </p>
+                                            {ora.ora_kezdete_helye && (
+                                                <p style={{ margin: "5px 0", color: "#4a6f8a" }}>
+                                                    <strong>Hely:</strong> {ora.ora_kezdete_helye}
+                                                </p>
+                                            )}
+                                        </div>
                                     </div>
                                 ))}
                             </div>
@@ -249,24 +347,50 @@ const TanuloReszletek = () => {
                         marginBottom: "20px",
                         border: "1px solid #e1e7ec"
                     }}>
-                        <h3 style={{ color: "#2c7be5", marginTop: "0", marginBottom: "15px" }}>Befizetések</h3>
+                        <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "15px" }}>
+                            <h3 style={{ color: "#2c7be5", margin: 0 }}>Befizetések</h3>
+                            <span style={{ 
+                                backgroundColor: "#e1e7ec", 
+                                color: "#4a6f8a", 
+                                padding: "5px 10px", 
+                                borderRadius: "12px",
+                                fontSize: "14px"
+                            }}>
+                                {befizetes.length} befizetés
+                            </span>
+                        </div>
                         {befizetes.length === 0 ? (
                             <p style={{ color: "#6e84a3" }}>Nincs elérhető befizetés.</p>
                         ) : (
-                            <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(250px, 1fr))", gap: "15px" }}>
+                            <div style={{ 
+                                maxHeight: "300px", 
+                                overflowY: "auto",
+                                paddingRight: "10px"
+                            }}>
                                 {befizetes.map((befizetes, index) => (
                                     <div key={index} style={{ 
                                         backgroundColor: "white", 
                                         padding: "15px", 
                                         borderRadius: "6px", 
-                                        boxShadow: "0 1px 3px rgba(0,0,0,0.05)"
+                                        boxShadow: "0 1px 3px rgba(0,0,0,0.05)",
+                                        marginBottom: "10px",
+                                        display: "grid",
+                                        gridTemplateColumns: "1fr auto",
+                                        gap: "10px"
                                     }}>
-                                        <p style={{ margin: "5px 0", color: "#4a6f8a" }}>
-                                            <strong>Dátum:</strong> {befizetes.befizetesek_ideje ? formatDateTime(befizetes.befizetesek_ideje) : "Nincs dátum"}
-                                        </p>
-                                        <p style={{ margin: "5px 0", color: "#4a6f8a" }}>
-                                            <strong>Összeg:</strong> {befizetes.befizetesek_osszeg} Ft
-                                        </p>
+                                        <div>
+                                            <p style={{ margin: "5px 0", color: "#4a6f8a" }}>
+                                                <strong>Dátum:</strong> {formatDateTime(befizetes.befizetesek_ideje)}
+                                            </p>
+                                            <p style={{ margin: "5px 0", color: "#4a6f8a" }}>
+                                                <strong>Összeg:</strong> {befizetes.befizetesek_osszeg} Ft
+                                            </p>
+                                            {befizetes.befizetesek_megjegyzes && (
+                                                <p style={{ margin: "5px 0", color: "#4a6f8a" }}>
+                                                    <strong>Megjegyzés:</strong> {befizetes.befizetesek_megjegyzes}
+                                                </p>
+                                            )}
+                                        </div>
                                     </div>
                                 ))}
                             </div>
@@ -303,7 +427,7 @@ const TanuloReszletek = () => {
                                 backgroundColor: "#f8fafd",
                                 border: "1px solid #e1e7ec"
                             }}>
-                                <h3 style={{ color: "#2c7be5", marginTop: "0" }}>Oktatóváltás</h3>
+                                <h3 style={{ color: "#2c7be5", marginTop: "0", marginBottom: "15px" }}>Oktatóváltás</h3>
                                 <div style={{ marginBottom: "20px" }}>
                                     <label style={{ 
                                         display: "block", 
@@ -318,7 +442,6 @@ const TanuloReszletek = () => {
                                         style={{ 
                                             padding: "10px 15px", 
                                             width: "100%", 
-                                            maxWidth: "400px", 
                                             borderRadius: "6px",
                                             border: "1px solid #e1e7ec",
                                             backgroundColor: "white",
@@ -336,23 +459,24 @@ const TanuloReszletek = () => {
                                     </select>
                                 </div>
 
-                                <button
-                                    onClick={oktatoCsere}
-                                    style={{ 
-                                        padding: "12px 25px", 
-                                        backgroundColor: "#00d97e", 
-                                        color: "white", 
-                                        border: "none", 
-                                        borderRadius: "6px", 
-                                        cursor: "pointer",
-                                        fontSize: "14px",
-                                        fontWeight: "500",
-                                        transition: "all 0.2s",
-                                        marginTop: "10px"
-                                    }}
-                                >
-                                    Oktatóváltás
-                                </button>
+                                <div style={{ display: "flex", justifyContent: "flex-end" }}>
+                                    <button
+                                        onClick={oktatoCsere}
+                                        style={{ 
+                                            padding: "12px 25px", 
+                                            backgroundColor: "#00d97e", 
+                                            color: "white", 
+                                            border: "none", 
+                                            borderRadius: "6px", 
+                                            cursor: "pointer",
+                                            fontSize: "14px",
+                                            fontWeight: "500",
+                                            transition: "all 0.2s"
+                                        }}
+                                    >
+                                        Oktatóváltás
+                                    </button>
+                                </div>
                             </div>
                         )}
                     </div>
