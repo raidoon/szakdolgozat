@@ -4,11 +4,11 @@
     "slug": "kanyargo",
     "version": "1.0.0",
     "orientation": "portrait",
-    "icon": "./assets/kanyarGO.jpg",
+    "icon": "./assets/kanyarGO.png",
     "userInterfaceStyle": "light",
     "newArchEnabled": true,
     "splash": {
-      "image": "./assets/kanyarGO.jpg",
+      "image": "./assets/kanyarGO.png",
       "resizeMode": "contain",
       "backgroundColor": "#ffffff"
     },
@@ -17,7 +17,7 @@
     },
     "android": {
       "adaptiveIcon": {
-        "foregroundImage": "./assets/kanyarGO.jpg",
+        "foregroundImage": "./assets/kanyarGO.png",
         "backgroundColor": "#ffffff"
       },
       "package": "com.slashtactics.kanyargo"
