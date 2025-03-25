@@ -39,10 +39,8 @@ export default function Oktato_Kezdolap({ atkuld }) {
     }
   };
 
-
   const onRefresh = async () => {
     setRefreshing(true);
-    
     await letoltes();
     await kovetkezoOraLetoltes();
     setRefreshing(false);
@@ -58,17 +56,20 @@ export default function Oktato_Kezdolap({ atkuld }) {
     return `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, "0")}-${String(date.getDate()).padStart(2, "0")} ${String(date.getHours()).padStart(2, "0")}:${String(date.getMinutes()).padStart(2, "0")}`;
   };
 
+
   const renderItem = ({ item }) => (
     <View style={styles.itemContainer}>
       <Text style={styles.itemName}>{item.nev}</Text>
       <Text style={styles.itemEmail}>{item.email}</Text>
     </View>
   );
-
   return (
     <View style={styles.container}>
-      <Text style={styles.title}>Kezdőlap</Text>
-      <Text style={styles.welcomeText}>{atkuld ? `Üdvözlünk, ${atkuld.oktato_neve}!` : "Nincs adat"}</Text>
+      {/* Header Section */}
+      <View style={styles.header}>
+        <Text style={styles.headerTitle}>Üdvözlünk</Text>
+        <Text style={styles.teacherName}>{atkuld?.oktato_neve || "Kedves Oktató"}</Text>
+      </View>
 
       <FlatList
         data={adatok}
@@ -80,28 +81,44 @@ export default function Oktato_Kezdolap({ atkuld }) {
         }
       />
 
-      <TouchableOpacity
-        style={styles.primaryButton}
-        onPress={() => navigation.navigate("Oktato_KovetkezoOra", { atkuld })}
-      >
-        <Text style={styles.buttonText}>
-          Következő Óra: {kovetkezoOra ? formatDateTime(kovetkezoOra) : "Még nincs rögzített óra"}
-        </Text>
-      </TouchableOpacity>
 
-      <TouchableOpacity
-        style={styles.secondaryButton}
-        onPress={() => navigation.navigate("Oktato_MegerositesrevaroOrak", { atkuld })}
-      >
-        <Text style={styles.secondaryButtonText}>Még módosítható órák</Text>
-      </TouchableOpacity>
+      {/* Action Cards */}
+      <View style={styles.cardsContainer}>
+        {/* Next Lesson Card */}
+        <TouchableOpacity 
+          style={[styles.actionCard, styles.nextLessonCard]}
+          onPress={() => navigation.navigate("Oktato_KovetkezoOra", { atkuld })}
+        >
+          <Text style={styles.cardLabel}>Következő óra</Text>
+          <Text style={styles.cardValue}>
+            {kovetkezoOra ? formatDateTime(kovetkezoOra) : "Nincs rögzített óra"}
+          </Text>
+          <View style={styles.greenCircle} />
+        </TouchableOpacity>
 
-      <TouchableOpacity
-        style={styles.tertiaryButton}
-        onPress={() => navigation.navigate("Oktato_MegerositesrevaroFizetes", { atkuld })}
-      >
-        <Text style={styles.tertiaryButtonText}>Jóváhagyásra váró befizetések</Text>
-      </TouchableOpacity>
+        {/* Modifiable Lessons Card */}
+        <TouchableOpacity
+          style={[styles.actionCard, styles.modifiableCard]}
+          onPress={() => navigation.navigate("Oktato_MegerositesrevaroOrak", { atkuld })}
+        >
+          <Text style={styles.cardLabel}>orak</Text>
+          <Text style={styles.cardValue}>Módosítható órák</Text>
+          <View style={styles.blueCircle} />
+        </TouchableOpacity>
+
+        {/* Payments Card */}
+        <TouchableOpacity
+          style={[styles.actionCard, styles.paymentCard]}
+          onPress={() => navigation.navigate("Oktato_MegerositesrevaroFizetes", { atkuld })}
+        >
+          <Text style={styles.cardLabel}>befizuk</Text>
+          <Text style={styles.cardValue}>Befizetések</Text>
+          <View style={styles.tealCircle} />
+        </TouchableOpacity>
+      </View>
+
+     
+      
     </View>
   );
 }
@@ -109,88 +126,101 @@ export default function Oktato_Kezdolap({ atkuld }) {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    padding: 24,
-    backgroundColor: "#FFFFFF",
+    backgroundColor: '#F8FDFF',
+    paddingHorizontal: 16,
   },
-  title: {
-    fontSize: 28,
-    fontFamily: "Inter-Bold",
-    marginBottom: 16,
-    textAlign: "center",
-    color: "#2C3E50",
-  },
-  welcomeText: {
-    fontSize: 18,
-    fontFamily: "Inter-Medium",
-    marginBottom: 24,
-    textAlign: "center",
-    color: "#4CAF50", // Green color for welcome text
-  },
-  list: {
-    marginBottom: 24,
-  },
-  itemContainer: {
-    backgroundColor: "#F8F9FA",
-    padding: 16,
-    marginBottom: 12,
-    borderRadius: 12,
-    borderWidth: 1,
-    borderColor: "#E9ECEF",
-  },
-  itemName: {
-    fontSize: 16,
-    fontFamily: "Inter-SemiBold",
-    color: "#2C3E50",
-  },
-  itemEmail: {
-    fontSize: 14,
-    fontFamily: "Inter-Regular",
-    color: "#7F8C8D",
-    marginTop: 4,
-  },
-  primaryButton: {
-    backgroundColor: "#4CAF50", // Green color for primary button
-    padding: 30,
-    borderRadius: 12,
-    marginBottom: 12,
-    alignItems: "center",
-    shadowColor: "#4CAF50", // Green shadow
+  header: {
+    paddingTop: 40,
+    paddingBottom: 20,
+    backgroundColor: '#FFFFFF',
+    borderBottomLeftRadius: 20,
+    borderBottomRightRadius: 20,
+    marginBottom: 15,
+    shadowColor: '#E1F5FE',
     shadowOffset: { width: 0, height: 4 },
-    shadowOpacity: 0.2,
+    shadowOpacity: 0.1,
     shadowRadius: 6,
-    elevation: 5,
+    elevation: 3,
   },
-  secondaryButton: {
-    backgroundColor: "transparent",
-    padding: 16,
-    borderRadius: 12,
+  headerTitle: {
+    fontSize: 22,
+    color: '#78909C',
+    textAlign: 'center',
+    fontFamily: 'Inter-Medium',
+  },
+  teacherName: {
+    fontSize: 26,
+    color: '#00796B',
+    textAlign: 'center',
+    fontFamily: 'Inter-Bold',
+    marginTop: 5,
+  },
+  cardsContainer: {
+    marginBottom: 15,
+  },
+  actionCard: {
+    backgroundColor: '#FFFFFF',
+    borderRadius: 16,
+    padding: 20,
     marginBottom: 12,
-    alignItems: "center",
-    borderWidth: 2,
-    borderColor: "#4CAF50", // Green border for secondary button
+    shadowColor: '#B2DFDB',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.1,
+    shadowRadius: 6,
+    elevation: 2,
+    position: 'relative',
+    overflow: 'hidden',
   },
-  tertiaryButton: {
-    backgroundColor: "#FFFFFF",
-    padding: 16,
-    borderRadius: 12,
-    marginBottom: 12,
-    alignItems: "center",
-    borderWidth: 2,
-    borderColor: "#E9ECEF",
+  nextLessonCard: {
+    borderLeftWidth: 5,
+    borderLeftColor: '#4CAF50',
   },
-  buttonText: {
-    color: "#FFFFFF",
-    fontSize: 16,
-    fontFamily: "Inter-SemiBold",
+  modifiableCard: {
+    borderLeftWidth: 5,
+    borderLeftColor: '#2196F3',
   },
-  secondaryButtonText: {
-    color: "#4CAF50", // Green text for secondary button
-    fontSize: 16,
-    fontFamily: "Inter-SemiBold",
+  paymentCard: {
+    borderLeftWidth: 5,
+    borderLeftColor: '#00838F',
   },
-  tertiaryButtonText: {
-    color: "#2C3E50",
-    fontSize: 16,
-    fontFamily: "Inter-SemiBold",
+  cardLabel: {
+    fontSize: 14,
+    color: '#78909C',
+    fontFamily: 'Inter-Medium',
+    marginBottom: 5,
   },
+  cardValue: {
+    fontSize: 18,
+    fontFamily: 'Inter-SemiBold',
+  },
+  nextLessonCard: {
+    borderLeftColor: '#4CAF50',
+  },
+  greenCircle: {
+    position: 'absolute',
+    width: 80,
+    height: 80,
+    borderRadius: 40,
+    backgroundColor: 'rgba(76, 175, 80, 0.1)',
+    right: -20,
+    top: -20,
+  },
+  blueCircle: {
+    position: 'absolute',
+    width: 80,
+    height: 80,
+    borderRadius: 40,
+    backgroundColor: 'rgba(33, 150, 243, 0.1)',
+    right: -20,
+    top: -20,
+  },
+  tealCircle: {
+    position: 'absolute',
+    width: 80,
+    height: 80,
+    borderRadius: 40,
+    backgroundColor: 'rgba(0, 131, 143, 0.1)',
+    right: -20,
+    top: -20,
+  }
 });

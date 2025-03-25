@@ -776,57 +776,6 @@ app.post("/diakokOrai", (req, res) => {
   );
   connection.end();
 });
-//---------------
-app.post("/diakokTeljesitettOrai", (req, res) => {
-  console.log("hello");
-  kapcsolat();
-  connection.query(
-    `SELECT *
-    FROM felhasznaloi_adatok AS felhasznalo
-    INNER JOIN tanulo_adatok AS tanulo
-    ON felhasznalo.felhasznalo_id=tanulo.tanulo_felhasznaloID
-    INNER JOIN ora_adatok AS ora
-    ON tanulo.tanulo_id= ora.ora_diakja 
-    LEFT JOIN ora_tipusa ON ora_tipusa.oratipus_id = ora.ora_tipusID
-    WHERE ora_teljesitve=1 AND tanulo_felhasznaloID = ?`,
-    [req.body.tanulo_felhasznaloID],
-    (err, rows, fields) => {
-      if (err) {
-        console.log(err);
-        res.status(500).send("Hiba");
-      } else {
-        console.log(rows);
-        res.status(200).send(rows);
-      }
-    }
-  );
-  connection.end();
-});
-//-----------
-app.post("/diakokVisszaOrai", (req, res) => {
-  console.log("hello");
-  kapcsolat();
-  connection.query(
-    `SELECT *
-    FROM felhasznaloi_adatok AS felhasznalo
-    INNER JOIN tanulo_adatok AS tanulo
-    ON felhasznalo.felhasznalo_id=tanulo.tanulo_felhasznaloID
-    INNER JOIN ora_adatok AS ora
-    ON tanulo.tanulo_id= ora.ora_diakja 
-    WHERE ora.ora_teljesitve=0 OR ora.ora_teljesitve=2 AND tanulo_felhasznaloID = ?`,
-    [req.body.tanulo_felhasznaloID],
-    (err, rows, fields) => {
-      if (err) {
-        console.log(err);
-        res.status(500).send("Hiba");
-      } else {
-        console.log(rows);
-        res.status(200).send(rows);
-      }
-    }
-  );
-  connection.end();
-});
 //-------------------
 app.post("/koviOra", (req, res) => {
   console.log("hello");
@@ -1329,7 +1278,7 @@ app.get('/vizsgak', (req, res) => {
   );
   connection.end();
 });
-
+//-----------------------------------------
 app.post("/tanuloLe", (req, res) => {
   kapcsolat();
   connection.query(

@@ -1,7 +1,6 @@
 import { useState,useEffect } from "react";
 import { View, Text, Button, FlatList, TouchableOpacity,StyleSheet } from "react-native";
 import { useNavigation } from '@react-navigation/native';
-import Oktato_Styles from "../../Oktato_Styles";
 import Ipcim from "../../Ipcim";
 
 
@@ -11,8 +10,6 @@ export default function Oktato_Datumok({atkuld}){
   console.log(atkuld)
 
   const letoltes=async ()=>{
-      //alert("hello")
-     //alert(atkuld.oktato_id)
       var adat={
           "oktatoid":atkuld.oktato_id
       }
@@ -81,97 +78,146 @@ const kattvaro = (tanulo) => {
   navigation.navigate("Oktato_MegerositesrevaroOrak", { tanulo });
 };
   return (
-    <View style={Oktato_Styles.diakok_container}>
-      <Text style={Oktato_Styles.title}>Időpontok lap</Text>
-      <FlatList
+    <View style={styles.container}>
+    
+    <View style={styles.header}>
+      <Text style={styles.headerTitle}>Időpontok</Text>
+      <Text style={styles.welcomeText}>{atkuld?.oktato_neve || "Kedves Oktató"}</Text>
+    </View>
+
+
+    <FlatList
         data={adatok}
         
       />
-      
+
+   
+    <View style={styles.cardsContainer}>
       <TouchableOpacity
-        style={Oktato_Styles.navigateButton}
+        style={[styles.actionCard, styles.primaryCard]}
         onPress={() => navigation.navigate("Oktato_OraRogzites", { atkuld })}
       >
-        <Text style={Oktato_Styles.navigateButtonText}>Új óra hozzáadása</Text>
+        <Text style={styles.cardTitle}>Új óra hozzáadása</Text>
+        <Text style={styles.cardSubtitle}>Rögzítés</Text>
+        <View style={styles.greenAccent} />
       </TouchableOpacity>
 
       <TouchableOpacity
-        style={Oktato_Styles.navigateButton}
+        style={[styles.actionCard, styles.secondaryCard]}
         onPress={() => navigation.navigate("Oktato_ElkovetkezendoOrak", { atkuld })}
       >
-        <Text style={Oktato_Styles.navigateButtonText}>Elkövetkező órák</Text>
+        <Text style={styles.cardTitle}>Elkövetkező órák</Text>
+        <Text style={styles.cardSubtitle}>Megtekintés</Text>
+        <View style={styles.blueAccent} />
       </TouchableOpacity>
 
-
       <TouchableOpacity
-        style={Oktato_Styles.navigateButton}
-        onPress={() => navigation.navigate("Oktato_AktualisTanulok", { atkuld })}
-      >
-        <Text style={Oktato_Styles.navigateButtonText}>Teljesített Órák</Text>
-      </TouchableOpacity>
-
-
-      <TouchableOpacity
-        style={Oktato_Styles.navigateButton}
+        style={[styles.actionCard, styles.tertiaryCard]}
         onPress={() => navigation.navigate("Oktato_MegerositesrevaroOrak", { atkuld })}
       >
-        <Text style={Oktato_Styles.navigateButtonText}>Módosítható órák</Text>
+        <Text style={styles.cardTitle}>Módosítható órák</Text>
+        <Text style={styles.cardSubtitle}>Frissítés szükséges</Text>
+        <View style={styles.tealAccent} />
       </TouchableOpacity>
     </View>
-  );
+  </View>
+);
 }
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: "#F5F5F5",
-    padding: 20,
-  },
-  title: {
-    fontSize: 24,
-    fontWeight: "bold",
-    color: "#2C3E50",
-    marginBottom: 20,
-    textAlign: "center",
-  },
-  list: {
-    flex: 1,
+container: {
+  flex: 1,
+  padding: 20,
+  backgroundColor: "#F5FBFF", // Light blue background
+},
+header: {
   marginBottom: 20,
-  },
-  itemContainer: {
-    backgroundColor: "#FFFFFF",
-    padding: 15,
-    borderRadius: 10,
-    marginBottom: 10,
-    shadowColor: "#000",
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.1,
-    shadowRadius: 4,
-    elevation: 3,
-  },
-  itemText: {
-    fontSize: 16,
-    fontWeight: "600",
-    color: "#2C3E50",
-  },
-  itemSubText: {
-    fontSize: 14,
-    color: "#888",
-    marginTop: 5,
-  },
-  buttonContainer: {
-    marginTop: 10,
-  },
-  button: {
-    backgroundColor: "#FF6F61",
-    padding: 15,
-    borderRadius: 10,
-    alignItems: "center",
-    marginBottom: 10,
-  },
-  buttonText: {
-    color: "#FFFFFF",
-    fontSize: 16,
-    fontWeight: "600",
-  },
+  padding: 15,
+  backgroundColor: "#FFFFFF",
+  borderRadius: 12,
+  shadowColor: "#E0F7FA",
+  shadowOffset: { width: 0, height: 2 },
+  shadowOpacity: 0.1,
+  shadowRadius: 6,
+  elevation: 3,
+},
+headerTitle: {
+  fontSize: 24,
+  fontFamily: "Inter-Bold",
+  marginBottom: 8,
+  textAlign: "center",
+  color: "#00796B", // Dark teal/green
+},
+welcomeText: {
+  fontSize: 16,
+  fontFamily: "Inter-Medium",
+  textAlign: "center",
+  color: "#4CAF50", // Green color
+},
+cardsContainer: {
+  marginBottom: 20,
+},
+actionCard: {
+  backgroundColor: "#FFFFFF",
+  borderRadius: 12,
+  padding: 16,
+  marginBottom: 12,
+  shadowColor: "#B2DFDB",
+  shadowOffset: { width: 0, height: 2 },
+  shadowOpacity: 0.1,
+  shadowRadius: 6,
+  elevation: 2,
+  position: 'relative',
+  overflow: 'hidden',
+},
+primaryCard: {
+  borderLeftWidth: 5,
+  borderLeftColor: "#4CAF50", // Green
+},
+secondaryCard: {
+  borderLeftWidth: 5,
+  borderLeftColor: "#2196F3", // Blue
+},
+tertiaryCard: {
+  borderLeftWidth: 5,
+  borderLeftColor: "#00838F", // Teal
+},
+cardTitle: {
+  fontSize: 16,
+  fontFamily: "Inter-SemiBold",
+  color: "#00796B", // Dark teal
+  marginBottom: 4,
+},
+cardSubtitle: {
+  fontSize: 14,
+  fontFamily: "Inter-Regular",
+  color: "#78909C", // Gray-blue
+},
+greenAccent: {
+  position: 'absolute',
+  width: 60,
+  height: 60,
+  borderRadius: 30,
+  backgroundColor: 'rgba(76, 175, 80, 0.1)',
+  right: -15,
+  top: -15,
+},
+blueAccent: {
+  position: 'absolute',
+  width: 60,
+  height: 60,
+  borderRadius: 30,
+  backgroundColor: 'rgba(33, 150, 243, 0.1)',
+  right: -15,
+  top: -15,
+},
+tealAccent: {
+  position: 'absolute',
+  width: 60,
+  height: 60,
+  borderRadius: 30,
+  backgroundColor: 'rgba(0, 131, 143, 0.1)',
+  right: -15,
+  top: -15,
+},
 });
