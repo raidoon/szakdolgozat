@@ -1,7 +1,6 @@
 import { useState, useEffect } from "react";
 import { View, Text, FlatList, StyleSheet } from "react-native";
 import { useNavigation } from "@react-navigation/native";
-import Oktato_Styles from "../../Oktato_Styles";
 import Ipcim from "../../Ipcim";
 import { Calendar, LocaleConfig } from "react-native-calendars";
 import { LinearGradient } from "expo-linear-gradient";

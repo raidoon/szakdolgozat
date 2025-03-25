@@ -1,5 +1,5 @@
 import { useState,useEffect } from "react";
-import { View, Text, Button, FlatList, TouchableOpacity,StyleSheet } from "react-native";
+import { View, Text, FlatList, TouchableOpacity,StyleSheet } from "react-native";
 import { useNavigation } from '@react-navigation/native';
 import Ipcim from "../../Ipcim";
 

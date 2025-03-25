@@ -14,7 +14,6 @@ import Ipcim from "../../Ipcim";
 import TanuloKinyitottDatumok from "./Tanulo_KinyitottDatumok";
 import { ActivityIndicator } from "react-native";
 import { PanGestureHandler, GestureHandlerRootView } from "react-native-gesture-handler";
-import { LinearGradient } from "expo-linear-gradient";
 
 const Tanulo_Datumok = ({ atkuld }) => {
   const ma = new Date();

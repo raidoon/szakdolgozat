@@ -5,9 +5,7 @@ import {
   TextInput,
   TouchableOpacity,
   StyleSheet,
-  Alert,
 } from "react-native";
-import Styles from "../../../Styles";
 import Ionicons from "react-native-vector-icons/Ionicons";
 import HibaModal from "../../../extra/HibaModal";
 import SikerModal from "../../../extra/SikerModal";

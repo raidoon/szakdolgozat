@@ -8,7 +8,6 @@ import {
   ActivityIndicator,
   Modal,
 } from "react-native";
-import { GestureHandlerRootView } from "react-native-gesture-handler";
 import { Calendar } from "react-native-calendars";
 import { ScrollView } from "react-native-gesture-handler";
 import Ionicons from "react-native-vector-icons/Ionicons";
