@@ -1,14 +1,14 @@
 {
   "expo": {
     "name": "frontend",
-    "slug": "frontend",
+    "slug": "kanyargo",
     "version": "1.0.0",
     "orientation": "portrait",
-    "icon": "./assets/icon.png",
+    "icon": "./assets/kanyarGO.jpg",
     "userInterfaceStyle": "light",
     "newArchEnabled": true,
     "splash": {
-      "image": "./assets/splash-icon.png",
+      "image": "./assets/kanyarGO.jpg",
       "resizeMode": "contain",
       "backgroundColor": "#ffffff"
     },
@@ -19,14 +19,25 @@
       "adaptiveIcon": {
         "foregroundImage": "./assets/adaptive-icon.png",
         "backgroundColor": "#ffffff"
-      }
+      },
+      "package": "com.slashtactics.kanyargo"
     },
     "web": {
       "favicon": "./assets/favicon.png"
     },
     "packagerOpts": {
-      "sourceExts": ["js", "jsx", "svgx"],
+      "sourceExts": [
+        "js",
+        "jsx",
+        "svgx"
+      ],
       "transformer": "node_modules/react-native-svg-transformer/index.js"
-    }
+    },
+    "extra": {
+      "eas": {
+        "projectId": "4c291f02-0cd4-4872-a443-ad305f6403c0"
+      }
+    },
+    "owner": "raidon.ss"
   }
 }
