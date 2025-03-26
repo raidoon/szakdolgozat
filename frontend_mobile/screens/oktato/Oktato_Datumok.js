@@ -82,7 +82,7 @@ const kattvaro = (tanulo) => {
     
     <View style={styles.header}>
       <Text style={styles.headerTitle}>Időpontok</Text>
-      <Text style={styles.welcomeText}>{atkuld?.oktato_neve || "Kedves Oktató"}</Text>
+      
     </View>
 
 

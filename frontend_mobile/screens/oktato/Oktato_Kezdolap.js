@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import { View, Text, TouchableOpacity, FlatList, StyleSheet, RefreshControl } from "react-native";
 import { useNavigation } from '@react-navigation/native';
 import Ipcim from "../../Ipcim";
+import Ionicons from '@expo/vector-icons/Ionicons';
 
 export default function Oktato_Kezdolap({ atkuld }) {
   const [adatok, setAdatok] = useState([]);
@@ -57,68 +58,73 @@ export default function Oktato_Kezdolap({ atkuld }) {
   };
 
 
-  const renderItem = ({ item }) => (
-    <View style={styles.itemContainer}>
-      <Text style={styles.itemName}>{item.nev}</Text>
-      <Text style={styles.itemEmail}>{item.email}</Text>
-    </View>
-  );
   return (
     <View style={styles.container}>
-      {/* Header Section */}
+      {/* Header */}
       <View style={styles.header}>
-        <Text style={styles.headerTitle}>Üdvözlünk</Text>
-        <Text style={styles.teacherName}>{atkuld?.oktato_neve || "Kedves Oktató"}</Text>
+        <Text style={styles.headerCim}>Üdvözlünk</Text>
+        <Text style={styles.oktatoNev}>{atkuld?.oktato_neve || "Kedves Oktató"}</Text>
       </View>
 
       <FlatList
         data={adatok}
-        renderItem={renderItem}
+        
         keyExtractor={(item) => item.id.toString()}
-        style={styles.list}
+        
         refreshControl={
           <RefreshControl refreshing={refreshing} onRefresh={onRefresh} colors={["#4CAF50"]} />
         }
       />
 
-
-      {/* Action Cards */}
-      <View style={styles.cardsContainer}>
-        {/* Next Lesson Card */}
+      {/* Kártyák */}
+      <View style={styles.kartyaContainer}>
+        {/* Következő óra kártya */}
         <TouchableOpacity 
-          style={[styles.actionCard, styles.nextLessonCard]}
+          style={[styles.Kartyak, styles.kovetkezoOraKartya]}
           onPress={() => navigation.navigate("Oktato_KovetkezoOra", { atkuld })}
         >
-          <Text style={styles.cardLabel}>Következő óra</Text>
-          <Text style={styles.cardValue}>
-            {kovetkezoOra ? formatDateTime(kovetkezoOra) : "Nincs rögzített óra"}
-          </Text>
-          <View style={styles.greenCircle} />
+          <View style={styles.kartyaContent}>
+            <View>
+              <Text style={styles.kartyaLabel}>Következő óra</Text>
+              <Text style={styles.kartyaValue}>
+                {kovetkezoOra ? formatDateTime(kovetkezoOra) : "Nincs rögzített óra"}
+              </Text>
+            </View>
+            <Ionicons name="chevron-forward" size={24} color="#4CAF50" />
+          </View>
+          <View style={styles.zold} />
         </TouchableOpacity>
 
-        {/* Modifiable Lessons Card */}
+        {/* Órák kártya */}
         <TouchableOpacity
-          style={[styles.actionCard, styles.modifiableCard]}
+          style={[styles.Kartyak, styles.orakKartya]}
           onPress={() => navigation.navigate("Oktato_MegerositesrevaroOrak", { atkuld })}
         >
-          <Text style={styles.cardLabel}>orak</Text>
-          <Text style={styles.cardValue}>Módosítható órák</Text>
-          <View style={styles.blueCircle} />
+          <View style={styles.kartyaContent}>
+            <View>
+              <Text style={styles.kartyaLabel}>Órák</Text>
+              <Text style={styles.kartyaValue}>Módosítható órák</Text>
+            </View>
+            
+          </View>
+          <View style={styles.kek} />
         </TouchableOpacity>
 
-        {/* Payments Card */}
+        {/* Pénz kártya*/}
         <TouchableOpacity
-          style={[styles.actionCard, styles.paymentCard]}
-          onPress={() => navigation.navigate("Oktato_MegerositesrevaroFizetes", { atkuld })}
+          style={[styles.Kartyak, styles.penzKartya]}
+          onPress={() => navigation.navigate("Oktato_MegerositBefizetes", { atkuld })}
         >
-          <Text style={styles.cardLabel}>befizuk</Text>
-          <Text style={styles.cardValue}>Befizetések</Text>
-          <View style={styles.tealCircle} />
+          <View style={styles.kartyaContent}>
+            <View>
+              <Text style={styles.kartyaLabel}>Befizetések</Text>
+              <Text style={styles.kartyaValue}>Befizetések jóváhagyása</Text>
+            </View>
+            
+          </View>
+          <View style={styles.zoldeskek} />
         </TouchableOpacity>
       </View>
-
-     
-      
     </View>
   );
 }
@@ -142,23 +148,23 @@ const styles = StyleSheet.create({
     shadowRadius: 6,
     elevation: 3,
   },
-  headerTitle: {
+  headerCim: {
     fontSize: 22,
     color: '#78909C',
     textAlign: 'center',
     fontFamily: 'Inter-Medium',
   },
-  teacherName: {
+  oktatoNev: {
     fontSize: 26,
     color: '#00796B',
     textAlign: 'center',
     fontFamily: 'Inter-Bold',
     marginTop: 5,
   },
-  cardsContainer: {
+  kartyaContainer: {
     marginBottom: 15,
   },
-  actionCard: {
+  Kartyak: {
     backgroundColor: '#FFFFFF',
     borderRadius: 16,
     padding: 20,
@@ -171,32 +177,35 @@ const styles = StyleSheet.create({
     position: 'relative',
     overflow: 'hidden',
   },
-  nextLessonCard: {
+  kovetkezoOraKartya: {
     borderLeftWidth: 5,
     borderLeftColor: '#4CAF50',
   },
-  modifiableCard: {
+  orakKartya: {
     borderLeftWidth: 5,
     borderLeftColor: '#2196F3',
   },
-  paymentCard: {
+  penzKartya: {
     borderLeftWidth: 5,
     borderLeftColor: '#00838F',
   },
-  cardLabel: {
+  kartyaContent: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    width: '100%',
+  },
+  kartyaLabel: {
     fontSize: 14,
     color: '#78909C',
     fontFamily: 'Inter-Medium',
     marginBottom: 5,
   },
-  cardValue: {
+  kartyaValue: {
     fontSize: 18,
     fontFamily: 'Inter-SemiBold',
   },
-  nextLessonCard: {
-    borderLeftColor: '#4CAF50',
-  },
-  greenCircle: {
+  zold: {
     position: 'absolute',
     width: 80,
     height: 80,
@@ -205,7 +214,7 @@ const styles = StyleSheet.create({
     right: -20,
     top: -20,
   },
-  blueCircle: {
+  kek: {
     position: 'absolute',
     width: 80,
     height: 80,
@@ -214,7 +223,7 @@ const styles = StyleSheet.create({
     right: -20,
     top: -20,
   },
-  tealCircle: {
+  zoldeskek: {
     position: 'absolute',
     width: 80,
     height: 80,

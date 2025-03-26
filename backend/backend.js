@@ -876,31 +876,6 @@ app.post("/nemkeszBefizetesek", (req, res) => {
   );
   connection.end();
 });
-//-------------------------------
-app.post("/egyDiakNemKeszBefizetesei", (req, res) => {
-  console.log("hello");
-  kapcsolat();
-  connection.query(
-    `SELECT *
-    FROM felhasznaloi_adatok AS felhasznalo
-    INNER JOIN tanulo_adatok AS tanulo
-    ON felhasznalo.felhasznalo_id=tanulo.tanulo_felhasznaloID
-    INNER JOIN befizetesek
-    ON tanulo.tanulo_id= befizetesek.befizetesek_tanuloID
-    WHERE befizetesek.befizetesek_jovahagyva=0 AND befizetesek.befizetesek_kinek=1 AND tanulo_felhasznaloID = ?`,
-    [req.body.tanulo_felhasznaloID],
-    (err, rows, fields) => {
-      if (err) {
-        console.log(err);
-        res.status(500).send("Hiba");
-      } else {
-        console.log(rows);
-        res.status(200).send(rows);
-      }
-    }
-  );
-  connection.end();
-});
 //--------------------------
 app.post("/befizetesFelvitel", (req, res) => {
   kapcsolat();
@@ -1036,29 +1011,7 @@ app.put('/oraTeljesul', (req, res) => {
    
   });
 });
-//--------------------------
-app.put('/oraFrissit', (req, res) => {
-  kapcsolat(); // Establish the database connection
 
-  const { ora_id } = req.body;
-
-  const updateQuery = `
-    UPDATE ora_adatok 
-    SET ora_teljesitve = 2 
-    WHERE ora_id = ?
-  `;
-  console.log("Running query:", updateQuery, "with ora_id:", ora_id); // Log the query and ora_id
-  connection.query(updateQuery, [ora_id], (err, result) => {
-    if (err) {
-      console.error("Hiba az óra frissítésében:", err);
-      res.status(500).json({ message: "Hiba az óra frissítésében" });
-    } else {
-      console.log("Órák módosíthatóságának frissítése kész. Affected rows:", result.affectedRows);
-      res.status(200).json({ message: "Az óra elutasításra került!" });
-    }
-    connection.end();
-  });
-});
 //---------------
 app.put('/oraTeljesit', (req, res) => {
   kapcsolat(); // Establish the database connection

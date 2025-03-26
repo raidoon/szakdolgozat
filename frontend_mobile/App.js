@@ -36,7 +36,6 @@ import Oktato_MegerositesrevaroOrak from "./screens/oktato/OktatoDatumokScreens/
 import Oktato_MegerositOra from "./screens/oktato/OktatoDatumokScreens/Oktato_MegerositOra"
 import Oktato_BefizetesRogzites from "./screens/oktato/OktatoBefizetesekScreens/Oktato_BefizetesRogzites";
 import Oktato_ATBefizetesek from "./screens/oktato/OktatoBefizetesekScreens/Oktato_ATBefizetesek";
-import Oktato_MegerositesrevaroFizetes from "./screens/oktato/OktatoBefizetesekScreens/Oktato_MegerositesrevaroFizetes"
 import Oktato_MegerositBefizetes from "./screens/oktato/OktatoBefizetesekScreens/Oktato_MegerositBefizetes";
 import Oktato_TanuloABefizetesek from "./screens/oktato/OktatoBefizetesekScreens/Oktato_TanuloABefizetesek";
 import Oktato_KovetkezoOra from "./screens/oktato/Oktato_KovetkezoOra";
@@ -183,7 +182,6 @@ export default function App() {
         <Stack.Screen name="Oktato_BefizetesRogzites" component={Oktato_BefizetesRogzites} />
         <Stack.Screen name="Oktato_ATBefizetesek" component={Oktato_ATBefizetesek} />
         <Stack.Screen name="Oktato_MegerositBefizetes" component={Oktato_MegerositBefizetes} />
-        <Stack.Screen name="Oktato_MegerositesrevaroFizetes" component={Oktato_MegerositesrevaroFizetes} />
         <Stack.Screen name="Oktato_TanuloABefizetesek" component={Oktato_TanuloABefizetesek} />
         <Stack.Screen name="Oktato_KovetkezoOra" component={Oktato_KovetkezoOra} />
         <Stack.Screen name="Oktato_AKTUALIS" component={Oktato_AKTUALIS} />

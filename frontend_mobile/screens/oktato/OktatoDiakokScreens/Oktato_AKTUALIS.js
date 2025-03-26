@@ -42,7 +42,6 @@ export default function Oktato_AKTUALIS({ route }) {
     }, []);
 
     const katt = (tanulo) => {
-        
         navigation.navigate("Oktato_TanuloReszletei", { tanulo });
     };
 
@@ -63,7 +62,7 @@ export default function Oktato_AKTUALIS({ route }) {
                     </View>
                 )}
                 keyExtractor={item => item.tanulo_id.toString()} 
-                contentContainerStyle={styles.flatListContent} // Added for spacing
+                contentContainerStyle={styles.flatListContent}
             />
         </View>
     );
@@ -72,51 +71,62 @@ export default function Oktato_AKTUALIS({ route }) {
 const styles = StyleSheet.create({
     container: {
         flex: 1,
-        margin:20
+        backgroundColor: '#F5FBFF',
+        padding: 20
     },
     header: {
         fontSize: 28,
         fontWeight: 'bold',
         textAlign: 'center',
-        marginBottom: 20,
-        color: '#2c3e50',
+        marginBottom: 25,
+        color: '#00796B',
+        paddingVertical: 10,
+        backgroundColor: '#FFFFFF',
+        borderRadius: 10,
+        elevation: 3,
+        shadowColor: '#388E3C',
+        shadowOffset: { width: 0, height: 2 },
+        shadowOpacity: 0.2,
+        shadowRadius: 4,
     },
     itemContainer: {
         flexDirection: 'row',
         justifyContent: 'space-between',
         alignItems: 'center',
-        padding: 20,
+        padding: 18,
         marginBottom: 15,
-        backgroundColor: '#ffffff',
-        
-        shadowColor: '#000',
-        shadowOffset: { width: 0, height: 4 },
+        backgroundColor: '#FFFFFF',
+        borderRadius: 10,
+        borderLeftWidth: 5,
+        borderLeftColor: '#4CAF50',
+        elevation: 2,
+        shadowColor: '#2E7D32',
+        shadowOffset: { width: 0, height: 1 },
         shadowOpacity: 0.1,
-        shadowRadius: 6,
-        elevation: 5,
+        shadowRadius: 3,
     },
     itemText: {
         fontSize: 18,
         fontWeight: '600',
-        color: '#34495e',
+        color: '#2E7D32',
     },
     button: {
-        backgroundColor: '#3498db',
+        backgroundColor: '#388E3C',
         paddingVertical: 10,
         paddingHorizontal: 20,
-        borderRadius: 25,
-        shadowColor: '#3498db',
+        borderRadius: 20,
+        elevation: 2,
+        shadowColor: '#2E7D32',
         shadowOffset: { width: 0, height: 2 },
         shadowOpacity: 0.3,
-        shadowRadius: 3,
-        elevation: 3,
+        shadowRadius: 2,
     },
     buttonText: {
-        color: '#fff',
+        color: '#E8F5E9',
         fontSize: 16,
         fontWeight: '600',
     },
     flatListContent: {
-        paddingBottom: 20, // Added bottom padding to avoid cutting off the last item
+        paddingBottom: 20,
     },
 });

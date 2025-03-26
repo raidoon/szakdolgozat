@@ -5,74 +5,81 @@ import {
   TouchableOpacity,
   StyleSheet,
   ScrollView,
+  View,
+  ActivityIndicator,
+  Alert
 } from "react-native";
 import { Dropdown } from "react-native-element-dropdown";
 import Ipcim from "../../../Ipcim";
 import DateTimePicker from "@react-native-community/datetimepicker";
 import { LinearGradient } from "expo-linear-gradient";
 import { useNavigation } from '@react-navigation/native';
+import Ionicons from "@expo/vector-icons/Ionicons";
 
 export default function Oktato_OraRogzites({ route }) {
   const { atkuld } = route.params;
   const navigation = useNavigation();
   const [adatTomb, setAdatTomb] = useState([]);
   const [diakTomb, setDiakTomb] = useState([]);
-  const [selectedValue, setSelectedValue] = useState(1);
+  const [selectedValue, setSelectedValue] = useState(null);
   const [selectedDiak, setSelectedDiak] = useState(null);
   const [date, setDate] = useState(new Date());
   const [showDatePicker, setShowDatePicker] = useState(false);
   const [showTimePicker, setShowTimePicker] = useState(false);
   const [datum, setDatum] = useState("");
   const [ido, setIdo] = useState("");
-  const [cim, setCim] = useState(""); // Opcionális cím mező
+  const [cim, setCim] = useState("");
+  const [isFocus, setIsFocus] = useState(false);
+  const [isFocusDiak, setIsFocusDiak] = useState(false);
+  const [loading, setLoading] = useState(true);
+
+  const isFormValid = datum && ido && selectedValue && selectedDiak;
 
   useEffect(() => {
     const fetchAdatok = async () => {
       try {
-        const response = await fetch(Ipcim.Ipcim + "/valasztTipus");
-        const data = await response.json();
-        setAdatTomb(data.map((item) => ({ label: item.oratipus_neve, value: item.oratipus_id })));
+        setLoading(true);
+        await Promise.all([fetchTipusok(), fetchDiakok()]);
       } catch (error) {
-        console.error("Hiba a valasztTipus adatok betöltésekor:", error);
+        console.error("Error loading data:", error);
+        Alert.alert("Hiba", "Nem sikerült betölteni az adatokat");
+      } finally {
+        setLoading(false);
       }
     };
     fetchAdatok();
   }, []);
 
-  useEffect(() => {
-    const fetchDiakok = async () => {
-      if (!atkuld || !atkuld.oktato_id) return;
-      try {
-        var adat = { "oktato_id": atkuld.oktato_id };
-        const response = await fetch(`${Ipcim.Ipcim}/aktualisDiakok`, {
-          method: "POST",
-          body: JSON.stringify(adat),
-          headers: { "Content-type": "application/json; charset=UTF-8" },
-        });
-        const data = await response.json();
-        setDiakTomb(data.map((item) => ({ label: item.tanulo_neve, value: item.tanulo_id })));
-      } catch (error) {
-        console.error("Hiba az aktualisDiakok adatok betöltésekor:", error);
-      }
-    };
-    fetchDiakok();
-  }, [atkuld]);
+  const fetchTipusok = async () => {
+    const response = await fetch(Ipcim.Ipcim + "/valasztTipus");
+    const data = await response.json();
+    setAdatTomb(data.map((item) => ({ label: item.oratipus_neve, value: item.oratipus_id })));
+  };
+
+  const fetchDiakok = async () => {
+    if (!atkuld?.oktato_id) return;
+    const adat = { "oktato_id": atkuld.oktato_id };
+    const response = await fetch(`${Ipcim.Ipcim}/aktualisDiakok`, {
+      method: "POST",
+      body: JSON.stringify(adat),
+      headers: { "Content-type": "application/json; charset=UTF-8" },
+    });
+    const data = await response.json();
+    setDiakTomb(data.map((item) => ({ label: item.tanulo_neve, value: item.tanulo_id })));
+  };
 
   const felvitel = async () => {
-    if (!datum || !ido || !selectedValue || !selectedDiak) {
-      alert("Minden kötelező mezőt ki kell tölteni!");
-      return;
-    }
-
-    const adatok = {
-      bevitel1: selectedValue,
-      bevitel2: atkuld.oktato_id,
-      bevitel3: selectedDiak,
-      bevitel4: `${datum} ${ido}`,
-      bevitel5: cim || " ", // Ha nincs cím, egy default szöveg kerül be
-    };
+    if (!isFormValid) return;
 
     try {
+      const adatok = {
+        bevitel1: selectedValue,
+        bevitel2: atkuld.oktato_id,
+        bevitel3: selectedDiak,
+        bevitel4: `${datum} ${ido}`,
+        bevitel5: cim || " ",
+      };
+
       const response = await fetch(Ipcim.Ipcim + "/oraFelvitel", {
         method: "POST",
         body: JSON.stringify(adatok),
@@ -82,19 +89,16 @@ export default function Oktato_OraRogzites({ route }) {
       const text = await response.text();
 
       if (response.status === 400) {
-        // If the backend returns a 400 status, show the error message
-        alert(text); // "Ezen a dátumon már van rögzített óra!"
+        Alert.alert("Hiba", text);
       } else if (response.ok) {
-        // If the response is successful, show a success message
-        alert("Óra sikeresen rögzítve!");
-        navigation.goBack(); // Visszalép az előző oldalra
+        Alert.alert("Siker", "Óra sikeresen rögzítve!");
+        navigation.goBack();
       } else {
-        // Handle other potential errors
-        alert("Hiba az óra rögzítésekor. Kérjük, próbálja újra.");
+        throw new Error("Unknown error occurred");
       }
     } catch (error) {
       console.error("Hiba az óra rögzítésében:", error);
-      alert("Hiba az óra rögzítésében. Kérjük, próbálja újra.");
+      Alert.alert("Hiba", "Hiba az óra rögzítésében. Kérjük, próbálja újra.");
     }
   };
 
@@ -102,8 +106,8 @@ export default function Oktato_OraRogzites({ route }) {
     if (selectedDatum) {
       setShowDatePicker(false);
       const year = selectedDatum.getFullYear();
-      const month = String(selectedDatum.getMonth() + 1).padStart(2, "0"); // 2 számjegyű hónap
-      const day = String(selectedDatum.getDate()).padStart(2, "0"); // 2 számjegyű nap
+      const month = String(selectedDatum.getMonth() + 1).padStart(2, "0");
+      const day = String(selectedDatum.getDate()).padStart(2, "0");
       setDatum(`${year}-${month}-${day}`);
     }
   };
@@ -111,74 +115,138 @@ export default function Oktato_OraRogzites({ route }) {
   const valtozikIdo = (event, selectedIdo) => {
     if (selectedIdo) {
       setShowTimePicker(false);
-      const hours = String(selectedIdo.getHours()).padStart(2, "0"); // 2 számjegyű óra
-      const minutes = String(selectedIdo.getMinutes()).padStart(2, "0"); // 2 számjegyű perc
+      const hours = String(selectedIdo.getHours()).padStart(2, "0");
+      const minutes = String(selectedIdo.getMinutes()).padStart(2, "0");
       setIdo(`${hours}:${minutes}`);
     }
   };
 
+  if (loading) {
+    return (
+      <LinearGradient colors={['#1e90ff', '#00bfff']} style={styles.loadingContainer}>
+        <ActivityIndicator size="large" color="#fff" />
+      </LinearGradient>
+    );
+  }
+
   return (
-    <LinearGradient colors={['#2a5298', '#FDEEDC']} style={styles.container}>
+    <LinearGradient colors={['#1e90ff', '#00bfff']} style={styles.container}>
       <ScrollView contentContainerStyle={styles.content}>
-        <Text style={styles.title}>Új óra rögzítése</Text>
+        <View style={styles.header}>
+          <Text style={styles.title}>Új óra rögzítése</Text>
+          <Text style={styles.subtitle}>Töltsd ki az alábbi űrlapot</Text>
+        </View>
 
-        <Text style={styles.label}>Válassz típust:</Text>
-        <Dropdown
-          style={styles.dropdown}
-          placeholderStyle={styles.placeholderStyle}
-          selectedTextStyle={styles.selectedTextStyle}
-          data={adatTomb}
-          maxHeight={300}
-          labelField="label"
-          valueField="value"
-          placeholder="-- Válassz --"
-          value={selectedValue}
-          onChange={(item) => setSelectedValue(item.value)}
-        />
+        <View style={styles.formContainer}>
+          <Text style={styles.label}>Óratípus*</Text>
+          <View style={styles.inputContainer}>
+            <Ionicons name="school-outline" size={20} color="#999" style={styles.icon} />
+            <Dropdown
+              style={[styles.dropdown, isFocus && { borderColor: '#fff' }]}
+              placeholderStyle={styles.placeholderStyle}
+              selectedTextStyle={styles.selectedTextStyle}
+              data={adatTomb}
+              maxHeight={300}
+              labelField="label"
+              valueField="value"
+              placeholder="Válassz típust"
+              value={selectedValue}
+              onFocus={() => setIsFocus(true)}
+              onBlur={() => setIsFocus(false)}
+              onChange={item => {
+                setSelectedValue(item.value);
+                setIsFocus(false);
+              }}
+            />
+          </View>
 
-        <Text style={styles.label}>Válassz diákot:</Text>
-        <Dropdown
-          style={styles.dropdown}
-          placeholderStyle={styles.placeholderStyle}
-          selectedTextStyle={styles.selectedTextStyle}
-          data={diakTomb}
-          maxHeight={300}
-          labelField="label"
-          valueField="value"
-          placeholder="-- Válassz diákot --"
-          value={selectedDiak}
-          onChange={(item) => setSelectedDiak(item.value)}
-        />
+          <Text style={styles.label}>Diák*</Text>
+          <View style={styles.inputContainer}>
+            <Ionicons name="person-outline" size={20} color="#999" style={styles.icon} />
+            <Dropdown
+              style={[styles.dropdown, isFocusDiak && { borderColor: '#fff' }]}
+              placeholderStyle={styles.placeholderStyle}
+              selectedTextStyle={styles.selectedTextStyle}
+              data={diakTomb}
+              search
+              maxHeight={300}
+              labelField="label"
+              valueField="value"
+              placeholder="Válassz diákot"
+              searchPlaceholder="Keresés..."
+              value={selectedDiak}
+              onFocus={() => setIsFocusDiak(true)}
+              onBlur={() => setIsFocusDiak(false)}
+              onChange={item => {
+                setSelectedDiak(item.value);
+                setIsFocusDiak(false);
+              }}
+            />
+          </View>
 
-        <Text style={styles.label}>Óra helyszíne (opcionális):</Text>
-        <TextInput
-          style={styles.input}
-          placeholder="Írd be a címet (nem kötelező)"
-          placeholderTextColor="#999"
-          value={cim}
-          onChangeText={setCim}
-        />
+          <Text style={styles.label}>Helyszín (opcionális)</Text>
+          <View style={styles.inputContainer}>
+            <Ionicons name="location-outline" size={20} color="#999" style={styles.icon} />
+            <TextInput
+              style={styles.input}
+              placeholder="Óra helyszíne"
+              placeholderTextColor="#999"
+              value={cim}
+              onChangeText={setCim}
+            />
+          </View>
 
-        <TouchableOpacity style={styles.button} onPress={() => setShowDatePicker(true)}>
-          <Text style={styles.buttonText}>Dátum kiválasztása</Text>
+          <Text style={styles.label}>Dátum*</Text>
+          <TouchableOpacity 
+            style={styles.datumGomb}
+            onPress={() => setShowDatePicker(true)}
+          >
+            <Ionicons name="calendar-outline" size={20} color="#fff" />
+            <Text style={styles.datumText}>
+              {datum || "Válassz dátumot"}
+            </Text>
+          </TouchableOpacity>
+
+          <Text style={styles.label}>Idő*</Text>
+          <TouchableOpacity 
+            style={styles.datumGomb}
+            onPress={() => setShowTimePicker(true)}
+          >
+            <Ionicons name="time-outline" size={20} color="#fff" />
+            <Text style={styles.datumText}>
+              {ido || "Válassz időpontot"}
+            </Text>
+          </TouchableOpacity>
+
+          {showDatePicker && (
+            <DateTimePicker 
+              value={date} 
+              mode="date" 
+              is24Hour 
+              onChange={valtozikDatum} 
+            />
+          )}
+          {showTimePicker && (
+            <DateTimePicker 
+              value={date} 
+              mode="time" 
+              is24Hour 
+              onChange={valtozikIdo} 
+            />
+          )}
+        </View>
+
+        <TouchableOpacity 
+          style={[
+            styles.mentesGomb,
+            isFormValid ? styles.aktivGomb : styles.passzivGomb
+          ]}
+          onPress={isFormValid ? felvitel : null}
+        >
+          <Text style={styles.mentesGombText}>
+            <Ionicons name="save-outline" size={20} /> Óra rögzítése
+          </Text>
         </TouchableOpacity>
-        {datum ? <Text style={styles.date}>{datum}</Text> : null}
-
-        <TouchableOpacity style={styles.button} onPress={() => setShowTimePicker(true)}>
-          <Text style={styles.buttonText}>Idő kiválasztása</Text>
-        </TouchableOpacity>
-        {ido ? <Text style={styles.date}>{ido}</Text> : null}
-
-        <TouchableOpacity style={styles.saveButton} onPress={felvitel}>
-          <Text style={styles.buttonText}>Óra rögzítése</Text>
-        </TouchableOpacity>
-
-        {showDatePicker && (
-          <DateTimePicker value={date} mode="date" is24Hour onChange={valtozikDatum} />
-        )}
-        {showTimePicker && (
-          <DateTimePicker value={date} mode="time" is24Hour onChange={valtozikIdo} />
-        )}
       </ScrollView>
     </LinearGradient>
   );
@@ -188,75 +256,111 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
   },
+  loadingContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
   content: {
     padding: 20,
-    flexGrow: 1,
+    paddingBottom: 40,
+  },
+  header: {
+    marginBottom: 25,
+    alignItems: 'center',
   },
   title: {
     fontSize: 24,
-    fontWeight: "bold",
-    color: "#fff",
+    fontWeight: 'bold',
+    color: '#fff',
+    marginBottom: 5,
+  },
+  subtitle: {
+    fontSize: 16,
+    color: 'rgba(255,255,255,0.8)',
+  },
+  formContainer: {
+    backgroundColor: 'rgba(255, 255, 255, 0.15)',
+    borderRadius: 20,
+    padding: 20,
     marginBottom: 20,
-    textAlign: "center",
   },
   label: {
     fontSize: 16,
-    marginTop: 10,
-    color: "#fff",
-    fontWeight: "600",
+    marginTop: 15,
+    marginBottom: 8,
+    fontWeight: '600',
+    color: '#fff',
+  },
+  inputContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor: 'rgba(255, 255, 255, 0.2)',
+    borderColor: 'rgba(255, 255, 255, 0.5)',
+    borderWidth: 1,
+    borderRadius: 12,
+    paddingHorizontal: 15,
+    marginBottom: 15,
+  },
+  icon: {
+    marginRight: 10,
   },
   dropdown: {
+    flex: 1,
     height: 50,
-    backgroundColor: "#fff",
-    borderRadius: 8,
-    paddingHorizontal: 10,
-    marginVertical: 10,
-    borderWidth: 1,
-    borderColor: "#ddd",
+    color: '#fff',
   },
   input: {
+    flex: 1,
     height: 50,
-    backgroundColor: "#fff",
-    borderRadius: 8,
-    paddingHorizontal: 10,
-    marginVertical: 10,
-    color: "#333",
-    borderWidth: 1,
-    borderColor: "#ddd",
-  },
-  button: {
-    backgroundColor: "#2980b9",
-    padding: 12,
-    borderRadius: 8,
-    alignItems: "center",
-    marginTop: 10,
-  },
-  saveButton: {
-    backgroundColor: "#27ae60",
-    padding: 15,
-    borderRadius: 8,
-    alignItems: "center",
-    marginTop: 20,
-  },
-  buttonText: {
-    color: "#fff",
+    color: '#fff',
     fontSize: 16,
-    fontWeight: "bold",
-  },
-  date: {
-    backgroundColor: "#fff",
-    padding: 10,
-    textAlign: "center",
-    borderRadius: 8,
-    marginVertical: 5,
-    color: "#333",
-    borderWidth: 1,
-    borderColor: "#ddd",
   },
   placeholderStyle: {
-    color: "#999",
+    fontSize: 16,
+    color: 'rgba(255,255,255,0.7)',
   },
   selectedTextStyle: {
-    color: "#333",
+    fontSize: 16,
+    color: '#fff',
+  },
+  datumGomb: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor: 'rgba(255, 255, 255, 0.2)',
+    borderColor: 'rgba(255, 255, 255, 0.5)',
+    borderWidth: 1,
+    borderRadius: 12,
+    padding: 12,
+    marginBottom: 15,
+  },
+  datumText: {
+    color: '#fff',
+    marginLeft: 10,
+    fontSize: 16,
+  },
+  mentesGomb: {
+    padding: 16,
+    borderRadius: 12,
+    alignItems: 'center',
+    flexDirection: 'row',
+    justifyContent: 'center',
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.25,
+    shadowRadius: 3.84,
+    elevation: 5,
+  },
+  aktivGomb: {
+    backgroundColor: '#2ecc71',
+  },
+  passzivGomb: {
+    backgroundColor: '#95a5a6',
+  },
+  mentesGombText: {
+    color: '#fff',
+    fontSize: 18,
+    fontWeight: 'bold',
+    marginLeft: 8,
   },
 });

@@ -1,29 +1,26 @@
 import { useState, useEffect } from "react";
-import { View, Text, FlatList, TouchableOpacity, StyleSheet } from "react-native";
+import { View, Text, FlatList, TouchableOpacity, StyleSheet,ActivityIndicator} from "react-native";
 import { useNavigation } from '@react-navigation/native';
 import Ipcim from "../../../Ipcim";
 import { LinearGradient } from "expo-linear-gradient";
+import Ionicons from "@expo/vector-icons/Ionicons";
 
 export default function Oktato_ATBefizetesek({ route }) {
     const { atkuld } = route.params;
     const [adatok, setAdatok] = useState([]);
+    const [loading, setLoading] = useState(true);
     const navigation = useNavigation();
-    console.log(atkuld);
 
     const letoltes = async () => {
         try {
-            const adat = {
-                oktato_id: atkuld.oktato_id,
-            };
-            console.log("Elküldött adat:", JSON.stringify({ "oktato_id": atkuld.oktato_id }));
+            setLoading(true);
+            const adat = { oktato_id: atkuld.oktato_id };
 
             const response = await fetch(Ipcim.Ipcim + "/aktualisDiakok", {
                 method: "POST",
                 body: JSON.stringify(adat),
                 headers: { "Content-type": "application/json; charset=UTF-8" }
             });
-
-            console.log("API válasz:", response);
 
             if (!response.ok) {
                 throw new Error(`Hiba történt: ${response.statusText}`);
@@ -33,7 +30,9 @@ export default function Oktato_ATBefizetesek({ route }) {
             setAdatok(data);
         } catch (error) {
             console.error("Hiba az API-hívás során:", error);
-            alert("Nem sikerült az adatok letöltése. Ellenőrizd az API-t.");
+            Alert.alert("Hiba", "Nem sikerült az adatok letöltése");
+        } finally {
+            setLoading(false);
         }
     };
 
@@ -42,30 +41,46 @@ export default function Oktato_ATBefizetesek({ route }) {
     }, []);
 
     const katt = (tanulo) => {
-        
         navigation.navigate("Oktato_TanuloABefizetesek", { tanulo });
     };
 
     return (
-        <LinearGradient colors={['#6a11cb', '#2575fc']} style={styles.container}>
+        <LinearGradient colors={['#1e90ff', '#00bfff']} style={styles.container}>
             <View style={styles.content}>
-                <Text style={styles.header}>Diákok</Text>
+                <View style={styles.headerContainer}>
+                    <Text style={styles.header}>Diákok és Befizetések</Text>
+                    <Text style={styles.subHeader}>Válassz egy diákot a részletek megtekintéséhez</Text>
+                </View>
 
-                <FlatList
-                    data={adatok}
-                    renderItem={({ item }) => (
-                        <View style={styles.listItem}>
-                            <Text style={styles.studentName}>{item.tanulo_neve}</Text>
-                            <TouchableOpacity
-                                style={styles.detailsButton}
+                {loading ? (
+                    <ActivityIndicator size="large" color="#fff" />
+                ) : adatok.length === 0 ? (
+                    <View style={styles.emptyContainer}>
+                        <Ionicons name="people-outline" size={48} color="#fff" />
+                        <Text style={styles.emptyText}>Nincsenek aktív diákok</Text>
+                    </View>
+                ) : (
+                    <FlatList
+                        data={adatok}
+                        contentContainerStyle={styles.listContainer}
+                        renderItem={({ item }) => (
+                            <TouchableOpacity 
+                                style={styles.card}
                                 onPress={() => katt(item)}
                             >
-                                <Text style={styles.buttonText}>Továbbiak</Text>
+                                <View style={styles.cardContent}>
+                                    <Ionicons name="person-circle-outline" size={32} color="#fff" />
+                                    <View style={styles.textContainer}>
+                                        <Text style={styles.studentName}>{item.tanulo_neve}</Text>
+                                        
+                                    </View>
+                                </View>
+                                <Ionicons name="chevron-forward" size={24} color="rgba(255,255,255,0.7)" />
                             </TouchableOpacity>
-                        </View>
-                    )}
-                    keyExtractor={item => item.tanulo_id.toString()}
-                />
+                        )}
+                        keyExtractor={item => item.tanulo_id.toString()}
+                    />
+                )}
             </View>
         </LinearGradient>
     );
@@ -79,35 +94,60 @@ const styles = StyleSheet.create({
         flex: 1,
         padding: 20,
     },
+    headerContainer: {
+        marginBottom: 25,
+        alignItems: 'center',
+    },
     header: {
         fontSize: 24,
-        fontWeight: "bold",
-        color: "#fff",
-        marginBottom: 20,
-        textAlign: "center",
+        fontWeight: 'bold',
+        color: '#fff',
+        marginBottom: 5,
     },
-    listItem: {
-        backgroundColor: "rgba(255, 255, 255, 0.2)",
-        borderRadius: 10,
-        padding: 15,
-        marginBottom: 10,
-        flexDirection: "row",
-        justifyContent: "space-between",
-        alignItems: "center",
+    subHeader: {
+        fontSize: 16,
+        color: 'rgba(255,255,255,0.8)',
+        textAlign: 'center',
+    },
+    listContainer: {
+        paddingBottom: 20,
+    },
+    card: {
+        backgroundColor: 'rgba(255, 255, 255, 0.15)',
+        borderRadius: 12,
+        padding: 16,
+        marginBottom: 12,
+        flexDirection: 'row',
+        alignItems: 'center',
+        justifyContent: 'space-between',
+    },
+    cardContent: {
+        flexDirection: 'row',
+        alignItems: 'center',
+    },
+    textContainer: {
+        marginLeft: 15,
     },
     studentName: {
         fontSize: 18,
-        color: "#fff",
-        fontWeight: "bold",
+        fontWeight: '600',
+        color: '#fff',
+        marginBottom: 2,
     },
-    detailsButton: {
-        backgroundColor: "#6a11cb",
-        paddingVertical: 8,
-        paddingHorizontal: 15,
-        borderRadius: 5,
+    studentId: {
+        fontSize: 14,
+        color: 'rgba(255,255,255,0.7)',
     },
-    buttonText: {
-        color: "#fff",
-        fontWeight: "bold",
+    emptyContainer: {
+        flex: 1,
+        justifyContent: 'center',
+        alignItems: 'center',
+        padding: 40,
+    },
+    emptyText: {
+        fontSize: 18,
+        color: '#fff',
+        marginTop: 16,
+        textAlign: 'center',
     },
 });

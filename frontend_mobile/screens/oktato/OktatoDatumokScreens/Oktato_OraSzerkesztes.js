@@ -6,14 +6,17 @@ import {
   StyleSheet,
   Alert,
   ScrollView,
+  View,
+  ActivityIndicator
 } from "react-native";
 import { Dropdown } from "react-native-element-dropdown";
 import Ipcim from "../../../Ipcim";
 import DateTimePicker from "@react-native-community/datetimepicker";
 import { LinearGradient } from "expo-linear-gradient";
+import Ionicons from "@expo/vector-icons/Ionicons";
 
 export default function Oktato_OraSzerkesztes({ route, navigation }) {
-  const { ora } = route.params; // Az átadott óra adatai
+  const { ora } = route.params;
   const [diakTomb, setDiakTomb] = useState([]);
   const [selectedDiak, setSelectedDiak] = useState(ora.tanulo_id);
   const [date, setDate] = useState(new Date(ora.ora_datuma));
@@ -23,8 +26,8 @@ export default function Oktato_OraSzerkesztes({ route, navigation }) {
   const [ido, setIdo] = useState("");
   const [cim, setCim] = useState(ora.ora_kezdeshelye);
   const [isLoading, setIsLoading] = useState(false);
+  const [isFocus, setIsFocus] = useState(false);
 
-  // Dátum és idő formázása a meglévő adatokból
   useEffect(() => {
     const originalDate = new Date(ora.ora_datuma);
     setDatum(
@@ -35,7 +38,6 @@ export default function Oktato_OraSzerkesztes({ route, navigation }) {
     );
   }, []);
 
-  // Diákok betöltése
   useEffect(() => {
     const fetchDiakok = async () => {
       try {
@@ -55,7 +57,6 @@ export default function Oktato_OraSzerkesztes({ route, navigation }) {
     fetchDiakok();
   }, []);
 
-  // Óra frissítése
   const frissites = async () => {
     if (isLoading) return;
 
@@ -64,25 +65,23 @@ export default function Oktato_OraSzerkesztes({ route, navigation }) {
       return;
     }
 
-    const frissitettAdatok = {
-      bevitel1: selectedDiak, // ora_diakja
-      bevitel2: `${datum} ${ido}`, // ora_datuma
-      bevitel3: cim || " ", // ora_kezdeshelye
-      bevitel4: ora.ora_id, // ora_id
-    };
-
     setIsLoading(true);
     try {
       const response = await fetch(`${Ipcim.Ipcim}/oraSzerkesztes`, {
         method: "POST",
-        body: JSON.stringify(frissitettAdatok),
+        body: JSON.stringify({
+          bevitel1: selectedDiak,
+          bevitel2: `${datum} ${ido}`,
+          bevitel3: cim || " ",
+          bevitel4: ora.ora_id,
+        }),
         headers: { "Content-type": "application/json; charset=UTF-8" },
       });
 
       if (!response.ok) throw new Error("Hiba a frissítés során");
 
       Alert.alert("Siker", "Óra sikeresen frissítve!");
-      navigation.goBack(); // Visszalép az előző oldalra
+      navigation.goBack();
     } catch (error) {
       console.error("Hiba:", error);
       Alert.alert("Hiba", "Nem sikerült frissíteni az órát.");
@@ -91,7 +90,6 @@ export default function Oktato_OraSzerkesztes({ route, navigation }) {
     }
   };
 
-  // Dátum választás
   const valtozikDatum = (event, selectedDatum) => {
     if (selectedDatum) {
       setShowDatePicker(false);
@@ -101,7 +99,6 @@ export default function Oktato_OraSzerkesztes({ route, navigation }) {
     }
   };
 
-  // Idő választás
   const valtozikIdo = (event, selectedIdo) => {
     if (selectedIdo) {
       setShowTimePicker(false);
@@ -112,46 +109,77 @@ export default function Oktato_OraSzerkesztes({ route, navigation }) {
   };
 
   return (
-    <LinearGradient colors={['#6495ED', '#ffff']} style={styles.container}>
+    <LinearGradient colors={['#E3F2FD', '#E8F5E9']} style={styles.container}>
       <ScrollView contentContainerStyle={styles.content}>
         <Text style={styles.title}>Óra szerkesztése</Text>
 
-        <Text style={styles.label}>Válassz diákot:</Text>
-        <Dropdown
-          style={styles.dropdown}
-          placeholderStyle={styles.placeholderStyle}
-          selectedTextStyle={styles.selectedTextStyle}
-          data={diakTomb}
-          maxHeight={300}
-          labelField="label"
-          valueField="value"
-          placeholder="-- Válassz diákot --"
-          value={selectedDiak}
-          onChange={(item) => setSelectedDiak(item.value)}
-        />
+        <View style={styles.card}>
+          <Text style={styles.label}>Diák kiválasztása</Text>
+          <Dropdown
+            style={[styles.dropdown, isFocus && { borderColor: '#4CAF50' }]}
+            placeholderStyle={styles.placeholderStyle}
+            selectedTextStyle={styles.selectedTextStyle}
+            data={diakTomb}
+            maxHeight={300}
+            labelField="label"
+            valueField="value"
+            placeholder={!isFocus ? 'Válassz diákot' : '...'}
+            value={selectedDiak}
+            onFocus={() => setIsFocus(true)}
+            onBlur={() => setIsFocus(false)}
+            onChange={item => {
+              setSelectedDiak(item.value);
+              setIsFocus(false);
+            }}
+          />
 
-        <TouchableOpacity style={styles.button} onPress={() => setShowDatePicker(true)}>
-          <Text style={styles.buttonText}>Dátum kiválasztása</Text>
-        </TouchableOpacity>
-        {datum && <Text style={styles.date}>{datum}</Text>}
+          <Text style={styles.label}>Dátum és idő</Text>
+          <View style={styles.datumContainer}>
+            <TouchableOpacity 
+              style={styles.datumGomb} 
+              onPress={() => setShowDatePicker(true)}
+            >
+              <Ionicons name="calendar-outline" size={18} color="#4CAF50" />
+              <Text style={styles.datumGombText}>
+                {datum || "Válassz dátumot"}
+              </Text>
+            </TouchableOpacity>
+            
+            <TouchableOpacity 
+              style={styles.datumGomb} 
+              onPress={() => setShowTimePicker(true)}
+            >
+              <Ionicons name="time-outline" size={18} color="#4CAF50" />
+              <Text style={styles.datumGombText}>
+                {ido || "Válassz időpontot"}
+              </Text>
+            </TouchableOpacity>
+          </View>
 
-        <TouchableOpacity style={styles.button} onPress={() => setShowTimePicker(true)}>
-          <Text style={styles.buttonText}>Idő kiválasztása</Text>
-        </TouchableOpacity>
-        {ido && <Text style={styles.date}>{ido}</Text>}
+          <Text style={styles.label}>Helyszín</Text>
+          <TextInput
+            style={styles.input}
+            placeholder="Írd be a címet"
+            placeholderTextColor="#999"
+            value={cim}
+            onChangeText={setCim}
+          />
 
-        <Text style={styles.label}>Óra helyszíne:</Text>
-        <TextInput
-          style={styles.input}
-          placeholder="Írd be a címet"
-          placeholderTextColor="#999"
-          value={cim}
-          onChangeText={setCim}
-        />
-
-        <TouchableOpacity style={styles.saveButton} onPress={frissites} disabled={isLoading}>
-          <Text style={styles.buttonText}>{isLoading ? "Feldolgozás..." : "Mentés"}</Text>
-        </TouchableOpacity>
+          <TouchableOpacity 
+            style={styles.mentesGomb} 
+            onPress={frissites} 
+            disabled={isLoading}
+          >
+            {isLoading ? (
+              <ActivityIndicator color="#fff" />
+            ) : (
+              <>
+                <Ionicons name="save-outline" size={18} color="#fff" />
+                <Text style={styles.mentesGombText}> Mentés</Text>
+              </>
+            )}
+          </TouchableOpacity>
+        </View>
 
         {showDatePicker && (
           <DateTimePicker value={date} mode="date" is24Hour onChange={valtozikDatum} />
@@ -170,73 +198,96 @@ const styles = StyleSheet.create({
   },
   content: {
     padding: 20,
-    flexGrow: 1,
+    paddingBottom: 40,
   },
   title: {
     fontSize: 24,
-    fontWeight: "bold",
-    color: "#fff",
+    fontWeight: '600',
+    color: '#2c3e50',
     marginBottom: 20,
-    textAlign: "center",
+    textAlign: 'center',
+  },
+  card: {
+    backgroundColor: '#fff',
+    borderRadius: 12,
+    padding: 20,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.1,
+    shadowRadius: 6,
+    elevation: 3,
   },
   label: {
     fontSize: 16,
-    marginTop: 10,
-    color: "#fff",
-    fontWeight: "600",
+    color: '#4a90e2',
+    fontWeight: '500',
+    marginBottom: 8,
+    marginTop: 12,
   },
   dropdown: {
     height: 50,
-    backgroundColor: "#fff",
-    borderRadius: 8,
-    paddingHorizontal: 10,
-    marginVertical: 10,
+    borderColor: '#E0E0E0',
     borderWidth: 1,
-    borderColor: "#ddd",
+    borderRadius: 8,
+    paddingHorizontal: 15,
+    backgroundColor: '#fff',
+    marginBottom: 10,
+  },
+  datumContainer: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    marginBottom: 10,
+  },
+  datumGomb: {
+    flex: 1,
+    flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor: '#fff',
+    borderColor: '#E0E0E0',
+    borderWidth: 1,
+    borderRadius: 8,
+    padding: 12,
+    marginRight: 5,
+  },
+  datumGombText: {
+    marginLeft: 8,
+    color: '#333',
   },
   input: {
     height: 50,
-    backgroundColor: "#fff",
-    borderRadius: 8,
-    paddingHorizontal: 10,
-    marginVertical: 10,
-    color: "#333",
+    borderColor: '#E0E0E0',
     borderWidth: 1,
-    borderColor: "#ddd",
-  },
-  button: {
-    backgroundColor: "#0057FF", // Slightly lighter green for buttons
-    padding: 12,
     borderRadius: 8,
-    alignItems: "center",
-    marginTop: 10,
-  },
-  saveButton: {
-    backgroundColor: "#2e7d32", // Same green as regular button
-    padding: 15,
-    borderRadius: 8,
-    alignItems: "center",
-    marginTop: 20,
-  },
-  buttonText: {
-    color: "#fff",
+    paddingHorizontal: 15,
+    backgroundColor: '#fff',
+    color: '#333',
     fontSize: 16,
-    fontWeight: "bold",
+    marginBottom: 15,
   },
-  date: {
-    backgroundColor: "#fff",
-    padding: 10,
-    textAlign: "center",
+  mentesGomb: {
+    flexDirection: 'row',
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: '#4CAF50',
+    padding: 14,
     borderRadius: 8,
-    marginVertical: 5,
-    color: "#333",
-    borderWidth: 1,
-    borderColor: "#ddd",
+    marginTop: 10,
+    shadowColor: '#2E7D32',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.3,
+    shadowRadius: 4,
+  },
+  mentesGombText: {
+    color: '#fff',
+    fontSize: 16,
+    fontWeight: '500',
   },
   placeholderStyle: {
-    color: "#999",
+    fontSize: 16,
+    color: '#999',
   },
   selectedTextStyle: {
-    color: "#333",
+    fontSize: 16,
+    color: '#333',
   },
 });

@@ -74,46 +74,85 @@ export default function Oktato_LevizsgazottTanuloReszletei({ route }) {
     }, []);
 
     return (
-        <View style={stilus.kontener}>
-            <View style={stilus.kartya}>
-                <Text style={stilus.cim}>{tanulo.tanulo_neve}Részletei</Text>
-                <Text style={stilus.adat}>Email: {email}</Text>
-                <Text style={stilus.adat}>Telefonszám: {telefonszam}</Text>
-                <Text style={stilus.adat}>Összes befizetés: {osszesBefizetett} Ft</Text>
-                <Text style={stilus.adat}>Összes teljesített óra: {osszesOra}</Text>
+        <View style={styles.container}>
+            <View style={styles.card}>
+                <Text style={styles.header}>{tanulo.tanulo_neve} részletei</Text>
+                
+                <View style={styles.infok}>
+                    <Text style={styles.label}>Email:</Text>
+                    <Text style={styles.value}>{email}</Text>
+                </View>
+                
+                <View style={styles.infok}>
+                    <Text style={styles.label}>Telefonszám:</Text>
+                    <Text style={styles.value}>{telefonszam}</Text>
+                </View>
+                
+                <View style={styles.infok}>
+                    <Text style={styles.label}>Összes befizetés:</Text>
+                    <Text style={[styles.value, styles.highlight]}>{osszesBefizetett} Ft</Text>
+                </View>
+                
+                <View style={styles.infok}>
+                    <Text style={styles.label}>Összes óra:</Text>
+                    <Text style={[styles.value, styles.highlight]}>{osszesOra}</Text>
+                </View>
             </View>
         </View>
     );
 }
 
-const stilus = StyleSheet.create({
-    kontener: {
+const styles = StyleSheet.create({
+    container: {
         flex: 1,
-        backgroundColor: '#f0f4f8',
-        alignItems: "center",
-        justifyContent: "center",
+        backgroundColor: '#F5FBFF',
+        alignItems: 'center',
+        justifyContent: 'center',
         padding: 20,
     },
-    kartya: {
-        backgroundColor: "#fff",
-        padding: 20,
-        borderRadius: 15,
-        shadowColor: "#000",
+    card: {
+        backgroundColor: '#FFFFFF',
+        width: '90%',
+        borderRadius: 12,
+        padding: 25,
+        shadowColor: '#2E7D32',
         shadowOffset: { width: 0, height: 4 },
-        shadowOpacity: 0.2,
+        shadowOpacity: 0.1,
         shadowRadius: 6,
-        width: "90%",
-        alignItems: "center",
+        elevation: 5,
+        borderLeftWidth: 6,
+        borderLeftColor: '#4CAF50',
     },
-    cim: {
-        fontSize: 28,
-        fontWeight: "bold",
-        color: "#333",
+    header: {
+        fontSize: 24,
+        fontWeight: 'bold',
+        color: '#00796B',
+        marginBottom: 20,
+        textAlign: 'center',
+        paddingBottom: 10,
+        borderBottomWidth: 1,
+        borderBottomColor: 'rgba(76, 175, 80, 0.2)',
+    },
+    infok: {
+        flexDirection: 'row',
+        justifyContent: 'space-between',
         marginBottom: 15,
+        paddingBottom: 10,
+        borderBottomWidth: 1,
+        borderBottomColor: 'rgba(76, 175, 80, 0.1)',
     },
-    adat: {
+    label: {
         fontSize: 18,
-        color: "#555",
-        marginVertical: 4,
-    }
+        color: '#388E3C',
+        fontWeight: '500',
+    },
+    value: {
+        fontSize: 18,
+        color: '#2E7D32',
+        fontWeight: '600',
+    },
+    highlight: {
+        color: '#00796B',
+        fontWeight: 'bold',
+    },
 });

@@ -39,9 +39,9 @@ export default function Oktato_Diakok({ atkuld }) {
 
   return (
     <View style={styles.container}>
-      {/* Header matching Kezdolap */}
+      
       <View style={styles.header}>
-        <Text style={styles.headerTitle}>Diákok</Text>
+        <Text style={styles.headerCim}>Diákok</Text>
         <FlatList
         data={adatok}
         
@@ -49,21 +49,21 @@ export default function Oktato_Diakok({ atkuld }) {
       </View>
 
       
-      <View style={styles.buttonGroup}>
+      <View style={styles.gombok}>
         <TouchableOpacity
-          style={styles.primaryButton}
+          style={styles.elsoGomb}
           onPress={() => navigation.navigate("Oktato_AKTUALIS", { atkuld })}
         >
-          <Text style={styles.buttonText}>Aktuális Diákok Adatai</Text>
-          <View style={styles.greenCircle} />
+          <Text style={styles.elsogombText}>Aktuális Diákok Adatai</Text>
+          <View style={styles.zold} />
         </TouchableOpacity>
 
         <TouchableOpacity
-          style={styles.secondaryButton}
+          style={styles.masodikGomb}
           onPress={() => navigation.navigate("Oktato_LEVIZSGAZOTT", { atkuld })}
         >
-          <Text style={styles.secondaryButtonText}>Levizsgázott Diákok Adatai</Text>
-          <View style={styles.blueCircle} />
+          <Text style={styles.masodikgombText}>Levizsgázott Diákok Adatai</Text>
+          <View style={styles.kek} />
         </TouchableOpacity>
       </View>
 
@@ -90,23 +90,17 @@ const styles = StyleSheet.create({
     shadowRadius: 6,
     elevation: 3,
   },
-  headerTitle: {
+  headerCim: {
     fontSize: 24,
     fontFamily: "Inter-Bold",
     marginBottom: 8,
     textAlign: "center",
     color: "#00796B", // Dark teal/green
   },
-  welcomeText: {
-    fontSize: 16,
-    fontFamily: "Inter-Medium",
-    textAlign: "center",
-    color: "#4CAF50", // Green color
-  },
-  buttonGroup: {
+  gombok: {
     marginBottom: 20,
   },
-  primaryButton: {
+  elsoGomb: {
     backgroundColor: "#4CAF50", // Green
     padding: 30,
     borderRadius: 10,
@@ -120,7 +114,7 @@ const styles = StyleSheet.create({
     position: 'relative',
     overflow: 'hidden',
   },
-  secondaryButton: {
+  masodikGomb: {
     backgroundColor: "#E8F5E9", // Very light green
     padding: 30,
     borderRadius: 10,
@@ -131,7 +125,7 @@ const styles = StyleSheet.create({
     position: 'relative',
     overflow: 'hidden',
   },
-  greenCircle: {
+  zold: {
     position: 'absolute',
     width: 60,
     height: 60,
@@ -140,7 +134,7 @@ const styles = StyleSheet.create({
     right: -15,
     top: -15,
   },
-  blueCircle: {
+  kek: {
     position: 'absolute',
     width: 60,
     height: 60,
@@ -149,12 +143,12 @@ const styles = StyleSheet.create({
     right: -15,
     top: -15,
   },
-  buttonText: {
+  elsogombText: {
     color: "#FFFFFF",
     fontSize: 16,
     fontFamily: "Inter-SemiBold",
   },
-  secondaryButtonText: {
+  masodikgombText: {
     color: "#2E7D32", // Dark green
     fontSize: 16,
     fontFamily: "Inter-SemiBold",

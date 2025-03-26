@@ -1,7 +1,6 @@
 import { useState, useEffect } from "react";
 import { View, Text, FlatList, TouchableOpacity, StyleSheet } from "react-native";
 import { useNavigation } from '@react-navigation/native';
-
 import Ipcim from "../../../Ipcim";
 
 export default function Oktato_LEVIZSGAZOTT({ route }) {
@@ -11,13 +10,10 @@ export default function Oktato_LEVIZSGAZOTT({ route }) {
     console.log(atkuld);
 
     const letoltes = async () => {
-        
-        
         try {
             const adat = {
                 oktato_id: atkuld.oktato_id,
             }
-            //alert(atkuld.oktato_id)
             console.log("Elküldött adat:", JSON.stringify({ "oktato_id": atkuld.oktato_id }));
 
             const response = await fetch(Ipcim.Ipcim + "/levizsgazottDiakok", {
@@ -33,14 +29,12 @@ export default function Oktato_LEVIZSGAZOTT({ route }) {
             }
 
             const data = await response.json();
-            //alert(JSON.stringify(data))
             setAdatok(data);
 
         } catch (error) {
             console.error("Hiba az API-hívás során:", error);
             alert("Nem sikerült az adatok letöltése. Ellenőrizd az API-t.");
         }
-        
     }
 
     useEffect(() => {
@@ -48,7 +42,6 @@ export default function Oktato_LEVIZSGAZOTT({ route }) {
     }, []); 
 
     const katt = (tanulo) => {
-       
         navigation.navigate("Oktato_LevizsgazottTanuloReszletei", { tanulo });
     };
 
@@ -69,6 +62,7 @@ export default function Oktato_LEVIZSGAZOTT({ route }) {
                     </View>
                 )}
                 keyExtractor={item => item.tanulo_id.toString()} 
+                contentContainerStyle={styles.flatListContent}
             />
         </View>
     );
@@ -77,41 +71,62 @@ export default function Oktato_LEVIZSGAZOTT({ route }) {
 const styles = StyleSheet.create({
     container: {
         flex: 1,
-        padding: 20,
-        backgroundColor: '#f5f5f5',
+        backgroundColor: '#F5FBFF',
+        padding: 20
     },
     header: {
-        fontSize: 24,
+        fontSize: 28,
         fontWeight: 'bold',
         textAlign: 'center',
-        marginBottom: 20,
-        color: '#333',
+        marginBottom: 25,
+        color: '#00796B',
+        paddingVertical: 10,
+        backgroundColor: '#FFFFFF',
+        borderRadius: 10,
+        elevation: 3,
+        shadowColor: '#388E3C',
+        shadowOffset: { width: 0, height: 2 },
+        shadowOpacity: 0.2,
+        shadowRadius: 4,
     },
     itemContainer: {
         flexDirection: 'row',
         justifyContent: 'space-between',
         alignItems: 'center',
-        padding: 15,
-        marginBottom: 10,
-        backgroundColor: '#fff',
+        padding: 18,
+        marginBottom: 15,
+        backgroundColor: '#FFFFFF',
         borderRadius: 10,
-        shadowColor: '#000',
-        shadowOffset: { width: 0, height: 2 },
+        borderLeftWidth: 5,
+        borderLeftColor: '#4CAF50',
+        elevation: 2,
+        shadowColor: '#2E7D32',
+        shadowOffset: { width: 0, height: 1 },
         shadowOpacity: 0.1,
-        shadowRadius: 5,
-        elevation: 3,
+        shadowRadius: 3,
     },
     itemText: {
         fontSize: 18,
-        color: '#333',
+        fontWeight: '600',
+        color: '#2E7D32',
     },
     button: {
-        backgroundColor: '#007bff',
-        padding: 10,
-        borderRadius: 5,
+        backgroundColor: '#388E3C',
+        paddingVertical: 10,
+        paddingHorizontal: 20,
+        borderRadius: 20,
+        elevation: 2,
+        shadowColor: '#2E7D32',
+        shadowOffset: { width: 0, height: 2 },
+        shadowOpacity: 0.3,
+        shadowRadius: 2,
     },
     buttonText: {
-        color: '#fff',
+        color: '#E8F5E9',
         fontSize: 16,
+        fontWeight: '600',
+    },
+    flatListContent: {
+        paddingBottom: 20,
     },
 });

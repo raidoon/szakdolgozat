@@ -1,6 +1,17 @@
 import React, { useState, useEffect } from "react";
-import { View, Text, StyleSheet, FlatList, TouchableOpacity, Modal, Alert, ActivityIndicator } from "react-native";
+import { 
+  View, 
+  Text, 
+  StyleSheet, 
+  FlatList, 
+  TouchableOpacity, 
+  Modal, 
+  Alert, 
+  ActivityIndicator 
+} from "react-native";
 import Ipcim from "../../../Ipcim";
+import { LinearGradient } from "expo-linear-gradient";
+import Ionicons from "@expo/vector-icons/Ionicons";
 
 export default function Oktato_MegerositOra({ route }) {
     const { tanulo } = route.params;
@@ -20,11 +31,11 @@ export default function Oktato_MegerositOra({ route }) {
             });
             if (!response.ok) throw new Error(`Hiba: ${response.statusText}`);
             const data = await response.json();
-            setAdatok(data);
+            const rendezettAdatok = data.sort((a, b) => new Date(b.ora_datuma) - new Date(a.ora_datuma));
+            setAdatok(rendezettAdatok);
             if (data.length > 0) {
-                setTipus(data[0].oratipus_neve); // Set the type for the first item (if needed)
+                setTipus(data[0].oratipus_neve);
             }
-            
         } catch (error) {
             console.error("Hiba:", error);
             Alert.alert("Hiba", "Nem sikerült az adatok letöltése.");
@@ -35,21 +46,18 @@ export default function Oktato_MegerositOra({ route }) {
 
     const frissitOraAllapot = async () => {
         try {
-            // Update lessons to "Módosítható" (2) if the date has passed
             const responseModosithato = await fetch(`${Ipcim.Ipcim}/oraFrissul`, {
                 method: "PUT",
                 headers: { "Content-type": "application/json; charset=UTF-8" }
             });
             if (!responseModosithato.ok) throw new Error(`Hiba: ${responseModosithato.statusText}`);
 
-            // Update lessons to "Teljesített" (1) if 3 days have passed since the lesson date
             const responseTeljesitett = await fetch(`${Ipcim.Ipcim}/oraTeljesul`, {
                 method: "PUT",
                 headers: { "Content-type": "application/json; charset=UTF-8" }
             });
             if (!responseTeljesitett.ok) throw new Error(`Hiba: ${responseTeljesitett.statusText}`);
 
-            // Refresh the data after updating
             letoltes();
         } catch (error) {
             console.error("Hiba az óra állapot frissítésében:", error);
@@ -77,7 +85,7 @@ export default function Oktato_MegerositOra({ route }) {
             if (!response.ok) throw new Error(`Hiba: ${response.statusText}`);
             const data = await response.json();
             Alert.alert("Siker", data.message);
-            letoltes(); // Refresh data after deletion
+            letoltes();
         } catch (error) {
             console.error("Hiba:", error);
             Alert.alert("Hiba", "Nem sikerült törölni az órát.");
@@ -96,24 +104,7 @@ export default function Oktato_MegerositOra({ route }) {
             if (!response.ok) throw new Error(`Hiba: ${response.statusText}`);
             const data = await response.json();
             Alert.alert("Siker", data.message);
-            letoltes(); // Refresh data after update
-        } catch (error) {
-            console.error("Hiba:", error);
-            Alert.alert("Hiba", "Nem sikerült frissíteni az órát.");
-        }
-    };
-
-    const modosulOra = async (ora_id) => {
-        try {
-            const response = await fetch(`${Ipcim.Ipcim}/oraFrissit`, {
-                method: "PUT",
-                body: JSON.stringify({ ora_id: ora_id }),
-                headers: { "Content-type": "application/json; charset=UTF-8" }
-            });
-            if (!response.ok) throw new Error(`Hiba: ${response.statusText}`);
-            const data = await response.json();
-            Alert.alert("Siker", data.message);
-            letoltes(); // Refresh data after update
+            letoltes();
         } catch (error) {
             console.error("Hiba:", error);
             Alert.alert("Hiba", "Nem sikerült frissíteni az órát.");
@@ -122,9 +113,9 @@ export default function Oktato_MegerositOra({ route }) {
 
     if (isLoading) {
         return (
-            <View style={styles.loadingContainer}>
-                <ActivityIndicator size="large" color="#ff8f00" />
-            </View>
+            <LinearGradient colors={['#E3F2FD', '#E8F5E9']} style={styles.loadingContainer}>
+                <ActivityIndicator size="large" color="#4a90e2" />
+            </LinearGradient>
         );
     }
 
@@ -136,67 +127,87 @@ export default function Oktato_MegerositOra({ route }) {
         const hours = String(date.getHours()).padStart(2, "0");
         const minutes = String(date.getMinutes()).padStart(2, "0");
 
-        return `${year}-${month}-${day} ${hours}:${minutes}`;
+        return `${year}.${month}.${day} ${hours}:${minutes}`;
+    };
+
+    const getStatusColor = (status) => {
+        switch(status) {
+            case 0: return '#FFA000'; // Pending - amber
+            case 1: return '#4CAF50'; // Completed - green
+            case 2: return '#2196F3'; // Modifiable - blue
+            default: return '#9E9E9E';
+        }
     };
 
     return (
-        <View style={styles.container}>
+        <LinearGradient colors={['#E3F2FD', '#E8F5E9']} style={styles.container}>
             <FlatList
                 data={adatok}
                 keyExtractor={(item) => item.ora_id.toString()}
                 ListHeaderComponent={() => (
-                    <>
-                        <Text style={styles.header}>Részletek</Text>
+                    <View style={styles.headerContainer}>
+                        <Text style={styles.header}>Óra állapotok</Text>
                         <Text style={styles.studentName}>{tanulo.tanulo_neve}</Text>
-                    </>
-                )}
-                contentContainerStyle={{ paddingBottom: 20 }}
-                renderItem={({ item }) => (
-                    <View style={styles.card}>
-                        <View style={styles.cardItem}>
-                            <Text style={styles.cardItemTitle}>Dátum:</Text>
-                            <Text style={styles.cardItemText}>{formatDateTime(item.ora_datuma)}</Text>
-                        </View>
-                        <View style={styles.cardItem}>
-                            <Text style={styles.cardItemTitle}>Típus:</Text>
-                            <Text style={styles.cardItemText}>{item.oratipus_neve}</Text>
-                        </View>
-                        <View style={styles.cardItem}>
-                            <Text style={styles.cardItemTitle}>Állapot:</Text>
-                            <Text style={styles.cardItemText}>
-                                {item.ora_teljesitve === 0
-                                    ? "Függőben"
-                                    : item.ora_teljesitve === 1
-                                    ? "Teljesített"
-                                    : "Módosítható"}
-                            </Text>
-                        </View>
-                        {item.ora_teljesitve === 0 && (
-                            <TouchableOpacity
-                                style={[styles.button, styles.deleteButton]}
-                                onPress={() => confirmTorles(item.ora_id)}
-                            >
-                                <Text style={styles.buttonText}>Törlés</Text>
-                            </TouchableOpacity>
-                        )}
-                        {item.ora_teljesitve === 2 && (
-                            <>
-                                <TouchableOpacity
-                                    style={[styles.button, styles.updateButton]}
-                                    onPress={() => teljesitOra(item.ora_id)}
-                                >
-                                    <Text style={styles.buttonText}>Teljesítetté jelöl</Text>
-                                </TouchableOpacity>
-                                <TouchableOpacity
-                                    style={[styles.button, styles.rejectButton]}
-                                    onPress={() => modosulOra(item.ora_id)}
-                                >
-                                    <Text style={styles.buttonText}>Elutasítás</Text>
-                                </TouchableOpacity>
-                            </>
-                        )}
                     </View>
                 )}
+                contentContainerStyle={styles.listContent}
+                renderItem={({ item }) => (
+                    <View style={styles.card}>
+                        <View style={styles.cardHeader}>
+                            <Text style={styles.lessonDate}>{formatDateTime(item.ora_datuma)}</Text>
+                            <View style={[styles.statusPill, {backgroundColor: getStatusColor(item.ora_teljesitve)}]}>
+                                <Text style={styles.statusText}>
+                                    {item.ora_teljesitve === 0
+                                        ? "Függőben"
+                                        : item.ora_teljesitve === 1
+                                        ? "Teljesített"
+                                        : "Módosítható"}
+                                </Text>
+                            </View>
+                        </View>
+
+                        <View style={styles.infoRow}>
+                            <Ionicons name="book-outline" size={18} color="#4a90e2" />
+                            <Text style={styles.infoText}>{item.oratipus_neve}</Text>
+                        </View>
+
+                        <View style={styles.buttonContainer}>
+                            {item.ora_teljesitve === 0 && (
+                                <TouchableOpacity
+                                    style={[styles.button, styles.deleteButton]}
+                                    onPress={() => confirmTorles(item.ora_id)}
+                                >
+                                    <Ionicons name="trash-outline" size={18} color="#fff" />
+                                    <Text style={styles.buttonText}> Törlés</Text>
+                                </TouchableOpacity>
+                            )}
+                            {item.ora_teljesitve === 2 && (
+                                <>
+                                    <TouchableOpacity
+                                        style={[styles.button, styles.completeButton]}
+                                        onPress={() => teljesitOra(item.ora_id)}
+                                    >
+                                        <Ionicons name="checkmark-circle-outline" size={18} color="#fff" />
+                                        <Text style={styles.buttonText}> Teljesít</Text>
+                                    </TouchableOpacity>
+                                    <TouchableOpacity
+                                        style={[styles.button, styles.rejectButton]}
+                                        onPress={() => confirmTorles(item.ora_id)}
+                                    >
+                                        <Ionicons name="close-circle-outline" size={18} color="#fff" />
+                                        <Text style={styles.buttonText}> Elutasít</Text>
+                                    </TouchableOpacity>
+                                </>
+                            )}
+                        </View>
+                    </View>
+                )}
+                ListEmptyComponent={
+                    <View style={styles.emptyContainer}>
+                        <Ionicons name="calendar-outline" size={48} color="#bdc3c7" />
+                        <Text style={styles.emptyText}>Nincs rögzített óra</Text>
+                    </View>
+                }
             />
 
             <Modal
@@ -207,97 +218,141 @@ export default function Oktato_MegerositOra({ route }) {
             >
                 <View style={styles.modalOverlay}>
                     <View style={styles.modalContent}>
+                        <Ionicons name="warning-outline" size={48} color="#FFA000" style={styles.modalIcon} />
                         <Text style={styles.modalText}>Biztosan törölni szeretnéd az órát?</Text>
                         <View style={styles.modalButtonsContainer}>
                             <TouchableOpacity
                                 style={[styles.modalButton, styles.cancelButton]}
                                 onPress={() => setModalVisible(false)}
                             >
-                                <Text style={styles.buttonText}>Mégsem</Text>
+                                <Text style={styles.modalButtonText}>Mégsem</Text>
                             </TouchableOpacity>
                             <TouchableOpacity
-                                style={[styles.modalButton, styles.deleteButton]}
+                                style={[styles.modalButton, styles.confirmDeleteButton]}
                                 onPress={torolOra}
                             >
-                                <Text style={styles.buttonText}>Törlés</Text>
+                                <Text style={styles.modalButtonText}>Törlés</Text>
                             </TouchableOpacity>
                         </View>
                     </View>
                 </View>
             </Modal>
-        </View>
+        </LinearGradient>
     );
 }
 
 const styles = StyleSheet.create({
     container: {
         flex: 1,
-        backgroundColor: "#fffde7", // Light pleasant yellow background
-        padding: 20,
     },
     loadingContainer: {
         flex: 1,
         justifyContent: "center",
         alignItems: "center",
     },
+    headerContainer: {
+        padding: 20,
+        paddingBottom: 10,
+    },
     header: {
-        fontSize: 28,
-        fontWeight: "bold",
-        color: "#ff8f00", // Orange for emphasis
-        marginBottom: 10,
+        fontSize: 24,
+        fontWeight: "600",
+        color: "#2c3e50",
         textAlign: "center",
+        marginBottom: 5,
     },
     studentName: {
-        fontSize: 22,
-        fontWeight: "500",
-        color: "#333",
-        marginBottom: 20,
+        fontSize: 18,
+        color: "#4a90e2",
         textAlign: "center",
+        fontWeight: "500",
+    },
+    listContent: {
+        paddingBottom: 20,
     },
     card: {
-        backgroundColor: "#fff3e0", // Light orange card background
-        padding: 20,
-        borderRadius: 15,
-        marginVertical: 10,
+        backgroundColor: "#fff",
+        borderRadius: 12,
+        padding: 16,
+        marginHorizontal: 16,
+        marginVertical: 8,
         shadowColor: "#000",
         shadowOffset: { width: 0, height: 2 },
         shadowOpacity: 0.1,
         shadowRadius: 4,
         elevation: 3,
     },
-    cardItem: {
+    cardHeader: {
         flexDirection: "row",
         justifyContent: "space-between",
-        marginBottom: 10,
+        alignItems: "center",
+        marginBottom: 12,
+        paddingBottom: 12,
+        borderBottomWidth: 1,
+        borderBottomColor: "#f0f0f0",
     },
-    cardItemTitle: {
-        fontWeight: "bold",
-        color: "#333",
+    lessonDate: {
         fontSize: 16,
+        fontWeight: "600",
+        color: "#2c3e50",
     },
-    cardItemText: {
-        color: "#555",
-        fontSize: 16,
+    statusPill: {
+        paddingHorizontal: 10,
+        paddingVertical: 4,
+        borderRadius: 12,
+    },
+    statusText: {
+        color: "#fff",
+        fontSize: 13,
+        fontWeight: "500",
+    },
+    infoRow: {
+        flexDirection: "row",
+        alignItems: "center",
+        marginBottom: 12,
+    },
+    infoText: {
+        fontSize: 15,
+        color: "#34495e",
+        marginLeft: 8,
+    },
+    buttonContainer: {
+        flexDirection: "row",
+        justifyContent: "flex-end",
+        marginTop: 8,
     },
     button: {
-        padding: 12,
-        borderRadius: 8,
+        flexDirection: "row",
         alignItems: "center",
-        marginTop: 10,
+        paddingVertical: 8,
+        paddingHorizontal: 12,
+        borderRadius: 8,
+        marginLeft: 8,
     },
     deleteButton: {
-        backgroundColor: "#ff5c5c", // Red for delete
+        backgroundColor: "#f44336",
     },
-    updateButton: {
-        backgroundColor: "#4CAF50", // Green for update
+    completeButton: {
+        backgroundColor: "#4CAF50",
     },
     rejectButton: {
-        backgroundColor: "#ff8f00", // Orange for reject
+        backgroundColor: "#FFA000",
     },
     buttonText: {
         color: "#fff",
+        fontSize: 14,
+        fontWeight: "500",
+    },
+    emptyContainer: {
+        alignItems: "center",
+        justifyContent: "center",
+        padding: 40,
+    },
+    emptyText: {
         fontSize: 16,
-        fontWeight: "bold",
+        color: "#7f8c8d",
+        marginTop: 16,
+        textAlign: "center",
     },
     modalOverlay: {
         flex: 1,
@@ -307,16 +362,19 @@ const styles = StyleSheet.create({
     },
     modalContent: {
         backgroundColor: "#fff",
-        padding: 25,
-        borderRadius: 15,
+        padding: 24,
+        borderRadius: 12,
         width: "80%",
         alignItems: "center",
+    },
+    modalIcon: {
+        marginBottom: 16,
     },
     modalText: {
         fontSize: 18,
         color: "#333",
         textAlign: "center",
-        marginBottom: 20,
+        marginBottom: 24,
     },
     modalButtonsContainer: {
         flexDirection: "row",
@@ -330,6 +388,13 @@ const styles = StyleSheet.create({
         alignItems: "center",
     },
     cancelButton: {
-        backgroundColor: "#ccc", // Gray for cancel
+        backgroundColor: "#b0bec5",
+    },
+    confirmDeleteButton: {
+        backgroundColor: "#f44336",
+    },
+    modalButtonText: {
+        color: "#fff",
+        fontWeight: "500",
     },
 });

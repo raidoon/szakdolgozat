@@ -21,8 +21,8 @@ export default function Oktato_KovetkezoOra({ route }) {
     const { atkuld } = route.params;
     const [adatok, setAdatok] = useState([]);
     const [kovetkezoOra, setKovetkezoOra] = useState(null);
-    const [selectedDate, setSelectedDate] = useState("");
-    const [selectedDateLessons, setSelectedDateLessons] = useState([]);
+    const [valasztottDatum, setValasztottDatum] = useState("");
+    const [datumOrai, setDatumOrai] = useState([]);
     const navigation = useNavigation();
 
     console.log(atkuld);
@@ -60,7 +60,7 @@ export default function Oktato_KovetkezoOra({ route }) {
         }
     };
 
-    const fetchLessonsForDate = async (date) => {
+    const napOrai = async (date) => {
         try {
             const response = await fetch(Ipcim.Ipcim + "/egyNapOraja", {
                 method: "POST",
@@ -69,7 +69,7 @@ export default function Oktato_KovetkezoOra({ route }) {
             });
 
             const data = await response.json();
-            setSelectedDateLessons(data);
+            setDatumOrai(data);
         } catch (error) {
             console.error("Hiba az órarend lekérésekor:", error);
         }
@@ -92,79 +92,84 @@ export default function Oktato_KovetkezoOra({ route }) {
     };
 
     return (
-        <LinearGradient colors={['#6a11cb', '#2575fc']} style={styles.container}>
+        <LinearGradient 
+            colors={['#4CAF50', '#2196F3']} 
+            start={{ x: 0, y: 0 }}
+            end={{ x: 1, y: 1 }}
+            style={styles.container}
+        >
             <View style={styles.content}>
                 {kovetkezoOra && (
-                    <View style={styles.nextLessonContainer}>
-                        <Text style={styles.nextLessonText}>
+                    <View style={styles.koviOraContainer}>
+                        <Text style={styles.koviOraText}>
                             Következő óra: {formatDateTime(kovetkezoOra.ora_datuma)} - {kovetkezoOra.tanulo_neve}
                         </Text>
                     </View>
                 )}
 
-                <View style={styles.calendarContainer}>
+                <View style={styles.naptarContainer}>
                     <Calendar
                         onDayPress={(day) => {
-                            setSelectedDate(day.dateString);
-                            fetchLessonsForDate(day.dateString);
+                            setValasztottDatum(day.dateString);
+                            napOrai(day.dateString);
                         }}
                         markedDates={{
-                            [selectedDate]: {
+                            [valasztottDatum]: {
                                 selected: true,
-                                selectedColor: "#6a11cb",
+                                selectedColor: "#388E3C",
                                 customStyles: {
                                     container: {
-                                        borderRadius: 5, // Square corners
-                                        width: 36, // Width of the square
-                                        height: 36, // Height of the square
+                                        borderRadius: 5,
+                                        width: 36,
+                                        height: 36,
                                         justifyContent: "center",
                                         alignItems: "center",
                                     },
                                     text: {
-                                        color: "#fff", // Text color for the selected date
+                                        color: "#fff",
                                         fontWeight: "bold",
                                     },
                                 },
                             },
                         }}
                         theme={{
-                            calendarBackground: "#f0f0f0", // Gray background
-                            textSectionTitleColor: "#333",
-                            textSectionTitleDisabledColor: "#999",
-                            dayTextColor: "#333",
-                            todayTextColor: "#2575fc",
-                            selectedDayTextColor: "#fff",
-                            selectedDayBackgroundColor: "#6a11cb",
-                            textDisabledColor: "#999",
-                            arrowColor: "#6a11cb",
+                            calendarBackground: "#FFFFFF",
+                            textSectionTitleColor: "#2E7D32",
+                            textSectionTitleDisabledColor: "#BDBDBD",
+                            dayTextColor: "#2E7D32",
+                            todayTextColor: "#00796B",
+                            selectedDayTextColor: "#FFFFFF",
+                            selectedDayBackgroundColor: "#388E3C",
+                            textDisabledColor: "#BDBDBD",
+                            arrowColor: "#388E3C",
                             textDayFontSize: 18,
                             textMonthFontSize: 20,
                             textDayHeaderFontSize: 16,
-                            textDayFontWeight: "bold",
+                            textDayFontWeight: "500",
                             textMonthFontWeight: "bold",
-                            textDayHeaderFontWeight: "bold",
+                            textDayHeaderFontWeight: "500",
                         }}
                     />
 
-                    {selectedDate && (
-                        <Text style={styles.selectedText}>Kiválasztott dátum: {selectedDate}</Text>
+                    {valasztottDatum && (
+                        <Text style={styles.kivalasztottText}>Kiválasztott dátum: {valasztottDatum}</Text>
                     )}
                 </View>
 
-                <View style={styles.lessonsContainer}>
-                    {selectedDateLessons.length > 0 ? (
+                <View style={styles.orakContainer}>
+                    {datumOrai.length > 0 ? (
                         <FlatList
-                            data={selectedDateLessons}
+                            data={datumOrai}
                             keyExtractor={(item) => item.ora_id.toString()}
                             renderItem={({ item }) => (
-                                <View style={styles.lessonItem}>
-                                    <Text style={styles.lessonText}>{formatDateTime(item.ora_datuma)}</Text>
-                                    <Text style={styles.lessonStudent}>{item.tanulo_neve}</Text>
+                                <View style={styles.orakItem}>
+                                    <Text style={styles.orakText}>{formatDateTime(item.ora_datuma)}</Text>
+                                    <Text style={styles.orakDiak}>{item.tanulo_neve}</Text>
                                 </View>
                             )}
                         />
                     ) : (
-                        selectedDate && <Text style={styles.noLessons}>Nincs óra erre a napra.</Text>
+                        valasztottDatum && <Text style={styles.nincsOra}>Nincs óra erre a napra.</Text>
                     )}
                 </View>
             </View>
@@ -180,53 +185,75 @@ const styles = StyleSheet.create({
         flex: 1,
         padding: 20,
     },
-    nextLessonContainer: {
-        backgroundColor: 'rgba(255, 255, 255, 0.2)',
+    koviOraContainer: {
+        backgroundColor: 'rgba(255, 255, 255, 0.9)',
         padding: 15,
         borderRadius: 10,
         marginBottom: 20,
+        borderLeftWidth: 5,
+        borderLeftColor: '#388E3C',
+        elevation: 3,
+        shadowColor: '#2E7D32',
+        shadowOffset: { width: 0, height: 2 },
+        shadowOpacity: 0.2,
+        shadowRadius: 4,
     },
-    nextLessonText: {
+    koviOraText: {
         fontSize: 18,
-        color: '#fff',
+        color: '#2E7D32',
         fontWeight: 'bold',
     },
-    calendarContainer: {
-        backgroundColor: 'rgba(255, 255, 255, 0.2)',
+    naptarContainer: {
+        backgroundColor: 'rgba(255, 255, 255, 0.9)',
         borderRadius: 10,
         padding: 15,
         marginBottom: 20,
+        elevation: 3,
+        shadowColor: '#2E7D32',
+        shadowOffset: { width: 0, height: 2 },
+        shadowOpacity: 0.2,
+        shadowRadius: 4,
     },
-    selectedText: {
+    kivalasztottText: {
         marginTop: 10,
         fontSize: 16,
-        color: '#fff',
+        color: '#2E7D32',
         fontWeight: 'bold',
         textAlign: 'center',
     },
-    lessonsContainer: {
+    orakContainer: {
         flex: 1,
     },
-    lessonItem: {
-        backgroundColor: 'rgba(255, 255, 255, 0.2)',
+    orakItem: {
+        backgroundColor: 'rgba(255, 255, 255, 0.9)',
         padding: 15,
         borderRadius: 10,
         marginBottom: 10,
+        borderLeftWidth: 5,
+        borderLeftColor: '#4CAF50',
+        elevation: 2,
+        shadowColor: '#2E7D32',
+        shadowOffset: { width: 0, height: 1 },
+        shadowOpacity: 0.1,
+        shadowRadius: 3,
     },
-    lessonText: {
+    orakText: {
         fontSize: 16,
-        color: '#fff',
+        color: '#2E7D32',
         fontWeight: 'bold',
     },
-    lessonStudent: {
+    orakDiak: {
         fontSize: 14,
-        color: '#fff',
+        color: '#388E3C',
     },
-    noLessons: {
+    nincsOra: {
         marginTop: 10,
         fontSize: 16,
-        color: '#fff',
+        color: '#FFFFFF',
         fontWeight: 'bold',
         textAlign: 'center',
+        textShadowColor: 'rgba(0, 0, 0, 0.3)',
+        textShadowOffset: { width: 1, height: 1 },
+        textShadowRadius: 2,
     },
 });

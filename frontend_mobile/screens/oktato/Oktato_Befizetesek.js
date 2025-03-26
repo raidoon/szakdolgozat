@@ -43,39 +43,39 @@ export default function Oktato_Befizetesek({ atkuld }) {
 
   return (
     <View style={styles.container}>
-      {/* Header matching Kezdolap */}
+      {/* Header */}
       <View style={styles.header}>
         <Text style={styles.headerTitle}>Befizetések</Text>
       </View>
 
       <FlatList data={adatok}/>
-      {/* Action Cards */}
-      <View style={styles.cardsContainer}>
+      {/* kártyák */}
+      <View style={styles.kartyakContainer}>
         <TouchableOpacity
-          style={[styles.actionCard, styles.primaryCard]}
+          style={[styles.Kartyak, styles.elsoKartya]}
           onPress={() => navigation.navigate("Oktato_BefizetesRogzites", { atkuld })}
         >
-          <Text style={styles.cardTitle}>Új befizetés hozzáadása</Text>
-          <Text style={styles.cardSubtitle}>Rögzítés</Text>
-          <View style={styles.greenAccent} />
+          <Text style={styles.kartyaCim}>Új befizetés hozzáadása</Text>
+          <Text style={styles.kartyaSzoveg}>Rögzítés</Text>
+          <View style={styles.zold} />
         </TouchableOpacity>
 
         <TouchableOpacity
-          style={[styles.actionCard, styles.secondaryCard]}
+          style={[styles.Kartyak, styles.masodikKartya]}
           onPress={() => navigation.navigate("Oktato_ATBefizetesek", { atkuld })}
         >
-          <Text style={styles.cardTitle}>Diákok Befizetései</Text>
-          <Text style={styles.cardSubtitle}>Megtekintés</Text>
-          <View style={styles.blueAccent} />
+          <Text style={styles.kartyaCim}>Diákok Befizetései</Text>
+          <Text style={styles.kartyaSzoveg}>Megtekintés</Text>
+          <View style={styles.kek} />
         </TouchableOpacity>
 
         <TouchableOpacity
-          style={[styles.actionCard, styles.tertiaryCard]}
-          onPress={() => navigation.navigate("Oktato_MegerositesrevaroFizetes", { atkuld })}
+          style={[styles.Kartyak, styles.harmadikKartya]}
+          onPress={() => navigation.navigate("Oktato_MegerositBefizetes", { atkuld })}
         >
-          <Text style={styles.cardTitle}>Jóváhagyásra váró befizetések</Text>
-          <Text style={styles.cardSubtitle}>Kezeletlen tranzakciók</Text>
-          <View style={styles.tealAccent} />
+          <Text style={styles.kartyaCim}>Jóváhagyásra váró befizetések</Text>
+          <Text style={styles.kartyaSzoveg}>Kezeletlen tranzakciók</Text>
+          <View style={styles.zoldeskek} />
         </TouchableOpacity>
       </View>
 
@@ -83,7 +83,7 @@ export default function Oktato_Befizetesek({ atkuld }) {
   );
 }
 
-// Styles matching Kezdolap.js
+
 const styles = StyleSheet.create({
   container: {
     flex: 1,
@@ -101,23 +101,17 @@ const styles = StyleSheet.create({
     shadowRadius: 6,
     elevation: 3,
   },
-  headerTitle: {
+  headerCim: {
     fontSize: 24,
     fontFamily: "Inter-Bold",
     marginBottom: 8,
     textAlign: "center",
     color: "#00796B", // Dark teal/green
   },
-  welcomeText: {
-    fontSize: 16,
-    fontFamily: "Inter-Medium",
-    textAlign: "center",
-    color: "#4CAF50", // Green color
-  },
-  cardsContainer: {
+  kartyakContainer: {
     marginBottom: 20,
   },
-  actionCard: {
+  Kartyak: {
     backgroundColor: "#FFFFFF",
     borderRadius: 12,
     padding: 16,
@@ -130,30 +124,30 @@ const styles = StyleSheet.create({
     position: 'relative',
     overflow: 'hidden',
   },
-  primaryCard: {
+  elsoKartya: {
     borderLeftWidth: 5,
     borderLeftColor: "#4CAF50", // Green
   },
-  secondaryCard: {
+  masodikKartya: {
     borderLeftWidth: 5,
     borderLeftColor: "#2196F3", // Blue
   },
-  tertiaryCard: {
+  harmadikKartya: {
     borderLeftWidth: 5,
     borderLeftColor: "#00838F", // Teal
   },
-  cardTitle: {
+  kartyaCim: {
     fontSize: 16,
     fontFamily: "Inter-SemiBold",
     color: "#00796B", // Dark teal
     marginBottom: 4,
   },
-  cardSubtitle: {
+  kartyaSzoveg: {
     fontSize: 14,
     fontFamily: "Inter-Regular",
     color: "#78909C", // Gray-blue
   },
-  greenAccent: {
+  zold: {
     position: 'absolute',
     width: 60,
     height: 60,
@@ -162,7 +156,7 @@ const styles = StyleSheet.create({
     right: -15,
     top: -15,
   },
-  blueAccent: {
+  kek: {
     position: 'absolute',
     width: 60,
     height: 60,
@@ -171,7 +165,7 @@ const styles = StyleSheet.create({
     right: -15,
     top: -15,
   },
-  tealAccent: {
+  zoldeskek: {
     position: 'absolute',
     width: 60,
     height: 60,

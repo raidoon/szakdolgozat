@@ -101,26 +101,26 @@ export default function Oktato_TanuloReszletei({ route }) {
     return (
         <View style={styles.container}>
             <View style={styles.card}>
-                <Text style={styles.header}>Részletek</Text>
-                <View style={styles.infoContainer}>
+                <Text style={styles.header}>Tanuló részletei</Text>
+                <View style={styles.infok}>
                     <Text style={styles.infoLabel}>Név:</Text>
                     <Text style={styles.infoValue}>{tanulo.tanulo_neve}</Text>
                 </View>
-                <View style={styles.infoContainer}>
+                <View style={styles.infok}>
                     <Text style={styles.infoLabel}>Email:</Text>
                     <Text style={styles.infoValue}>{email}</Text>
                 </View>
-                <View style={styles.infoContainer}>
+                <View style={styles.infok}>
                     <Text style={styles.infoLabel}>Telefonszám:</Text>
                     <Text style={styles.infoValue}>{telefonszam}</Text>
                 </View>
-                <View style={styles.infoContainer}>
+                <View style={styles.infok}>
                     <Text style={styles.infoLabel}>Összes befizetés:</Text>
-                    <Text style={styles.infoValue}>{osszesBefizetett} Ft</Text>
+                    <Text style={[styles.infoValue, styles.highlightText]}>{osszesBefizetett} Ft</Text>
                 </View>
-                <View style={styles.infoContainer}>
+                <View style={styles.infok}>
                     <Text style={styles.infoLabel}>Összes óra:</Text>
-                    <Text style={styles.infoValue}>{osszesOra}</Text>
+                    <Text style={[styles.infoValue, styles.highlightText]}>{osszesOra}</Text>
                 </View>
             </View>
         </View>
@@ -130,41 +130,53 @@ export default function Oktato_TanuloReszletei({ route }) {
 const styles = StyleSheet.create({
     container: {
         flex: 1,
-        backgroundColor: "#fffde7", // Light pleasant yellow background
-        alignItems: "center",
-        justifyContent: "center",
+        backgroundColor: '#F5FBFF',
+        alignItems: 'center',
+        justifyContent: 'center',
         padding: 20,
     },
     card: {
-        backgroundColor: "#fff3e0", // Light orange card background
+        backgroundColor: '#FFFFFF',
         padding: 25,
         borderRadius: 12,
-        shadowColor: "#000",
+        shadowColor: '#2E7D32',
         shadowOffset: { width: 0, height: 4 },
         shadowOpacity: 0.1,
         shadowRadius: 6,
-        width: "90%",
+        width: '90%',
+        borderLeftWidth: 6,
+        borderLeftColor: '#4CAF50',
     },
     header: {
         fontSize: 28,
-        fontWeight: "bold",
-        color: "#ff8f00", // Orange for emphasis
-        marginBottom: 20,
-        textAlign: "center",
+        fontWeight: 'bold',
+        color: '#00796B',
+        marginBottom: 25,
+        textAlign: 'center',
+        paddingBottom: 10,
+        borderBottomWidth: 1,
+        borderBottomColor: '#E8F5E9',
     },
-    infoContainer: {
-        flexDirection: "row",
-        justifyContent: "space-between",
-        marginBottom: 15,
+    infok: {
+        flexDirection: 'row',
+        justifyContent: 'space-between',
+        marginBottom: 18,
+        paddingBottom: 10,
+        borderBottomWidth: 1,
+        borderBottomColor: 'rgba(76, 175, 80, 0.1)',
     },
     infoLabel: {
         fontSize: 18,
-        color: "#333",
-        fontWeight: "500",
+        color: '#388E3C',
+        fontWeight: '500',
     },
     infoValue: {
         fontSize: 18,
-        color: "#000",
-        fontWeight: "bold",
+        color: '#2E7D32',
+        fontWeight: '600',
+    },
+    highlightText: {
+        color: '#00796B',
+        fontWeight: 'bold',
     },
 });

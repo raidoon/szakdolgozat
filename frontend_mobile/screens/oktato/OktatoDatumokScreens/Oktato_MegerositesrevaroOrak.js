@@ -1,16 +1,20 @@
 import { useState, useEffect } from "react";
-import { View, Text, FlatList, TouchableOpacity, StyleSheet, Animated } from "react-native";
+import { View, Text, FlatList, TouchableOpacity, StyleSheet, ActivityIndicator} from "react-native";
 import { useNavigation } from "@react-navigation/native";
 import Ipcim from "../../../Ipcim";
+import { LinearGradient } from "expo-linear-gradient";
+import Ionicons from "@expo/vector-icons/Ionicons";
 
 export default function Oktato_MegerositesrevaroOrak({ route }) {
     const { atkuld } = route.params;
     const [adatok, setAdatok] = useState([]);
+    const [loading, setLoading] = useState(true);
     const navigation = useNavigation();
 
     useEffect(() => {
         const letoltes = async () => {
             try {
+                setLoading(true);
                 const response = await fetch(Ipcim.Ipcim + "/aktualisDiakok", {
                     method: "POST",
                     body: JSON.stringify({ oktato_id: atkuld.oktato_id }),
@@ -19,111 +23,140 @@ export default function Oktato_MegerositesrevaroOrak({ route }) {
 
                 if (!response.ok) throw new Error(`Hiba: ${response.statusText}`);
 
-                setAdatok(await response.json());
+                const data = await response.json();
+                setAdatok(data);
             } catch (error) {
                 console.error("API hiba:", error);
-                alert("Nem sikerült az adatok letöltése.");
+                Alert.alert("Hiba", "Nem sikerült az adatok letöltése.");
+            } finally {
+                setLoading(false);
             }
         };
 
         letoltes();
     }, []);
 
-    // 🔹 1️⃣ PULZÁLÓ HATÁS (Bounce) gyorsítva
-    const katt = (tanulo, anim) => {
-        Animated.sequence([
-            Animated.timing(anim, { toValue: 0.9, duration: 50, useNativeDriver: true }), // Gyorsabb animáció (50ms)
-            Animated.timing(anim, { toValue: 1.1, duration: 50, useNativeDriver: true }), // Gyorsabb animáció (50ms)
-            Animated.timing(anim, { toValue: 1, duration: 50, useNativeDriver: true }),  // Gyorsabb animáció (50ms)
-        ]).start(() => navigation.navigate("Oktato_MegerositOra", { tanulo }));
+    const katt = (tanulo) => {
+        navigation.navigate("Oktato_MegerositOra", { tanulo });
     };
 
     return (
-        <View style={styles.container}>
-            <Text style={styles.title}>Módosítható órák</Text>
+        <LinearGradient 
+            colors={['#1e90ff', '#00bfff']} 
+            style={styles.container}
+        >
+            <View style={styles.content}>
+                <View style={styles.headerContainer}>
+                    <Text style={styles.header}>Megerősítésre váró órák</Text>
+                    <Text style={styles.subHeader}>Válassz diákot az órák jóváhagyásához</Text>
+                </View>
 
-            {adatok.length === 0 ? (
-                <Text style={styles.noData}>Nincs módosítható óra.</Text>
-            ) : (
-                <FlatList
-                    data={adatok}
-                    renderItem={({ item }) => {
-                        const scaleAnim = new Animated.Value(1); // Egyedi animáció minden gombhoz
-
-                        return (
-                            <View style={styles.card}>
-                                <Text style={styles.name}>{item.tanulo_neve}</Text>
-
-                                <Animated.View style={{ transform: [{ scale: scaleAnim }] }}>
-                                    <TouchableOpacity style={styles.button} onPress={() => katt(item, scaleAnim)}>
-                                        <Text style={styles.buttonText}>Továbbiak</Text>
-                                    </TouchableOpacity>
-                                </Animated.View>
-                            </View>
-                        );
-                    }}
-                    keyExtractor={(item) => item.tanulo_id.toString()}
-                />
-            )}
-        </View>
+                {loading ? (
+                    <ActivityIndicator size="large" color="#fff" />
+                ) : adatok.length === 0 ? (
+                    <View style={styles.emptyContainer}>
+                        <Ionicons name="checkmark-done-outline" size={48} color="#fff" />
+                        <Text style={styles.emptyText}>Nincsenek megerősítésre váró órák</Text>
+                    </View>
+                ) : (
+                    <FlatList
+                        data={adatok}
+                        contentContainerStyle={styles.listContainer}
+                        renderItem={({ item }) => (
+                            <TouchableOpacity 
+                                style={styles.card}
+                                onPress={() => katt(item)}
+                            >
+                                <View style={styles.cardContent}>
+                                    <Ionicons name="person-circle-outline" size={32} color="#fff" />
+                                    <View style={styles.textContainer}>
+                                        <Text style={styles.studentName}>{item.tanulo_neve}</Text>
+                                       
+                                    </View>
+                                </View>
+                                <Ionicons name="chevron-forward" size={24} color="rgba(255,255,255,0.7)" />
+                            </TouchableOpacity>
+                        )}
+                        keyExtractor={(item) => item.tanulo_id.toString()}
+                    />
+                )}
+            </View>
+        </LinearGradient>
     );
 }
 
-
-// 📌 STÍLUSOK
 const styles = StyleSheet.create({
     container: {
         flex: 1,
-        padding: 40,
-        backgroundColor: "#4c669f",
-        backgroundImage: "linear-gradient(to bottom, #4c669f, #3b5998, #192f6a)",
     },
-    title: {
-        fontSize: 30,
-        fontWeight: "bold",
-        textAlign: "center",
-        color: "#fff",
-        marginBottom: 20,
+    content: {
+        flex: 1,
+        padding: 20,
     },
-    noData: {
-        textAlign: "center",
+    headerContainer: {
+        marginBottom: 25,
+        alignItems: 'center',
+    },
+    header: {
+        fontSize: 24,
+        fontWeight: 'bold',
+        color: '#fff',
+        marginBottom: 5,
+    },
+    subHeader: {
         fontSize: 16,
-        color: "#fff",
+        color: 'rgba(255,255,255,0.8)',
+        textAlign: 'center',
+    },
+    listContainer: {
+        paddingBottom: 20,
     },
     card: {
-        backgroundColor: "#fff",
-        padding: 15,
-        borderRadius: 15,
-        shadowColor: "#000",
-        shadowOpacity: 0.2,
-        shadowOffset: { width: 0, height: 3 },
-        shadowRadius: 5,
-        elevation: 4,
-        marginBottom: 10,
+        backgroundColor: 'rgba(255, 255, 255, 0.15)',
+        borderRadius: 12,
+        padding: 16,
+        marginBottom: 12,
+        flexDirection: 'row',
+        alignItems: 'center',
+        justifyContent: 'space-between',
     },
-    name: {
-        fontSize: 20,
-        fontWeight: "700",
-        marginBottom: 20,
-        color: "#3b5998",
+    cardContent: {
+        flexDirection: 'row',
+        alignItems: 'center',
     },
-    button: {
-        backgroundColor: "rgba(0, 123, 255, 1)",
-        paddingVertical: 14,  // Vastagabb gomb (növelhetjük a padding-et)
-        paddingHorizontal: 20, // Oldalsó tér a szöveg körül
-        borderRadius: 20,
-        alignItems: "center",
-        shadowColor: "#000",
-        shadowOpacity: 0.3,
-        shadowOffset: { width: 0, height: 2 },
-        shadowRadius: 4,
-        elevation: 5,
-        height: 50, // Gomb magasságának csökkentése (rövidebb)
+    textContainer: {
+        marginLeft: 15,
     },
-    buttonText: {
-        color: "#fff",
-        fontSize: 17,
-        fontWeight: "700",
+    studentName: {
+        fontSize: 18,
+        fontWeight: '600',
+        color: '#fff',
+        marginBottom: 4,
+    },
+    statusContainer: {
+        flexDirection: 'row',
+    },
+    statusBadge: {
+        backgroundColor: 'rgba(255, 193, 7, 0.3)',
+        paddingHorizontal: 10,
+        paddingVertical: 4,
+        borderRadius: 12,
+    },
+    statusText: {
+        color: '#FFC107',
+        fontSize: 14,
+        fontWeight: '500',
+    },
+    emptyContainer: {
+        flex: 1,
+        justifyContent: 'center',
+        alignItems: 'center',
+        padding: 40,
+    },
+    emptyText: {
+        fontSize: 18,
+        color: '#fff',
+        marginTop: 16,
+        textAlign: 'center',
     },
 });
-
