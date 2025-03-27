@@ -1,8 +1,10 @@
 import React, { useState, useEffect, useMemo } from "react";
+import { useNavigate } from "react-router-dom";
 import Ipcim from "./Ipcim";
 import Navbar from "./Navbar";
 
 const Vizsgak = () => {
+  const navigate = useNavigate();
   const [diakTomb, setDiakTomb] = useState([]);
   const [vizsgaTomb, setVizsgaTomb] = useState([]);
   const [selectedDiak, setSelectedDiak] = useState("");
@@ -17,6 +19,17 @@ const Vizsgak = () => {
 
   const felhasznalo_autosiskola = felhasznaloAdatok?.felhasznalo?.felhasznalo_autosiskola;
 
+  const formatDateTime = (dateTimeString) => {
+    if (!dateTimeString) return "Nincs dátum";
+    const date = new Date(dateTimeString);
+    return date.toLocaleString('hu-HU', {
+        year: 'numeric',
+        month: '2-digit',
+        day: '2-digit',
+        hour: '2-digit',
+        minute: '2-digit'
+    });
+};
   useEffect(() => {
     if (!felhasznalo_autosiskola) return;
 
@@ -98,7 +111,7 @@ const Vizsgak = () => {
       });
 
       const text = await response.text();
-      setHiba(""); // Clear any previous errors
+      setHiba("");
       alert("Vizsga sikeresen rögzítve: " + text);
       fetchVizsgak();
     } catch (error) {
@@ -131,10 +144,20 @@ const Vizsgak = () => {
     }
   };
 
+  const getCurrentMonthYear = () => {
+    const now = new Date();
+    return now.toLocaleString("hu-HU", { month: "long", year: "numeric" });
+  };
+
   const vizsgakHaviBontasban = vizsgaTomb.reduce((acc, vizsga) => {
-    const honap = new Date(vizsga.ora_datuma).toLocaleString("hu-HU", { month: "long", year: "numeric" });
-    if (!acc[honap]) acc[honap] = [];
-    acc[honap].push(vizsga);
+    const vizsgaDate = new Date(vizsga.ora_datuma);
+    const honap = vizsgaDate.toLocaleString("hu-HU", { month: "long", year: "numeric" });
+    const currentMonthYear = getCurrentMonthYear();
+    
+    if (honap === currentMonthYear) {
+      if (!acc[honap]) acc[honap] = [];
+      acc[honap].push(vizsga);
+    }
     return acc;
   }, {});
 
@@ -223,31 +246,64 @@ const Vizsgak = () => {
                 gridTemplateColumns: "repeat(auto-fill, minmax(300px, 1fr))", 
                 gap: "15px"
               }}>
-                {vizsgak.map((vizsga) => (
-                  <div key={vizsga.ora_id} style={{ backgroundColor: "white",padding: "15px", borderRadius: "6px",boxShadow: "0 1px 3px rgba(0,0,0,0.05)",
-                   borderLeft: "3px solid #2c7be5",position: "relative"}}>
-                    <div style={{ marginBottom: "10px" }}>
-                      <strong style={{ color: "#4a6f8a" }}>Tanuló:</strong> {vizsga.tanulo_neve}
+                {vizsgak.map((vizsga) => {
+                  const vizsgaDate = new Date(vizsga.ora_datuma);
+                  const currentDate = new Date();
+                  const showDeleteButton = currentDate < vizsgaDate;
+
+                  return (
+                    <div key={vizsga.ora_id} style={{ backgroundColor: "white",padding: "15px", borderRadius: "6px",boxShadow: "0 1px 3px rgba(0,0,0,0.05)",
+                     borderLeft: "3px solid #2c7be5",position: "relative"}}>
+                      <div style={{ marginBottom: "10px" }}>
+                        <strong style={{ color: "#4a6f8a" }}>Tanuló:</strong> {vizsga.tanulo_neve}
+                      </div>
+                      <div style={{ marginBottom: "10px" }}>
+                        <strong style={{ color: "#4a6f8a" }}>Időpont:</strong>  {formatDateTime(vizsgaDate)}
+                      </div>
+                      {showDeleteButton && (
+                        <button 
+                          onClick={() => torolVizsga(vizsga.ora_id)}
+                          style={{ padding: "8px 15px",backgroundColor: "#ff5e5e", color: "white",border: "none",borderRadius: "4px",
+                            cursor: "pointer",fontSize: "14px",transition: "all 0.2s",
+                            position: "absolute",bottom: "15px", right: "15px"
+                          }}
+                          onMouseEnter={(e) => e.currentTarget.style.backgroundColor = "#e04545"}
+                          onMouseLeave={(e) => e.currentTarget.style.backgroundColor = "#ff5e5e"}
+                        >
+                          Törlés
+                        </button>
+                      )}
                     </div>
-                    <div style={{ marginBottom: "10px" }}>
-                      <strong style={{ color: "#4a6f8a" }}>Időpont:</strong> {new Date(vizsga.ora_datuma).toLocaleString('hu-HU')}
-                    </div>
-                    <button 
-                      onClick={() => torolVizsga(vizsga.ora_id)}
-                      style={{ padding: "8px 15px",backgroundColor: "#ff5e5e", color: "white",border: "none",borderRadius: "4px",
-                        cursor: "pointer",fontSize: "14px",transition: "all 0.2s",
-                        position: "absolute",bottom: "15px", right: "15px"
-                      }}
-                      onMouseEnter={(e) => e.currentTarget.style.backgroundColor = "#e04545"}
-                      onMouseLeave={(e) => e.currentTarget.style.backgroundColor = "#ff5e5e"}
-                    >
-                      Törlés
-                    </button>
-                  </div>
-                ))}
+                  );
+                })}
               </div>
             </div>
           ))}
+        </div>
+
+       
+        <div style={{ textAlign: "center", marginTop: "30px" }}>
+          <button 
+            onClick={() => navigate("/elsosiker")}
+            style={{
+              padding: "12px 25px",
+              backgroundColor: "#2c7be5",
+              color: "white",
+              border: "none",
+              borderRadius: "6px",
+              cursor: "pointer",
+              fontSize: "15px",
+              fontWeight: "500",
+              transition: "all 0.2s",
+              boxShadow: "0 2px 5px rgba(44, 123, 229, 0.2)",
+              width: "100%",
+              maxWidth: "300px"
+            }}
+            onMouseEnter={(e) => e.currentTarget.style.transform = "translateY(-2px)"}
+            onMouseLeave={(e) => e.currentTarget.style.transform = "none"}
+          >
+            Első sikeres vizsgázók megtekintése
+          </button>
         </div>
       </div>
     </div>

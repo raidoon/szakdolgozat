@@ -12,6 +12,7 @@ import LevizsgazottDiakok from './LevizsgazottDiakok';
 import TanuloReszletek from './TanuloReszletek'; // Import the TanuloReszletek component
 import Penzugyek from './Penzugyek';
 import Vizsgak from './Vizsgak';
+import ElsoSiker from './ElsoSiker';
 
 const ProtectedRoute = ({ children }) => {
   const token = localStorage.getItem('token');
@@ -78,6 +79,15 @@ const App = () => {
           element={
             <ProtectedRoute>
               <Vizsgak />
+            </ProtectedRoute>
+          } 
+        />
+
+    <Route 
+          path="/elsosiker" 
+          element={
+            <ProtectedRoute>
+              <ElsoSiker />
             </ProtectedRoute>
           } 
         />

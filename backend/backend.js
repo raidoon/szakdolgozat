@@ -1250,6 +1250,34 @@ app.post("/tanuloLe", (req, res) => {
   connection.end();
 });
 
+//------------
+app.get("/elsoreSiker", (req, res) => {
+  kapcsolat();
+
+  const query = `
+           SELECT 
+                tanulo.*,
+                oktato.oktato_neve,
+                ora.ora_datuma
+            FROM tanulo_adatok AS tanulo
+            INNER JOIN ora_adatok AS ora ON tanulo.tanulo_id = ora.ora_diakja
+            LEFT JOIN oktato_adatok AS oktato ON tanulo.tanulo_oktatoja = oktato.oktato_id
+            WHERE tanulo_levizsgazott = 1 
+            AND ora_tipusID = 2
+            GROUP BY tanulo.tanulo_id, oktato.oktato_neve, ora.ora_datuma
+            HAVING COUNT(ora.ora_id) = 1;`;
+
+        connection.query(query, (err, results) => {
+          if (err) {
+            console.error("Hiba az adatok lekérdezésében:", err);
+            return res.status(500).json({ message: "Hiba történt a lekérdezés során" });
+          }
+
+          console.log("Sikeres lekérdezés:", results);
+          res.status(200).json(results); // Visszaküldjük az ÖSSZES eredményt
+        });
+	});
+
 app.listen(port, () => {
   console.log(`Example app listening on port ${port}`);
 });

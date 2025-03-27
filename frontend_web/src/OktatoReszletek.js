@@ -4,8 +4,10 @@ import { useState, useEffect } from "react";
 import "./css/OktatoReszletek.css";
 import Navbar from "./Navbar";
 import Ipcim from "./Ipcim";
+import { useNavigate } from "react-router-dom";
 
 const OktatoReszletek = () => {
+  const navigate = useNavigate();
   const { oktatoId } = useParams();
   const [oktato, setOktato] = useState(null);
   const [betoltes, setBetoltes] = useState(true);
@@ -14,6 +16,7 @@ const OktatoReszletek = () => {
   const [aktualisLista, setAktualisLista] = useState([]);
   const [levizsgazottLathato, setLevizsgazottLathato] = useState(false);
   const [levizsgazottLista, setLevizsgazottLista] = useState([]);
+  
 
   useEffect(() => {
     const oktatoLekerdezes = async () => {
@@ -91,23 +94,112 @@ const OktatoReszletek = () => {
               </div>
             </div>
 
-            {aktualisLathato && (
-              <div className="diakLista">
-                {aktualisLista.length > 0 ? (
-                  aktualisLista.map((diak, key) => (
-                    <div key={key} className="diakKartya">
-                      <h2>{diak.tanulo_neve}</h2>
-                      <p>Email: {diak.tanulo_email}</p>
-                      <p>Telefonszám: {diak.tanulo_telefon}</p>
-                      <p>Órák száma: {diak.oral_szama}</p>
-                      <button className="actionButton">Tanuló adatainak megtekintése</button>
+                          {aktualisLathato && (
+                <div>
+                  {aktualisLista.length > 0 ? (
+                    <div style={{ overflowX: "auto" }}>
+                      <table style={{
+                        width: "100%",
+                        borderCollapse: "collapse",
+                        backgroundColor: "white",
+                        borderRadius: "8px",
+                        overflow: "hidden",
+                        boxShadow: "0 1px 3px rgba(0,0,0,0.05)"
+                      }}>
+                        <thead>
+                          <tr style={{ backgroundColor: "#f8fafd" }}>
+                            <th style={{
+                              padding: "15px",
+                              textAlign: "left",
+                              color: "#4a6f8a",
+                              fontWeight: "600",
+                              borderBottom: "1px solid #e1e7ec"
+                            }}>Név</th>
+                            <th style={{
+                              padding: "15px",
+                              textAlign: "left",
+                              color: "#4a6f8a",
+                              fontWeight: "600",
+                              borderBottom: "1px solid #e1e7ec"
+                            }}>Email</th>
+                            <th style={{
+                              padding: "15px",
+                              textAlign: "left",
+                              color: "#4a6f8a",
+                              fontWeight: "600",
+                              borderBottom: "1px solid #e1e7ec"
+                            }}>Telefonszám</th>
+                            <th style={{
+                              padding: "15px",
+                              textAlign: "left",
+                              color: "#4a6f8a",
+                              fontWeight: "600",
+                              borderBottom: "1px solid #e1e7ec"
+                            }}>Órák száma</th>
+                            <th style={{
+                              padding: "15px",
+                              textAlign: "left",
+                              color: "#4a6f8a",
+                              fontWeight: "600",
+                              borderBottom: "1px solid #e1e7ec"
+                            }}></th>
+                          </tr>
+                        </thead>
+                        <tbody>
+                          {aktualisLista.map((diak, index) => (
+                            <tr key={index} style={{
+                              borderBottom: "1px solid #e1e7ec",
+                              transition: "background-color 0.2s",
+                              ":hover": {
+                                backgroundColor: "#f8fafd"
+                              }
+                            }}>
+                              <td style={{ padding: "15px", color: "#12263f" }}>{diak.tanulo_neve}</td>
+                              <td style={{ padding: "15px", color: "#4a6f8a" }}>{diak.tanulo_email}</td>
+                              <td style={{ padding: "15px", color: "#4a6f8a" }}>{diak.tanulo_telefon}</td>
+                              <td style={{ padding: "15px", color: "#4a6f8a" }}>{diak.oral_szama}</td>
+                              <td style={{ padding: "15px" }}>
+                                <button 
+                                  onClick={() => navigate(`/tanuloreszletek/${diak.tanulo_felhasznaloID}`)}
+                                  style={{
+                                    padding: "8px 15px",
+                                    backgroundColor: "#2c7be5",
+                                    color: "white",
+                                    borderRadius: "4px",
+                                    textDecoration: "none",
+                                    fontSize: "14px",
+                                    display: "inline-block",
+                                    transition: "all 0.2s",
+                                    border: "none",
+                                    cursor: "pointer",
+                                    ":hover": {
+                                      backgroundColor: "#1a68d1",
+                                      transform: "translateY(-1px)"
+                                    }
+                                  }}
+                                >
+                                  Tanuló adatainak megtekintése
+                                </button>
+                              </td>
+                            </tr>
+                          ))}
+                        </tbody>
+                      </table>
                     </div>
-                  ))
-                ) : (
-                  <p>A kiválasztott oktatónak jelenleg nincs egy aktuális tanulója sem!</p>
-                )}
-              </div>
-            )}
+                  ) : (
+                    <div style={{
+                      padding: "20px",
+                      backgroundColor: "#f8fafd",
+                      borderRadius: "8px",
+                      textAlign: "center",
+                      color: "#6e84a3",
+                      border: "1px dashed #e1e7ec"
+                    }}>
+                      A kiválasztott oktatónak jelenleg nincs egy aktuális tanulója sem!
+                    </div>
+                  )}
+                </div>
+              )}
 
             {/* ---------------------------- LEVIZSGÁZOTT TANULÓK LISTÁZVA ---------------------*/}
             <div className="lenyiloKartya" onClick={() => setLevizsgazottLathato(!levizsgazottLathato)}>
@@ -120,21 +212,103 @@ const OktatoReszletek = () => {
             </div>
 
             {levizsgazottLathato && (
-              <div className="diakLista">
-                {levizsgazottLista.length > 0 ? (
-                  levizsgazottLista.map((diak, key) => (
-                    <div key={key} className="diakKartya">
-                      <h2>{diak.tanulo_neve}</h2>
-                      <p>Vizsga dátuma: {diak.vizsga_datuma}</p>
-                      <p>Végeredmény: {diak.vegeredmeny}</p>
-                      <button className="actionButton">Tanuló adatainak megtekintése</button>
+                <div>
+                  {levizsgazottLista.length > 0 ? (
+                    <div style={{ overflowX: "auto" }}>
+                      <table style={{
+                        width: "100%",
+                        borderCollapse: "collapse",
+                        backgroundColor: "white",
+                        borderRadius: "8px",
+                        overflow: "hidden",
+                        boxShadow: "0 1px 3px rgba(0,0,0,0.05)"
+                      }}>
+                        <thead>
+                          <tr style={{ backgroundColor: "#f8fafd" }}>
+                            <th style={{
+                              padding: "15px",
+                              textAlign: "left",
+                              color: "#4a6f8a",
+                              fontWeight: "600",
+                              borderBottom: "1px solid #e1e7ec"
+                            }}>Név</th>
+                            <th style={{
+                              padding: "15px",
+                              textAlign: "left",
+                              color: "#4a6f8a",
+                              fontWeight: "600",
+                              borderBottom: "1px solid #e1e7ec"
+                            }}>Vizsga dátuma</th>
+                            <th style={{
+                              padding: "15px",
+                              textAlign: "left",
+                              color: "#4a6f8a",
+                              fontWeight: "600",
+                              borderBottom: "1px solid #e1e7ec"
+                            }}>Végeredmény</th>
+                            <th style={{
+                              padding: "15px",
+                              textAlign: "left",
+                              color: "#4a6f8a",
+                              fontWeight: "600",
+                              borderBottom: "1px solid #e1e7ec"
+                            }}></th>
+                          </tr>
+                        </thead>
+                        <tbody>
+                          {levizsgazottLista.map((diak, index) => (
+                            <tr key={index} style={{
+                              borderBottom: "1px solid #e1e7ec",
+                              transition: "background-color 0.2s",
+                              ":hover": {
+                                backgroundColor: "#f8fafd"
+                              }
+                            }}>
+                              <td style={{ padding: "15px", color: "#12263f" }}>{diak.tanulo_neve}</td>
+                              <td style={{ padding: "15px", color: "#4a6f8a" }}>{diak.vizsga_datuma}</td>
+                              <td style={{ padding: "15px", color: "#4a6f8a" }}>{diak.vegeredmeny}</td>
+                              <td style={{ padding: "15px" }}>
+                                <button 
+                                  onClick={() => navigate(`/tanuloreszletek/${diak.tanulo_felhasznaloID}`)}
+                                  style={{
+                                    padding: "8px 15px",
+                                    backgroundColor: "#2c7be5",
+                                    color: "white",
+                                    borderRadius: "4px",
+                                    textDecoration: "none",
+                                    fontSize: "14px",
+                                    display: "inline-block",
+                                    transition: "all 0.2s",
+                                    border: "none",
+                                    cursor: "pointer",
+                                    ":hover": {
+                                      backgroundColor: "#1a68d1",
+                                      transform: "translateY(-1px)"
+                                    }
+                                  }}
+                                >
+                                  Tanuló adatainak megtekintése
+                                </button>
+                              </td>
+                            </tr>
+                          ))}
+                        </tbody>
+                      </table>
                     </div>
-                  ))
-                ) : (
-                  <p>A kiválasztott oktatónak egyelőre még nincs levizsgázott tanulója beírva!</p>
-                )}
-              </div>
-            )}
+                  ) : (
+                    <div style={{
+                      padding: "20px",
+                      backgroundColor: "#f8fafd",
+                      borderRadius: "8px",
+                      textAlign: "center",
+                      color: "#6e84a3",
+                      border: "1px dashed #e1e7ec"
+                    }}>
+                      A kiválasztott oktatónak egyelőre még nincs levizsgázott tanulója beírva!
+                    </div>
+                  )}
+                </div>
+              )}
           </div>
         </div>
       </div>

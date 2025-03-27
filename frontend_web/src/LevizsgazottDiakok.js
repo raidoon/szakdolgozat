@@ -134,14 +134,14 @@ const LevizsgazottDiakok = () => {
                                         color: "#4a6f8a",
                                         fontWeight: "600",
                                         borderBottom: "1px solid #e1e7ec"
-                                    }}>Autósiskola</th>
+                                    }}>Oktató</th>
                                     <th style={{
                                         padding: "15px",
                                         textAlign: "left",
                                         color: "#4a6f8a",
                                         fontWeight: "600",
                                         borderBottom: "1px solid #e1e7ec"
-                                    }}>Műveletek</th>
+                                    }}></th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -154,7 +154,7 @@ const LevizsgazottDiakok = () => {
                                         }
                                     }}>
                                         <td style={{ padding: "15px", color: "#12263f" }}>{item.tanulo_neve}</td>
-                                        <td style={{ padding: "15px", color: "#4a6f8a" }}>{item.autosiskola_nev}</td>
+                                        <td style={{ padding: "15px", color: "#4a6f8a" }}>{item.oktato_neve}</td>
                                         <td style={{ padding: "15px" }}>
                                             <Link 
                                                 to={`/tanuloreszletek/${item.tanulo_felhasznaloID}`}
@@ -173,7 +173,7 @@ const LevizsgazottDiakok = () => {
                                                     }
                                                 }}
                                             >
-                                                Részletek
+                                                Tanuló adatainak megtekintése
                                             </Link>
                                         </td>
                                     </tr>
