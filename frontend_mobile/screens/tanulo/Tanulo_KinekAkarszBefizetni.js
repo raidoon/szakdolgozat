@@ -13,9 +13,9 @@ const Tanulo_KinekAkarszBefizetni = ({atkuld}) => {
   return (
     <LinearGradient colors={["#ffffff", "#f0f4ff"]} style={styles.container}>
       <ScrollView contentContainerStyle={styles.scrollContainer}>
-        <Text style={styles.title}>Válassza ki, hogy kinél fizette be a felvenni kívánt összeget!</Text>
+        <Text style={styles.title}>Válaszd ki, hogy kinél fizetted be a felvenni kívánt összeget!</Text>
         <Text style={styles.subtitle}>
-        Az itt rögzített tranzakciók kizárólag szemléltető jellegűek, és nem vonódnak le a bankkártyájáról!
+        Az itt rögzített tranzakciók kizárólag szemléltető jellegűek, és nem vonódnak le a bankkártyádról!
         </Text>
         {/* FIZETÉS AZ OKTATÓNAK */}
         <TouchableOpacity
@@ -32,7 +32,7 @@ const Tanulo_KinekAkarszBefizetni = ({atkuld}) => {
             style={styles.gradient}
           >
             <Ionicons name="person" size={30} color="#fff" />
-            <Text style={styles.buttonText}>Az oktatónál fizetett</Text>
+            <Text style={styles.buttonText}>Az oktatónál fizettem</Text>
           </LinearGradient>
         </TouchableOpacity>
         {/*  FIZETÉS AZ AUTÓSISKOLÁNAK */}
@@ -50,7 +50,7 @@ const Tanulo_KinekAkarszBefizetni = ({atkuld}) => {
             style={styles.gradient}
           >
             <Ionicons name="school" size={30} color="#fff" />
-            <Text style={styles.buttonText}>Az autósiskolánál fizetett</Text>
+            <Text style={styles.buttonText}>Az autósiskolánál fizettem</Text>
           </LinearGradient>
         </TouchableOpacity>
         {/* FIZETÉSI ELŐZMÉNYEK AZ ÖSSZES BEFIZETÉSHEZ !!! */}

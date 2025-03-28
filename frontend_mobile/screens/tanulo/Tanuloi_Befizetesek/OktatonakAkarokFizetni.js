@@ -31,7 +31,7 @@ const OktatonakAkarokFizetni = ({ route }) => {
   const osszegFelvitele = async () => {
     if (osszeg === "" || parseFloat(osszeg) === 0) {
       setHibaModalCim("Hoppá!");
-      setHibaModalSzoveg("Úgy tűnik, hogy elfelejtette beírni az összeget!");
+      setHibaModalSzoveg("Úgy tűnik, hogy elfelejtetted beírni az összeget!");
       setHibaModal(true);
       return;
     }
@@ -74,7 +74,7 @@ const OktatonakAkarokFizetni = ({ route }) => {
         });
         if (valasz.ok) {
           setSikerModalCim("Sikeres befizetés!");
-          setSikerModalSzoveg("A tranzakció sikeresen rögzítésre került az alkalmazásban! Amennyiben nem jelenik meg azonnal fizetési előzmények között, próbáljon meg ráfrissíteni!");
+          setSikerModalSzoveg("A tranzakció sikeresen rögzítésre került az alkalmazásban! Amennyiben nem jelenik meg azonnal fizetési előzményeid között, próbálj meg ráfrissíteni!");
           setSikerModal(true);
         } else {
           setHibaModalCim("Hoppá!");
@@ -151,10 +151,10 @@ const OktatonakAkarokFizetni = ({ route }) => {
             <Text style={styles.nagybetusSzoveg}>FONTOS!</Text>
 
             <Text style={styles.kisbetusSzoveg}>
-              Adja meg, hogy a befizetett összeg milyen típusú.
+              Add meg, hogy a befizetett összeg milyen típusú.
             </Text>
             <Text style={styles.kisbetusSzoveg}>
-              Válasszon az alábbi lehetőségek közül:
+              Válassz az alábbi lehetőségek közül:
             </Text>
             {/*---------------------------------- CHECKBOX --------------------------------*/}
             <View style={styles.checkboxView}>
@@ -203,7 +203,7 @@ const OktatonakAkarokFizetni = ({ route }) => {
             Ez az oldal az oktatónál történő befizetéseket kezeli.
           </Text>
           <Text style={styles.kisbetusSzoveg}>
-            Az itt felvenni kívánt összeget az oktatója fogja jóváhagyni a saját alkalmazásában, amennyiben annak befizetése valóban megtörtént.
+            Az itt felvenni kívánt összeget az oktatód fogja jóváhagyni a saját alkalmazásában, amennyiben annak befizetése valóban megtörtént.
           </Text>
 
           <TouchableOpacity onPress={osszegMegnyomas} style={styles.input}>

@@ -31,7 +31,7 @@ const AutosiskolanakAkarokFizetni = ({ route }) => {
   const osszegFelvitele = async () => {
     if (osszeg === "" || parseFloat(osszeg) === 0) {
       setHibaModalCim("Hoppá!");
-      setHibaModalSzoveg("Úgy tűnik, hogy elfelejtette beírni az összeget!");
+      setHibaModalSzoveg("Úgy tűnik, hogy elfelejtetted beírni az összeget!");
       setHibaModal(true);
       return;
     } else if (osszeg.startsWith("0") && osszeg !== "0") {
@@ -73,7 +73,7 @@ const AutosiskolanakAkarokFizetni = ({ route }) => {
         const valaszText = await valasz.text();
         if (valasz.ok) {
           setSikerModalCim("Sikeres befizetés!");
-          setSikerModalSzoveg("A tranzakció sikeresen rögzítésre került az alkalmazásban! Amennyiben nem jelenik meg azonnal fizetési előzmények között, próbáljon meg ráfrissíteni!");
+          setSikerModalSzoveg("A tranzakció sikeresen rögzítésre került az alkalmazásban! Amennyiben nem jelenik meg azonnal fizetési előzmények között, próbálj meg ráfrissíteni!");
           setSikerModal(true);
         } else {
           setHibaModalCim("Hoppá!");
@@ -149,10 +149,10 @@ const AutosiskolanakAkarokFizetni = ({ route }) => {
           {/*-------------------------------------- SZÁMOLÓGÉP LÁTHATÓ -------------------*/}
           <Text style={styles.nagybetusSzoveg}>FONTOS!</Text>
           <Text style={styles.kisbetusSzoveg}>
-            Adja meg, hogy a befizetett összeg milyen típusú.
+            Add meg, hogy a befizetett összeg milyen típusú.
           </Text>
           <Text style={styles.kisbetusSzoveg}>
-            Válasszon az alábbi lehetőségek közül:
+            Válassz az alábbi lehetőségek közül:
           </Text>
           {/*---------------------------------- CHECKBOX --------------------------------*/}
           <View style={styles.checkboxView}>
@@ -196,7 +196,7 @@ const AutosiskolanakAkarokFizetni = ({ route }) => {
           {/*-------------------------------------- SZÁMOLÓGÉP NEM LÁTHATÓ -------------------*/}
           <Text style={styles.nagybetusSzoveg}>FIGYELEM!</Text>
           <Text style={styles.kisbetusSzoveg}>
-            Ez az oldal az autósiskolának történő befizetéseket kezeli.
+            Ez az oldal az autósiskola részére történő befizetéseket kezeli.
           </Text>
           <Text style={styles.kisbetusSzoveg}>
           Az itt felvenni kívánt összeget az autósiskola fogja jóváhagyni, amennyiben annak befizetése valóban megtörtént.

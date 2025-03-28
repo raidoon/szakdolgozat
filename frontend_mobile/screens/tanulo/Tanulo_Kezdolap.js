@@ -79,10 +79,10 @@ const Tanulo_Kezdolap = ({ atkuld }) => {
   const vezetoMondatok = [
     "Nem a gyorsaság, hanem a stílus a lényeg!",
     "A gyorsulás csak akkor menő, ha a kanyar is jól sikerül.",
-    "Ne csak gyorsan, hanem okosan is vezess!",
+    "A jó vezető nem hajt, hanem uralja az utat.",
     "A kressz már megvan, úgyhogy jöhet a vezetés!",
     "A legjobb sofőr mindig tudja, hogy mikor kell lassítani.",
-    "A jó vezető nem hajt, hanem uralja az utat.",
+    "Ne csak gyorsan, hanem okosan is vezess!",
     "Vezetni menő, de biztonságban maradni még menőbb.",
     "A legjobb vezetők nem a gyorsulásban, hanem az irányításban jeleskednek.",
     "A volán mögött minden döntés számít – válaszd meg okosan!",
