@@ -38,7 +38,7 @@ const Kapcsolat = () => {
     <div className='KapcsolatBody'>
       <div className="kapcsolatNagyDiv">
         <div className="udvozloPanel">
-          <h1>Üzenetküldés a <span style={{ color: '#007bff', fontWeight: 600, fontSize: 50 }}>Jogsi+</span> csapatának</h1>
+          <h1>Üzenetküldés a <span style={{fontWeight: 600,fontSize:48}}>Kanyar<span style={{color: '#007bff'}}>GO+</span></span> <br/>csapatának</h1>
           <p>Ha bármilyen kérdése van, vagy szeretne több információt kapni szolgáltatásainkról, kérjük, töltse ki az alábbi űrlapot, és mi hamarosan válaszolunk!</p>
           <p>Kérjük az üzenetében azt is tüntesse fel, hogy melyik autósiskolát képviseli!</p>
           <button

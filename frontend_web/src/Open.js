@@ -95,140 +95,205 @@ const Open = () => {
           Nagyszerű, hogy itt vagy! Ez a felület az autósiskola ügyintézői
           részére készült!
         </p>
-
-        <button
-          style={styles.registrationButton}
-          onClick={() => setRegisztracioLathato(!regisztracioLathato)}
-        >
-          {regisztracioLathato ? "Bezárás" : "Új felhasználó regisztrálása"}
-        </button>
-
-        {regisztracioLathato && (
-          <div
-            style={{
+  
+        {/* Main container with flex layout */}
+        <div style={{
+          display: "flex",
+          flexDirection: regisztracioLathato ? "row" : "column",
+          alignItems: "flex-start",
+          gap: "20px",
+          maxWidth: "1200px",
+          margin: "0 auto"
+        }}>
+          {/* Left side - stats and upcoming lessons */}
+          <div style={{ 
+            flex: regisztracioLathato ? 1 : "100%",
+            minWidth: regisztracioLathato ? "400px" : "auto"
+          }}>
+            {/* ADATOK IDE */}
+            <div style={{ display: "flex", gap: "10px", marginBottom: "20px" }}>
+              <div style={styles.statCard}>
+                <h3>Tanulók</h3>
+                <p style={{ fontSize: "24px", fontWeight: "bold" }}>42</p>
+              </div>
+              <div style={styles.statCard}>
+                <h3>Oktatók</h3>
+                <p style={{ fontSize: "24px", fontWeight: "bold" }}>5</p>
+              </div>
+              <div style={styles.statCard}>
+                <h3>Ma órák</h3>
+                <p style={{ fontSize: "24px", fontWeight: "bold" }}>0</p>
+              </div>
+            </div>
+  
+            {/* KÖZELGŐ ÓRÁK */}
+            <div style={{ 
+              background: "white", 
+              padding: "15px", 
+              borderRadius: "8px", 
+              boxShadow: "0 2px 4px rgba(0,0,0,0.1)" 
+            }}>
+              <h3 style={{ marginTop: 0 }}>Közelgő órák (ma)</h3>
+              <ul style={{ listStyle: "none", padding: 0 }}>
+                <li style={{ padding: "8px 0", borderBottom: "1px solid #eee" }}>
+                  A mai napra nincs több bejegyzett óra.
+                </li>
+              </ul>
+            </div>
+  
+            {!regisztracioLathato && (
+              <button
+                style={{
+                  ...styles.registrationButton,
+                  marginTop: "20px",
+                  alignSelf: "center"
+                }}
+                onClick={() => setRegisztracioLathato(true)}
+              >
+                Új felhasználó regisztrálása
+              </button>
+            )}
+          </div>
+  
+          {/* JOBB OLDAL REGISZTRÁCIÓ */}
+          {regisztracioLathato && (
+            <div style={{
+              flex: 1,
               background: "white",
               padding: "2rem",
               borderRadius: "8px",
               boxShadow: "0 4px 8px rgba(0, 0, 0, 0.1)",
-              maxWidth: "500px",
-              margin: "20px auto",
-              textAlign: "center",
-              justifyContent: "center",
-              alignContent: "center",
-              alignItems: "center",
-            }}
-          >
-            <h1
-              style={{
-                color: "#007bff",
-                fontWeight: 600,
-                fontSize: "1.5rem",
-                marginBottom: "1.5rem",
-              }}
-            >
-              Új felhasználó regisztrálása
-            </h1>
-
-            <p>
-              Ezen az oldalon kizárólag a saját autósiskolájához regisztrálhat
-              be új oktatót vagy diákot.
-            </p>
-
-            <form onSubmit={regisztracio} style={{ textAlign: "left" }}>
-              <div className="textbox">
-                <FontAwesomeIcon icon={faUser} className="icon" />
-                <input
-                  type="text"
-                  value={nev}
-                  placeholder="Teljes név"
-                  onChange={(e) => setNev(e.target.value)}
-                  required
-                />
-              </div>
-
-              <div className="textbox">
-                <FontAwesomeIcon icon={faEnvelope} className="icon" />
-                <input
-                  type="email"
-                  value={email}
-                  placeholder="Email"
-                  onChange={(e) => setEmail(e.target.value)}
-                  required
-                />
-              </div>
-
-              <div className="textbox">
-                <FontAwesomeIcon icon={faLock} className="icon" />
-                <input
-                  type={jelszoMutatasa ? "text" : "password"}
-                  value={jelszo}
-                  placeholder="Jelszó"
-                  onChange={(e) => setJelszo(e.target.value)}
-                  required
-                />
-                <i
-                  className="eye-icon"
-                  onClick={() => setJelszoMutatasa(!jelszoMutatasa)}
+              minWidth: "400px"
+            }}>
+              <div style={{
+                display: "flex",
+                justifyContent: "space-between",
+                alignItems: "center",
+                marginBottom: "1.5rem"
+              }}>
+                <h1 style={{
+                  color: "#007bff",
+                  fontWeight: 600,
+                  fontSize: "1.5rem",
+                  margin: 0
+                }}>
+                  Új felhasználó regisztrálása
+                </h1>
+                <button 
+                  onClick={() => setRegisztracioLathato(false)}
+                  style={{
+                    background: "none",
+                    border: "none",
+                    color: "#666",
+                    cursor: "pointer",
+                    fontSize: "1rem"
+                  }}
                 >
-                  {jelszoMutatasa ? <FaEye /> : <FaEyeSlash />}
-                </i>
+                  ✕
+                </button>
               </div>
+  
+              <p style={{ marginBottom: "1.5rem" }}>
+                Ezen az oldalon kizárólag a saját autósiskolájához regisztrálhat
+                be új oktatót vagy diákot.
+              </p>
+  
+              <form onSubmit={regisztracio} style={{ textAlign: "left" }}>
+                <div className="textbox">
+                  <FontAwesomeIcon icon={faUser} className="icon" />
+                  <input
+                    type="text"
+                    value={nev}
+                    placeholder="Teljes név"
+                    onChange={(e) => setNev(e.target.value)}
+                    required
+                  />
+                </div>
 
-              <div className="textbox">
-                <FontAwesomeIcon icon={faPhone} className="icon" />
-                <input
-                  type="tel"
-                  value={telefonszam}
-                  placeholder="Telefonszám"
-                  onChange={(e) => setTelefonszam(e.target.value)}
-                  required
-                />
-              </div>
+                <div className="textbox">
+                  <FontAwesomeIcon icon={faEnvelope} className="icon" />
+                  <input
+                    type="email"
+                    value={email}
+                    placeholder="Email"
+                    onChange={(e) => setEmail(e.target.value)}
+                    required
+                  />
+                </div>
 
-              <div className="textbox">
-                <FontAwesomeIcon icon={faUser} className="icon" />
-                <select
-                  value={tipus}
-                  onChange={(e) => setTipus(e.target.value)}
+                <div className="textbox">
+                  <FontAwesomeIcon icon={faLock} className="icon" />
+                  <input
+                    type={jelszoMutatasa ? "text" : "password"}
+                    value={jelszo}
+                    placeholder="Jelszó"
+                    onChange={(e) => setJelszo(e.target.value)}
+                    required
+                  />
+                  <i
+                    className="eye-icon"
+                    onClick={() => setJelszoMutatasa(!jelszoMutatasa)}
+                  >
+                    {jelszoMutatasa ? <FaEye /> : <FaEyeSlash />}
+                  </i>
+                </div>
+
+                <div className="textbox">
+                  <FontAwesomeIcon icon={faPhone} className="icon" />
+                  <input
+                    type="tel"
+                    value={telefonszam}
+                    placeholder="Telefonszám"
+                    onChange={(e) => setTelefonszam(e.target.value)}
+                    required
+                  />
+                </div>
+
+                <div className="textbox">
+                  <FontAwesomeIcon icon={faUser} className="icon" />
+                  <select
+                    value={tipus}
+                    onChange={(e) => setTipus(e.target.value)}
+                    style={{
+                      width: "100%",
+                      padding: "0.75rem 0.75rem 0.75rem 40px",
+                      border: "1px solid #ddd",
+                      borderRadius: "4px",
+                      fontSize: "1rem",
+                      appearance: "none",
+                      backgroundColor: "white",
+                    }}
+                    required
+                  >
+                    <option value="">
+                      Válassza ki a regisztrálni kívánt felhasználó típusát
+                    </option>
+                    <option value="1">Oktató</option>
+                    <option value="2">Tanuló</option>
+                  </select>
+                </div>
+                {hiba && <p style={styles.hiba}>{hiba}</p>}
+                {siker && <p style={styles.siker}>{siker}</p>}
+                <button
+                  type="submit"
                   style={{
                     width: "100%",
-                    padding: "0.75rem 0.75rem 0.75rem 40px",
-                    border: "1px solid #ddd",
+                    padding: "0.75rem",
+                    backgroundColor: "#007bff",
+                    color: "white",
+                    border: "none",
                     borderRadius: "4px",
                     fontSize: "1rem",
-                    appearance: "none",
-                    backgroundColor: "white",
+                    cursor: "pointer",
+                    marginTop: "1rem",
                   }}
-                  required
                 >
-                  <option value="">
-                    Válassza ki a regisztrálni kívánt felhasználó típusát
-                  </option>
-                  <option value="1">Oktató</option>
-                  <option value="2">Tanuló</option>
-                </select>
-              </div>
-              {hiba && <p style={styles.hiba}>{hiba}</p>}
-              {siker && <p style={styles.siker}>{siker}</p>}
-              <button
-                type="submit"
-                style={{
-                  width: "100%",
-                  padding: "0.75rem",
-                  backgroundColor: "#007bff",
-                  color: "white",
-                  border: "none",
-                  borderRadius: "4px",
-                  fontSize: "1rem",
-                  cursor: "pointer",
-                  marginTop: "1rem",
-                }}
-              >
-                Regisztráció
-              </button>
-            </form>
-          </div>
-        )}
+                  Regisztráció
+                </button>
+              </form>
+            </div>
+          )}
+        </div>
       </div>
     </div>
   );
@@ -255,6 +320,15 @@ const styles = {
     cursor: "pointer",
     marginTop: "20px",
   },
+  statCard: {
+    background: "white",
+    padding: "15px",
+    borderRadius: "8px",
+    boxShadow: "0 2px 4px rgba(0,0,0,0.1)",
+    flex: 1,
+    textAlign: "center"
+  }
+
 };
 
 export default Open;

@@ -23,10 +23,9 @@ const OktatoReszletek = () => {
       try {
         const oktatoResponse = await fetch(Ipcim.Ipcim + `/oktato/${oktatoId}`);
         if (!oktatoResponse.ok) throw new Error("Ez az oktató nem található!");
-        const kivalasztottOktato = await oktatoResponse.json();
+        const kivalasztottOktato = await oktatoResponse.json(); 
         setOktato(kivalasztottOktato);
         if (kivalasztottOktato) {
-          // Fetch active students
           const oktatoid = { oktato_id: oktatoId };
           const aktualisDiakok = await fetch(Ipcim.Ipcim + "/aktualisDiakok", {
             method: "POST",
@@ -39,7 +38,6 @@ const OktatoReszletek = () => {
           const aktualisDiakokResponse = await aktualisDiakok.json();
           setAktualisLista(aktualisDiakokResponse);
 
-          // Fetch finished students
           const levizsgazottDiakok = await fetch(Ipcim.Ipcim + "/levizsgazottDiakok", {
             method: "POST",
             body: JSON.stringify(oktatoid),
@@ -75,12 +73,11 @@ const OktatoReszletek = () => {
           {/* ---------------------------- OKTATÓ ADATAI BAL OLDALON KIÍRVA ---------------------*/}
           <div className="oktatoReszletekSection">
             <h1>{oktato.oktato_neve}</h1>
-            <p>Email: {oktato.oktato_email}</p>
-            <p>Telefonszám: {oktato.oktato_telefon}</p>
-            <p>Összes tanuló: {aktualisLista.length + levizsgazottLista.length}</p>
+            <p>Email: {oktato.felhasznalo_email}</p>
+            <p>Telefonszám: {oktato.felhasznalo_telefonszam}</p>
+            <p>Eddigi diákjai száma: {aktualisLista.length + levizsgazottLista.length}</p>
             
             <button className="editButton">Oktató adatainak szerkesztése</button>
-            <button className="actionButton">Értesítés küldése</button>
           </div>
           {/* ---------------------------- TANULÓK JOBB OLDALON LISTÁZVA ---------------------*/}
           <div className="studentsSection">

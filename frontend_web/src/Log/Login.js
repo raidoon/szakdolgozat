@@ -38,7 +38,7 @@ const Login = () => {
     <div className='LoginBody'>
     <div className="bejelentkezesNagyDiv">
       <div className="udvozloPanel">
-        <h1>Üdvözöljük a <span style={{color: '#007bff', fontWeight: 600,fontSize:50}}>Jogsi+</span>  weboldalán!</h1>
+        <h1>Üdvözöljük a <span style={{fontWeight: 600,fontSize:48}}>Kanyar<span style={{color: '#007bff'}}>GO+</span></span>  <br/>weboldalán!</h1>
         <p>Amennyiben Ön már rendelkezik adminisztrátori jogosultsággal, kérjük, jelentkezzen be a rendszerbe. </p>
         <p>Ha Ön egy autósiskola képviseletében szeretné igénybe venni szolgáltatásainkat, kérjük, lépjen velünk kapcsolatba az alábbi <a href='/kapcsolat' style={{color: '#007bff',fontWeight: 'bold',textDecoration:'none'}}>linken</a>, ahol szívesen válaszolunk minden kérdésére, és segítünk a regisztrációban!</p>
       </div>
