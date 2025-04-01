@@ -11,6 +11,7 @@ import {
   faPhone,
 } from "@fortawesome/free-solid-svg-icons";
 import { FaEye, FaEyeSlash } from "react-icons/fa";
+
 const Open = () => {
   const [hiba, setHiba] = useState("");
   const [siker, setSiker] = useState("");
@@ -96,22 +97,12 @@ const Open = () => {
           részére készült!
         </p>
   
-        {/* Main container with flex layout */}
-        <div style={{
-          display: "flex",
-          flexDirection: regisztracioLathato ? "row" : "column",
-          alignItems: "flex-start",
-          gap: "20px",
-          maxWidth: "1200px",
-          margin: "0 auto"
-        }}>
+        {/* Main container with responsive flex layout */}
+        <div className="mainContainer">
           {/* Left side - stats and upcoming lessons */}
-          <div style={{ 
-            flex: regisztracioLathato ? 1 : "100%",
-            minWidth: regisztracioLathato ? "400px" : "auto"
-          }}>
+          <div className="statsContainer">
             {/* ADATOK IDE */}
-            <div style={{ display: "flex", gap: "10px", marginBottom: "20px" }}>
+            <div className="statsGrid">
               <div style={styles.statCard}>
                 <h3>Tanulók</h3>
                 <p style={{ fontSize: "24px", fontWeight: "bold" }}>42</p>
@@ -121,18 +112,13 @@ const Open = () => {
                 <p style={{ fontSize: "24px", fontWeight: "bold" }}>5</p>
               </div>
               <div style={styles.statCard}>
-                <h3>Ma órák</h3>
+                <h3>Mai órák</h3>
                 <p style={{ fontSize: "24px", fontWeight: "bold" }}>0</p>
               </div>
             </div>
   
             {/* KÖZELGŐ ÓRÁK */}
-            <div style={{ 
-              background: "white", 
-              padding: "15px", 
-              borderRadius: "8px", 
-              boxShadow: "0 2px 4px rgba(0,0,0,0.1)" 
-            }}>
+            <div className="upcomingLessons">
               <h3 style={{ marginTop: 0 }}>Közelgő órák (ma)</h3>
               <ul style={{ listStyle: "none", padding: 0 }}>
                 <li style={{ padding: "8px 0", borderBottom: "1px solid #eee" }}>
@@ -143,11 +129,7 @@ const Open = () => {
   
             {!regisztracioLathato && (
               <button
-                style={{
-                  ...styles.registrationButton,
-                  marginTop: "20px",
-                  alignSelf: "center"
-                }}
+                className="registrationToggleButton"
                 onClick={() => setRegisztracioLathato(true)}
               >
                 Új felhasználó regisztrálása
@@ -155,47 +137,24 @@ const Open = () => {
             )}
           </div>
   
-          {/* JOBB OLDAL REGISZTRÁCIÓ */}
+          {/* Registration form - appears below on mobile */}
           {regisztracioLathato && (
-            <div style={{
-              flex: 1,
-              background: "white",
-              padding: "2rem",
-              borderRadius: "8px",
-              boxShadow: "0 4px 8px rgba(0, 0, 0, 0.1)",
-              minWidth: "400px"
-            }}>
-              <div style={{
-                display: "flex",
-                justifyContent: "space-between",
-                alignItems: "center",
-                marginBottom: "1.5rem"
-              }}>
-                <h1 style={{
-                  color: "#007bff",
-                  fontWeight: 600,
-                  fontSize: "1.5rem",
-                  margin: 0
-                }}>
+            <div className="registrationForm">
+              <div className="formHeader">
+                <h1>
                   Új felhasználó regisztrálása
                 </h1>
                 <button 
                   onClick={() => setRegisztracioLathato(false)}
-                  style={{
-                    background: "none",
-                    border: "none",
-                    color: "#666",
-                    cursor: "pointer",
-                    fontSize: "1rem"
-                  }}
+                  className="closeButton"
                 >
                   ✕
                 </button>
               </div>
   
-              <p style={{ marginBottom: "1.5rem" }}>
-                Ezen az oldalon kizárólag a saját autósiskolájához regisztrálhat
-                be új oktatót vagy diákot.
+              <p className="formDescription">
+                Ezen az oldalon kizárólag a saját <span>()</span> autósiskolájához regisztrálhat
+                be új adminisztrátort, oktatót vagy diákot.
               </p>
   
               <form onSubmit={regisztracio} style={{ textAlign: "left" }}>
@@ -254,15 +213,7 @@ const Open = () => {
                   <select
                     value={tipus}
                     onChange={(e) => setTipus(e.target.value)}
-                    style={{
-                      width: "100%",
-                      padding: "0.75rem 0.75rem 0.75rem 40px",
-                      border: "1px solid #ddd",
-                      borderRadius: "4px",
-                      fontSize: "1rem",
-                      appearance: "none",
-                      backgroundColor: "white",
-                    }}
+                    className="formSelect"
                     required
                   >
                     <option value="">
@@ -270,23 +221,14 @@ const Open = () => {
                     </option>
                     <option value="1">Oktató</option>
                     <option value="2">Tanuló</option>
+                    <option value="3">Adminisztrátor</option>
                   </select>
                 </div>
                 {hiba && <p style={styles.hiba}>{hiba}</p>}
                 {siker && <p style={styles.siker}>{siker}</p>}
                 <button
                   type="submit"
-                  style={{
-                    width: "100%",
-                    padding: "0.75rem",
-                    backgroundColor: "#007bff",
-                    color: "white",
-                    border: "none",
-                    borderRadius: "4px",
-                    fontSize: "1rem",
-                    cursor: "pointer",
-                    marginTop: "1rem",
-                  }}
+                  className="submitButton"
                 >
                   Regisztráció
                 </button>
@@ -300,26 +242,10 @@ const Open = () => {
 };
 
 const styles = {
-  container: {
-    padding: "20px",
-    textAlign: "center",
-    backgroundColor: "#f4f4f4",
-    minHeight: "100vh",
-  },
   heading: { fontSize: "28px", color: "#333", marginBottom: "10px" },
   welcomeText: { fontSize: "18px", color: "#555", marginBottom: "20px" },
   hiba: { fontSize: "16px", color: "#ff0000" },
   siker: { fontSize: "16px", color: "#008000" },
-  registrationButton: {
-    padding: "10px",
-    fontSize: "16px",
-    backgroundColor: "#007BFF",
-    color: "#fff",
-    border: "none",
-    borderRadius: "5px",
-    cursor: "pointer",
-    marginTop: "20px",
-  },
   statCard: {
     background: "white",
     padding: "15px",
@@ -328,7 +254,6 @@ const styles = {
     flex: 1,
     textAlign: "center"
   }
-
 };
 
 export default Open;

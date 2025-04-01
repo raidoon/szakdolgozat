@@ -1,44 +1,218 @@
 .openBody {
-    margin: 0;
-    font-family: Arial, sans-serif;
-    background: linear-gradient(135deg, #d6e8f1, #1b4ca2);
-    min-height: 100vh;
-    max-height: 100%;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    flex-direction: column;
-    padding: 20px;
+  margin: 0;
+  font-family: Arial, sans-serif;
+  background: linear-gradient(135deg, #d6e8f1, #1b4ca2);
+  min-height: 100vh;
+  max-height: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+  padding: 20px;
+  box-sizing: border-box;
 }
-.textbox {
-    position: relative;
-    margin-bottom: 1rem;
-    text-align: left;
+
+.openBody .textbox {
+  position: relative;
+  margin-bottom: 1rem;
+  text-align: left;
+}
+
+.openBody .icon {
+  position: absolute;
+  left: 12px;
+  top: 50%;
+  transform: translateY(-50%);
+  color: #007bff;
+  font-size: larger;
+}
+
+.openBody .textbox input {
+  width: 100%;
+  padding: 0.75rem 0.75rem 0.75rem 40px;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  font-size: 1rem;
+}
+
+.openBody .eye-icon {
+  position: absolute;
+  right: 12px;
+  top: 50%;
+  transform: translateY(-50%);
+  cursor: pointer;
+  color: #007bff;
+  font-size: 1.2rem;
+}
+
+/* Main container styles */
+.openBody .mainContainer {
+  display: flex;
+  flex-direction: row;
+  align-items: flex-start;
+  gap: 20px;
+  max-width: 1200px;
+  margin: 0 auto;
+  width: 100%;
+}
+
+.openBody .statsContainer {
+  flex: 1;
+  min-width: 400px;
+}
+
+.openBody .statsGrid {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 20px;
+}
+
+.openBody .upcomingLessons {
+  background: white;
+  padding: 15px;
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+.openBody .registrationToggleButton {
+  padding: 10px;
+  font-size: 16px;
+  background-color: #007BFF;
+  color: #fff;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  margin-top: 20px;
+  width: 100%;
+}
+
+.openBody .registrationForm {
+  flex: 1;
+  background: white;
+  padding: 2rem;
+  border-radius: 8px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  min-width: 400px;
+}
+
+.openBody .formHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1.5rem;
+}
+
+.openBody .formHeader h1 {
+  color: #007bff;
+  font-weight: 600;
+  font-size: 1.5rem;
+  margin: 0;
+}
+
+.openBody .closeButton {
+  background: none;
+  border: none;
+  color: #666;
+  cursor: pointer;
+  font-size: 1rem;
+}
+
+.openBody .formDescription {
+  margin-bottom: 1.5rem;
+}
+
+.openBody .formSelect {
+  width: 100% !important;
+  padding: 0.75rem 0.75rem 0.75rem 40px !important; /* Same padding as the input fields */
+  border: 1px solid #ddd !important;
+  border-radius: 4px !important;
+  font-size: 1rem !important;
+  appearance: none !important;
+  background-color: white !important;
+  box-sizing: border-box !important; /* Ensures padding is included in width */
+}
+
+.openBody .submitButton {
+  width: 100%;
+  padding: 0.75rem;
+  background-color: #007bff;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  font-size: 1rem;
+  cursor: pointer;
+  margin-top: 1rem;
+}
+
+/* Responsive styles */
+@media (max-width: 768px) {
+  .openBody .mainContainer {
+      flex-direction: column;
+      width: 100%;
+      padding: 0 10px;
   }
-  
-  .icon {
-    position: absolute;
-    left: 12px;
-    top: 50%;
-    transform: translateY(-50%);
-    color: #007bff;
-    font-size: larger;
+
+  .openBody .statsContainer {
+      width: 100%;
   }
-  
-  .textbox input {
-    width: 100%;
-    padding: 0.75rem 0.75rem 0.75rem 40px;
-    border: 1px solid #ddd;
-    border-radius: 4px;
-    font-size: 1rem;
+
+  .openBody .registrationForm {
+      width: 80%;
+      margin-top: 20px;
+      padding: 1.5rem;
   }
-  
-  .eye-icon {
-    position: absolute;
-    right: 12px;
-    top: 50%;
-    transform: translateY(-50%);
-    cursor: pointer;
-    color: #007bff;
-    font-size: 1.2rem;
+
+  .openBody .statsGrid {
+      flex-direction: column;
   }
+
+  .openBody .statsGrid > div {
+      margin-bottom: 10px;
+  }
+
+  .openBody .heading {
+      font-size: 24px;
+  }
+
+  .openBody .welcomeText {
+      font-size: 16px;
+  }
+
+  .openBody .formSelect {
+    width: 100% !important;
+    box-sizing: border-box !important;
+  }
+}
+
+@media (max-width: 480px) {
+  .mainContainer {
+      padding: 10px;
+  }
+
+  .openBody .heading {
+      font-size: 20px;
+  }
+
+  .openBody .welcomeText {
+      font-size: 14px;
+  }
+
+  .openBody .registrationForm {
+      padding: 1rem;
+  }
+
+  .openBody .formHeader h1 {
+      font-size: 1.3rem; 
+  }
+
+  .openBody .closeButton {
+      font-size: 1.3rem;
+      right: 0.5rem;
+      top: 0.5rem;
+  }
+
+  .openBody .formSelect {
+    width: 100% !important;
+    box-sizing: border-box !important;
+  }
+}
