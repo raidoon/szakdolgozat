@@ -12,9 +12,17 @@ export default function Oktato_ElkovetkezendoOrak({ route }) {
     const navigation = useNavigation();
 
     useEffect(() => {
+        navigation.setOptions({
+            title: "Elkövetkező órák",
+            headerShown: true,
+            headerStyle: { backgroundColor: '#1e90ff' },
+            headerTintColor: '#fff',
+            headerTitleAlign: 'center',
+        });
+
         frissitOraAllapot();
         letoltes();
-    }, []);
+    }, [navigation]);
 
     const letoltes = async () => {
         try {
@@ -74,7 +82,7 @@ export default function Oktato_ElkovetkezendoOrak({ route }) {
     };
 
     return (
-        <LinearGradient colors={['#f5fcff', '#e6f7ed']} style={styles.container}>
+        <LinearGradient colors={['#1e90ff', '#00bfff']} style={styles.container}>
             <View style={styles.content}>
                 <Text style={styles.title}>Elkövetkező órák</Text>
 
@@ -94,12 +102,12 @@ export default function Oktato_ElkovetkezendoOrak({ route }) {
                             </View>
 
                             <View style={styles.infoItem}>
-                                <Ionicons name="person-outline" size={18} color="#4a90e2" />
+                                <Ionicons name="person-outline" size={18} color="#fff" />
                                 <Text style={styles.infoText}>Diák: {item.tanulo_neve}</Text>
                             </View>
                             
                             <View style={styles.infoItem}>
-                                <Ionicons name="location-outline" size={18} color="#4a90e2" />
+                                <Ionicons name="location-outline" size={18} color="#fff" />
                                 <Text style={styles.infoText}>
                                     Helyszín: {item.ora_kezdeshelye || "Nincs megadva"}
                                 </Text>
@@ -117,7 +125,7 @@ export default function Oktato_ElkovetkezendoOrak({ route }) {
                     )}
                     ListEmptyComponent={
                         <View style={styles.emptyContainer}>
-                            <Ionicons name="calendar-outline" size={48} color="#bdc3c7" />
+                            <Ionicons name="calendar-outline" size={48} color="rgba(255,255,255,0.7)" />
                             <Text style={styles.emptyText}>Nincs elkövetkező óra</Text>
                         </View>
                     }
@@ -141,20 +149,20 @@ const styles = StyleSheet.create({
     title: {
         fontSize: 24,
         fontWeight: '600',
-        color: '#2c3e50',
+        color: '#fff',
         marginBottom: 25,
         textAlign: 'center',
         letterSpacing: 0.5,
+        textShadowColor: 'rgba(0,0,0,0.1)',
+        textShadowOffset: {width: 0, height: 1},
+        textShadowRadius: 3
     },
     card: {
-        backgroundColor: '#fff',
+        backgroundColor: 'rgba(255, 255, 255, 0.15)',
         borderRadius: 12,
         marginBottom: 16,
-        shadowColor: '#2c3e50',
-        shadowOffset: { width: 0, height: 3 },
-        shadowOpacity: 0.1,
-        shadowRadius: 6,
-        elevation: 3,
+        borderWidth: 1,
+        borderColor: 'rgba(255,255,255,0.2)',
         overflow: 'hidden',
     },
     dateHeader: {
@@ -162,23 +170,25 @@ const styles = StyleSheet.create({
         justifyContent: 'space-between',
         alignItems: 'center',
         padding: 16,
-        backgroundColor: 'rgba(74, 144, 226, 0.05)',
+        backgroundColor: 'rgba(255,255,255,0.1)',
         borderBottomWidth: 1,
-        borderBottomColor: '#ecf0f1',
+        borderBottomColor: 'rgba(255,255,255,0.1)',
     },
     lessonDate: {
         fontSize: 16,
         fontWeight: '600',
-        color: '#2c3e50',
+        color: '#fff',
     },
     typePill: {
-        backgroundColor: 'rgba(46, 204, 113, 0.2)',
+        backgroundColor: 'rgba(46, 204, 113, 0.3)',
         paddingHorizontal: 10,
         paddingVertical: 4,
         borderRadius: 12,
+        borderWidth: 1,
+        borderColor: 'rgba(46, 204, 113, 0.5)'
     },
     typeText: {
-        color: '#2ecc71',
+        color: '#fff',
         fontSize: 13,
         fontWeight: '500',
     },
@@ -187,21 +197,23 @@ const styles = StyleSheet.create({
         alignItems: 'center',
         padding: 14,
         borderBottomWidth: 1,
-        borderBottomColor: '#f8f9fa',
+        borderBottomColor: 'rgba(255,255,255,0.1)',
     },
     infoText: {
         fontSize: 15,
-        color: '#34495e',
+        color: '#fff',
         marginLeft: 10,
     },
     editButton: {
         flexDirection: 'row',
         justifyContent: 'center',
         alignItems: 'center',
-        backgroundColor: '#4a90e2',
+        backgroundColor: 'rgba(255,255,255,0.2)',
         padding: 12,
         margin: 16,
         borderRadius: 8,
+        borderWidth: 1,
+        borderColor: 'rgba(255,255,255,0.3)'
     },
     editButtonText: {
         color: '#fff',
@@ -218,7 +230,7 @@ const styles = StyleSheet.create({
     },
     emptyText: {
         fontSize: 16,
-        color: '#7f8c8d',
+        color: 'rgba(255,255,255,0.8)',
         marginTop: 16,
         textAlign: 'center',
     },

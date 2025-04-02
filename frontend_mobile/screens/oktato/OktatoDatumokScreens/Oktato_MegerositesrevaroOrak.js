@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { View, Text, FlatList, TouchableOpacity, StyleSheet, ActivityIndicator} from "react-native";
+import { View, Text, FlatList, TouchableOpacity, StyleSheet, ActivityIndicator } from "react-native";
 import { useNavigation } from "@react-navigation/native";
 import Ipcim from "../../../Ipcim";
 import { LinearGradient } from "expo-linear-gradient";
@@ -12,6 +12,14 @@ export default function Oktato_MegerositesrevaroOrak({ route }) {
     const navigation = useNavigation();
 
     useEffect(() => {
+        navigation.setOptions({
+            title: "Diákok órái",
+            headerShown: true,
+            headerStyle: { backgroundColor: '#1e90ff' },
+            headerTintColor: '#fff',
+            headerTitleAlign: 'center'
+        });
+
         const letoltes = async () => {
             try {
                 setLoading(true);
@@ -27,18 +35,13 @@ export default function Oktato_MegerositesrevaroOrak({ route }) {
                 setAdatok(data);
             } catch (error) {
                 console.error("API hiba:", error);
-                Alert.alert("Hiba", "Nem sikerült az adatok letöltése.");
             } finally {
                 setLoading(false);
             }
         };
 
         letoltes();
-    }, []);
-
-    const katt = (tanulo) => {
-        navigation.navigate("Oktato_MegerositOra", { tanulo });
-    };
+    }, [navigation]);
 
     return (
         <LinearGradient 
@@ -46,11 +49,6 @@ export default function Oktato_MegerositesrevaroOrak({ route }) {
             style={styles.container}
         >
             <View style={styles.content}>
-                <View style={styles.headerContainer}>
-                    <Text style={styles.header}>Megerősítésre váró órák</Text>
-                    <Text style={styles.subHeader}>Válassz diákot az órák jóváhagyásához</Text>
-                </View>
-
                 {loading ? (
                     <ActivityIndicator size="large" color="#fff" />
                 ) : adatok.length === 0 ? (
@@ -65,14 +63,11 @@ export default function Oktato_MegerositesrevaroOrak({ route }) {
                         renderItem={({ item }) => (
                             <TouchableOpacity 
                                 style={styles.card}
-                                onPress={() => katt(item)}
+                                onPress={() => navigation.navigate("Oktato_MegerositOra", { tanulo: item })}
                             >
                                 <View style={styles.cardContent}>
                                     <Ionicons name="person-circle-outline" size={32} color="#fff" />
-                                    <View style={styles.textContainer}>
-                                        <Text style={styles.studentName}>{item.tanulo_neve}</Text>
-                                       
-                                    </View>
+                                    <Text style={styles.studentName}>{item.tanulo_neve}</Text>
                                 </View>
                                 <Ionicons name="chevron-forward" size={24} color="rgba(255,255,255,0.7)" />
                             </TouchableOpacity>
@@ -92,21 +87,7 @@ const styles = StyleSheet.create({
     content: {
         flex: 1,
         padding: 20,
-    },
-    headerContainer: {
-        marginBottom: 25,
-        alignItems: 'center',
-    },
-    header: {
-        fontSize: 24,
-        fontWeight: 'bold',
-        color: '#fff',
-        marginBottom: 5,
-    },
-    subHeader: {
-        fontSize: 16,
-        color: 'rgba(255,255,255,0.8)',
-        textAlign: 'center',
+        paddingTop: 10, // Nem kell extra padding, mert a header megjelenik
     },
     listContainer: {
         paddingBottom: 20,
@@ -124,28 +105,11 @@ const styles = StyleSheet.create({
         flexDirection: 'row',
         alignItems: 'center',
     },
-    textContainer: {
-        marginLeft: 15,
-    },
     studentName: {
         fontSize: 18,
         fontWeight: '600',
         color: '#fff',
-        marginBottom: 4,
-    },
-    statusContainer: {
-        flexDirection: 'row',
-    },
-    statusBadge: {
-        backgroundColor: 'rgba(255, 193, 7, 0.3)',
-        paddingHorizontal: 10,
-        paddingVertical: 4,
-        borderRadius: 12,
-    },
-    statusText: {
-        color: '#FFC107',
-        fontSize: 14,
-        fontWeight: '500',
+        marginLeft: 10,
     },
     emptyContainer: {
         flex: 1,
@@ -160,3 +124,4 @@ const styles = StyleSheet.create({
         textAlign: 'center',
     },
 });
+

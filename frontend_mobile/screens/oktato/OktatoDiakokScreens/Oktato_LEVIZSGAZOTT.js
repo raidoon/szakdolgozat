@@ -9,20 +9,26 @@ export default function Oktato_LEVIZSGAZOTT({ route }) {
     const navigation = useNavigation();
     console.log(atkuld);
 
+    useEffect(() => {
+        navigation.setOptions({
+            title: "Levizsgázott Diákok",
+            headerShown: true,
+            headerStyle: { backgroundColor: '#00796B' },
+            headerTintColor: '#fff',
+            headerTitleAlign: 'center',
+        });
+
+        letoltes();
+    }, [navigation]);
+
     const letoltes = async () => {
         try {
-            const adat = {
-                oktato_id: atkuld.oktato_id,
-            }
-            console.log("Elküldött adat:", JSON.stringify({ "oktato_id": atkuld.oktato_id }));
-
+            const adat = { oktato_id: atkuld.oktato_id };
             const response = await fetch(Ipcim.Ipcim + "/levizsgazottDiakok", {
                 method: "POST",
                 body: JSON.stringify(adat),
                 headers: { "Content-type": "application/json; charset=UTF-8" }
             });
-
-            console.log("API válasz:", response);
 
             if (!response.ok) {
                 throw new Error(`Hiba történt: ${response.statusText}`);
@@ -30,16 +36,11 @@ export default function Oktato_LEVIZSGAZOTT({ route }) {
 
             const data = await response.json();
             setAdatok(data);
-
         } catch (error) {
             console.error("Hiba az API-hívás során:", error);
             alert("Nem sikerült az adatok letöltése. Ellenőrizd az API-t.");
         }
-    }
-
-    useEffect(() => {
-        letoltes();
-    }, []); 
+    };
 
     const katt = (tanulo) => {
         navigation.navigate("Oktato_LevizsgazottTanuloReszletei", { tanulo });
@@ -47,8 +48,6 @@ export default function Oktato_LEVIZSGAZOTT({ route }) {
 
     return (
         <View style={styles.container}>
-            <Text style={styles.header}>Levizsgázott Diákok</Text>
-
             <FlatList
                 data={adatok}
                 renderItem={({ item }) => (
@@ -73,21 +72,6 @@ const styles = StyleSheet.create({
         flex: 1,
         backgroundColor: '#F5FBFF',
         padding: 20
-    },
-    header: {
-        fontSize: 28,
-        fontWeight: 'bold',
-        textAlign: 'center',
-        marginBottom: 25,
-        color: '#00796B',
-        paddingVertical: 10,
-        backgroundColor: '#FFFFFF',
-        borderRadius: 10,
-        elevation: 3,
-        shadowColor: '#388E3C',
-        shadowOffset: { width: 0, height: 2 },
-        shadowOpacity: 0.2,
-        shadowRadius: 4,
     },
     itemContainer: {
         flexDirection: 'row',
@@ -130,3 +114,4 @@ const styles = StyleSheet.create({
         paddingBottom: 20,
     },
 });
+

@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
-import { View, Text, StyleSheet, FlatList, TouchableOpacity, Alert, ActivityIndicator,ScrollView} from "react-native";
+import { View, Text, StyleSheet, FlatList, TouchableOpacity, Alert, ActivityIndicator, ScrollView } from "react-native";
+import { useNavigation } from '@react-navigation/native';
 import Ipcim from "../../../Ipcim";
 import { LinearGradient } from "expo-linear-gradient";
 import Ionicons from "@expo/vector-icons/Ionicons";
@@ -8,6 +9,19 @@ export default function Oktato_TanuloABefizetesek({ route }) {
     const { tanulo } = route.params;
     const [adatok, setAdatok] = useState([]);
     const [loading, setLoading] = useState(true);
+    const navigation = useNavigation();
+
+    useEffect(() => {
+        navigation.setOptions({
+            title: "Befizetések",
+            headerShown: true,
+            headerStyle: { backgroundColor: '#1e90ff' },
+            headerTintColor: '#fff',
+            headerTitleAlign: 'center',
+        });
+
+        letoltes();
+    }, [navigation]);
 
     const letoltes = async () => {
         try {
@@ -35,10 +49,6 @@ export default function Oktato_TanuloABefizetesek({ route }) {
             setLoading(false);
         }
     };
-
-    useEffect(() => {
-        letoltes();
-    }, []);
 
     const megerositVagyVissza = (befizetesek_id) => {
         Alert.alert(
@@ -103,15 +113,15 @@ export default function Oktato_TanuloABefizetesek({ route }) {
         <LinearGradient colors={['#1e90ff', '#00bfff']} style={styles.container}>
             <ScrollView contentContainerStyle={styles.content}>
                 <View style={styles.header}>
-                    <Text style={styles.title}>Befizetések</Text>
-                    <Text style={styles.subtitle}>{tanulo.tanulo_neve}</Text>
+                    <Text style={styles.title}>{tanulo.tanulo_neve}</Text>
+                    <Text style={styles.subtitle}>Befizetési előzmények</Text>
                 </View>
 
                 {loading ? (
                     <ActivityIndicator size="large" color="#fff" />
                 ) : adatok.length === 0 ? (
                     <View style={styles.emptyContainer}>
-                        <Ionicons name="receipt-outline" size={48} color="#fff" />
+                        <Ionicons name="receipt-outline" size={48} color="rgba(255,255,255,0.7)" />
                         <Text style={styles.emptyText}>Nincsenek befizetések</Text>
                     </View>
                 ) : (
@@ -134,18 +144,18 @@ export default function Oktato_TanuloABefizetesek({ route }) {
                                 </View>
 
                                 <View style={styles.detailRow}>
-                                    <Ionicons name="time-outline" size={18} color="#555" />
+                                    <Ionicons name="time-outline" size={18} color="#fff" />
                                     <Text style={styles.detailText}>{idoFormazas(item.befizetesek_ideje)}</Text>
                                 </View>
 
                                 <View style={styles.detailRow}>
-                                    <Ionicons name="cash-outline" size={18} color="#555" />
+                                    <Ionicons name="cash-outline" size={18} color="#fff" />
                                     <Text style={styles.detailText}>{item.befizetesek_osszeg} Ft</Text>
                                 </View>
 
                                 {item.befizetesek_kinek !== 1 && (
                                     <View style={styles.schoolPaymentContainer}>
-                                        <Ionicons name="business-outline" size={18} color="#555" />
+                                        <Ionicons name="business-outline" size={18} color="#fff" />
                                         <Text style={styles.schoolPaymentText}>Autósiskolának fizetve</Text>
                                     </View>
                                 )}
@@ -182,28 +192,25 @@ const styles = StyleSheet.create({
         alignItems: 'center',
     },
     title: {
-        fontSize: 28,
+        fontSize: 24,
         fontWeight: 'bold',
         color: '#fff',
         marginBottom: 5,
     },
     subtitle: {
-        fontSize: 18,
-        color: 'rgba(255,255,255,0.9)',
+        fontSize: 16,
+        color: 'rgba(255,255,255,0.8)',
     },
     listContainer: {
         paddingBottom: 20,
     },
     card: {
-        backgroundColor: '#fff',
+        backgroundColor: 'rgba(255, 255, 255, 0.15)',
         borderRadius: 12,
         padding: 16,
         marginBottom: 15,
-        shadowColor: '#000',
-        shadowOffset: { width: 0, height: 2 },
-        shadowOpacity: 0.1,
-        shadowRadius: 4,
-        elevation: 3,
+        borderWidth: 1,
+        borderColor: 'rgba(255,255,255,0.2)',
     },
     cardHeader: {
         flexDirection: 'row',
@@ -212,12 +219,12 @@ const styles = StyleSheet.create({
         marginBottom: 12,
         paddingBottom: 12,
         borderBottomWidth: 1,
-        borderBottomColor: '#f0f0f0',
+        borderBottomColor: 'rgba(255,255,255,0.2)',
     },
     date: {
         fontSize: 16,
         fontWeight: '600',
-        color: '#2c3e50',
+        color: '#fff',
     },
     statusBadge: {
         paddingHorizontal: 10,
@@ -236,7 +243,7 @@ const styles = StyleSheet.create({
     },
     detailText: {
         fontSize: 15,
-        color: '#555',
+        color: '#fff',
         marginLeft: 8,
     },
     schoolPaymentContainer: {
@@ -245,22 +252,24 @@ const styles = StyleSheet.create({
         marginTop: 8,
         paddingTop: 8,
         borderTopWidth: 1,
-        borderTopColor: '#f0f0f0',
+        borderTopColor: 'rgba(255,255,255,0.2)',
     },
     schoolPaymentText: {
         fontSize: 14,
-        color: '#555',
+        color: 'rgba(255,255,255,0.8)',
         marginLeft: 8,
         fontStyle: 'italic',
     },
     confirmButton: {
-        backgroundColor: '#2ecc71',
+        backgroundColor: 'rgba(46, 204, 113, 0.7)',
         flexDirection: 'row',
         alignItems: 'center',
         justifyContent: 'center',
         padding: 10,
         borderRadius: 8,
         marginTop: 10,
+        borderWidth: 1,
+        borderColor: 'rgba(255,255,255,0.3)',
     },
     confirmButtonText: {
         color: '#fff',
@@ -275,7 +284,7 @@ const styles = StyleSheet.create({
     },
     emptyText: {
         fontSize: 18,
-        color: '#fff',
+        color: 'rgba(255,255,255,0.8)',
         marginTop: 16,
         textAlign: 'center',
     },

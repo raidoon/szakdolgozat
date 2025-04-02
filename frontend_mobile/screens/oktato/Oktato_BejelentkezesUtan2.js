@@ -84,7 +84,7 @@ const Oktato_BejelentkezesUtan2 = ({ navigation, route }) => {
           }
           return <Ionicons name={iconName} size={size} color={color} />;
         },
-        tabBarActiveTintColor: "tomato",
+        tabBarActiveTintColor: "green",
         tabBarInactiveTintColor: "gray",
       })}
     >
@@ -101,7 +101,7 @@ const Oktato_BejelentkezesUtan2 = ({ navigation, route }) => {
                   
       <Tab.Screen 
           name="Oktato_Datumok" 
-          options={{title:"Dátumok"}}
+          options={{title:"Időpontok"}}
           children={() => <Oktato_Datumok atkuld={storedData} />} />
 
       <Tab.Screen

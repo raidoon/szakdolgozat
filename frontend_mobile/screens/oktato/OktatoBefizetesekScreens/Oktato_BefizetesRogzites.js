@@ -1,16 +1,86 @@
 import { useEffect, useState } from "react";
-import {Text,TextInput,TouchableOpacity,StyleSheet,ScrollView,View,KeyboardAvoidingView,Platform,} from "react-native";
+import { 
+  Text, 
+  TextInput, 
+  TouchableOpacity, 
+  StyleSheet, 
+  ScrollView, 
+  View, 
+  KeyboardAvoidingView, 
+  Platform, 
+  Modal 
+} from "react-native";
 import { Dropdown } from "react-native-element-dropdown";
 import Ipcim from "../../../Ipcim";
 import DateTimePicker from "@react-native-community/datetimepicker";
-import HibaModal from "../../../extra/HibaModal";
 import { LinearGradient } from "expo-linear-gradient";
+import { useNavigation } from '@react-navigation/native';
 import Ionicons from "@expo/vector-icons/Ionicons";
+
+const CustomAlert = ({ visible, title, message, onClose, type = 'error' }) => {
+  if (!visible) return null;
+
+  const alertConfig = {
+    error: {
+      icon: 'alert-circle',
+      color: '#e74c3c',
+      gradient: ['#e74c3c', '#c0392b'],
+    },
+    success: {
+      icon: 'checkmark-circle',
+      color: '#2ecc71',
+      gradient: ['#2ecc71', '#27ae60'],
+    },
+    info: {
+      icon: 'information-circle',
+      color: '#3498db',
+      gradient: ['#3498db', '#2980b9'],
+    }
+  };
+
+  const config = alertConfig[type] || alertConfig.error;
+
+  return (
+    <Modal
+      transparent={true}
+      visible={visible}
+      animationType="fade"
+      onRequestClose={onClose}
+    >
+      <View style={styles.alertOverlay}>
+        <LinearGradient 
+          colors={config.gradient}
+          start={{ x: 0, y: 0 }}
+          end={{ x: 1, y: 1 }}
+          style={styles.alertContainer}
+        >
+          <View style={styles.alertIconContainer}>
+            <Ionicons name={config.icon} size={48} color="#fff" />
+          </View>
+          
+          <Text style={styles.alertTitle}>{title}</Text>
+          <Text style={styles.alertMessage}>{message}</Text>
+          
+          <TouchableOpacity 
+            style={styles.alertButton}
+            onPress={onClose}
+            activeOpacity={0.8}
+          >
+            <Text style={styles.alertButtonText}>Értem</Text>
+          </TouchableOpacity>
+        </LinearGradient>
+      </View>
+    </Modal>
+  );
+};
 
 export default function Oktato_BefizetesRogzites({ route }) {
   const { atkuld } = route.params;
-  const [hibaModalLathato, setHibaModalLathato] = useState(false);
-  const [hibaModalSzoveg, setHibaModalSzoveg] = useState("");
+  const navigation = useNavigation();
+  const [alertVisible, setAlertVisible] = useState(false);
+  const [alertMessage, setAlertMessage] = useState("");
+  const [alertType, setAlertType] = useState("error");
+  const [alertTitle, setAlertTitle] = useState("Hiba!");
   const [adatTomb, setAdatTomb] = useState([]);
   const [diakTomb, setDiakTomb] = useState([]);
   const [selectedValue, setSelectedValue] = useState(null);
@@ -25,6 +95,14 @@ export default function Oktato_BefizetesRogzites({ route }) {
   const [isDiakFocus, setIsDiakFocus] = useState(false);
 
   useEffect(() => {
+    navigation.setOptions({
+      title: "Befizetés rögzítése",
+      headerShown: true,
+      headerStyle: { backgroundColor: '#1e90ff' },
+      headerTintColor: '#fff',
+      headerTitleAlign: 'center',
+    });
+
     const fetchAdatok = async () => {
       try {
         const response = await fetch(Ipcim.Ipcim + "/valasztTipus");
@@ -35,7 +113,7 @@ export default function Oktato_BefizetesRogzites({ route }) {
       }
     };
     fetchAdatok();
-  }, []);
+  }, [navigation]);
 
   useEffect(() => {
     const fetchDiakok = async () => {
@@ -58,8 +136,7 @@ export default function Oktato_BefizetesRogzites({ route }) {
 
   const felvitel = async () => {
     if (!datum || !oraPerc || !selectedValue || !selectedDiak || !osszeg) {
-      setHibaModalLathato(true);
-      setHibaModalSzoveg('Minden mező kitöltése kötelező!');
+      showAlert('Hiba!', 'Minden mező kitöltése kötelező!', 'error');
       return;
     }
 
@@ -76,7 +153,7 @@ export default function Oktato_BefizetesRogzites({ route }) {
         headers: { "Content-type": "application/json; charset=UTF-8" },
       });
       const text = await response.text();
-      alert("Befizetés sikeresen rögzítve: " + text);
+      showAlert('Siker!', 'Befizetés sikeresen rögzítve!', 'success');
       // Reset form after successful submission
       setSelectedValue(null);
       setSelectedDiak(null);
@@ -85,9 +162,15 @@ export default function Oktato_BefizetesRogzites({ route }) {
       setOsszeg("");
     } catch (error) {
       console.error("Hiba a befizetés rögzítésében:", error);
-      setHibaModalLathato(true);
-      setHibaModalSzoveg('Hiba történt a befizetés rögzítése közben. Kérjük próbálja újra.');
+      showAlert('Hiba!', 'Hiba történt a befizetés rögzítése közben. Kérjük próbálja újra.', 'error');
     }
+  };
+
+  const showAlert = (title, message, type) => {
+    setAlertTitle(title);
+    setAlertMessage(message);
+    setAlertType(type);
+    setAlertVisible(true);
   };
 
   return (
@@ -97,84 +180,67 @@ export default function Oktato_BefizetesRogzites({ route }) {
         style={{ flex: 1 }}
       >
         <ScrollView contentContainerStyle={styles.content}>
-          <View style={styles.header}>
-            <Text style={styles.title}>Új befizetés rögzítése</Text>
-            <Text style={styles.subtitle}>Töltsd ki az alábbi mezőket</Text>
-          </View>
-
           <View style={styles.formContainer}>
-            <Text style={styles.label}>Óratípus</Text>
-            <Dropdown
-              style={[styles.dropdown, isFocus && { borderColor: '#fff' }]}
-              placeholderStyle={styles.placeholderStyle}
-              selectedTextStyle={styles.selectedTextStyle}
-              inputSearchStyle={styles.inputSearchStyle}
-              iconStyle={styles.iconStyle}
-              data={adatTomb}
-              maxHeight={300}
-              labelField="label"
-              valueField="value"
-              placeholder={!isFocus ? 'Válassz típust' : '...'}
-              value={selectedValue}
-              onFocus={() => setIsFocus(true)}
-              onBlur={() => setIsFocus(false)}
-              onChange={item => {
-                setSelectedValue(item.value);
-                setIsFocus(false);
-              }}
-              renderLeftIcon={() => (
-                <Ionicons 
-                  name="school-outline" 
-                  size={20} 
-                  color={isFocus ? '#fff' : '#999'} 
-                  style={styles.icon} 
-                />
-              )}
-            />
-
-            <Text style={styles.label}>Diák</Text>
-            <Dropdown
-              style={[styles.dropdown, isDiakFocus && { borderColor: '#fff' }]}
-              placeholderStyle={styles.placeholderStyle}
-              selectedTextStyle={styles.selectedTextStyle}
-              inputSearchStyle={styles.inputSearchStyle}
-              iconStyle={styles.iconStyle}
-              data={diakTomb}
-              maxHeight={300}
-              labelField="label"
-              valueField="value"
-              placeholder={!isDiakFocus ? 'Válassz diákot' : '...'}
-              value={selectedDiak}
-              onFocus={() => setIsDiakFocus(true)}
-              onBlur={() => setIsDiakFocus(false)}
-              onChange={item => {
-                setSelectedDiak(item.value);
-                setIsDiakFocus(false);
-              }}
-              renderLeftIcon={() => (
-                <Ionicons 
-                  name="person-outline" 
-                  size={20} 
-                  color={isDiakFocus ? '#fff' : '#999'} 
-                  style={styles.icon} 
-                />
-              )}
-            />
-
-            <Text style={styles.label}>Összeg (Ft)</Text>
+            <Text style={styles.label}>Óratípus*</Text>
             <View style={styles.inputContainer}>
-              <Ionicons name="cash-outline" size={20} color="#999" style={styles.inputIcon} />
+              <Ionicons name="school-outline" size={20} color="#fff" style={styles.icon} />
+              <Dropdown
+                style={[styles.dropdown, isFocus && { borderColor: '#fff' }]}
+                placeholderStyle={styles.placeholderStyle}
+                selectedTextStyle={styles.selectedTextStyle}
+                data={adatTomb}
+                maxHeight={300}
+                labelField="label"
+                valueField="value"
+                placeholder="Válassz típust"
+                value={selectedValue}
+                onFocus={() => setIsFocus(true)}
+                onBlur={() => setIsFocus(false)}
+                onChange={item => {
+                  setSelectedValue(item.value);
+                  setIsFocus(false);
+                }}
+              />
+            </View>
+
+            <Text style={styles.label}>Diák*</Text>
+            <View style={styles.inputContainer}>
+              <Ionicons name="person-outline" size={20} color="#fff" style={styles.icon} />
+              <Dropdown
+                style={[styles.dropdown, isDiakFocus && { borderColor: '#fff' }]}
+                placeholderStyle={styles.placeholderStyle}
+                selectedTextStyle={styles.selectedTextStyle}
+                data={diakTomb}
+                search
+                maxHeight={300}
+                labelField="label"
+                valueField="value"
+                placeholder="Válassz diákot"
+                searchPlaceholder="Keresés..."
+                value={selectedDiak}
+                onFocus={() => setIsDiakFocus(true)}
+                onBlur={() => setIsDiakFocus(false)}
+                onChange={item => {
+                  setSelectedDiak(item.value);
+                  setIsDiakFocus(false);
+                }}
+              />
+            </View>
+
+            <Text style={styles.label}>Összeg (Ft)*</Text>
+            <View style={styles.inputContainer}>
+              <Ionicons name="cash-outline" size={20} color="#fff" style={styles.icon} />
               <TextInput
                 style={styles.input}
-                placeholder=" "
-                placeholderTextColor="#999"
+                placeholder="Írd be az összeget"
+                placeholderTextColor="rgba(255,255,255,0.7)"
                 keyboardType="numeric"
                 value={osszeg}
                 onChangeText={setOsszeg}
               />
             </View>
 
-            <Text style={styles.label}>Dátum és idő</Text>
+            <Text style={styles.label}>Dátum és idő*</Text>
             <View style={styles.datetimeContainer}>
               <TouchableOpacity 
                 style={styles.datetimeButton} 
@@ -182,26 +248,26 @@ export default function Oktato_BefizetesRogzites({ route }) {
               >
                 <Ionicons name="calendar-outline" size={20} color="#fff" />
                 <Text style={styles.datetimeButtonText}>
-                  {datum ? datum : 'Dátum'}
+                  {datum || "Válassz dátumot"}
                 </Text>
               </TouchableOpacity>
-
+              
               <TouchableOpacity 
                 style={styles.datetimeButton} 
                 onPress={() => setShowTimePicker(true)}
               >
                 <Ionicons name="time-outline" size={20} color="#fff" />
                 <Text style={styles.datetimeButtonText}>
-                  {oraPerc ? oraPerc : 'Idő'}
+                  {oraPerc || "Válassz időpontot"}
                 </Text>
               </TouchableOpacity>
             </View>
 
             <TouchableOpacity 
               style={[
-                styles.submitButton, 
+                styles.submitButton,
                 (!datum || !oraPerc || !selectedValue || !selectedDiak || !osszeg) && styles.disabledButton
-              ]} 
+              ]}
               onPress={felvitel}
               disabled={!datum || !oraPerc || !selectedValue || !selectedDiak || !osszeg}
             >
@@ -243,12 +309,12 @@ export default function Oktato_BefizetesRogzites({ route }) {
             />
           )}
 
-          <HibaModal
-            visible={hibaModalLathato}
-            onClose={() => setHibaModalLathato(false)}
-            title={'Hiba!'}
-            body={hibaModalSzoveg}
-            buttonText={"Értem"}
+          <CustomAlert
+            visible={alertVisible}
+            onClose={() => setAlertVisible(false)}
+            title={alertTitle}
+            message={alertMessage}
+            type={alertType}
           />
         </ScrollView>
       </KeyboardAvoidingView>
@@ -262,27 +328,15 @@ const styles = StyleSheet.create({
   },
   content: {
     padding: 20,
-    flexGrow: 1,
-  },
-  header: {
-    marginBottom: 30,
-    alignItems: 'center',
-  },
-  title: {
-    fontSize: 26,
-    fontWeight: "bold",
-    color: "#fff",
-    marginBottom: 5,
-  },
-  subtitle: {
-    fontSize: 16,
-    color: "rgba(255,255,255,0.8)",
+    paddingBottom: 40,
   },
   formContainer: {
     backgroundColor: 'rgba(255, 255, 255, 0.15)',
     borderRadius: 20,
     padding: 20,
     marginBottom: 20,
+    borderWidth: 1,
+    borderColor: 'rgba(255,255,255,0.2)',
   },
   label: {
     fontSize: 16,
@@ -290,35 +344,6 @@ const styles = StyleSheet.create({
     marginBottom: 8,
     fontWeight: "600",
     color: "#fff",
-  },
-  dropdown: {
-    height: 50,
-    backgroundColor: "rgba(255, 255, 255, 0.2)",
-    borderColor: 'rgba(255, 255, 255, 0.5)',
-    borderWidth: 1,
-    borderRadius: 12,
-    paddingHorizontal: 15,
-    marginBottom: 15,
-  },
-  placeholderStyle: {
-    fontSize: 16,
-    color: 'rgba(255,255,255,0.7)',
-  },
-  selectedTextStyle: {
-    fontSize: 16,
-    color: '#fff',
-  },
-  inputSearchStyle: {
-    height: 40,
-    fontSize: 16,
-    color: '#fff',
-  },
-  iconStyle: {
-    width: 20,
-    height: 20,
-  },
-  icon: {
-    marginRight: 10,
   },
   inputContainer: {
     flexDirection: 'row',
@@ -329,16 +354,28 @@ const styles = StyleSheet.create({
     borderRadius: 12,
     paddingHorizontal: 15,
     marginBottom: 15,
-    height: 50,
   },
-  inputIcon: {
+  icon: {
     marginRight: 10,
+  },
+  dropdown: {
+    flex: 1,
+    height: 50,
+    color: '#fff',
   },
   input: {
     flex: 1,
+    height: 50,
     color: '#fff',
     fontSize: 16,
-    height: 50,
+  },
+  placeholderStyle: {
+    fontSize: 16,
+    color: 'rgba(255,255,255,0.7)',
+  },
+  selectedTextStyle: {
+    fontSize: 16,
+    color: '#fff',
   },
   datetimeContainer: {
     flexDirection: 'row',
@@ -380,12 +417,66 @@ const styles = StyleSheet.create({
     elevation: 5,
   },
   disabledButton: {
-    backgroundColor: '#7f8c8d',
-    opacity: 0.7,
+    backgroundColor: '#95a5a6',
   },
   submitButtonText: {
     color: "white",
     fontSize: 18,
     fontWeight: "bold",
+  },
+  // Alert styles
+  alertOverlay: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: 'rgba(0,0,0,0.5)',
+    padding: 20,
+  },
+  alertContainer: {
+    width: '100%',
+    borderRadius: 20,
+    padding: 25,
+    alignItems: 'center',
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.3,
+    shadowRadius: 10,
+    elevation: 5,
+  },
+  alertIconContainer: {
+    backgroundColor: 'rgba(255,255,255,0.2)',
+    width: 80,
+    height: 80,
+    borderRadius: 40,
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginBottom: 15,
+  },
+  alertTitle: {
+    fontSize: 22,
+    fontWeight: 'bold',
+    color: '#fff',
+    marginBottom: 10,
+    textAlign: 'center',
+  },
+  alertMessage: {
+    fontSize: 16,
+    color: 'rgba(255,255,255,0.9)',
+    textAlign: 'center',
+    marginBottom: 25,
+    lineHeight: 22,
+  },
+  alertButton: {
+    backgroundColor: 'rgba(255,255,255,0.3)',
+    paddingVertical: 12,
+    paddingHorizontal: 35,
+    borderRadius: 30,
+    borderWidth: 1,
+    borderColor: 'rgba(255,255,255,0.5)',
+  },
+  alertButtonText: {
+    color: '#fff',
+    fontSize: 16,
+    fontWeight: '600',
   },
 });

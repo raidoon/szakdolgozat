@@ -3,6 +3,7 @@ import { View, Text, TouchableOpacity, FlatList, StyleSheet, RefreshControl } fr
 import { useNavigation } from '@react-navigation/native';
 import Ipcim from "../../Ipcim";
 import Ionicons from '@expo/vector-icons/Ionicons';
+import { LinearGradient } from 'expo-linear-gradient';
 
 export default function Oktato_Kezdolap({ atkuld }) {
   const [adatok, setAdatok] = useState([]);
@@ -60,69 +61,91 @@ export default function Oktato_Kezdolap({ atkuld }) {
 
   return (
     <View style={styles.container}>
+      <LinearGradient colors={['#f5f7fa', '#e4f2fe']} style={styles.background} />
+      
       {/* Header */}
-      <View style={styles.header}>
-        <Text style={styles.headerCim}>Üdvözlünk</Text>
-        <Text style={styles.oktatoNev}>{atkuld?.oktato_neve || "Kedves Oktató"}</Text>
+      <View >
+        <Text style={styles.welcomeText}>Üdvözlünk</Text>
+        <Text style={styles.teacherName}>{atkuld?.oktato_neve || "Kedves Oktató"}</Text>
+        <View style={styles.headerDivider} />
       </View>
 
       <FlatList
         data={adatok}
-        
         keyExtractor={(item) => item.id.toString()}
-        
         refreshControl={
-          <RefreshControl refreshing={refreshing} onRefresh={onRefresh} colors={["#4CAF50"]} />
+          <RefreshControl 
+            refreshing={refreshing} 
+            onRefresh={onRefresh} 
+            tintColor="#4CAF50"
+            colors={["#4CAF50"]} 
+          />
         }
+        style={styles.list}
       />
 
-      {/* Kártyák */}
-      <View style={styles.kartyaContainer}>
-        {/* Következő óra kártya */}
+      {/* Cards Section */}
+      <View style={styles.cardsContainer}>
+        {/* Next Lesson Card */}
         <TouchableOpacity 
-          style={[styles.Kartyak, styles.kovetkezoOraKartya]}
+          style={styles.card}
           onPress={() => navigation.navigate("Oktato_KovetkezoOra", { atkuld })}
         >
-          <View style={styles.kartyaContent}>
-            <View>
-              <Text style={styles.kartyaLabel}>Következő óra</Text>
-              <Text style={styles.kartyaValue}>
+          <LinearGradient
+            colors={['#4CAF50', '#2E7D32']}
+            style={styles.cardGradient}
+            start={{ x: 0, y: 0 }}
+            end={{ x: 1, y: 1 }}
+          >
+            <Ionicons name="time" size={28} color="white" style={styles.cardIcon} />
+            <View style={styles.cardText}>
+              <Text style={styles.cardTitle}>Következő óra</Text>
+              <Text style={styles.cardSubtitle}>
                 {kovetkezoOra ? formatDateTime(kovetkezoOra) : "Nincs rögzített óra"}
               </Text>
             </View>
-            <Ionicons name="chevron-forward" size={24} color="#4CAF50" />
-          </View>
-          <View style={styles.zold} />
+            <Ionicons name="chevron-forward" size={24} color="white" />
+          </LinearGradient>
         </TouchableOpacity>
 
-        {/* Órák kártya */}
+        {/* Lessons Management Card */}
         <TouchableOpacity
-          style={[styles.Kartyak, styles.orakKartya]}
+          style={styles.card}
           onPress={() => navigation.navigate("Oktato_MegerositesrevaroOrak", { atkuld })}
         >
-          <View style={styles.kartyaContent}>
-            <View>
-              <Text style={styles.kartyaLabel}>Órák</Text>
-              <Text style={styles.kartyaValue}>Módosítható órák</Text>
+          <LinearGradient
+            colors={['#2196F3', '#1565C0']}
+            style={styles.cardGradient}
+            start={{ x: 0, y: 0 }}
+            end={{ x: 1, y: 1 }}
+          >
+            <Ionicons name="calendar" size={28} color="white" style={styles.cardIcon} />
+            <View style={styles.cardText}>
+              <Text style={styles.cardTitle}>Órák kezelése</Text>
+              <Text style={styles.cardSubtitle}>Frissítendő órák</Text>
             </View>
-            
-          </View>
-          <View style={styles.kek} />
+            <Ionicons name="chevron-forward" size={24} color="white" />
+          </LinearGradient>
         </TouchableOpacity>
 
-        {/* Pénz kártya*/}
+        {/* Payments Card */}
         <TouchableOpacity
-          style={[styles.Kartyak, styles.penzKartya]}
+          style={styles.card}
           onPress={() => navigation.navigate("Oktato_MegerositBefizetes", { atkuld })}
         >
-          <View style={styles.kartyaContent}>
-            <View>
-              <Text style={styles.kartyaLabel}>Befizetések</Text>
-              <Text style={styles.kartyaValue}>Befizetések jóváhagyása</Text>
+          <LinearGradient
+            colors={['#00796B', '#00796B']}
+            style={styles.cardGradient}
+            start={{ x: 0, y: 0 }}
+            end={{ x: 1, y: 1 }}
+          >
+            <Ionicons name="cash" size={28} color="white" style={styles.cardIcon} />
+            <View style={styles.cardText}>
+              <Text style={styles.cardTitle}>Befizetések</Text>
+              <Text style={styles.cardSubtitle}>Jóváhagyásra vár</Text>
             </View>
-            
-          </View>
-          <View style={styles.zoldeskek} />
+            <Ionicons name="chevron-forward" size={24} color="white" />
+          </LinearGradient>
         </TouchableOpacity>
       </View>
     </View>
@@ -132,104 +155,82 @@ export default function Oktato_Kezdolap({ atkuld }) {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#F8FDFF',
-    paddingHorizontal: 16,
+  },
+  background: {
+    position: 'absolute',
+    left: 0,
+    right: 0,
+    top: 0,
+    bottom: 0,
   },
   header: {
-    paddingTop: 40,
-    paddingBottom: 20,
-    backgroundColor: '#FFFFFF',
-    borderBottomLeftRadius: 20,
-    borderBottomRightRadius: 20,
-    marginBottom: 15,
-    shadowColor: '#E1F5FE',
-    shadowOffset: { width: 0, height: 4 },
+    padding: 24,
+    backgroundColor: 'white',
+    borderBottomLeftRadius: 16,
+    borderBottomRightRadius: 16,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.1,
-    shadowRadius: 6,
+    shadowRadius: 8,
     elevation: 3,
+    marginBottom: 16,
   },
-  headerCim: {
-    fontSize: 22,
-    color: '#78909C',
+  welcomeText: {
+    padding:20,
+    fontSize: 18,
+    color: '#607D8B',
     textAlign: 'center',
-    fontFamily: 'Inter-Medium',
   },
-  oktatoNev: {
-    fontSize: 26,
-    color: '#00796B',
+  teacherName: {
+    fontSize: 24,
+    fontWeight: 'bold',
+    color: '#263238',
     textAlign: 'center',
-    fontFamily: 'Inter-Bold',
-    marginTop: 5,
+    marginTop: 4,
   },
-  kartyaContainer: {
-    marginBottom: 15,
+  headerDivider: {
+    height: 2,
+    backgroundColor: '#E2E8F0',
+    marginVertical: 12,
+    width: '40%',
+    alignSelf: 'center'
   },
-  Kartyak: {
-    backgroundColor: '#FFFFFF',
-    borderRadius: 16,
-    padding: 20,
-    marginBottom: 12,
-    shadowColor: '#B2DFDB',
+  list: {
+    flex: 1,
+    paddingHorizontal: 16,
+  },
+  cardsContainer: {
+    padding: 16,
+  },
+  card: {
+    borderRadius: 12,
+    marginBottom: 16,
+    shadowColor: '#000',
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.1,
     shadowRadius: 6,
-    elevation: 2,
-    position: 'relative',
+    elevation: 3,
     overflow: 'hidden',
   },
-  kovetkezoOraKartya: {
-    borderLeftWidth: 5,
-    borderLeftColor: '#4CAF50',
-  },
-  orakKartya: {
-    borderLeftWidth: 5,
-    borderLeftColor: '#2196F3',
-  },
-  penzKartya: {
-    borderLeftWidth: 5,
-    borderLeftColor: '#00838F',
-  },
-  kartyaContent: {
+  cardGradient: {
+    padding: 20,
     flexDirection: 'row',
-    justifyContent: 'space-between',
     alignItems: 'center',
-    width: '100%',
   },
-  kartyaLabel: {
-    fontSize: 14,
-    color: '#78909C',
-    fontFamily: 'Inter-Medium',
-    marginBottom: 5,
+  cardIcon: {
+    marginRight: 16,
   },
-  kartyaValue: {
+  cardText: {
+    flex: 1,
+  },
+  cardTitle: {
     fontSize: 18,
-    fontFamily: 'Inter-SemiBold',
+    fontWeight: 'bold',
+    color: 'white',
   },
-  zold: {
-    position: 'absolute',
-    width: 80,
-    height: 80,
-    borderRadius: 40,
-    backgroundColor: 'rgba(76, 175, 80, 0.1)',
-    right: -20,
-    top: -20,
+  cardSubtitle: {
+    fontSize: 14,
+    color: 'rgba(255,255,255,0.8)',
+    marginTop: 4,
   },
-  kek: {
-    position: 'absolute',
-    width: 80,
-    height: 80,
-    borderRadius: 40,
-    backgroundColor: 'rgba(33, 150, 243, 0.1)',
-    right: -20,
-    top: -20,
-  },
-  zoldeskek: {
-    position: 'absolute',
-    width: 80,
-    height: 80,
-    borderRadius: 40,
-    backgroundColor: 'rgba(0, 131, 143, 0.1)',
-    right: -20,
-    top: -20,
-  }
 });

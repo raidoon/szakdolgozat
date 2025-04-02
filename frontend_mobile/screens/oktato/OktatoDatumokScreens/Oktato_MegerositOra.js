@@ -6,9 +6,10 @@ import {
   FlatList, 
   TouchableOpacity, 
   Modal, 
-  Alert, 
-  ActivityIndicator 
+  ActivityIndicator,
+  Pressable
 } from "react-native";
+import { useNavigation } from '@react-navigation/native';
 import Ipcim from "../../../Ipcim";
 import { LinearGradient } from "expo-linear-gradient";
 import Ionicons from "@expo/vector-icons/Ionicons";
@@ -20,6 +21,134 @@ export default function Oktato_MegerositOra({ route }) {
     const [isModalVisible, setModalVisible] = useState(false);
     const [selectedOraId, setSelectedOraId] = useState(null);
     const [isLoading, setIsLoading] = useState(true);
+    const [alertVisible, setAlertVisible] = useState(false);
+    const [alertTitle, setAlertTitle] = useState("");
+    const [alertMessage, setAlertMessage] = useState("");
+    const [alertType, setAlertType] = useState("");
+    const [confirmAlertVisible, setConfirmAlertVisible] = useState(false);
+    const [confirmAction, setConfirmAction] = useState(null);
+    const [confirmData, setConfirmData] = useState(null);
+    const navigation = useNavigation();
+
+    const CustomAlert = ({ visible, title, message, type, onClose, onConfirm }) => {
+        if (!visible) return null;
+    
+        const alertStyles = {
+            success: {
+                backgroundColor: '#4CAF50',
+                icon: 'checkmark-circle',
+                iconColor: '#fff',
+                buttonLayout: 'center'
+            },
+            error: {
+                backgroundColor: '#f44336',
+                icon: 'alert-circle',
+                iconColor: '#fff',
+                buttonLayout: 'center'
+            },
+            confirm: {
+                backgroundColor: '#FFA000',
+                icon: 'help-circle',
+                iconColor: '#fff',
+                buttonLayout: 'row'
+            }
+        };
+    
+        const currentStyle = alertStyles[type] || alertStyles.error;
+
+        
+
+        return (
+            <Modal
+                transparent={true}
+                animationType="fade"
+                visible={visible}
+                onRequestClose={onClose}
+            >
+                <View style={styles.alertOverlay}>
+                    <View style={[styles.alertContainer, { backgroundColor: currentStyle.backgroundColor }]}>
+                        <Ionicons 
+                            name={currentStyle.icon} 
+                            size={36} 
+                            color={currentStyle.iconColor} 
+                            style={styles.alertIcon}
+                        />
+                        <Text style={styles.alertTitle}>{title}</Text>
+                        <Text style={styles.alertMessage}>{message}</Text>
+                        <View style={[
+                            styles.alertButtonContainer, 
+                            { flexDirection: currentStyle.buttonLayout === 'center' ? 'column' : 'row' }
+                        ]}>
+                            {type === 'confirm' && (
+                                <Pressable
+                                    style={[styles.alertButton, styles.cancelButton]}
+                                    onPress={onClose}
+                                >
+                                    <Text style={styles.alertButtonText}>Mégsem</Text>
+                                </Pressable>
+                            )}
+                            <Pressable
+                                style={[
+                                    styles.alertButton, 
+                                    type === 'confirm' ? styles.confirmButton : styles.singleButton
+                                ]}
+                                onPress={type === 'confirm' ? onConfirm : onClose}
+                            >
+                                <Text style={styles.alertButtonText}>OK</Text>
+                            </Pressable>
+                        </View>
+                    </View>
+                </View>
+            </Modal>
+        );
+    };
+
+    const showAlert = (title, message, type) => {
+        setAlertTitle(title);
+        setAlertMessage(message);
+        setAlertType(type);
+        setAlertVisible(true);
+    };
+
+    const showConfirmAlert = (title, message, action, data) => {
+        setAlertTitle(title);
+        setAlertMessage(message);
+        setAlertType('confirm');
+        setConfirmAction(() => action);
+        setConfirmData(data);
+        setConfirmAlertVisible(true);
+    };
+
+    const handleConfirm = () => {
+        if (confirmAction) {
+            confirmAction(confirmData);
+        }
+        setConfirmAlertVisible(false);
+    };
+
+    const hideAlert = () => {
+        setAlertVisible(false);
+        if (alertType === 'success') {
+            letoltes();
+        }
+    };
+
+    const hideConfirmAlert = () => {
+        setConfirmAlertVisible(false);
+    };
+
+    useEffect(() => {
+        navigation.setOptions({
+            title: "Órák jóváhagyása",
+            headerShown: true,
+            headerStyle: { backgroundColor: '#1e90ff' },
+            headerTintColor: '#fff',
+            headerTitleAlign: 'center',
+        });
+
+        letoltes();
+        frissitOraAllapot();
+    }, [navigation]);
 
     const letoltes = async () => {
         setIsLoading(true);
@@ -38,7 +167,7 @@ export default function Oktato_MegerositOra({ route }) {
             }
         } catch (error) {
             console.error("Hiba:", error);
-            Alert.alert("Hiba", "Nem sikerült az adatok letöltése.");
+            showAlert("Hiba", "Nem sikerült az adatok letöltése.", "error");
         } finally {
             setIsLoading(false);
         }
@@ -61,37 +190,42 @@ export default function Oktato_MegerositOra({ route }) {
             letoltes();
         } catch (error) {
             console.error("Hiba az óra állapot frissítésében:", error);
-            Alert.alert("Hiba", "Nem sikerült frissíteni az óra állapotát.");
+            showAlert("Hiba", "Nem sikerült frissíteni az óra állapotát.", "error");
         }
     };
 
-    useEffect(() => {
-        letoltes();
-        frissitOraAllapot();
-    }, []);
-
     const confirmTorles = (ora_id) => {
-        setSelectedOraId(ora_id);
-        setModalVisible(true);
+        showConfirmAlert(
+            "Óra törlése",
+            "Biztosan törölni szeretnéd ezt az órát?",
+            torolOra,
+            ora_id
+        );
     };
 
-    const torolOra = async () => {
+    const torolOra = async (ora_id) => {
         try {
             const response = await fetch(`${Ipcim.Ipcim}/oraTorles`, {
                 method: "DELETE",
-                body: JSON.stringify({ ora_id: selectedOraId }),
+                body: JSON.stringify({ ora_id: ora_id }),
                 headers: { "Content-type": "application/json; charset=UTF-8" }
             });
             if (!response.ok) throw new Error(`Hiba: ${response.statusText}`);
             const data = await response.json();
-            Alert.alert("Siker", data.message);
-            letoltes();
+            showAlert("Siker", data.message, "success");
         } catch (error) {
             console.error("Hiba:", error);
-            Alert.alert("Hiba", "Nem sikerült törölni az órát.");
-        } finally {
-            setModalVisible(false);
+            showAlert("Hiba", "Nem sikerült törölni az órát.", "error");
         }
+    };
+
+    const confirmTeljesitOra = (ora_id) => {
+        showConfirmAlert(
+            "Óra teljesítése",
+            "Biztosan jóváhagyod ezt az órát?",
+            teljesitOra,
+            ora_id
+        );
     };
 
     const teljesitOra = async (ora_id) => {
@@ -103,18 +237,17 @@ export default function Oktato_MegerositOra({ route }) {
             });
             if (!response.ok) throw new Error(`Hiba: ${response.statusText}`);
             const data = await response.json();
-            Alert.alert("Siker", data.message);
-            letoltes();
+            showAlert("Siker", data.message, "success");
         } catch (error) {
             console.error("Hiba:", error);
-            Alert.alert("Hiba", "Nem sikerült frissíteni az órát.");
+            showAlert("Hiba", "Nem sikerült frissíteni az órát.", "error");
         }
     };
 
     if (isLoading) {
         return (
-            <LinearGradient colors={['#E3F2FD', '#E8F5E9']} style={styles.loadingContainer}>
-                <ActivityIndicator size="large" color="#4a90e2" />
+            <LinearGradient colors={['#1e90ff', '#00bfff']} style={styles.loadingContainer}>
+                <ActivityIndicator size="large" color="#fff" />
             </LinearGradient>
         );
     }
@@ -132,22 +265,22 @@ export default function Oktato_MegerositOra({ route }) {
 
     const getStatusColor = (status) => {
         switch(status) {
-            case 0: return '#FFA000'; // Pending - amber
-            case 1: return '#4CAF50'; // Completed - green
-            case 2: return '#2196F3'; // Modifiable - blue
+            case 0: return '#FFA000';
+            case 1: return '#4CAF50';
+            case 2: return '#2196F3';
             default: return '#9E9E9E';
         }
     };
 
     return (
-        <LinearGradient colors={['#E3F2FD', '#E8F5E9']} style={styles.container}>
+        <LinearGradient colors={['#1e90ff', '#00bfff']} style={styles.container}>
             <FlatList
                 data={adatok}
                 keyExtractor={(item) => item.ora_id.toString()}
                 ListHeaderComponent={() => (
                     <View style={styles.headerContainer}>
-                        <Text style={styles.header}>Óra állapotok</Text>
                         <Text style={styles.studentName}>{tanulo.tanulo_neve}</Text>
+                        <Text style={styles.subHeader}>Óraállapotok kezelése</Text>
                     </View>
                 )}
                 contentContainerStyle={styles.listContent}
@@ -167,7 +300,7 @@ export default function Oktato_MegerositOra({ route }) {
                         </View>
 
                         <View style={styles.infoRow}>
-                            <Ionicons name="book-outline" size={18} color="#4a90e2" />
+                            <Ionicons name="book-outline" size={18} color="#fff" />
                             <Text style={styles.infoText}>{item.oratipus_neve}</Text>
                         </View>
 
@@ -185,7 +318,7 @@ export default function Oktato_MegerositOra({ route }) {
                                 <>
                                     <TouchableOpacity
                                         style={[styles.button, styles.completeButton]}
-                                        onPress={() => teljesitOra(item.ora_id)}
+                                        onPress={() => confirmTeljesitOra(item.ora_id)}
                                     >
                                         <Ionicons name="checkmark-circle-outline" size={18} color="#fff" />
                                         <Text style={styles.buttonText}> Teljesít</Text>
@@ -204,39 +337,28 @@ export default function Oktato_MegerositOra({ route }) {
                 )}
                 ListEmptyComponent={
                     <View style={styles.emptyContainer}>
-                        <Ionicons name="calendar-outline" size={48} color="#bdc3c7" />
+                        <Ionicons name="calendar-outline" size={48} color="rgba(255,255,255,0.7)" />
                         <Text style={styles.emptyText}>Nincs rögzített óra</Text>
                     </View>
                 }
             />
 
-            <Modal
-                transparent={true}
-                visible={isModalVisible}
-                animationType="fade"
-                onRequestClose={() => setModalVisible(false)}
-            >
-                <View style={styles.modalOverlay}>
-                    <View style={styles.modalContent}>
-                        <Ionicons name="warning-outline" size={48} color="#FFA000" style={styles.modalIcon} />
-                        <Text style={styles.modalText}>Biztosan törölni szeretnéd az órát?</Text>
-                        <View style={styles.modalButtonsContainer}>
-                            <TouchableOpacity
-                                style={[styles.modalButton, styles.cancelButton]}
-                                onPress={() => setModalVisible(false)}
-                            >
-                                <Text style={styles.modalButtonText}>Mégsem</Text>
-                            </TouchableOpacity>
-                            <TouchableOpacity
-                                style={[styles.modalButton, styles.confirmDeleteButton]}
-                                onPress={torolOra}
-                            >
-                                <Text style={styles.modalButtonText}>Törlés</Text>
-                            </TouchableOpacity>
-                        </View>
-                    </View>
-                </View>
-            </Modal>
+            <CustomAlert
+                visible={alertVisible}
+                title={alertTitle}
+                message={alertMessage}
+                type={alertType}
+                onClose={hideAlert}
+            />
+
+            <CustomAlert
+                visible={confirmAlertVisible}
+                title={alertTitle}
+                message={alertMessage}
+                type="confirm"
+                onClose={hideConfirmAlert}
+                onConfirm={handleConfirm}
+            />
         </LinearGradient>
     );
 }
@@ -253,34 +375,29 @@ const styles = StyleSheet.create({
     headerContainer: {
         padding: 20,
         paddingBottom: 10,
-    },
-    header: {
-        fontSize: 24,
-        fontWeight: "600",
-        color: "#2c3e50",
-        textAlign: "center",
-        marginBottom: 5,
+        alignItems: 'center'
     },
     studentName: {
-        fontSize: 18,
-        color: "#4a90e2",
-        textAlign: "center",
-        fontWeight: "500",
+        fontSize: 22,
+        fontWeight: '600',
+        color: '#fff',
+        marginBottom: 5,
+    },
+    subHeader: {
+        fontSize: 16,
+        color: 'rgba(255,255,255,0.8)',
     },
     listContent: {
         paddingBottom: 20,
     },
     card: {
-        backgroundColor: "#fff",
+        backgroundColor: 'rgba(255, 255, 255, 0.15)',
         borderRadius: 12,
         padding: 16,
         marginHorizontal: 16,
         marginVertical: 8,
-        shadowColor: "#000",
-        shadowOffset: { width: 0, height: 2 },
-        shadowOpacity: 0.1,
-        shadowRadius: 4,
-        elevation: 3,
+        borderWidth: 1,
+        borderColor: 'rgba(255,255,255,0.2)',
     },
     cardHeader: {
         flexDirection: "row",
@@ -289,12 +406,12 @@ const styles = StyleSheet.create({
         marginBottom: 12,
         paddingBottom: 12,
         borderBottomWidth: 1,
-        borderBottomColor: "#f0f0f0",
+        borderBottomColor: 'rgba(255,255,255,0.2)',
     },
     lessonDate: {
         fontSize: 16,
         fontWeight: "600",
-        color: "#2c3e50",
+        color: "#fff",
     },
     statusPill: {
         paddingHorizontal: 10,
@@ -313,7 +430,7 @@ const styles = StyleSheet.create({
     },
     infoText: {
         fontSize: 15,
-        color: "#34495e",
+        color: "#fff",
         marginLeft: 8,
     },
     buttonContainer: {
@@ -328,15 +445,17 @@ const styles = StyleSheet.create({
         paddingHorizontal: 12,
         borderRadius: 8,
         marginLeft: 8,
+        borderWidth: 1,
+        borderColor: 'rgba(255,255,255,0.3)',
     },
     deleteButton: {
-        backgroundColor: "#f44336",
+        backgroundColor: "rgba(244, 67, 54, 0.7)",
     },
     completeButton: {
-        backgroundColor: "#4CAF50",
+        backgroundColor: "rgba(76, 175, 80, 0.7)",
     },
     rejectButton: {
-        backgroundColor: "#FFA000",
+        backgroundColor: "rgba(255, 160, 0, 0.7)",
     },
     buttonText: {
         color: "#fff",
@@ -350,51 +469,74 @@ const styles = StyleSheet.create({
     },
     emptyText: {
         fontSize: 16,
-        color: "#7f8c8d",
+        color: "rgba(255,255,255,0.8)",
         marginTop: 16,
         textAlign: "center",
     },
-    modalOverlay: {
+    // Alert styles
+    alertOverlay: {
         flex: 1,
         justifyContent: "center",
         alignItems: "center",
         backgroundColor: "rgba(0, 0, 0, 0.5)",
     },
-    modalContent: {
-        backgroundColor: "#fff",
-        padding: 24,
-        borderRadius: 12,
+    alertContainer: {
         width: "80%",
+        borderRadius: 16,
+        padding: 24,
         alignItems: "center",
+        shadowColor: "#000",
+        shadowOffset: { width: 0, height: 4 },
+        shadowOpacity: 0.3,
+        shadowRadius: 8,
+        elevation: 5,
     },
-    modalIcon: {
+    alertIcon: {
         marginBottom: 16,
     },
-    modalText: {
-        fontSize: 18,
-        color: "#333",
+    alertTitle: {
+        fontSize: 20,
+        fontWeight: "bold",
+        color: "#fff",
+        marginBottom: 8,
         textAlign: "center",
-        marginBottom: 24,
     },
-    modalButtonsContainer: {
+    alertMessage: {
+        fontSize: 16,
+        color: "#fff",
+        marginBottom: 24,
+        textAlign: "center",
+    },
+    confirmButtonContainer: {
         flexDirection: "row",
         justifyContent: "space-between",
         width: "100%",
     },
-    modalButton: {
-        padding: 12,
+    alertButton: {
+        backgroundColor: "#fff",
         borderRadius: 8,
-        width: "45%",
-        alignItems: "center",
+        paddingVertical: 12,
+        paddingHorizontal: 24,
+        elevation: 2,
+        marginHorizontal: 8,
     },
     cancelButton: {
         backgroundColor: "#b0bec5",
     },
-    confirmDeleteButton: {
-        backgroundColor: "#f44336",
+    confirmButton: {
+        backgroundColor: "#4CAF50",
     },
-    modalButtonText: {
-        color: "#fff",
-        fontWeight: "500",
+    alertButtonText: {
+        color: "#1e90ff",
+        fontSize: 16,
+        fontWeight: "600",
+    },
+    alertButtonContainer: {
+        width: '100%',
+        justifyContent: 'space-between',
+    },
+    singleButton: {
+        alignSelf: 'center',
+        width: '25%',
     },
 });

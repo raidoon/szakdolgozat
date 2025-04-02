@@ -7,7 +7,8 @@ import {
   ScrollView,
   View,
   ActivityIndicator,
-  Alert
+  Modal,
+  Pressable
 } from "react-native";
 import { Dropdown } from "react-native-element-dropdown";
 import Ipcim from "../../../Ipcim";
@@ -32,23 +33,84 @@ export default function Oktato_OraRogzites({ route }) {
   const [isFocus, setIsFocus] = useState(false);
   const [isFocusDiak, setIsFocusDiak] = useState(false);
   const [loading, setLoading] = useState(true);
+  const [alertVisible, setAlertVisible] = useState(false);
+  const [alertTitle, setAlertTitle] = useState("");
+  const [alertMessage, setAlertMessage] = useState("");
+  const [alertType, setAlertType] = useState(""); // 'success' or 'error'
 
   const isFormValid = datum && ido && selectedValue && selectedDiak;
 
+  // Custom Alert Component
+  const CustomAlert = ({ visible, title, message, type, onClose }) => {
+    if (!visible) return null;
+
+    const backgroundColor = type === 'success' ? '#2ecc71' : '#e74c3c';
+
+    return (
+      <Modal
+        transparent={true}
+        animationType="fade"
+        visible={visible}
+        onRequestClose={onClose}
+      >
+        <View style={styles.alertOverlay}>
+          <View style={[styles.alertContainer, { backgroundColor }]}>
+            <Ionicons 
+              name={type === 'success' ? "checkmark-circle" : "alert-circle"} 
+              size={40} 
+              color="#fff" 
+              style={styles.alertIcon}
+            />
+            <Text style={styles.alertTitle}>{title}</Text>
+            <Text style={styles.alertMessage}>{message}</Text>
+            <Pressable
+              style={styles.alertButton}
+              onPress={onClose}
+            >
+              <Text style={styles.alertButtonText}>OK</Text>
+            </Pressable>
+          </View>
+        </View>
+      </Modal>
+    );
+  };
+
+  const showAlert = (title, message, type) => {
+    setAlertTitle(title);
+    setAlertMessage(message);
+    setAlertType(type);
+    setAlertVisible(true);
+  };
+
+  const hideAlert = () => {
+    setAlertVisible(false);
+    if (alertType === 'success') {
+      navigation.goBack();
+    }
+  };
+
   useEffect(() => {
+    navigation.setOptions({
+      title: "Új óra rögzítése",
+      headerShown: true,
+      headerStyle: { backgroundColor: '#1e90ff' },
+      headerTintColor: '#fff',
+      headerTitleAlign: 'center',
+    });
+
     const fetchAdatok = async () => {
       try {
         setLoading(true);
         await Promise.all([fetchTipusok(), fetchDiakok()]);
       } catch (error) {
         console.error("Error loading data:", error);
-        Alert.alert("Hiba", "Nem sikerült betölteni az adatokat");
+        showAlert("Hiba", "Nem sikerült betölteni az adatokat", "error");
       } finally {
         setLoading(false);
       }
     };
     fetchAdatok();
-  }, []);
+  }, [navigation]);
 
   const fetchTipusok = async () => {
     const response = await fetch(Ipcim.Ipcim + "/valasztTipus");
@@ -69,7 +131,10 @@ export default function Oktato_OraRogzites({ route }) {
   };
 
   const felvitel = async () => {
-    if (!isFormValid) return;
+    if (!isFormValid) {
+      showAlert("Hiányzó adatok", "Minden kötelező mezőt ki kell tölteni!", "error");
+      return;
+    }
 
     try {
       const adatok = {
@@ -89,16 +154,15 @@ export default function Oktato_OraRogzites({ route }) {
       const text = await response.text();
 
       if (response.status === 400) {
-        Alert.alert("Hiba", text);
+        showAlert("Hiba", text, "error");
       } else if (response.ok) {
-        Alert.alert("Siker", "Óra sikeresen rögzítve!");
-        navigation.goBack();
+        showAlert("Siker", "Óra sikeresen rögzítve!", "success");
       } else {
-        throw new Error("Unknown error occurred");
+        throw new Error("Ismeretlen hiba");
       }
     } catch (error) {
       console.error("Hiba az óra rögzítésében:", error);
-      Alert.alert("Hiba", "Hiba az óra rögzítésében. Kérjük, próbálja újra.");
+      showAlert("Hiba", "Hiba az óra rögzítésében. Kérjük, próbálja újra.", "error");
     }
   };
 
@@ -132,11 +196,6 @@ export default function Oktato_OraRogzites({ route }) {
   return (
     <LinearGradient colors={['#1e90ff', '#00bfff']} style={styles.container}>
       <ScrollView contentContainerStyle={styles.content}>
-        <View style={styles.header}>
-          <Text style={styles.title}>Új óra rögzítése</Text>
-          <Text style={styles.subtitle}>Töltsd ki az alábbi űrlapot</Text>
-        </View>
-
         <View style={styles.formContainer}>
           <Text style={styles.label}>Óratípus*</Text>
           <View style={styles.inputContainer}>
@@ -247,6 +306,14 @@ export default function Oktato_OraRogzites({ route }) {
             <Ionicons name="save-outline" size={20} /> Óra rögzítése
           </Text>
         </TouchableOpacity>
+
+        <CustomAlert
+          visible={alertVisible}
+          title={alertTitle}
+          message={alertMessage}
+          type={alertType}
+          onClose={hideAlert}
+        />
       </ScrollView>
     </LinearGradient>
   );
@@ -264,20 +331,6 @@ const styles = StyleSheet.create({
   content: {
     padding: 20,
     paddingBottom: 40,
-  },
-  header: {
-    marginBottom: 25,
-    alignItems: 'center',
-  },
-  title: {
-    fontSize: 24,
-    fontWeight: 'bold',
-    color: '#fff',
-    marginBottom: 5,
-  },
-  subtitle: {
-    fontSize: 16,
-    color: 'rgba(255,255,255,0.8)',
   },
   formContainer: {
     backgroundColor: 'rgba(255, 255, 255, 0.15)',
@@ -362,5 +415,48 @@ const styles = StyleSheet.create({
     fontSize: 18,
     fontWeight: 'bold',
     marginLeft: 8,
+  },
+  // Alert styles
+  alertOverlay: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: 'rgba(0, 0, 0, 0.5)',
+    padding: 20,
+  },
+  alertContainer: {
+    width: '100%',
+    borderRadius: 20,
+    padding: 25,
+    alignItems: 'center',
+  },
+  alertIcon: {
+    marginBottom: 15,
+  },
+  alertTitle: {
+    fontSize: 22,
+    fontWeight: 'bold',
+    color: '#fff',
+    marginBottom: 10,
+    textAlign: 'center',
+  },
+  alertMessage: {
+    fontSize: 16,
+    color: '#fff',
+    marginBottom: 20,
+    textAlign: 'center',
+  },
+  alertButton: {
+    backgroundColor: '#fff',
+    borderRadius: 10,
+    paddingVertical: 12,
+    paddingHorizontal: 30,
+    elevation: 2,
+  },
+  alertButtonText: {
+    color: '#1e90ff',
+    fontSize: 16,
+    fontWeight: 'bold',
+    textAlign: 'center',
   },
 });

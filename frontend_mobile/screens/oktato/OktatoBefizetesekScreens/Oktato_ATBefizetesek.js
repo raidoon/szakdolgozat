@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { View, Text, FlatList, TouchableOpacity, StyleSheet,ActivityIndicator} from "react-native";
+import { View, Text, FlatList, TouchableOpacity, StyleSheet, ActivityIndicator } from "react-native";
 import { useNavigation } from '@react-navigation/native';
 import Ipcim from "../../../Ipcim";
 import { LinearGradient } from "expo-linear-gradient";
@@ -10,6 +10,18 @@ export default function Oktato_ATBefizetesek({ route }) {
     const [adatok, setAdatok] = useState([]);
     const [loading, setLoading] = useState(true);
     const navigation = useNavigation();
+
+    useEffect(() => {
+        navigation.setOptions({
+            title: "Diákok és Befizetések",
+            headerShown: true,
+            headerStyle: { backgroundColor: '#1e90ff' },
+            headerTintColor: '#fff',
+            headerTitleAlign: 'center',
+        });
+
+        letoltes();
+    }, [navigation]);
 
     const letoltes = async () => {
         try {
@@ -36,10 +48,6 @@ export default function Oktato_ATBefizetesek({ route }) {
         }
     };
 
-    useEffect(() => {
-        letoltes();
-    }, []);
-
     const katt = (tanulo) => {
         navigation.navigate("Oktato_TanuloABefizetesek", { tanulo });
     };
@@ -47,16 +55,11 @@ export default function Oktato_ATBefizetesek({ route }) {
     return (
         <LinearGradient colors={['#1e90ff', '#00bfff']} style={styles.container}>
             <View style={styles.content}>
-                <View style={styles.headerContainer}>
-                    <Text style={styles.header}>Diákok és Befizetések</Text>
-                    <Text style={styles.subHeader}>Válassz egy diákot a részletek megtekintéséhez</Text>
-                </View>
-
                 {loading ? (
                     <ActivityIndicator size="large" color="#fff" />
                 ) : adatok.length === 0 ? (
                     <View style={styles.emptyContainer}>
-                        <Ionicons name="people-outline" size={48} color="#fff" />
+                        <Ionicons name="people-outline" size={48} color="rgba(255,255,255,0.7)" />
                         <Text style={styles.emptyText}>Nincsenek aktív diákok</Text>
                     </View>
                 ) : (
@@ -72,13 +75,18 @@ export default function Oktato_ATBefizetesek({ route }) {
                                     <Ionicons name="person-circle-outline" size={32} color="#fff" />
                                     <View style={styles.textContainer}>
                                         <Text style={styles.studentName}>{item.tanulo_neve}</Text>
-                                        
+                                        <Text style={styles.studentId}>ID: {item.tanulo_id}</Text>
                                     </View>
                                 </View>
                                 <Ionicons name="chevron-forward" size={24} color="rgba(255,255,255,0.7)" />
                             </TouchableOpacity>
                         )}
                         keyExtractor={item => item.tanulo_id.toString()}
+                        ListHeaderComponent={
+                            <View style={styles.headerContainer}>
+                                <Text style={styles.subHeader}>Válassz egy diákot a részletek megtekintéséhez</Text>
+                            </View>
+                        }
                     />
                 )}
             </View>
@@ -95,19 +103,14 @@ const styles = StyleSheet.create({
         padding: 20,
     },
     headerContainer: {
-        marginBottom: 25,
-        alignItems: 'center',
-    },
-    header: {
-        fontSize: 24,
-        fontWeight: 'bold',
-        color: '#fff',
-        marginBottom: 5,
+        marginBottom: 20,
+        paddingHorizontal: 10,
     },
     subHeader: {
         fontSize: 16,
         color: 'rgba(255,255,255,0.8)',
         textAlign: 'center',
+        marginBottom: 10,
     },
     listContainer: {
         paddingBottom: 20,
@@ -120,6 +123,8 @@ const styles = StyleSheet.create({
         flexDirection: 'row',
         alignItems: 'center',
         justifyContent: 'space-between',
+        borderWidth: 1,
+        borderColor: 'rgba(255,255,255,0.2)',
     },
     cardContent: {
         flexDirection: 'row',
@@ -146,7 +151,7 @@ const styles = StyleSheet.create({
     },
     emptyText: {
         fontSize: 18,
-        color: '#fff',
+        color: 'rgba(255,255,255,0.8)',
         marginTop: 16,
         textAlign: 'center',
     },

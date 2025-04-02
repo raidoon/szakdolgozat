@@ -11,8 +11,8 @@ LocaleConfig.locales["hu"] = {
         "Július", "Augusztus", "Szeptember", "Október", "November", "December"
     ],
     monthNamesShort: ["Jan", "Feb", "Már", "Ápr", "Máj", "Jún", "Júl", "Aug", "Szep", "Okt", "Nov", "Dec"],
-    dayNames: ["Vasárnap", "Hétfő", "Kedd", "Szerda", "Csütörtök", "Péntek", "Szombat"],
-    dayNamesShort: ["V", "H", "K", "Sze", "Cs", "P", "Szo"],
+    dayNames: ["Hétfő", "Kedd", "Szerda", "Csütörtök", "Péntek", "Szombat", "Vasárnap"],
+    dayNamesShort: ["H", "K", "Sze", "Cs", "P", "Szo", "V"],
     today: "Ma"
 };
 LocaleConfig.defaultLocale = "hu";
@@ -25,7 +25,18 @@ export default function Oktato_KovetkezoOra({ route }) {
     const [datumOrai, setDatumOrai] = useState([]);
     const navigation = useNavigation();
 
-    console.log(atkuld);
+    useEffect(() => {
+        navigation.setOptions({
+            title: "Következő órák",
+            headerShown: true,
+            headerStyle: { backgroundColor: '#4CAF50' },
+            headerTintColor: '#fff',
+            headerTitleAlign: 'center',
+        });
+
+        letoltes();
+        kovetkezoOraLetoltes();
+    }, [navigation]);
 
     const letoltes = async () => {
         try {
@@ -37,7 +48,6 @@ export default function Oktato_KovetkezoOra({ route }) {
 
             const data = await response.json();
             setAdatok(data);
-            console.log(data);
         } catch (error) {
             console.error("Hiba az adatok letöltésekor:", error);
         }
@@ -74,11 +84,6 @@ export default function Oktato_KovetkezoOra({ route }) {
             console.error("Hiba az órarend lekérésekor:", error);
         }
     };
-
-    useEffect(() => {
-        letoltes();
-        kovetkezoOraLetoltes();
-    }, []);
 
     const formatDateTime = (dateTimeString) => {
         const date = new Date(dateTimeString);

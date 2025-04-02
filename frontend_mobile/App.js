@@ -54,8 +54,6 @@ function OktatoMenuStack(){
           headerShown: false,
         }}>
 
-      
-      
       <Stack.Screen name={"Oktato_Datumok"} component={Oktato_Datumok}/>
       <Stack.Screen name={"Oktato_Befizetesek"} component={Oktato_Befizetesek}/>
       <Stack.Screen name={"Oktato_Profil"} component={Oktato_Profil}/>
@@ -116,24 +114,26 @@ function OktatoProfilStack(){
     </Stack.Navigator>
   );
 }
-
-/*function OktatoDatumStack() {
+/*
+function OktatoDatumStack() {
   return (
-    <NavigationContainer>
-      <Stack.Navigator screenOptions={{headerShown: false,}}>
-
-        <Stack.Screen name="Oktato_AktualisTanulok" component={Oktato_AktualisTanulok} />
-        <Stack.Screen name="Oktato_TanuloAOrak" component={Oktato_TanuloAOrak} />
-        <Stack.Screen name="Oktato_MegerositesrevaroOrak" component={Oktato_MegerositesrevaroOrak} />
+   
+      <Stack.Navigator screenOptions={{headerShown: true}}>
+        <Stack.Screen name="Oktato_MegerositesrevaroOrak" options={{
+        title:"Diákok óráinak kezelése",
+        headerStyle:{
+          backgroundColor: "#fffff",
+          
+        }
+        }} component={Oktato_MegerositesrevaroOrak}  />
         <Stack.Screen name="Oktato_MegerositOra" component={Oktato_MegerositOra} />
         <Stack.Screen name="Oktato_ElkovetkezendoOrak" component={Oktato_ElkovetkezendoOrak} />
         <Stack.Screen name="Oktato_OraSzerkesztes" component={Oktato_OraSzerkesztes} />
-        <Stack.Screen name="Oktato_OraRogzites" component={Oktato_OraRogzites} />
+        <Stack.Screen name="Oktato_OraRogzites" options={{title:"Órarögzítés"}} component={Oktato_OraRogzites} />
       </Stack.Navigator>
-    </NavigationContainer>
   );
-}
-
+}*/
+/*
 function OktatoPenzStack() {
   return (
     <NavigationContainer>

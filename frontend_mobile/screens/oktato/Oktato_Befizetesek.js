@@ -2,6 +2,9 @@ import { useState, useEffect } from "react";
 import { View, Text, FlatList, TouchableOpacity, StyleSheet } from "react-native";
 import { useNavigation } from '@react-navigation/native';
 import Ipcim from "../../Ipcim";
+import { MaterialIcons } from '@expo/vector-icons';
+import { LinearGradient } from 'expo-linear-gradient';
+
 
 export default function Oktato_Befizetesek({ atkuld }) {
   const [adatok, setAdatok] = useState([]);
@@ -43,135 +46,154 @@ export default function Oktato_Befizetesek({ atkuld }) {
 
   return (
     <View style={styles.container}>
+      <LinearGradient colors={['#f5faf6', '#e0f2e1']} style={styles.background} />
+      
       {/* Header */}
       <View style={styles.header}>
-        <Text style={styles.headerTitle}>Befizetések</Text>
+        <Text style={styles.headerTitle}>Befizetés Kezelés</Text>
+        <Text style={styles.headerSubtitle}>Diákok fizetési tranzakciói</Text>
       </View>
 
-      <FlatList data={adatok}/>
-      {/* kártyák */}
-      <View style={styles.kartyakContainer}>
+      <FlatList 
+        data={adatok}
+        style={styles.list}
+        keyExtractor={(item) => item.id.toString()}
+      />
+
+      {/* Action Cards */}
+      <View style={styles.cardsContainer}>
+        {/* New Payment */}
         <TouchableOpacity
-          style={[styles.Kartyak, styles.elsoKartya]}
+          style={styles.card}
           onPress={() => navigation.navigate("Oktato_BefizetesRogzites", { atkuld })}
         >
-          <Text style={styles.kartyaCim}>Új befizetés hozzáadása</Text>
-          <Text style={styles.kartyaSzoveg}>Rögzítés</Text>
-          <View style={styles.zold} />
+          <LinearGradient
+            colors={['#4CAF50', '#2E7D32']}
+            style={styles.cardGradient}
+            start={{ x: 0, y: 0 }}
+            end={{ x: 1, y: 1 }}
+          >
+            <MaterialIcons name="add-circle" size={28} color="white" style={styles.cardIcon} />
+            <View style={styles.cardText}>
+              <Text style={styles.cardTitle}>Új befizetés</Text>
+              <Text style={styles.cardSubtitle}>Rögzítés</Text>
+            </View>
+          </LinearGradient>
         </TouchableOpacity>
 
+        {/* View Payments */}
         <TouchableOpacity
-          style={[styles.Kartyak, styles.masodikKartya]}
+          style={styles.card}
           onPress={() => navigation.navigate("Oktato_ATBefizetesek", { atkuld })}
         >
-          <Text style={styles.kartyaCim}>Diákok Befizetései</Text>
-          <Text style={styles.kartyaSzoveg}>Megtekintés</Text>
-          <View style={styles.kek} />
+          <LinearGradient
+            colors={['#66BB6A', '#388E3C']}
+            style={styles.cardGradient}
+            start={{ x: 0, y: 0 }}
+            end={{ x: 1, y: 1 }}
+          >
+            <MaterialIcons name="list-alt" size={28} color="white" style={styles.cardIcon} />
+            <View style={styles.cardText}>
+              <Text style={styles.cardTitle}>Diák befizetések</Text>
+              <Text style={styles.cardSubtitle}>Teljes lista</Text>
+            </View>
+          </LinearGradient>
         </TouchableOpacity>
 
+        {/* Pending Payments */}
         <TouchableOpacity
-          style={[styles.Kartyak, styles.harmadikKartya]}
+          style={styles.card}
           onPress={() => navigation.navigate("Oktato_MegerositBefizetes", { atkuld })}
         >
-          <Text style={styles.kartyaCim}>Jóváhagyásra váró befizetések</Text>
-          <Text style={styles.kartyaSzoveg}>Kezeletlen tranzakciók</Text>
-          <View style={styles.zoldeskek} />
+          <LinearGradient
+            colors={['#8BC34A', '#689F38']}
+            style={styles.cardGradient}
+            start={{ x: 0, y: 0 }}
+            end={{ x: 1, y: 1 }}
+          >
+            <MaterialIcons name="pending-actions" size={28} color="white" style={styles.cardIcon} />
+            <View style={styles.cardText}>
+              <Text style={styles.cardTitle}>Jóváhagyásra vár</Text>
+              <Text style={styles.cardSubtitle}>Függő tranzakciók</Text>
+            </View>
+          </LinearGradient>
         </TouchableOpacity>
       </View>
-
     </View>
   );
 }
 
-
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    padding: 20,
-    backgroundColor: "#F5FBFF", // Light blue background
+  },
+  background: {
+    position: 'absolute',
+    left: 0,
+    right: 0,
+    top: 0,
+    bottom: 0,
   },
   header: {
-    marginBottom: 20,
-    padding: 15,
-    backgroundColor: "#FFFFFF",
+    padding: 24,
+    backgroundColor: 'white',
+    borderBottomLeftRadius: 16,
+    borderBottomRightRadius: 16,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.1,
+    shadowRadius: 8,
+    elevation: 3,
+    marginBottom: 16,
+  },
+  headerTitle: {
+    fontSize: 24,
+    fontWeight: 'bold',
+    color: '#2E7D32', // Dark green
+    textAlign: 'center',
+  },
+  headerSubtitle: {
+    fontSize: 14,
+    color: '#689F38', // Medium green
+    textAlign: 'center',
+    marginTop: 4,
+  },
+  list: {
+    flex: 1,
+    paddingHorizontal: 16,
+  },
+  cardsContainer: {
+    padding: 16,
+  },
+  card: {
     borderRadius: 12,
-    shadowColor: "#E0F7FA",
+    marginBottom: 16,
+    shadowColor: '#000',
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.1,
     shadowRadius: 6,
     elevation: 3,
-  },
-  headerCim: {
-    fontSize: 24,
-    fontFamily: "Inter-Bold",
-    marginBottom: 8,
-    textAlign: "center",
-    color: "#00796B", // Dark teal/green
-  },
-  kartyakContainer: {
-    marginBottom: 20,
-  },
-  Kartyak: {
-    backgroundColor: "#FFFFFF",
-    borderRadius: 12,
-    padding: 16,
-    marginBottom: 12,
-    shadowColor: "#B2DFDB",
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.1,
-    shadowRadius: 6,
-    elevation: 2,
-    position: 'relative',
     overflow: 'hidden',
   },
-  elsoKartya: {
-    borderLeftWidth: 5,
-    borderLeftColor: "#4CAF50", // Green
+  cardGradient: {
+    padding: 20,
+    flexDirection: 'row',
+    alignItems: 'center',
   },
-  masodikKartya: {
-    borderLeftWidth: 5,
-    borderLeftColor: "#2196F3", // Blue
+  cardIcon: {
+    marginRight: 16,
   },
-  harmadikKartya: {
-    borderLeftWidth: 5,
-    borderLeftColor: "#00838F", // Teal
+  cardText: {
+    flex: 1,
   },
-  kartyaCim: {
-    fontSize: 16,
-    fontFamily: "Inter-SemiBold",
-    color: "#00796B", // Dark teal
-    marginBottom: 4,
+  cardTitle: {
+    fontSize: 18,
+    fontWeight: 'bold',
+    color: 'white',
   },
-  kartyaSzoveg: {
+  cardSubtitle: {
     fontSize: 14,
-    fontFamily: "Inter-Regular",
-    color: "#78909C", // Gray-blue
-  },
-  zold: {
-    position: 'absolute',
-    width: 60,
-    height: 60,
-    borderRadius: 30,
-    backgroundColor: 'rgba(76, 175, 80, 0.1)',
-    right: -15,
-    top: -15,
-  },
-  kek: {
-    position: 'absolute',
-    width: 60,
-    height: 60,
-    borderRadius: 30,
-    backgroundColor: 'rgba(33, 150, 243, 0.1)',
-    right: -15,
-    top: -15,
-  },
-  zoldeskek: {
-    position: 'absolute',
-    width: 60,
-    height: 60,
-    borderRadius: 30,
-    backgroundColor: 'rgba(0, 131, 143, 0.1)',
-    right: -15,
-    top: -15,
+    color: 'rgba(255,255,255,0.8)',
+    marginTop: 4,
   },
 });
