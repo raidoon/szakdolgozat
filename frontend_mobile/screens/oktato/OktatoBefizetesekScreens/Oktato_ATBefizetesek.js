@@ -75,7 +75,7 @@ export default function Oktato_ATBefizetesek({ route }) {
                                     <Ionicons name="person-circle-outline" size={32} color="#fff" />
                                     <View style={styles.textContainer}>
                                         <Text style={styles.studentName}>{item.tanulo_neve}</Text>
-                                        <Text style={styles.studentId}>ID: {item.tanulo_id}</Text>
+                                        
                                     </View>
                                 </View>
                                 <Ionicons name="chevron-forward" size={24} color="rgba(255,255,255,0.7)" />

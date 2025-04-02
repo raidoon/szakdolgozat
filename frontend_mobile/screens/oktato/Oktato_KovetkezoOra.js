@@ -169,7 +169,9 @@ export default function Oktato_KovetkezoOra({ route }) {
                             renderItem={({ item }) => (
                                 <View style={styles.orakItem}>
                                     <Text style={styles.orakText}>{formatDateTime(item.ora_datuma)}</Text>
-                                    <Text style={styles.orakDiak}>{item.tanulo_neve}</Text>
+                                    <Text style={styles.orakDiak}>Tanuló: {item.tanulo_neve}</Text>
+                                    <Text style={styles.orakDiak}>Típus: {item.oratipus_neve}</Text>
+
                                 </View>
                             )}
                         />

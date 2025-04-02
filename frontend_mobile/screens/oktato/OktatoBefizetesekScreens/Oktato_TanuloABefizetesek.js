@@ -1,5 +1,15 @@
-import { useEffect, useState } from "react";
-import { View, Text, StyleSheet, FlatList, TouchableOpacity, Alert, ActivityIndicator, ScrollView } from "react-native";
+import React, { useEffect, useState } from "react";
+import { 
+  View, 
+  Text, 
+  StyleSheet, 
+  FlatList, 
+  TouchableOpacity, 
+  ActivityIndicator, 
+  ScrollView,
+  Modal,
+  Pressable
+} from "react-native";
 import { useNavigation } from '@react-navigation/native';
 import Ipcim from "../../../Ipcim";
 import { LinearGradient } from "expo-linear-gradient";
@@ -10,6 +20,118 @@ export default function Oktato_TanuloABefizetesek({ route }) {
     const [adatok, setAdatok] = useState([]);
     const [loading, setLoading] = useState(true);
     const navigation = useNavigation();
+    const [alertVisible, setAlertVisible] = useState(false);
+    const [alertTitle, setAlertTitle] = useState("");
+    const [alertMessage, setAlertMessage] = useState("");
+    const [alertType, setAlertType] = useState("");
+    const [confirmAlertVisible, setConfirmAlertVisible] = useState(false);
+    const [confirmAction, setConfirmAction] = useState(null);
+    const [confirmData, setConfirmData] = useState(null);
+
+    const CustomAlert = ({ visible, title, message, type, onClose, onConfirm }) => {
+        if (!visible) return null;
+    
+        const alertStyles = {
+            success: {
+                backgroundColor: '#4CAF50',
+                icon: 'checkmark-circle',
+                iconColor: '#fff',
+                buttonLayout: 'center'
+            },
+            error: {
+                backgroundColor: '#f44336',
+                icon: 'alert-circle',
+                iconColor: '#fff',
+                buttonLayout: 'center'
+            },
+            confirm: {
+                backgroundColor: '#FFA000',
+                icon: 'help-circle',
+                iconColor: '#fff',
+                buttonLayout: 'row'
+            }
+        };
+    
+        const currentStyle = alertStyles[type] || alertStyles.error;
+
+        return (
+            <Modal
+                transparent={true}
+                animationType="fade"
+                visible={visible}
+                onRequestClose={onClose}
+            >
+                <View style={styles.alertOverlay}>
+                    <View style={[styles.alertContainer, { backgroundColor: currentStyle.backgroundColor }]}>
+                        <Ionicons 
+                            name={currentStyle.icon} 
+                            size={36} 
+                            color={currentStyle.iconColor} 
+                            style={styles.alertIcon}
+                        />
+                        <Text style={styles.alertTitle}>{title}</Text>
+                        <Text style={styles.alertMessage}>{message}</Text>
+                        <View style={[
+                            styles.alertButtonContainer, 
+                            { flexDirection: currentStyle.buttonLayout === 'center' ? 'column' : 'row' }
+                        ]}>
+                            {type === 'confirm' && (
+                                <Pressable
+                                    style={[styles.alertButton, styles.cancelButton]}
+                                    onPress={onClose}
+                                >
+                                    <Text style={styles.alertButtonText}>Mégsem</Text>
+                                </Pressable>
+                            )}
+                            <Pressable
+                                style={[
+                                    styles.alertButton, 
+                                    type === 'confirm' ? styles.cButton : styles.singleButton
+                                ]}
+                                onPress={type === 'confirm' ? onConfirm : onClose}
+                            >
+                                <Text style={styles.alertButtonText}>OK</Text>
+                            </Pressable>
+                        </View>
+                    </View>
+                </View>
+            </Modal>
+        );
+    };
+
+    const showAlert = (title, message, type) => {
+        setAlertTitle(title);
+        setAlertMessage(message);
+        setAlertType(type);
+        setAlertVisible(true);
+    };
+
+    const showConfirmAlert = (title, message, action, data) => {
+        setAlertTitle(title);
+        setAlertMessage(message);
+        setAlertType('confirm');
+        setConfirmAction(() => action);
+        setConfirmData(data);
+        setConfirmAlertVisible(true);
+    };
+
+    const handleConfirm = () => {
+        if (confirmAction) {
+            confirmAction(confirmData);
+        }
+        setConfirmAlertVisible(false);
+    };
+
+    const hideAlert = () => {
+        setAlertVisible(false);
+        if (alertType === 'success') {
+            letoltes();
+        }
+    };
+
+    const hideConfirmAlert = () => {
+        setConfirmAlertVisible(false);
+    };
 
     useEffect(() => {
         navigation.setOptions({
@@ -24,6 +146,7 @@ export default function Oktato_TanuloABefizetesek({ route }) {
     }, [navigation]);
 
     const letoltes = async () => {
+        setLoading(true);
         try {
             const adat = { tanulo_felhasznaloID: tanulo.tanulo_felhasznaloID };
 
@@ -44,26 +167,18 @@ export default function Oktato_TanuloABefizetesek({ route }) {
             
         } catch (error) {
             console.error("Hiba az API-hívás során:", error);
-            Alert.alert("Hiba", "Nem sikerült az adatok letöltése.");
+            showAlert("Hiba az adatbetöltéskor", "Nem sikerült az adatok letöltése. Kérjük, próbálja újra később.", "error");
         } finally {
             setLoading(false);
         }
     };
 
     const megerositVagyVissza = (befizetesek_id) => {
-        Alert.alert(
-            "Megerősítés", 
-            "Biztosan jóváhagyja ezt a befizetést?", 
-            [
-                {
-                    text: "Mégse",
-                    style: "cancel"
-                },
-                { 
-                    text: "Igen", 
-                    onPress: () => megerositFiz(befizetesek_id) 
-                }
-            ]
+        showConfirmAlert(
+            "Befizetés jóváhagyása",
+            "Biztosan jóváhagyja ezt a befizetést?",
+            megerositFiz,
+            befizetesek_id
         );
     };
 
@@ -87,10 +202,10 @@ export default function Oktato_TanuloABefizetesek({ route }) {
                 )
             );
             
-            Alert.alert("Siker", "A befizetés sikeresen jóváhagyva!");
+            showAlert("Sikeres művelet", "A befizetés sikeresen jóváhagyva!", "success");
         } catch (error) {
             console.error("Hiba történt:", error);
-            Alert.alert("Hiba", "Nem sikerült a befizetés állapotának frissítése.");
+            showAlert("Hiba történt", "Nem sikerült a befizetés állapotának frissítése.", "error");
         }
     };
 
@@ -175,6 +290,23 @@ export default function Oktato_TanuloABefizetesek({ route }) {
                     />
                 )}
             </ScrollView>
+
+            <CustomAlert
+                visible={alertVisible}
+                title={alertTitle}
+                message={alertMessage}
+                type={alertType}
+                onClose={hideAlert}
+            />
+
+            <CustomAlert
+                visible={confirmAlertVisible}
+                title={alertTitle}
+                message={alertMessage}
+                type="confirm"
+                onClose={hideConfirmAlert}
+                onConfirm={handleConfirm}
+            />
         </LinearGradient>
     );
 }
@@ -287,5 +419,66 @@ const styles = StyleSheet.create({
         color: 'rgba(255,255,255,0.8)',
         marginTop: 16,
         textAlign: 'center',
+    },
+    // Alert styles
+    alertOverlay: {
+        flex: 1,
+        justifyContent: "center",
+        alignItems: "center",
+        backgroundColor: "rgba(0, 0, 0, 0.5)",
+    },
+    alertContainer: {
+        width: "80%",
+        borderRadius: 16,
+        padding: 24,
+        alignItems: "center",
+        shadowColor: "#000",
+        shadowOffset: { width: 0, height: 4 },
+        shadowOpacity: 0.3,
+        shadowRadius: 8,
+        elevation: 5,
+    },
+    alertIcon: {
+        marginBottom: 16,
+    },
+    alertTitle: {
+        fontSize: 20,
+        fontWeight: "bold",
+        color: "#fff",
+        marginBottom: 8,
+        textAlign: "center",
+    },
+    alertMessage: {
+        fontSize: 16,
+        color: "#fff",
+        marginBottom: 24,
+        textAlign: "center",
+    },
+    alertButton: {
+        backgroundColor: "#fff",
+        borderRadius: 8,
+        paddingVertical: 12,
+        paddingHorizontal: 24,
+        elevation: 2,
+        marginHorizontal: 8,
+    },
+    cancelButton: {
+        backgroundColor: "#b0bec5",
+    },
+    cButton: {
+        backgroundColor: "#4CAF50",
+    },
+    alertButtonText: {
+        color: "#1e90ff",
+        fontSize: 16,
+        fontWeight: "600",
+    },
+    alertButtonContainer: {
+        width: '100%',
+        justifyContent: 'space-between',
+    },
+    singleButton: {
+        alignSelf: 'center',
+        width: '25%',
     },
 });

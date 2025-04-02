@@ -41,7 +41,7 @@ export default function Oktato_Diakok({ atkuld }) {
 
   return (
     <View style={styles.container}>
-      <LinearGradient colors={['#f5f7fa', '#e4f2fe']} style={styles.background} />
+      <LinearGradient colors={['#CBE5DD','#fff', '#CBE5DD' ]} style={styles.background} />
       
       <View style={styles.header}>
         <Text style={styles.headerCim}>Diákkezelés</Text>
@@ -129,8 +129,10 @@ const styles = StyleSheet.create({
   },
   content: {
     padding: 20,
+  paddingTop:125
   },
   card: {
+    
     borderRadius: 12,
     marginBottom: 16,
     shadowColor: '#000',

@@ -122,7 +122,7 @@ export default function Oktato_Kezdolap({ atkuld }) {
             <Ionicons name="calendar" size={28} color="white" style={styles.cardIcon} />
             <View style={styles.cardText}>
               <Text style={styles.cardTitle}>Órák kezelése</Text>
-              <Text style={styles.cardSubtitle}>Frissítendő órák</Text>
+              <Text style={styles.cardSubtitle}>Diákok órái</Text>
             </View>
             <Ionicons name="chevron-forward" size={24} color="white" />
           </LinearGradient>
@@ -142,7 +142,7 @@ export default function Oktato_Kezdolap({ atkuld }) {
             <Ionicons name="cash" size={28} color="white" style={styles.cardIcon} />
             <View style={styles.cardText}>
               <Text style={styles.cardTitle}>Befizetések</Text>
-              <Text style={styles.cardSubtitle}>Jóváhagyásra vár</Text>
+              <Text style={styles.cardSubtitle}>Kezeletlen tranzakciók</Text>
             </View>
             <Ionicons name="chevron-forward" size={24} color="white" />
           </LinearGradient>

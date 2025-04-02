@@ -142,7 +142,7 @@ return (
           <MaterialIcons name="update" size={28} color="white" style={styles.cardIcon} />
           <View style={styles.cardTextContainer}>
             <Text style={styles.cardTitle}>Diákok órái</Text>
-            <Text style={styles.cardSubtitle}>Frissítés szükséges</Text>
+            <Text style={styles.cardSubtitle}>Órák kezelése</Text>
           </View>
         </LinearGradient>
       </TouchableOpacity>
