@@ -90,28 +90,28 @@ const Oktato_BejelentkezesUtan2 = ({ navigation, route }) => {
     >
       <Tab.Screen
           name="Oktato_Kezdolap"
-          options={{ title: "Kezdőlap" }}
+          options={{headerShown: false, title: "Kezdőlap" }}
           children={() => <Oktato_Kezdolap atkuld={storedData} />}/>
 
 
       <Tab.Screen
                   name="Oktato_Diakok" 
-                  options={{title:"Diákok"}} 
+                  options={{headerShown: false,title:"Diákok"}} 
                   children={() => <Oktato_Diakok atkuld={storedData} />} />
                   
       <Tab.Screen 
           name="Oktato_Datumok" 
-          options={{title:"Időpontok"}}
+          options={{headerShown: false,title:"Időpontok"}}
           children={() => <Oktato_Datumok atkuld={storedData} />} />
 
       <Tab.Screen
           name="Oktato_Befizetesek" 
-          options={{title:"Befizetések"}} 
+          options={{headerShown: false,title:"Befizetések"}} 
           children={() => <Oktato_Befizetesek atkuld={storedData} />} />
 
       <Tab.Screen 
           name="Oktato_Profil" 
-          options={{title:"Oktatói Profil"}} 
+          options={{headerShown: false,title:"Oktatói Profil"}} 
           children={() => <Oktato_Profil atkuld={storedData} />} />
 
     </Tab.Navigator>
