@@ -84,7 +84,7 @@ export default function Oktato_ElkovetkezendoOrak({ route }) {
     return (
         <LinearGradient colors={['#1e90ff', '#00bfff']} style={styles.container}>
             <View style={styles.content}>
-                <Text style={styles.title}>Elkövetkező órák</Text>
+                <Text style={styles.title}>Itt szerkesztheted az elkövetkezendő órák adatait</Text>
 
                 <FlatList
                     data={adatok}
@@ -147,8 +147,8 @@ const styles = StyleSheet.create({
         paddingBottom: 20,
     },
     title: {
-        fontSize: 24,
-        fontWeight: '600',
+        fontSize:20,
+        
         color: '#fff',
         marginBottom: 25,
         textAlign: 'center',

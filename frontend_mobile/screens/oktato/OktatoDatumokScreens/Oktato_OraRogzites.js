@@ -187,19 +187,19 @@ export default function Oktato_OraRogzites({ route }) {
 
   if (loading) {
     return (
-      <LinearGradient colors={['#1e90ff', '#00bfff']} style={styles.loadingContainer}>
+      <LinearGradient colors={['#0066cc', '#004b87']} style={styles.loadingContainer}>
         <ActivityIndicator size="large" color="#fff" />
       </LinearGradient>
     );
   }
 
   return (
-    <LinearGradient colors={['#1e90ff', '#00bfff']} style={styles.container}>
+    <LinearGradient colors={['#0066cc', '#004b87']} style={styles.container}>
       <ScrollView contentContainerStyle={styles.content}>
         <View style={styles.formContainer}>
           <Text style={styles.label}>Óratípus*</Text>
           <View style={styles.inputContainer}>
-            <Ionicons name="school-outline" size={20} color="#999" style={styles.icon} />
+            <Ionicons name="school-outline" size={20} color="#fff" style={styles.icon} />
             <Dropdown
               style={[styles.dropdown, isFocus && { borderColor: '#fff' }]}
               placeholderStyle={styles.placeholderStyle}
@@ -221,7 +221,7 @@ export default function Oktato_OraRogzites({ route }) {
 
           <Text style={styles.label}>Diák*</Text>
           <View style={styles.inputContainer}>
-            <Ionicons name="person-outline" size={20} color="#999" style={styles.icon} />
+            <Ionicons name="person-outline" size={20} color="#fff" style={styles.icon} />
             <Dropdown
               style={[styles.dropdown, isFocusDiak && { borderColor: '#fff' }]}
               placeholderStyle={styles.placeholderStyle}
@@ -245,11 +245,11 @@ export default function Oktato_OraRogzites({ route }) {
 
           <Text style={styles.label}>Helyszín (opcionális)</Text>
           <View style={styles.inputContainer}>
-            <Ionicons name="location-outline" size={20} color="#999" style={styles.icon} />
+            <Ionicons name="location-outline" size={20} color="#fff" style={styles.icon} />
             <TextInput
               style={styles.input}
               placeholder="Óra helyszíne"
-              placeholderTextColor="#999"
+              placeholderTextColor="#fff"
               value={cim}
               onChangeText={setCim}
             />

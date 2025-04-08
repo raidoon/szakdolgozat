@@ -173,7 +173,7 @@ export default function Oktato_OraSzerkesztes({ route, navigation }) {
   return (
     <LinearGradient colors={['#E3F2FD', '#E8F5E9']} style={styles.container}>
       <ScrollView contentContainerStyle={styles.content}>
-        <Text style={styles.title}>Óra szerkesztése</Text>
+        <Text style={styles.title}>........</Text>
 
         <View style={styles.card}>
           <Text style={styles.label}>Diák kiválasztása</Text>

@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { View, Text, TouchableOpacity, FlatList, StyleSheet, RefreshControl } from "react-native";
+import { View, Text, TouchableOpacity, StyleSheet, SafeAreaView } from "react-native";
 import { useNavigation } from '@react-navigation/native';
 import Ipcim from "../../Ipcim";
 import Ionicons from '@expo/vector-icons/Ionicons';
@@ -58,35 +58,19 @@ export default function Oktato_Kezdolap({ atkuld }) {
     return `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, "0")}-${String(date.getDate()).padStart(2, "0")} ${String(date.getHours()).padStart(2, "0")}:${String(date.getMinutes()).padStart(2, "0")}`;
   };
 
-
   return (
-    <View style={styles.container}>
+    <SafeAreaView style={styles.container}>
       <LinearGradient colors={['#f5f7fa', '#e4f2fe']} style={styles.background} />
-      
-      {/* Header */}
-      <View >
+
+      {/* Header Section */}
+      <View style={styles.headerContainer}>
         <Text style={styles.welcomeText}>Üdvözlünk</Text>
         <Text style={styles.teacherName}>{atkuld?.oktato_neve || "Kedves Oktató"}</Text>
         <View style={styles.headerDivider} />
       </View>
 
-      <FlatList
-        data={adatok}
-        keyExtractor={(item) => item.id.toString()}
-        refreshControl={
-          <RefreshControl 
-            refreshing={refreshing} 
-            onRefresh={onRefresh} 
-            tintColor="#4CAF50"
-            colors={["#4CAF50"]} 
-          />
-        }
-        style={styles.list}
-      />
-
-      {/* Cards Section */}
+      {/* Next Lesson Card - Now positioned right below header */}
       <View style={styles.cardsContainer}>
-        {/* Next Lesson Card */}
         <TouchableOpacity 
           style={styles.card}
           onPress={() => navigation.navigate("Oktato_KovetkezoOra", { atkuld })}
@@ -99,8 +83,8 @@ export default function Oktato_Kezdolap({ atkuld }) {
           >
             <Ionicons name="time" size={28} color="white" style={styles.cardIcon} />
             <View style={styles.cardText}>
-              <Text style={styles.cardTitle}>Következő óra</Text>
-              <Text style={styles.cardSubtitle}>
+              <Text style={styles.cardTitle2}>Következő óra</Text>
+              <Text style={styles.cardSubtitle2}>
                 {kovetkezoOra ? formatDateTime(kovetkezoOra) : "Nincs rögzített óra"}
               </Text>
             </View>
@@ -108,7 +92,7 @@ export default function Oktato_Kezdolap({ atkuld }) {
           </LinearGradient>
         </TouchableOpacity>
 
-        {/* Lessons Management Card */}
+        {/* Órák kezelése */}
         <TouchableOpacity
           style={styles.card}
           onPress={() => navigation.navigate("Oktato_MegerositesrevaroOrak", { atkuld })}
@@ -128,7 +112,7 @@ export default function Oktato_Kezdolap({ atkuld }) {
           </LinearGradient>
         </TouchableOpacity>
 
-        {/* Payments Card */}
+        {/* Befizetések */}
         <TouchableOpacity
           style={styles.card}
           onPress={() => navigation.navigate("Oktato_MegerositBefizetes", { atkuld })}
@@ -148,13 +132,14 @@ export default function Oktato_Kezdolap({ atkuld }) {
           </LinearGradient>
         </TouchableOpacity>
       </View>
-    </View>
+    </SafeAreaView>
   );
 }
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
+    backgroundColor: '#f5f7fa',
   },
   background: {
     position: 'absolute',
@@ -163,26 +148,26 @@ const styles = StyleSheet.create({
     top: 0,
     bottom: 0,
   },
-  header: {
-    padding: 24,
+  headerContainer: {
+    paddingTop: 60,
+    paddingBottom: 20,
+    paddingHorizontal: 24,
     backgroundColor: 'white',
-    borderBottomLeftRadius: 16,
-    borderBottomRightRadius: 16,
+    borderBottomLeftRadius: 60,
+    borderBottomRightRadius: 60,
     shadowColor: '#000',
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.1,
     shadowRadius: 8,
     elevation: 3,
-    marginBottom: 16,
   },
   welcomeText: {
-    padding:20,
-    fontSize: 18,
+    fontSize: 25,
     color: '#607D8B',
     textAlign: 'center',
   },
   teacherName: {
-    fontSize: 24,
+    fontSize: 30,
     fontWeight: 'bold',
     color: '#263238',
     textAlign: 'center',
@@ -195,16 +180,14 @@ const styles = StyleSheet.create({
     width: '40%',
     alignSelf: 'center'
   },
-  list: {
-    flex: 1,
-    paddingHorizontal: 16,
-  },
   cardsContainer: {
-    padding: 16,
+    paddingHorizontal: 16,
+    marginTop: 140,
+    paddingBottom: 32,
   },
   card: {
     borderRadius: 12,
-    marginBottom: 16,
+    marginBottom: 30, // Adjusted margin
     shadowColor: '#000',
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.1,
@@ -224,13 +207,24 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   cardTitle: {
-    fontSize: 18,
+    fontSize: 22,
     fontWeight: 'bold',
     color: 'white',
   },
   cardSubtitle: {
-    fontSize: 14,
+    fontSize: 18,
     color: 'rgba(255,255,255,0.8)',
     marginTop: 4,
+  },
+  cardTitle2: {
+    fontSize: 22,
+    fontWeight: 'bold',
+    color: 'white',
+  },
+  cardSubtitle2: {
+    fontSize: 25,
+    color: 'rgba(255,255,255,0.8)',
+    marginTop: 4,
+    fontWeight: 'bold',
   },
 });

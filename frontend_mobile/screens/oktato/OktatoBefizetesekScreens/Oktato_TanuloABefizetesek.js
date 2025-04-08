@@ -229,7 +229,7 @@ export default function Oktato_TanuloABefizetesek({ route }) {
             <ScrollView contentContainerStyle={styles.content}>
                 <View style={styles.header}>
                     <Text style={styles.title}>{tanulo.tanulo_neve}</Text>
-                    <Text style={styles.subtitle}>Befizetési előzmények</Text>
+                    <Text style={styles.subtitle}>Fizetési előzmények</Text>
                 </View>
 
                 {loading ? (
@@ -354,7 +354,7 @@ const styles = StyleSheet.create({
         borderBottomColor: 'rgba(255,255,255,0.2)',
     },
     date: {
-        fontSize: 16,
+        fontSize: 20,
         fontWeight: '600',
         color: '#fff',
     },
@@ -365,7 +365,7 @@ const styles = StyleSheet.create({
     },
     statusText: {
         color: '#fff',
-        fontSize: 13,
+        fontSize: 14,
         fontWeight: '500',
     },
     detailRow: {
@@ -374,7 +374,7 @@ const styles = StyleSheet.create({
         marginBottom: 8,
     },
     detailText: {
-        fontSize: 15,
+        fontSize: 18,
         color: '#fff',
         marginLeft: 8,
     },
@@ -387,7 +387,7 @@ const styles = StyleSheet.create({
         borderTopColor: 'rgba(255,255,255,0.2)',
     },
     schoolPaymentText: {
-        fontSize: 14,
+        fontSize: 18,
         color: 'rgba(255,255,255,0.8)',
         marginLeft: 8,
         fontStyle: 'italic',

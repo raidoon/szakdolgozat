@@ -27,7 +27,7 @@ export default function Oktato_KovetkezoOra({ route }) {
 
     useEffect(() => {
         navigation.setOptions({
-            title: "Következő órák",
+            title: "Vezetési órarend",
             headerShown: true,
             headerStyle: { backgroundColor: '#4CAF50' },
             headerTintColor: '#fff',
@@ -170,7 +170,7 @@ export default function Oktato_KovetkezoOra({ route }) {
                                 <View style={styles.orakItem}>
                                     <Text style={styles.orakText}>{formatDateTime(item.ora_datuma)}</Text>
                                     <Text style={styles.orakDiak}>Tanuló: {item.tanulo_neve}</Text>
-                                    <Text style={styles.orakDiak}>Típus: {item.oratipus_neve}</Text>
+                                    <Text style={styles.orakDiak}>Óra típusa: {item.oratipus_neve}</Text>
 
                                 </View>
                             )}
@@ -206,7 +206,7 @@ const styles = StyleSheet.create({
         shadowRadius: 4,
     },
     koviOraText: {
-        fontSize: 18,
+        fontSize: 20,
         color: '#2E7D32',
         fontWeight: 'bold',
     },
@@ -223,7 +223,7 @@ const styles = StyleSheet.create({
     },
     kivalasztottText: {
         marginTop: 10,
-        fontSize: 16,
+        fontSize: 18,
         color: '#2E7D32',
         fontWeight: 'bold',
         textAlign: 'center',
@@ -245,17 +245,17 @@ const styles = StyleSheet.create({
         shadowRadius: 3,
     },
     orakText: {
-        fontSize: 16,
+        fontSize: 20,
         color: '#2E7D32',
         fontWeight: 'bold',
     },
     orakDiak: {
-        fontSize: 14,
+        fontSize: 18,
         color: '#388E3C',
     },
     nincsOra: {
         marginTop: 10,
-        fontSize: 16,
+        fontSize: 18,
         color: '#FFFFFF',
         fontWeight: 'bold',
         textAlign: 'center',

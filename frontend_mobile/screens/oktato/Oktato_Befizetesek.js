@@ -51,14 +51,10 @@ export default function Oktato_Befizetesek({ atkuld }) {
       {/* Header */}
       <View style={styles.header}>
         <Text style={styles.headerTitle}>Befizetés Kezelés</Text>
-        <Text style={styles.headerSubtitle}>Diákok fizetési tranzakciói</Text>
+        <Text style={styles.headerSubtitle}>Diákok tranzakciói</Text>
       </View>
 
-      <FlatList 
-        data={adatok}
-        style={styles.list}
-        keyExtractor={(item) => item.id.toString()}
-      />
+   
 
       {/* Action Cards */}
       <View style={styles.cardsContainer}>
@@ -94,7 +90,7 @@ export default function Oktato_Befizetesek({ atkuld }) {
           >
             <MaterialIcons name="list-alt" size={28} color="white" style={styles.cardIcon} />
             <View style={styles.cardText}>
-              <Text style={styles.cardTitle}>Diák befizetések</Text>
+              <Text style={styles.cardTitle}>Diákok befizetései</Text>
               <Text style={styles.cardSubtitle}>Teljes lista</Text>
             </View>
           </LinearGradient>
@@ -114,7 +110,7 @@ export default function Oktato_Befizetesek({ atkuld }) {
             <MaterialIcons name="pending-actions" size={28} color="white" style={styles.cardIcon} />
             <View style={styles.cardText}>
               <Text style={styles.cardTitle}>Jóváhagyásra vár</Text>
-              <Text style={styles.cardSubtitle}>Függő tranzakciók</Text>
+              <Text style={styles.cardSubtitle}>Függőben lévő tranzakciók</Text>
             </View>
           </LinearGradient>
         </TouchableOpacity>
@@ -135,6 +131,7 @@ const styles = StyleSheet.create({
     bottom: 0,
   },
   header: {
+    paddingTop:60,
     padding: 24,
     backgroundColor: 'white',
     borderBottomLeftRadius: 16,
@@ -147,27 +144,24 @@ const styles = StyleSheet.create({
     marginBottom: 16,
   },
   headerTitle: {
-    fontSize: 24,
+    fontSize: 26,
     fontWeight: 'bold',
     color: '#2E7D32', // Dark green
     textAlign: 'center',
   },
   headerSubtitle: {
-    fontSize: 14,
+    fontSize: 18,
     color: '#689F38', // Medium green
     textAlign: 'center',
     marginTop: 4,
   },
-  list: {
-    flex: 1,
-    paddingHorizontal: 16,
-  },
   cardsContainer: {
     padding: 16,
+    marginTop: 150, // Közelebb a fejléc aljához
   },
   card: {
     borderRadius: 12,
-    marginBottom: 16,
+    marginBottom: 22,
     shadowColor: '#000',
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.1,
@@ -187,12 +181,12 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   cardTitle: {
-    fontSize: 18,
+    fontSize: 22,
     fontWeight: 'bold',
     color: 'white',
   },
   cardSubtitle: {
-    fontSize: 14,
+    fontSize: 18,
     color: 'rgba(255,255,255,0.8)',
     marginTop: 4,
   },

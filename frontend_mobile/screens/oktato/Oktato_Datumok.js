@@ -83,14 +83,11 @@ return (
     <LinearGradient colors={['#f8fbff', '#e6f0fa']} style={styles.background} />
     
     <View style={styles.header}>
-      <Text style={styles.headerTitle}>Óra Kezelés</Text>
+      <Text style={styles.headerTitle}>Időpontok</Text>
       <Text style={styles.headerSubtitle}>Válassz a műveletek közül</Text>
     </View>
 
-    <FlatList
-      data={adatok}
-      style={styles.list}
-    />
+    
 
     <View style={styles.actionContainer}>
       <TouchableOpacity
@@ -163,6 +160,7 @@ background: {
   bottom: 0,
 },
 header: {
+  paddingTop:60,
   padding: 24,
   backgroundColor: 'white',
   borderBottomLeftRadius: 16,
@@ -175,27 +173,24 @@ header: {
   marginBottom: 16,
 },
 headerTitle: {
-  fontSize: 24,
+  fontSize: 26,
   fontWeight: 'bold',
   color: "#0D47A1", // Dark blue
   textAlign: 'center',
 },
 headerSubtitle: {
-  fontSize: 14,
+  fontSize: 18,
   color: "#546E7A", // Blue-gray
   textAlign: 'center',
   marginTop: 4,
 },
-list: {
-  flex: 1,
-  paddingHorizontal: 16,
-},
 actionContainer: {
-  padding: 16,
+  paddingHorizontal: 16,
+  marginTop: 150, // Közelebb a fejléc aljához
 },
 actionCard: {
   borderRadius: 12,
-  marginBottom: 16,
+  marginBottom: 22, // Kisebb távolság a gombok között
   shadowColor: '#000',
   shadowOffset: { width: 0, height: 2 },
   shadowOpacity: 0.1,
@@ -216,12 +211,12 @@ cardTextContainer: {
   flex: 1,
 },
 cardTitle: {
-  fontSize: 18,
+  fontSize: 22,
   fontWeight: 'bold',
   color: 'white',
 },
 cardSubtitle: {
-  fontSize: 14,
+  fontSize: 18,
   color: 'rgba(255,255,255,0.8)',
   marginTop: 4,
 },

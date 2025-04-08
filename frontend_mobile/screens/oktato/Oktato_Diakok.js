@@ -44,8 +44,8 @@ export default function Oktato_Diakok({ atkuld }) {
       <LinearGradient colors={['#CBE5DD','#fff', '#CBE5DD' ]} style={styles.background} />
       
       <View style={styles.header}>
-        <Text style={styles.headerCim}>Diákkezelés</Text>
-        <Text style={styles.headerSubtitle}>Válassz a diákok listázásához</Text>
+        <Text style={styles.headerCim}>Diákok</Text>
+        <Text style={styles.headerSubtitle}>Válassz a diákok adatainak megtekintéséhez</Text>
       </View>
 
       <View style={styles.content}>
@@ -61,7 +61,7 @@ export default function Oktato_Diakok({ atkuld }) {
           >
             <MaterialIcons name="school" size={32} color="white" style={styles.icon} />
             <Text style={styles.cardTitle}>Aktuális Diákok</Text>
-            <Text style={styles.cardSubtitle}>Megtekintés és kezelés</Text>
+            <Text style={styles.cardSubtitle}>Megtekintés</Text>
           </LinearGradient>
         </TouchableOpacity>
 
@@ -106,6 +106,7 @@ const styles = StyleSheet.create({
     color: '#607D8B',
   },
   header: {
+    paddingTop:60,
     padding: 24,
     backgroundColor: 'white',
     borderBottomLeftRadius: 16,
@@ -118,23 +119,23 @@ const styles = StyleSheet.create({
     marginBottom: 16,
   },
   headerCim: {
-    fontSize: 24,
+    fontSize: 26,
     fontWeight: 'bold',
     color: "#263238",
   },
   headerSubtitle: {
-    fontSize: 14,
+    fontSize: 18,
     color: "#607D8B",
     marginTop: 4,
   },
   content: {
     padding: 20,
-  paddingTop:125
+  paddingTop:160
   },
   card: {
     
     borderRadius: 12,
-    marginBottom: 16,
+    marginBottom: 30,
     shadowColor: '#000',
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.1,
@@ -148,12 +149,12 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
   },
   cardTitle: {
-    fontSize: 18,
+    fontSize: 22,
     fontWeight: 'bold',
     color: 'white',
   },
   cardSubtitle: {
-    fontSize: 14,
+    fontSize: 18,
     color: 'rgba(255,255,255,0.8)',
     marginTop: 4,
   },

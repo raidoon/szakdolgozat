@@ -98,8 +98,8 @@ export default function Oktato_BefizetesRogzites({ route }) {
     navigation.setOptions({
       title: "Befizetés rögzítése",
       headerShown: true,
-      headerStyle: { backgroundColor: '#1e90ff' },
-      headerTintColor: '#fff',
+      headerStyle: { backgroundColor: '#fff' },
+      headerTintColor:  '#2E7D32',
       headerTitleAlign: 'center',
     });
 
@@ -174,7 +174,7 @@ export default function Oktato_BefizetesRogzites({ route }) {
   };
 
   return (
-    <LinearGradient colors={['#1e90ff', '#00bfff']} style={styles.container}>
+    <LinearGradient colors={['#2E7D32','#2E7D32']} style={styles.container}>
       <KeyboardAvoidingView
         behavior={Platform.OS === "ios" ? "padding" : "height"}
         style={{ flex: 1 }}
