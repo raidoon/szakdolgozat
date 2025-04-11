@@ -60,7 +60,7 @@ export default function SzemelyesAdatok({ route }) {
     setSikerModalCim('Siker!');
     setSikerModalSzoveg('Adatok sikeresen frissítve!');
     setSikerModal(true);
-    console.log("Updated Data:", { name, email, phone });
+    //console.log("Updated Data:", { name, email, phone });
   };
 
   return (
